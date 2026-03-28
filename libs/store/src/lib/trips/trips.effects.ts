@@ -73,6 +73,18 @@ export class TripsEffects {
     )
   );
 
+  loadTripById$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TripActions.loadTripById),
+      switchMap(({ id }) =>
+        this.tripService.getTripById(id).pipe(
+          map((trip) => TripActions.loadTripByIdSuccess({ trip })),
+          catchError((error) => of(TripActions.loadTripByIdFailure({ error: error.message })))
+        )
+      )
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private tripService: TripService,

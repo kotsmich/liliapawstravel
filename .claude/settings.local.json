@@ -1,13 +1,10 @@
 {
-  "env":{
+  "env": {
     "cleanupPeriodDays": "365"
   },
   "permissions": {
     "allow": [
-      "Bash(npm install:*)",
-      "Bash(npm run:*)",
-      "Bash(npx nx@16 init --yes --nxCloud=skip)",
-      "Bash(npx nx@16 --yes init --nxCloud=skip --cacheable=build,test)"
+      "Bash(*)"
     ]
   }
 }

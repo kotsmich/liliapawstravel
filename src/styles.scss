@@ -1,29 +1,5 @@
-// Angular Material custom theme
-@use '@angular/material' as mat;
-
-@include mat.core();
-
-$primary-palette: mat.define-palette(mat.$orange-palette, 700, 400, 900);
-$accent-palette:  mat.define-palette(mat.$brown-palette, 600, 300, 800);
-$warn-palette:    mat.define-palette(mat.$red-palette);
-
-$lilia-theme: mat.define-light-theme((
-  color: (
-    primary: $primary-palette,
-    accent:  $accent-palette,
-    warn:    $warn-palette,
-  ),
-  typography: mat.define-typography-config(
-    $font-family: "'Inter', 'Segoe UI', sans-serif",
-  ),
-  density: 0,
-));
-
-@include mat.all-component-themes($lilia-theme);
-
 // Google Fonts
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 // ── Reset & Base ────────────────────────────────────────────────────────────
 *,
@@ -47,30 +23,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-// ── Angular Material overrides ──────────────────────────────────────────────
-.mat-mdc-raised-button.mat-primary {
-  background-color: #c47c3e !important;
-  border-radius: 30px !important;
-  padding: 0 1.75rem !important;
-  height: 44px !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.02em !important;
-}
-
-.mat-mdc-outlined-button {
-  border-radius: 30px !important;
-}
-
-.mat-mdc-form-field {
-  &.mat-focused .mdc-notched-outline__leading,
-  &.mat-focused .mdc-notched-outline__notch,
-  &.mat-focused .mdc-notched-outline__trailing {
-    border-color: #c47c3e !important;
-  }
-  .mat-mdc-floating-label.mdc-floating-label--float-above {
-    color: #c47c3e !important;
-  }
-}
 
 // ── Utility ─────────────────────────────────────────────────────────────────
 .container {
@@ -97,4 +49,47 @@ router-outlet + * {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Global PrimeNG Form Field Overrides ─────────────────────────────────────
+.p-inputtext {
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+
+  &::placeholder { color: #a0a0a0; }
+  &:disabled { background: #f5f5f5; opacity: 0.65; cursor: not-allowed; }
+}
+
+.p-select {
+  border-radius: 12px;
+  .p-select-label { font-size: 0.875rem; padding: 0.75rem 1rem; }
+  &.p-disabled { background: #f5f5f5; opacity: 0.65; }
+}
+
+.p-textarea {
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  &::placeholder { color: #a0a0a0; }
+  &:disabled { background: #f5f5f5; opacity: 0.65; cursor: not-allowed; }
+}
+
+.p-datepicker-input {
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  width: 100%;
+}
+
+.p-iftalabel {
+  width: 100%;
+  .p-inputtext, .p-select, .p-textarea { width: 100%; }
+}
+
+.p-error, small.p-error {
+  color: #dc2626;
+  font-size: 0.75rem;
+  display: block;
+  margin-top: 0.25rem;
 }

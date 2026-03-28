@@ -8,16 +8,14 @@ import {
   Validators,
   AbstractControl,
 } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { InputTextModule } from 'primeng/inputtext';
+import { TextareaModule } from 'primeng/textarea';
+import { SelectModule } from 'primeng/select';
+import { ButtonModule } from 'primeng/button';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { CardModule } from 'primeng/card';
+import { DividerModule } from 'primeng/divider';
+import { TooltipModule } from 'primeng/tooltip';
 import { Store } from '@ngrx/store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CalendarActions } from '../../store/calendar/calendar.actions';
@@ -41,16 +39,14 @@ import { CalendarEvent } from '../../models';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    MatCardModule,
-    MatChipsModule,
-    MatDividerModule,
-    MatTooltipModule,
+    InputTextModule,
+    TextareaModule,
+    SelectModule,
+    ButtonModule,
+    ProgressSpinnerModule,
+    CardModule,
+    DividerModule,
+    TooltipModule,
   ],
   templateUrl: './trip-request.component.html',
   styleUrls: ['./trip-request.component.scss'],

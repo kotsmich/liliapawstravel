@@ -9,8 +9,8 @@ export class TripRequestEffects {
   submitRequest$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TripRequestActions.submitRequest),
-      switchMap(({ dogs }) =>
-        this.tripRequestService.submitRequest(dogs).pipe(
+      switchMap(({ dogs, tripId }) =>
+        this.tripRequestService.submitRequest(dogs, tripId).pipe(
           map((request) => TripRequestActions.submitRequestSuccess({ request })),
           catchError((error) => of(TripRequestActions.submitRequestFailure({ error: error.message })))
         )

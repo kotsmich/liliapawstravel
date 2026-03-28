@@ -1,27 +1,23 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AdminUser } from '@myorg/models';
+import { API_URL } from './api-url.token';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly base = '/api/auth';
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private base = `${inject(API_URL)}/api/auth`;
 
   login(email: string, password: string): Observable<AdminUser> {
-    if (email === 'admin@liliapaws.com' && password === 'admin123') {
-      return of({
-        id: '1',
-        email,
-        token: 'mock-jwt-token-' + crypto.randomUUID(),
-      }).pipe(delay(800));
-    }
-    return throwError(() => new Error('Invalid credentials. Use admin@liliapaws.com / admin123'));
+    return this.http
+      .post<{ token: string }>(`${this.base}/login`, { email, password })
+      .pipe(map(({ token }) => ({ id: email, email, token })));
   }
 
   logout(): Observable<void> {
-    return of(undefined).pipe(delay(100));
+    // Stateless JWT — nothing to call on the server
+    return new Observable((observer) => { observer.next(); observer.complete(); });
   }
 }

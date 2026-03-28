@@ -30,12 +30,6 @@
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/user-app/src/environments/environment.development.ts",
-                  "with": "apps/user-app/src/environments/environment.ts"
-                }
-              ],
               "budgets": [
                 { "type": "initial", "maximumWarning": "1mb", "maximumError": "2mb" },
                 { "type": "anyComponentStyle", "maximumWarning": "10kb", "maximumError": "20kb" }
@@ -43,6 +37,12 @@
               "outputHashing": "all"
             },
             "development": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/user-app/src/environments/environment.ts",
+                  "with": "apps/user-app/src/environments/environment.development.ts"
+                }
+              ],
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,
@@ -94,12 +94,6 @@
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/admin-app/src/environments/environment.development.ts",
-                  "with": "apps/admin-app/src/environments/environment.ts"
-                }
-              ],
               "budgets": [
                 { "type": "initial", "maximumWarning": "1mb", "maximumError": "2mb" },
                 { "type": "anyComponentStyle", "maximumWarning": "10kb", "maximumError": "20kb" }
@@ -107,6 +101,12 @@
               "outputHashing": "all"
             },
             "development": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/admin-app/src/environments/environment.ts",
+                  "with": "apps/admin-app/src/environments/environment.development.ts"
+                }
+              ],
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,

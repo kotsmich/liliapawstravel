@@ -10,6 +10,7 @@ export interface Trip {
   arrivalCountry: string;
   arrivalCity: string;
   status: TripStatus;
+  spotsAvailable?: number;
   notes: string;
   dogs: Dog[];
 }

@@ -13,10 +13,11 @@
       <div class="row">
         <div class="field fw">
           <p-ifta-label>
-            <input pInputText id="date" formControlName="date" placeholder="YYYY-MM-DD" />
+            <p-datepicker inputId="date" formControlName="date" [minDate]="today"
+              dateFormat="dd/mm/yy" [showTime]="false" [showIcon]="true" styleClass="w-full" />
             <label for="date">Date</label>
           </p-ifta-label>
-          <small class="p-error" *ngIf="form.get('date')?.touched && form.get('date')?.invalid">Required (YYYY-MM-DD).</small>
+          <small class="p-error" *ngIf="form.get('date')?.touched && form.get('date')?.invalid">Please select a valid future date.</small>
         </div>
         <div class="field fw">
           <p-ifta-label>

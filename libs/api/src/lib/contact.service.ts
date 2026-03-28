@@ -1,21 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { ContactForm, ContactSubmission } from '@myorg/models';
+import { API_URL } from './api-url.token';
 
 @Injectable({ providedIn: 'root' })
 export class ContactService {
-  private readonly base = '/api/contact';
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private base = `${inject(API_URL)}/api/contact`;
 
   submitContact(form: ContactForm): Observable<ContactSubmission> {
-    const submission: ContactSubmission = {
-      ...form,
-      id: crypto.randomUUID(),
-      submittedAt: new Date().toISOString(),
-    };
-    return of(submission).pipe(delay(700));
+    return this.http.post<ContactSubmission>(this.base, form);
   }
 }

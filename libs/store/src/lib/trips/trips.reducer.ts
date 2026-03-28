@@ -57,7 +57,11 @@ export const tripsFeature = createFeature({
       selectedTrip: s.selectedTrip?.id === id ? null : s.selectedTrip,
       mutating: false,
     })),
-    on(TripActions.deleteTripFailure, (s, { error }) => ({ ...s, mutating: false, error }))
+    on(TripActions.deleteTripFailure, (s, { error }) => ({ ...s, mutating: false, error })),
+    // Load Trip By Id
+    on(TripActions.loadTripById, (s) => ({ ...s, loading: true })),
+    on(TripActions.loadTripByIdSuccess, (s, { trip }) => ({ ...s, selectedTrip: trip, loading: false })),
+    on(TripActions.loadTripByIdFailure, (s, { error }) => ({ ...s, loading: false, error }))
   ),
 });
 

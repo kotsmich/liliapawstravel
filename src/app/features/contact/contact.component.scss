@@ -119,11 +119,9 @@
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
 
-  mat-icon {
+  .feedback-icon {
     flex-shrink: 0;
     font-size: 2rem;
-    width: 2rem;
-    height: 2rem;
     margin-top: 0.25rem;
   }
 
@@ -143,7 +141,7 @@
     border: 1px solid #86efac;
     color: #166534;
 
-    mat-icon { color: #16a34a; }
+    .feedback-icon { color: #16a34a; }
   }
 
   &--error {
@@ -151,8 +149,31 @@
     border: 1px solid #fca5a5;
     color: #991b1b;
 
-    mat-icon { color: #dc2626; }
+    .feedback-icon { color: #dc2626; }
   }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #5c4a3a;
+  }
+}
+
+.error-text {
+  color: #dc2626;
+  font-size: 0.8rem;
+}
+
+.hint-text {
+  color: #7a6358;
+  font-size: 0.8rem;
 }
 
 /* shared */

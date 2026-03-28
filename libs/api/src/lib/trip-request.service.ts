@@ -1,22 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { TripRequest } from '@myorg/models';
+import { API_URL } from './api-url.token';
 
 @Injectable({ providedIn: 'root' })
 export class TripRequestService {
-  private readonly base = '/api/trip-requests';
+  private http = inject(HttpClient);
+  private base = `${inject(API_URL)}/api/trip-requests`;
 
-  constructor(private http: HttpClient) {}
-
-  submitRequest(dogs: TripRequest['dogs']): Observable<TripRequest> {
-    const result: TripRequest = {
-      id: crypto.randomUUID(),
-      submittedAt: new Date().toISOString(),
-      dogs,
-      status: 'pending',
-    };
-    return of(result).pipe(delay(800));
+  submitRequest(dogs: TripRequest['dogs'], tripId?: string): Observable<TripRequest> {
+    return this.http.post<TripRequest>(this.base, { tripId, dogs });
   }
 }

@@ -5,4 +5,5 @@ export interface TripRequest {
   submittedAt: string;
   dogs: Dog[];
   status: 'pending' | 'confirmed' | 'completed';
+  tripId?: string;
 }

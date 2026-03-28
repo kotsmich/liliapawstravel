@@ -18,5 +18,8 @@ export const TripActions = createActionGroup({
     'Delete Trip': props<{ id: string }>(),
     'Delete Trip Success': props<{ id: string }>(),
     'Delete Trip Failure': props<{ error: string }>(),
+    'Load Trip By Id': props<{ id: string }>(),
+    'Load Trip By Id Success': props<{ trip: Trip }>(),
+    'Load Trip By Id Failure': props<{ error: string }>(),
   },
 });

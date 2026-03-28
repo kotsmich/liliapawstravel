@@ -6,7 +6,7 @@
     </a>
 
     <button class="navbar__burger" (click)="toggleMenu()" aria-label="Toggle menu">
-      <mat-icon>{{ menuOpen ? 'close' : 'menu' }}</mat-icon>
+      <i class="pi" [class.pi-bars]="!menuOpen" [class.pi-times]="menuOpen"></i>
     </button>
 
     <ul class="navbar__links" [class.open]="menuOpen">

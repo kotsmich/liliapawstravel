@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
@@ -8,15 +8,16 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { TextareaModule } from 'primeng/textarea';
+import { DatePickerModule } from 'primeng/datepicker';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs';
+import { filter, take } from 'rxjs';
 import {
   TripActions,
-  selectAllTrips, selectTripsMutating, selectTripsError,
+  selectSelectedTrip, selectTripsMutating, selectTripsError,
 } from '@myorg/store';
 import { DogFormComponent, LoadingSpinnerComponent } from '@myorg/ui';
 import { Trip, Dog } from '@myorg/models';
@@ -27,7 +28,7 @@ import { Trip, Dog } from '@myorg/models';
   imports: [
     CommonModule, RouterLink, ReactiveFormsModule,
     InputTextModule, SelectModule, ButtonModule, CardModule,
-    IftaLabelModule, TextareaModule, MessageModule, ToastModule,
+    IftaLabelModule, TextareaModule, DatePickerModule, MessageModule, ToastModule,
     DogFormComponent, LoadingSpinnerComponent,
   ],
   templateUrl: './trip-form.component.html',
@@ -43,6 +44,7 @@ export class TripFormComponent implements OnInit {
   isEdit = false;
   editId: string | null = null;
 
+  today = new Date();
   mutating$ = this.store.select(selectTripsMutating);
   error$ = this.store.select(selectTripsError);
 
@@ -63,7 +65,7 @@ export class TripFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      date: ['', Validators.required],
+      date: [null as Date | null, Validators.required],
       departureCountry: ['', Validators.required],
       departureCity: ['', Validators.required],
       arrivalCountry: ['', Validators.required],
@@ -76,17 +78,17 @@ export class TripFormComponent implements OnInit {
     this.editId = this.route.snapshot.paramMap.get('id');
     this.isEdit = !!this.editId;
 
-    if (this.isEdit) {
-      this.store.select(selectAllTrips).pipe(
-        filter((trips) => trips.length > 0),
-        takeUntilDestroyed()
-      ).subscribe((trips) => {
-        const trip = trips.find((t) => t.id === this.editId);
-        if (trip) {
-          this.form.patchValue({ ...trip });
-          this.dogs.clear();
-          trip.dogs.forEach((d) => this.dogs.push(this.dogGroup(d)));
-        }
+    this.store.dispatch(TripActions.clearSelectedTrip());
+
+    if (this.isEdit && this.editId) {
+      this.store.dispatch(TripActions.loadTripById({ id: this.editId }));
+      this.store.select(selectSelectedTrip).pipe(
+        filter(Boolean),
+        take(1)
+      ).subscribe((trip) => {
+        this.form.patchValue({ ...trip, date: trip.date ? new Date(trip.date) : null });
+        this.dogs.clear();
+        trip.dogs.forEach((d) => this.dogs.push(this.dogGroup(d)));
       });
     }
   }
@@ -112,7 +114,9 @@ export class TripFormComponent implements OnInit {
   onSubmit(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const dogs: Dog[] = this.form.value.dogs.map((d: Partial<Dog>) => ({ ...d, id: crypto.randomUUID() }));
-    const payload = { ...this.form.value, dogs };
+    const rawDate = this.form.value.date as Date | null;
+    const dateStr = rawDate ? rawDate.toISOString().slice(0, 10) : '';
+    const payload = { ...this.form.value, date: dateStr, dogs };
 
     if (this.isEdit && this.editId) {
       this.store.dispatch(TripActions.updateTrip({ id: this.editId, trip: payload }));

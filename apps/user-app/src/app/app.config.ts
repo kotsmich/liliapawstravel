@@ -2,22 +2,26 @@ import { ApplicationConfig, isDevMode } from '@angular/core';
 import { provideRouter, withRouterConfig } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient } from '@angular/common/http';
+import { environment } from '../environments/environment';
+import { API_URL } from '@myorg/api';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { providePrimeNG } from 'primeng/config';
 import { definePreset } from '@primeng/themes';
 import Aura from '@primeng/themes/aura';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 
 import { APP_ROUTES } from './app.routes';
 import {
   calendarReducer,
   contactReducer,
   tripRequestReducer,
+  tripsReducer,
   CalendarEffects,
   ContactEffects,
   TripRequestEffects,
+  TripsEffects,
 } from '@myorg/store';
 
 const LiliaPreset = definePreset(Aura, {
@@ -43,12 +47,14 @@ export const appConfig: ApplicationConfig = {
     provideRouter(APP_ROUTES, withRouterConfig({ onSameUrlNavigation: 'reload' })),
     provideAnimationsAsync(),
     provideHttpClient(),
+    { provide: API_URL, useValue: environment.apiUrl },
     provideStore({
       calendar: calendarReducer,
       contact: contactReducer,
       tripRequest: tripRequestReducer,
+      trips: tripsReducer,
     }),
-    provideEffects([CalendarEffects, ContactEffects, TripRequestEffects]),
+    provideEffects([CalendarEffects, ContactEffects, TripRequestEffects, TripsEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     providePrimeNG({
       theme: {
@@ -58,5 +64,6 @@ export const appConfig: ApplicationConfig = {
       ripple: true,
     }),
     MessageService,
+    ConfirmationService,
   ],
 };

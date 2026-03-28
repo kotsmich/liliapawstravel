@@ -1,7 +1,7 @@
 import { ApplicationConfig, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
@@ -10,7 +10,10 @@ import { definePreset } from '@primeng/themes';
 import Aura from '@primeng/themes/aura';
 import { MessageService, ConfirmationService } from 'primeng/api';
 
+import { environment } from '../environments/environment';
 import { APP_ROUTES } from './app.routes';
+import { authInterceptor } from './auth.interceptor';
+import { API_URL } from '@myorg/api';
 import {
   authReducer, AuthEffects,
   tripsReducer, TripsEffects,
@@ -39,7 +42,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(APP_ROUTES),
     provideAnimationsAsync(),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
+    { provide: API_URL, useValue: environment.apiUrl },
     provideStore({
       auth: authReducer,
       trips: tripsReducer,
