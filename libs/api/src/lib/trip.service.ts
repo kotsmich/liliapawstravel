@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Trip } from '@myorg/models';
+import { Trip, Dog } from '@myorg/models';
 import { API_URL } from './api-url.token';
 
 @Injectable({ providedIn: 'root' })
@@ -23,6 +23,10 @@ export class TripService {
 
   updateTrip(id: string, trip: Partial<Trip>): Observable<Trip> {
     return this.http.put<Trip>(`${this.base}/${id}`, trip);
+  }
+
+  updateDog(tripId: string, dog: Dog): Observable<Dog> {
+    return this.http.patch<Dog>(`${this.base}/${tripId}/dogs/${dog.id}`, dog);
   }
 
   deleteTrip(id: string): Observable<{ id: string }> {

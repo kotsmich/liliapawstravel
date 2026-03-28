@@ -1,8 +1,9 @@
-import { Component, OnInit, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -11,6 +12,8 @@ import { TextareaModule } from 'primeng/textarea';
 import { DatePickerModule } from 'primeng/datepicker';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
+import { DialogModule } from 'primeng/dialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -20,15 +23,16 @@ import {
   selectSelectedTrip, selectTripsMutating, selectTripsError,
 } from '@myorg/store';
 import { DogFormComponent, LoadingSpinnerComponent } from '@myorg/ui';
-import { Trip, Dog } from '@myorg/models';
+import { Dog } from '@myorg/models';
 
 @Component({
   selector: 'app-trip-form',
   standalone: true,
   imports: [
     CommonModule, RouterLink, ReactiveFormsModule,
-    InputTextModule, SelectModule, ButtonModule, CardModule,
-    IftaLabelModule, TextareaModule, DatePickerModule, MessageModule, ToastModule,
+    InputTextModule, InputNumberModule, SelectModule, ButtonModule, CardModule,
+    IftaLabelModule, TextareaModule, DatePickerModule,
+    MessageModule, ToastModule, DialogModule, TooltipModule,
     DogFormComponent, LoadingSpinnerComponent,
   ],
   templateUrl: './trip-form.component.html',
@@ -41,6 +45,7 @@ export class TripFormComponent implements OnInit {
   private messageService = inject(MessageService);
 
   form!: FormGroup;
+  dogEditForm!: FormGroup;
   isEdit = false;
   editId: string | null = null;
 
@@ -53,6 +58,16 @@ export class TripFormComponent implements OnInit {
     { label: 'In Progress', value: 'in-progress' },
     { label: 'Completed', value: 'completed' },
   ];
+
+  sizes = [
+    { value: 'small', label: 'Small (< 10 kg)' },
+    { value: 'medium', label: 'Medium (10–25 kg)' },
+    { value: 'large', label: 'Large (> 25 kg)' },
+  ];
+
+  dogDialogVisible = false;
+  editingDogIndex: number | null = null;
+  isNewDog = false;
 
   constructor() {
     this.error$.pipe(
@@ -71,12 +86,18 @@ export class TripFormComponent implements OnInit {
       arrivalCountry: ['', Validators.required],
       arrivalCity: ['', Validators.required],
       status: ['upcoming', Validators.required],
+      totalCapacity: [1, [Validators.required, Validators.min(1)]],
       notes: [''],
       dogs: this.fb.array([]),
     });
 
     this.editId = this.route.snapshot.paramMap.get('id');
     this.isEdit = !!this.editId;
+
+    const prefilledDate = this.route.snapshot.queryParamMap.get('date');
+    if (prefilledDate && !this.isEdit) {
+      this.form.patchValue({ date: new Date(prefilledDate + 'T00:00:00') });
+    }
 
     this.store.dispatch(TripActions.clearSelectedTrip());
 
@@ -86,7 +107,7 @@ export class TripFormComponent implements OnInit {
         filter(Boolean),
         take(1)
       ).subscribe((trip) => {
-        this.form.patchValue({ ...trip, date: trip.date ? new Date(trip.date) : null });
+        this.form.patchValue({ ...trip, date: trip.date ? new Date(trip.date + 'T00:00:00') : null });
         this.dogs.clear();
         trip.dogs.forEach((d) => this.dogs.push(this.dogGroup(d)));
       });
@@ -96,27 +117,105 @@ export class TripFormComponent implements OnInit {
   get dogs(): FormArray { return this.form.get('dogs') as FormArray; }
 
   dogGroup(dog?: Partial<Dog>): FormGroup {
+    // No validators here — dogs are validated individually in the dialog (buildDogEditForm).
+    // The FormArray is a data store only; the dialog is the validation boundary.
     return this.fb.group({
-      name: [dog?.name ?? '', Validators.required],
-      size: [dog?.size ?? '', Validators.required],
-      chipId: [dog?.chipId ?? '', [Validators.required, Validators.pattern(/^\d{15}$/)]],
-      fromCountry: [dog?.fromCountry ?? '', Validators.required],
-      fromCity: [dog?.fromCity ?? '', Validators.required],
-      toCountry: [dog?.toCountry ?? '', Validators.required],
-      toCity: [dog?.toCity ?? '', Validators.required],
+      id: [dog?.id ?? ''],
+      name: [dog?.name ?? ''],
+      size: [dog?.size ?? ''],
+      age: [dog?.age ?? 0],
+      chipId: [dog?.chipId ?? ''],
+      pickupLocation: [dog?.pickupLocation ?? ''],
+      dropLocation: [dog?.dropLocation ?? ''],
       notes: [dog?.notes ?? ''],
     });
   }
 
-  addDog(): void { this.dogs.push(this.dogGroup()); }
+  private buildDogEditForm(values: Partial<Dog>): FormGroup {
+    return this.fb.group({
+      id: [values.id ?? ''],
+      name: [values.name ?? '', Validators.required],
+      size: [values.size ?? '', Validators.required],
+      age: [values.age ?? 0, [Validators.required, Validators.min(0)]],
+      chipId: [values.chipId ?? '', [Validators.required, Validators.pattern(/^\d{15}$/)]],
+      pickupLocation: [values.pickupLocation ?? '', Validators.required],
+      dropLocation: [values.dropLocation ?? '', Validators.required],
+      notes: [values.notes ?? ''],
+    });
+  }
+
+  addDog(): void {
+    const newId = crypto.randomUUID();
+    this.dogs.push(this.dogGroup({ id: newId }));
+    this.editingDogIndex = this.dogs.length - 1;
+    this.isNewDog = true;
+    this.dogEditForm = this.buildDogEditForm({ id: newId });
+    this.dogDialogVisible = true;
+  }
+
   removeDog(i: number): void { this.dogs.removeAt(i); }
+
+  openDogDialog(index: number): void {
+    this.editingDogIndex = index;
+    this.isNewDog = false;
+    // Deep copy of current dog values — dialog edits this copy, not the list
+    this.dogEditForm = this.buildDogEditForm({ ...this.dogs.at(index).value });
+    this.dogDialogVisible = true;
+  }
+
+  saveDogDialog(): void {
+    if (this.editingDogIndex === null) return;
+    this.dogEditForm.markAllAsTouched();
+    if (this.dogEditForm.invalid) return;
+
+    const values: Dog = { ...this.dogEditForm.value };
+
+    // Reflect changes locally in the FormArray (used when trip form is submitted)
+    (this.dogs.at(this.editingDogIndex) as FormGroup).patchValue(values);
+
+    // If editing an existing trip dog, persist immediately via store
+    if (this.isEdit && this.editId && !this.isNewDog) {
+      this.store.dispatch(TripActions.updateDog({ tripId: this.editId, dog: values }));
+      this.messageService.add({ severity: 'success', summary: 'Dog Updated', detail: 'Dog updated successfully.' });
+    }
+
+    this.dogDialogVisible = false;
+    this.editingDogIndex = null;
+    this.isNewDog = false;
+  }
+
+  cancelDogDialog(): void {
+    if (this.isNewDog && this.editingDogIndex !== null) {
+      this.dogs.removeAt(this.editingDogIndex);
+    }
+    this.dogDialogVisible = false;
+    this.editingDogIndex = null;
+    this.isNewDog = false;
+  }
+
+  get capacityError(): string | null {
+    const capacity = this.form.get('totalCapacity')?.value ?? 0;
+    if (capacity < this.dogs.length) {
+      return `Capacity (${capacity}) cannot be less than current dogs (${this.dogs.length}).`;
+    }
+    return null;
+  }
 
   onSubmit(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    const dogs: Dog[] = this.form.value.dogs.map((d: Partial<Dog>) => ({ ...d, id: crypto.randomUUID() }));
+    if (this.capacityError) return;
+
+    const dogs: Dog[] = this.form.value.dogs.map((d: Partial<Dog>) => ({
+      ...d,
+      id: d.id || crypto.randomUUID(),
+    }));
     const rawDate = this.form.value.date as Date | null;
-    const dateStr = rawDate ? rawDate.toISOString().slice(0, 10) : '';
-    const payload = { ...this.form.value, date: dateStr, dogs };
+    const dateStr = rawDate
+      ? `${rawDate.getFullYear()}-${String(rawDate.getMonth() + 1).padStart(2, '0')}-${String(rawDate.getDate()).padStart(2, '0')}`
+      : '';
+    const totalCapacity: number = this.form.value.totalCapacity;
+    const spotsAvailable = Math.max(0, totalCapacity - dogs.length);
+    const payload = { ...this.form.value, date: dateStr, totalCapacity, spotsAvailable, dogs };
 
     if (this.isEdit && this.editId) {
       this.store.dispatch(TripActions.updateTrip({ id: this.editId, trip: payload }));

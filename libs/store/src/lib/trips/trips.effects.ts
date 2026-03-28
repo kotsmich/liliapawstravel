@@ -73,6 +73,18 @@ export class TripsEffects {
     )
   );
 
+  updateDog$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TripActions.updateDog),
+      switchMap(({ tripId, dog }) =>
+        this.tripService.updateDog(tripId, dog).pipe(
+          map((updated) => TripActions.updateDogSuccess({ tripId, dog: updated })),
+          catchError((error) => of(TripActions.updateDogFailure({ error: error.message })))
+        )
+      )
+    )
+  );
+
   loadTripById$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TripActions.loadTripById),

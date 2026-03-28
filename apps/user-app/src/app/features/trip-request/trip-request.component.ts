@@ -5,6 +5,8 @@ import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { MessageModule } from 'primeng/message';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { IftaLabelModule } from 'primeng/iftalabel';
 import { Store } from '@ngrx/store';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { filter } from 'rxjs/operators';
@@ -30,6 +32,7 @@ import {
   imports: [
     CommonModule, ReactiveFormsModule,
     ButtonModule, DividerModule, MessageModule, ConfirmDialogModule,
+    InputTextModule, IftaLabelModule,
     DogFormComponent, TripCalendarComponent, LoadingSpinnerComponent, ToastNotificationComponent,
   ],
   templateUrl: './trip-request.component.html',
@@ -59,7 +62,12 @@ export class TripRequestComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(CalendarActions.loadEvents());
-    this.form = this.fb.group({ dogs: this.fb.array([this.dogGroup()]) });
+    this.form = this.fb.group({
+      requesterName: ['', Validators.required],
+      requesterEmail: ['', [Validators.required, Validators.email]],
+      requesterPhone: ['', Validators.required],
+      dogs: this.fb.array([this.dogGroup()]),
+    });
 
     this.events$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((e) => {
       this.calendarEvents = e as CalendarEvent[];
@@ -92,13 +100,12 @@ export class TripRequestComponent implements OnInit {
 
   dogGroup(): FormGroup {
     return this.fb.group({
-      name: ['', [Validators.required]],
+      name: ['', Validators.required],
       size: ['', Validators.required],
+      age: [0, [Validators.required, Validators.min(0)]],
       chipId: ['', [Validators.required, Validators.pattern(/^\d{15}$/)]],
-      fromCountry: ['', Validators.required],
-      fromCity: ['', Validators.required],
-      toCountry: ['', Validators.required],
-      toCity: ['', Validators.required],
+      pickupLocation: ['', Validators.required],
+      dropLocation: ['', Validators.required],
       notes: [''],
     });
   }
@@ -136,10 +143,17 @@ export class TripRequestComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    const { requesterName, requesterEmail, requesterPhone } = this.form.value;
     const dogs: Dog[] = this.form.value.dogs.map((d: Partial<Dog>) => ({
       ...d, id: crypto.randomUUID(),
     }));
-    this.store.dispatch(TripRequestActions.submitRequest({ dogs, tripId: this.selectedTrip!.id }));
+    this.store.dispatch(TripRequestActions.submitRequest({
+      dogs,
+      tripId: this.selectedTrip!.id,
+      requesterName,
+      requesterEmail,
+      requesterPhone,
+    }));
   }
 
   onReset(): void {

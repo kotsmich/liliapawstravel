@@ -1,0 +1,114 @@
+<div class="requests-page">
+  <div class="page-header">
+    <h1>Trip Requests</h1>
+  </div>
+
+  <p-toast />
+
+  <p-table
+    [value]="(requests$ | async) ?? []"
+    [loading]="!!(loading$ | async)"
+    [rowHover]="true"
+    selectionMode="single"
+    (onRowSelect)="openDetail($event.data)"
+    styleClass="p-datatable-sm"
+    [tableStyle]="{ 'min-width': '60rem' }"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Submitted</th>
+        <th>Requester</th>
+        <th>Trip ID</th>
+        <th>Dogs</th>
+        <th>Status</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-req>
+      <tr [pSelectableRow]="req" style="cursor:pointer">
+        <td>{{ req.submittedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ req.requesterName }}</td>
+        <td>{{ req.tripId }}</td>
+        <td>{{ req.dogs.length }}</td>
+        <td>
+          <p-tag [value]="req.status" [severity]="statusSeverity(req.status)" />
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5" style="text-align:center">No requests yet.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Detail Dialog -->
+  <p-dialog
+    header="Request Details"
+    [(visible)]="dialogVisible"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [draggable]="false"
+  >
+    <ng-container *ngIf="selectedRequest as req">
+      <div class="detail-section">
+        <h3>Requester</h3>
+        <p><i class="pi pi-user"></i> {{ req.requesterName }}</p>
+        <p><i class="pi pi-envelope"></i> {{ req.requesterEmail }}</p>
+        <p><i class="pi pi-phone"></i> {{ req.requesterPhone }}</p>
+      </div>
+
+      <div class="detail-section">
+        <h3>Trip</h3>
+        <p>Trip ID: <strong>{{ req.tripId }}</strong></p>
+        <p>Submitted: {{ req.submittedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p>Status: <p-tag [value]="req.status" [severity]="statusSeverity(req.status)" /></p>
+      </div>
+
+      <div class="detail-section">
+        <h3>Dogs ({{ req.dogs.length }})</h3>
+        <p-table [value]="req.dogs" styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '100%' }">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Name</th>
+              <th>Size</th>
+              <th>Age</th>
+              <th>Chip ID</th>
+              <th>Pickup</th>
+              <th>Drop</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-dog>
+            <tr>
+              <td>{{ dog.name }}</td>
+              <td>{{ dog.size }}</td>
+              <td>{{ dog.age }} yr</td>
+              <td>{{ dog.chipId }}</td>
+              <td>{{ dog.pickupLocation }}</td>
+              <td>{{ dog.dropLocation }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </ng-container>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Approve"
+        icon="pi pi-check"
+        severity="success"
+        [disabled]="selectedRequest?.status !== 'pending'"
+        (onClick)="approve()"
+      />
+      <p-button
+        label="Reject"
+        icon="pi pi-times"
+        severity="danger"
+        [outlined]="true"
+        [disabled]="selectedRequest?.status !== 'pending'"
+        (onClick)="reject()"
+      />
+    </ng-template>
+  </p-dialog>
+</div>

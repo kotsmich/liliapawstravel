@@ -30,5 +30,6 @@ export class ShellComponent {
   navItems = [
     { icon: 'pi pi-th-large', label: 'Dashboard', link: '/admin/dashboard' },
     { icon: 'pi pi-car', label: 'Trips', link: '/admin/trips' },
+    { icon: 'pi pi-inbox', label: 'Requests', link: '/admin/requests' },
   ];
 }

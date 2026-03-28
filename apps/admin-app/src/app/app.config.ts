@@ -18,6 +18,7 @@ import {
   authReducer, AuthEffects,
   tripsReducer, TripsEffects,
   calendarReducer, CalendarEffects,
+  tripRequestReducer, TripRequestEffects,
 } from '@myorg/store';
 
 const LiliaPreset = definePreset(Aura, {
@@ -48,8 +49,9 @@ export const appConfig: ApplicationConfig = {
       auth: authReducer,
       trips: tripsReducer,
       calendar: calendarReducer,
+      tripRequest: tripRequestReducer,
     }),
-    provideEffects([AuthEffects, TripsEffects, CalendarEffects]),
+    provideEffects([AuthEffects, TripsEffects, CalendarEffects, TripRequestEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     providePrimeNG({
       theme: {

@@ -1,5 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { Trip } from '@myorg/models';
+import { Trip, Dog } from '@myorg/models';
 
 export const TripActions = createActionGroup({
   source: 'Trips',
@@ -21,5 +21,8 @@ export const TripActions = createActionGroup({
     'Load Trip By Id': props<{ id: string }>(),
     'Load Trip By Id Success': props<{ trip: Trip }>(),
     'Load Trip By Id Failure': props<{ error: string }>(),
+    'Update Dog': props<{ tripId: string; dog: Dog }>(),
+    'Update Dog Success': props<{ tripId: string; dog: Dog }>(),
+    'Update Dog Failure': props<{ error: string }>(),
   },
 });

@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, AbstractControl } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { TextareaModule } from 'primeng/textarea';
@@ -15,6 +16,7 @@ import { IftaLabelModule } from 'primeng/iftalabel';
     CommonModule,
     ReactiveFormsModule,
     InputTextModule,
+    InputNumberModule,
     SelectModule,
     ButtonModule,
     TextareaModule,
@@ -44,6 +46,7 @@ export class DogFormComponent {
     const c = this.ctrl(field);
     if (!c.errors || !c.touched) return '';
     if (c.errors['required']) return 'Required.';
+    if (c.errors['min']) return 'Must be 0 or greater.';
     if (c.errors['minlength']) return `Min ${c.errors['minlength'].requiredLength} chars.`;
     if (c.errors['pattern']) return field === 'chipId' ? '15-digit chip ID.' : 'Invalid format.';
     return '';

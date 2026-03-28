@@ -2,10 +2,9 @@ export interface Dog {
   id: string;
   name: string;
   size: 'small' | 'medium' | 'large';
+  age: number;
   chipId: string;
-  fromCountry: string;
-  fromCity: string;
-  toCountry: string;
-  toCity: string;
+  pickupLocation: string;
+  dropLocation: string;
   notes: string;
 }

@@ -1,28 +1,130 @@
-.trips-page { display: flex; flex-direction: column; gap: 1.5rem; }
-.page-header { display: flex; align-items: center; justify-content: space-between;
-  h1 { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin: 0; } }
+.trips-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-.grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; align-items: start;
-  @media(max-width:900px){ grid-template-columns: 1fr; } }
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-.cal-hint { font-size: 0.8rem; color: #64748b; margin-top: 0.75rem; display: flex; align-items: center; gap: 0.4rem; }
+  h1 { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin: 0; }
+}
 
+/* ── Tab bar ── */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: color 0.15s, border-color 0.15s;
+
+  &.active { color: #e07b54; border-bottom-color: #e07b54; }
+  &:hover:not(.active) { color: #1e293b; }
+}
+
+/* ── Calendar tab layout ── */
+.grid-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 400px) 1fr;
+  gap: 1.5rem;
+  align-items: start;
+
+  @media (max-width: 900px) { grid-template-columns: 1fr; }
+}
+
+.cal-card-body {
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.cal-hint {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ── Selected-date trip card (inside calendar card) ── */
+.no-date-trip {
+  text-align: center;
+  padding: 1.25rem;
+  margin-top: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px dashed #e2e8f0;
+  color: #64748b;
+
+  i { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+  p { margin: 0 0 0.75rem; font-size: 0.875rem; }
+}
+
+/* ── Trip cards (right column) ── */
 .trips-list { display: flex; flex-direction: column; gap: 1rem; }
 
-.trip-header { display: flex; align-items: center; justify-content: space-between;
-  gap: 0.5rem; flex-wrap: wrap; padding: 0.75rem 1rem; border-bottom: 1px solid #f1f5f9; }
-.trip-route { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
-  strong { color: #1e293b; font-size: 0.95rem; } }
+.trip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
 
-.trip-body { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; font-size: 0.875rem;
-  .trip-date { color: #64748b; display: flex; align-items: center; gap: 0.3rem; }
+.trip-route {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+
+  strong { color: #1e293b; font-size: 0.95rem; }
+}
+
+.trip-body {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+
+  .trip-date  { color: #64748b; display: flex; align-items: center; gap: 0.3rem; }
   .dogs-count { color: #64748b; }
+  .spots-count {
+    color: #64748b;
+    &.low { color: #dc2626; font-weight: 600; }
+  }
   .notes { color: #64748b; font-style: italic; width: 100%; }
 }
 
 .trip-actions { display: flex; gap: 0.5rem; }
 
-.empty { text-align: center; padding: 4rem 2rem; color: #94a3b8;
+.empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #94a3b8;
+
   i { font-size: 3rem; display: block; margin: 0 auto 1rem; }
   a { color: #e07b54; }
 }
+
+/* ── All-trips table ── */
+.low-spots { color: #dc2626; font-weight: 600; }

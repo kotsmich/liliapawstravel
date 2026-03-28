@@ -7,11 +7,10 @@ export interface Dog {
   id: string;
   name: string;
   size: DogSize;
+  age: number;
   chipId: string;
-  fromCountry: string;
-  fromCity: string;
-  toCountry: string;
-  toCity: string;
+  pickupLocation: string;
+  dropLocation: string;
   notes: string;
 }
 
@@ -25,6 +24,7 @@ export interface Trip {
   arrivalCountry: string;
   arrivalCity: string;
   status: TripStatus;
+  totalCapacity: number;
   spotsAvailable: number;
   notes: string;
   dogs: Dog[];
@@ -38,6 +38,9 @@ export interface TripRequest {
   dogs: Dog[];
   status: TripRequestStatus;
   submittedAt: string; // ISO timestamp
+  requesterName: string;
+  requesterEmail: string;
+  requesterPhone: string;
 }
 
 export interface CalendarEvent {

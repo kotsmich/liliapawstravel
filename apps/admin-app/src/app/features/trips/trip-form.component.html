@@ -31,6 +31,18 @@
       <div class="row">
         <div class="field fw">
           <p-ifta-label>
+            <p-inputnumber inputId="totalCapacity" formControlName="totalCapacity"
+              [min]="1" [showButtons]="true" styleClass="w-full" />
+            <label for="totalCapacity">Total Capacity (spots)</label>
+          </p-ifta-label>
+          <small class="p-error" *ngIf="capacityError">{{ capacityError }}</small>
+          <small class="p-error" *ngIf="!capacityError && form.get('totalCapacity')?.touched && form.get('totalCapacity')?.invalid">Must be at least 1.</small>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field fw">
+          <p-ifta-label>
             <input pInputText id="depCountry" formControlName="departureCountry" placeholder="Romania" />
             <label for="depCountry">Departure Country</label>
           </p-ifta-label>
@@ -79,17 +91,24 @@
         </div>
       </ng-template>
 
-      <div formArrayName="dogs">
-        <ui-dog-form
-          *ngFor="let dog of dogs.controls; let i = index"
-          [formGroup]="$any(dogs.at(i))"
-          [index]="i"
-          [canRemove]="true"
-          (removeClicked)="removeDog(i)">
-        </ui-dog-form>
+      <div class="dogs-list" formArrayName="dogs">
+        <div *ngFor="let dog of dogs.controls; let i = index" class="dog-row">
+          <div class="dog-row__info">
+            <span class="dog-name">🐶 {{ dog.get('name')?.value || 'Unnamed' }}</span>
+            <span class="dog-badge">{{ dog.get('size')?.value }}</span>
+            <span class="dog-age" *ngIf="dog.get('age')?.value !== null">{{ dog.get('age')?.value }} yr</span>
+            <span class="dog-route">{{ dog.get('pickupLocation')?.value }} → {{ dog.get('dropLocation')?.value }}</span>
+            <span class="dog-chip">{{ dog.get('chipId')?.value }}</span>
+          </div>
+          <div class="dog-row__actions">
+            <p-button icon="pi pi-pencil" [outlined]="true" size="small" type="button"
+              pTooltip="Edit dog" (onClick)="openDogDialog(i)" />
+            <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" type="button"
+              pTooltip="Remove dog" (onClick)="removeDog(i)" />
+          </div>
+        </div>
+        <p *ngIf="dogs.length === 0" class="no-dogs">No dogs added yet. Use the button above.</p>
       </div>
-
-      <p *ngIf="dogs.length === 0" class="no-dogs">No dogs added yet. Use the button above.</p>
     </p-card>
 
     <!-- Actions -->
@@ -105,3 +124,86 @@
     </div>
   </form>
 </div>
+
+<!-- Dog add / edit dialog — outside the main form to avoid FormGroup nesting conflicts -->
+<p-dialog
+  [(visible)]="dogDialogVisible"
+  [modal]="true"
+  [style]="{ width: '620px', maxWidth: '95vw' }"
+  [contentStyle]="{ overflow: 'visible', padding: '1.25rem 1.5rem' }"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="false"
+  [header]="isNewDog ? 'Add Dog' : ('Edit Dog ' + ((editingDogIndex ?? 0) + 1))">
+
+  <div [formGroup]="dogEditForm" *ngIf="dogEditForm" class="dlg-form">
+    <div class="row">
+      <div class="field fw">
+        <p-ifta-label>
+          <input pInputText id="dlg-name" formControlName="name" class="w-full" />
+          <label for="dlg-name">Dog Name</label>
+        </p-ifta-label>
+        <small class="p-error" *ngIf="dogEditForm.get('name')?.touched && dogEditForm.get('name')?.invalid">Required.</small>
+      </div>
+      <div class="field fw">
+        <p-ifta-label>
+          <p-select inputId="dlg-size" formControlName="size" [options]="sizes"
+            optionLabel="label" optionValue="value" styleClass="w-full" />
+          <label for="dlg-size">Size</label>
+        </p-ifta-label>
+        <small class="p-error" *ngIf="dogEditForm.get('size')?.touched && dogEditForm.get('size')?.invalid">Required.</small>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field fw">
+        <p-ifta-label>
+          <p-inputnumber inputId="dlg-age" formControlName="age" [min]="0"
+            [showButtons]="false" styleClass="w-full" />
+          <label for="dlg-age">Age (years)</label>
+        </p-ifta-label>
+        <small class="p-error" *ngIf="dogEditForm.get('age')?.touched && dogEditForm.get('age')?.invalid">Must be 0 or greater.</small>
+      </div>
+      <div class="field fw">
+        <p-ifta-label>
+          <input pInputText id="dlg-chip" formControlName="chipId" class="w-full" maxlength="15" />
+          <label for="dlg-chip">Microchip ID</label>
+        </p-ifta-label>
+        <small class="p-error" *ngIf="dogEditForm.get('chipId')?.touched && dogEditForm.get('chipId')?.invalid">15-digit chip ID required.</small>
+      </div>
+    </div>
+
+    <div class="field fw">
+      <p-ifta-label>
+        <input pInputText id="dlg-pickup" formControlName="pickupLocation" class="w-full" />
+        <label for="dlg-pickup">Pickup Location</label>
+      </p-ifta-label>
+      <small class="p-error" *ngIf="dogEditForm.get('pickupLocation')?.touched && dogEditForm.get('pickupLocation')?.invalid">Required.</small>
+    </div>
+
+    <div class="field fw">
+      <p-ifta-label>
+        <input pInputText id="dlg-drop" formControlName="dropLocation" class="w-full" />
+        <label for="dlg-drop">Drop Location</label>
+      </p-ifta-label>
+      <small class="p-error" *ngIf="dogEditForm.get('dropLocation')?.touched && dogEditForm.get('dropLocation')?.invalid">Required.</small>
+    </div>
+
+    <div class="field fw">
+      <p-ifta-label>
+        <textarea pTextarea id="dlg-notes" formControlName="notes" rows="3"
+          class="w-full" autoResize></textarea>
+        <label for="dlg-notes">Special Notes (optional)</label>
+      </p-ifta-label>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancel" [outlined]="true" type="button" (onClick)="cancelDogDialog()" />
+    <p-button
+      [label]="isNewDog ? 'Add Dog' : 'Update'"
+      icon="pi pi-check"
+      type="button"
+      (onClick)="saveDogDialog()" />
+  </ng-template>
+</p-dialog>

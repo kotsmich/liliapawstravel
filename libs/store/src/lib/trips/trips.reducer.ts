@@ -60,8 +60,26 @@ export const tripsFeature = createFeature({
     on(TripActions.deleteTripFailure, (s, { error }) => ({ ...s, mutating: false, error })),
     // Load Trip By Id
     on(TripActions.loadTripById, (s) => ({ ...s, loading: true })),
-    on(TripActions.loadTripByIdSuccess, (s, { trip }) => ({ ...s, selectedTrip: trip, loading: false })),
-    on(TripActions.loadTripByIdFailure, (s, { error }) => ({ ...s, loading: false, error }))
+    on(TripActions.loadTripByIdSuccess, (s, { trip }) => ({
+      ...s,
+      selectedTrip: trip,
+      trips: s.trips.map((t) => (t.id === trip.id ? trip : t)),
+      loading: false,
+    })),
+    on(TripActions.loadTripByIdFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    // Update Dog
+    on(TripActions.updateDog, (s) => ({ ...s, mutating: true, error: null })),
+    on(TripActions.updateDogSuccess, (s, { tripId, dog }) => ({
+      ...s,
+      trips: s.trips.map((t) =>
+        t.id === tripId ? { ...t, dogs: t.dogs.map((d) => (d.id === dog.id ? dog : d)) } : t
+      ),
+      selectedTrip: s.selectedTrip?.id === tripId
+        ? { ...s.selectedTrip, dogs: s.selectedTrip.dogs.map((d) => (d.id === dog.id ? dog : d)) }
+        : s.selectedTrip,
+      mutating: false,
+    })),
+    on(TripActions.updateDogFailure, (s, { error }) => ({ ...s, mutating: false, error }))
   ),
 });
 

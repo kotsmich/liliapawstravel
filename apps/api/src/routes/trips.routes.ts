@@ -6,6 +6,7 @@ import {
   getTripById,
   createTrip,
   updateTrip,
+  updateTripDog,
   deleteTrip,
 } from '../controllers/trips.controller';
 
@@ -18,6 +19,7 @@ router.get('/:id', asyncHandler(async (req, res) => getTripById(req, res)));
 // Admin only
 router.post('/', requireAuth, asyncHandler(async (req, res) => createTrip(req, res)));
 router.put('/:id', requireAuth, asyncHandler(async (req, res) => updateTrip(req, res)));
+router.patch('/:tripId/dogs/:dogId', requireAuth, asyncHandler(async (req, res) => updateTripDog(req, res)));
 router.delete('/:id', requireAuth, asyncHandler(async (req, res) => deleteTrip(req, res)));
 
 export default router;

@@ -1,81 +1,107 @@
-.calendar {
-  border-radius: 12px;
+// Ensure the component fills whatever container it's placed in.
+:host {
+  display: block;
+  width: 100%;
   overflow: hidden;
-  border: 1px solid #f0dfc0;
-  user-select: none;
+  box-sizing: border-box;
+}
 
-  &__header {
-    background: #e07b54;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1rem;
-    font-weight: 600;
+// Theme overrides for p-datepicker (PrimeNG v17+) to match the brand palette.
+// ::ng-deep is required because p-datepicker renders outside the component's shadow.
+:host ::ng-deep {
+  // Stretch the inline datepicker to host width.
+  .p-datepicker {
+    width: 100% !important;
+    box-sizing: border-box;
   }
 
-  &__days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    background: #c96340;
+  .trip-cal {
+    width: 100%;
+    border: 1px solid #f0dfc0;
+    border-radius: 12px;
+    overflow: hidden;
+    user-select: none;
+    box-sizing: border-box;
 
-    span {
-      text-align: center;
-      padding: 0.4rem 0;
+    // Header (month / year + nav arrows)
+    .p-datepicker-header {
+      background: #e07b54;
+      color: #fff;
+      border-bottom: none;
+      padding: 0.75rem 1rem;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+
+      .p-datepicker-title { font-weight: 600; font-size: 1rem; }
+
+      .p-datepicker-prev-button,
+      .p-datepicker-next-button {
+        color: #fff;
+        opacity: 0.85;
+        &:hover { opacity: 1; background: rgba(255, 255, 255, 0.15); }
+      }
+    }
+
+    // Day-of-week header row
+    .p-datepicker-day-name {
+      background: #c96340;
+      color: rgba(255, 255, 255, 0.85);
       font-size: 0.7rem;
       font-weight: 600;
-      color: rgba(255,255,255,0.85);
       text-transform: uppercase;
+      padding: 0.4rem 0;
+    }
+
+    // Calendar body
+    .p-datepicker-calendar {
+      background: #fdf6ee;
+      width: 100%;
+    }
+
+    // Every day cell button
+    .p-datepicker-day {
+      color: #4a3728;
+      border-radius: 6px;
+      transition: background 0.15s;
+
+      &:hover:not(.p-disabled) { background: #f5e6d0; }
+    }
+
+    // Past / disabled dates
+    .p-datepicker-day.p-disabled { opacity: 0.35; }
+
+    // Selected date
+    .p-datepicker-day.p-datepicker-day-selected {
+      background: #e07b54;
+      color: #fff;
+      font-weight: 700;
+
+      .dot { background: #fff; }
     }
   }
 
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    background: #fdf6ee;
+  @media (max-width: 480px) {
+    .p-datepicker-header .p-datepicker-title { font-size: 0.875rem; }
+    .p-datepicker-day-name { font-size: 0.65rem; }
   }
 }
 
-.cell {
+// Custom date cell — wraps the day number + optional event dot
+.date-cell {
   position: relative;
-  min-height: 44px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 0.875rem;
-  color: #4a3728;
-  cursor: pointer;
-  border: 1px solid rgba(0,0,0,0.04);
-  transition: background 0.15s;
-
-  &:hover:not(.empty):not(.past) { background: #f5e6d0; }
-  &.empty { background: rgba(0,0,0,0.02); cursor: default; }
-  &.past  { opacity: 0.35; cursor: default; }
-  &.has-event:not(.past) { font-weight: 600; background: rgba(196,124,62,0.1); }
-  &.selected { background: #e07b54 !important; color: #fff; font-weight: 700;
-    .dot { background: #fff; }
-  }
-}
-
-.nav-btn {
-  background: none;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  opacity: 0.85;
-  &:hover { opacity: 1; background: rgba(255,255,255,0.15); }
+  min-height: 36px;
+  width: 100%;
 }
 
 .dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--dot-color, #e07b54);
+  background: #e07b54;
   position: absolute;
-  bottom: 4px;
+  bottom: 2px;
 }

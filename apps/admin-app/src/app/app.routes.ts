@@ -29,6 +29,10 @@ export const APP_ROUTES: Routes = [
         path: 'trips/:id/edit',
         loadComponent: () => import('./features/trips/trip-form.component').then((m) => m.TripFormComponent),
       },
+      {
+        path: 'requests',
+        loadComponent: () => import('./features/requests/requests-list.component').then((m) => m.RequestsListComponent),
+      },
     ],
   },
   { path: '**', redirectTo: 'admin/login' },

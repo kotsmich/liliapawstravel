@@ -3,7 +3,8 @@
   border-radius: 12px;
   padding: 1.5rem;
   border: 1px solid #f0dfc0;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  overflow: visible;
 
   &__header {
     display: flex;
@@ -15,15 +16,19 @@
   }
 }
 
-.dog-fields {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.field { display: flex; flex-direction: column; gap: 0.25rem; }
 .p-error { font-size: 0.75rem; color: #dc2626; }
 
-.f-full    { width: 100%; }
-.f-half    { flex: 1 1 calc(50% - 0.5rem); min-width: 180px; }
-.f-quarter { flex: 1 1 calc(25% - 0.75rem); min-width: 150px; }
+// p-ifta-label is an inline element by default; make it fill its grid column
+::ng-deep p-ifta-label {
+  display: block;
+  width: 100%;
+
+  .p-iftalabel {
+    width: 100%;
+
+    input,
+    textarea {
+      width: 100%;
+    }
+  }
+}

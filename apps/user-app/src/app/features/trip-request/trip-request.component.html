@@ -3,7 +3,7 @@
     <div class="container">
       <span class="tag">Transport Request</span>
       <h1>Book a Transport</h1>
-      <p>Select a travel date, add your dogs, and submit.</p>
+      <p>Select a travel date, fill in your details, add your dogs, and submit.</p>
     </div>
   </div>
 
@@ -44,10 +44,40 @@
         <p *ngIf="trip.notes" class="trip-details__notes">{{ trip.notes }}</p>
       </section>
 
-      <!-- Dog Form -->
+      <!-- Form -->
       <section class="card" *ngIf="!(success$ | async)">
-        <h2>🐕 Add Dogs for this Trip</h2>
         <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+          <!-- Requester info -->
+          <h2>👤 Your Details</h2>
+          <div class="requester-fields">
+            <div class="field">
+              <p-ifta-label>
+                <input pInputText id="reqName" formControlName="requesterName" />
+                <label for="reqName">Full Name</label>
+              </p-ifta-label>
+              <small class="p-error" *ngIf="form.get('requesterName')?.touched && form.get('requesterName')?.invalid">Required.</small>
+            </div>
+            <div class="field">
+              <p-ifta-label>
+                <input pInputText id="reqEmail" formControlName="requesterEmail" type="email" />
+                <label for="reqEmail">Email</label>
+              </p-ifta-label>
+              <small class="p-error" *ngIf="form.get('requesterEmail')?.touched && form.get('requesterEmail')?.invalid">Valid email required.</small>
+            </div>
+            <div class="field">
+              <p-ifta-label>
+                <input pInputText id="reqPhone" formControlName="requesterPhone" />
+                <label for="reqPhone">Phone</label>
+              </p-ifta-label>
+              <small class="p-error" *ngIf="form.get('requesterPhone')?.touched && form.get('requesterPhone')?.invalid">Required.</small>
+            </div>
+          </div>
+
+          <p-divider />
+
+          <!-- Dogs -->
+          <h2>🐕 Add Dogs for this Trip</h2>
           <div formArrayName="dogs">
             <ui-dog-form
               *ngFor="let dog of dogs.controls; let i = index"
@@ -74,10 +104,11 @@
           <!-- Summary preview -->
           <div *ngIf="showSummary" class="summary">
             <h3>📋 Summary</h3>
+            <p><strong>{{ form.value.requesterName }}</strong> · {{ form.value.requesterEmail }} · {{ form.value.requesterPhone }}</p>
             <div *ngFor="let d of form.value.dogs; let i = index" class="summary-row">
               <strong>Dog {{ i+1 }}: {{ d.name }}</strong>
-              <span>{{ d.size }} | {{ d.chipId }}</span>
-              <span>{{ d.fromCity }}, {{ d.fromCountry }} → {{ d.toCity }}, {{ d.toCountry }}</span>
+              <span>{{ d.size }} | {{ d.age }} yr | {{ d.chipId }}</span>
+              <span>{{ d.pickupLocation }} → {{ d.dropLocation }}</span>
             </div>
           </div>
 

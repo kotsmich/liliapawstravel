@@ -10,21 +10,74 @@
   <ui-loading-spinner *ngIf="loading$ | async" message="Loading trips..." />
 
   <ng-container *ngIf="!(loading$ | async)">
-    <div class="grid-layout">
+
+    <!-- Tab bar -->
+    <div class="tab-bar">
+      <button class="tab-btn" [class.active]="activeTab === 'calendar'" (click)="activeTab = 'calendar'">
+        <i class="pi pi-calendar"></i> Calendar View
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'all'" (click)="activeTab = 'all'">
+        <i class="pi pi-list"></i> All Trips
+      </button>
+    </div>
+
+    <!-- ── Calendar Tab ── -->
+    <div *ngIf="activeTab === 'calendar'" class="grid-layout">
+
       <!-- Calendar -->
       <p-card styleClass="cal-card">
         <ng-template pTemplate="title">Schedule</ng-template>
         <ui-trip-calendar
-          [events]="calendarEvents"
+          [events]="(calendarEvents$ | async) ?? []"
           [selectedDate]="selectedDate"
           (dateSelected)="onDateSelected($event)">
         </ui-trip-calendar>
-        <p class="cal-hint" *ngIf="selectedDate">
-          <i class="pi pi-info-circle"></i> Showing date: <strong>{{ selectedDate }}</strong>
+
+        <!-- Date selected: show trip or empty state -->
+        <ng-container *ngIf="selectedDate">
+          <p-card styleClass="date-trip-card" *ngFor="let trip of tripsForDate$ | async">
+            <ng-template pTemplate="header">
+              <div class="trip-header">
+                <div class="trip-route">
+                  <strong>{{ trip.departureCity }}, {{ trip.departureCountry }}</strong>
+                  <i class="pi pi-arrow-right mx-2"></i>
+                  <strong>{{ trip.arrivalCity }}, {{ trip.arrivalCountry }}</strong>
+                </div>
+                <p-tag [value]="trip.status" [severity]="statusSeverity(trip.status)" />
+              </div>
+            </ng-template>
+            <div class="trip-body">
+              <span class="trip-date"><i class="pi pi-calendar"></i> {{ trip.date }}</span>
+              <span class="dogs-count">🐶 {{ trip.dogs.length }} / {{ trip.totalCapacity }}</span>
+              <span class="spots-count" [class.low]="trip.spotsAvailable <= 2">
+                🐾 {{ trip.spotsAvailable }} spot{{ trip.spotsAvailable !== 1 ? 's' : '' }} remaining
+              </span>
+              <p *ngIf="trip.notes" class="notes">{{ trip.notes }}</p>
+            </div>
+            <ng-template pTemplate="footer">
+              <div class="trip-actions">
+                <p-button label="Edit" icon="pi pi-pencil" [outlined]="true" size="small"
+                  [routerLink]="['/admin/trips', trip.id, 'edit']" />
+                <p-button label="Delete" icon="pi pi-trash" severity="danger" [text]="true" size="small"
+                  (onClick)="deleteTrip(trip)" />
+              </div>
+            </ng-template>
+          </p-card>
+
+          <div *ngIf="(tripsForDate$ | async)?.length === 0" class="no-date-trip">
+            <i class="pi pi-calendar-plus"></i>
+            <p>No trip scheduled for <strong>{{ selectedDate }}</strong>.</p>
+            <p-button label="Add Trip for this Date" icon="pi pi-plus" size="small"
+              [outlined]="true" (onClick)="addTripForDate()" />
+          </div>
+        </ng-container>
+
+        <p class="cal-hint" *ngIf="!selectedDate">
+          <i class="pi pi-info-circle"></i> Click a highlighted date to see the trip details.
         </p>
       </p-card>
 
-      <!-- Trips list -->
+      <!-- Full trips list (right column) -->
       <div class="trips-list">
         <p-card class="trip-card" *ngFor="let trip of trips$ | async">
           <ng-template pTemplate="header">
@@ -39,7 +92,10 @@
           </ng-template>
           <div class="trip-body">
             <span class="trip-date"><i class="pi pi-calendar"></i> {{ trip.date }}</span>
-            <span class="dogs-count">🐶 {{ trip.dogs.length }} dog{{ trip.dogs.length !== 1 ? 's' : '' }}</span>
+            <span class="dogs-count">🐶 {{ trip.dogs.length }} / {{ trip.totalCapacity }} dog{{ trip.totalCapacity !== 1 ? 's' : '' }}</span>
+            <span class="spots-count" [class.low]="trip.spotsAvailable <= 2">
+              🐾 {{ trip.spotsAvailable }} spot{{ trip.spotsAvailable !== 1 ? 's' : '' }} remaining
+            </span>
             <p *ngIf="trip.notes" class="notes">{{ trip.notes }}</p>
           </div>
           <ng-template pTemplate="footer">
@@ -58,5 +114,51 @@
         </div>
       </div>
     </div>
+
+    <!-- ── All Trips Tab ── -->
+    <div *ngIf="activeTab === 'all'">
+      <p-table
+        [value]="(trips$ | async) ?? []"
+        [rowHover]="true"
+        styleClass="p-datatable-sm"
+        [tableStyle]="{ 'min-width': '60rem' }"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="date">Date <p-sortIcon field="date" /></th>
+            <th>Route</th>
+            <th>Capacity</th>
+            <th>Filled</th>
+            <th>Remaining</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-trip>
+          <tr>
+            <td>{{ trip.date }}</td>
+            <td>{{ trip.departureCity }} → {{ trip.arrivalCity }}</td>
+            <td>{{ trip.totalCapacity }}</td>
+            <td>{{ trip.dogs.length }}</td>
+            <td [class.low-spots]="trip.spotsAvailable <= 2">{{ trip.spotsAvailable }}</td>
+            <td><p-tag [value]="trip.status" [severity]="statusSeverity(trip.status)" /></td>
+            <td>
+              <div class="trip-actions">
+                <p-button icon="pi pi-pencil" [outlined]="true" size="small"
+                  [routerLink]="['/admin/trips', trip.id, 'edit']" pTooltip="Edit" />
+                <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small"
+                  (onClick)="deleteTrip(trip)" pTooltip="Delete" />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" style="text-align:center">No trips yet.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
   </ng-container>
 </div>

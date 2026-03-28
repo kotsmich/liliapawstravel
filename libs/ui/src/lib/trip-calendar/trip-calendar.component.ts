@@ -1,21 +1,14 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { DatePickerModule } from 'primeng/datepicker';
 import { TooltipModule } from 'primeng/tooltip';
-import { TagModule } from 'primeng/tag';
 import { CalendarEvent } from '@myorg/models';
-
-interface CalendarCell {
-  date: string;
-  label: number;
-  hasEvent: boolean;
-  isPast: boolean;
-  color: string;
-}
 
 @Component({
   selector: 'ui-trip-calendar',
   standalone: true,
-  imports: [CommonModule, TooltipModule, TagModule],
+  imports: [CommonModule, FormsModule, DatePickerModule, TooltipModule],
   templateUrl: './trip-calendar.component.html',
   styleUrls: ['./trip-calendar.component.scss'],
 })
@@ -24,69 +17,35 @@ export class TripCalendarComponent implements OnChanges {
   @Input() selectedDate: string | null = null;
   @Output() dateSelected = new EventEmitter<string>();
 
-  weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  monthLabel = '';
-  grid: CalendarCell[] = [];
-  currentYear = 0;
-  currentMonth = 0;
+  selectedDateObj: Date | null = null;
+  minDate = new Date();
+  private eventMap = new Map<string, string>();
 
   ngOnChanges(): void {
-    this.buildGrid();
+    this.eventMap = new Map(this.events.map((e) => [e.date, e.color]));
+    this.selectedDateObj = this.selectedDate ? new Date(this.selectedDate + 'T00:00:00') : null;
+    // New reference forces p-datepicker (OnPush) to re-evaluate date-cell templates.
+    this.minDate = new Date();
   }
 
-  buildGrid(): void {
-    const now = new Date();
-    if (!this.currentYear) {
-      this.currentYear = now.getFullYear();
-      this.currentMonth = now.getMonth();
-    }
-    this.monthLabel = new Date(this.currentYear, this.currentMonth, 1)
-      .toLocaleString('default', { month: 'long', year: 'numeric' });
-
-    const eventMap = new Map(this.events.map((e) => [e.date, e.color]));
-    const firstDay = new Date(this.currentYear, this.currentMonth, 1).getDay();
-    const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    this.grid = [];
-    for (let i = 0; i < firstDay; i++) {
-      this.grid.push({ date: '', label: 0, hasEvent: false, isPast: false, color: '' });
-    }
-    for (let d = 1; d <= daysInMonth; d++) {
-      const dateStr = `${this.currentYear}-${String(this.currentMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-      this.grid.push({
-        date: dateStr,
-        label: d,
-        hasEvent: eventMap.has(dateStr),
-        isPast: new Date(dateStr) < today,
-        color: eventMap.get(dateStr) ?? '',
-      });
-    }
+  onSelect(date: Date): void {
+    this.dateSelected.emit(this.toDateStr(date));
   }
 
-  prevMonth(): void {
-    if (this.currentMonth === 0) {
-      this.currentMonth = 11;
-      this.currentYear--;
-    } else {
-      this.currentMonth--;
-    }
-    this.buildGrid();
+  // p-calendar date template passes { year, month (0-based), day }
+  hasEvent(date: { year: number; month: number; day: number }): boolean {
+    return this.eventMap.has(this.partsToDateStr(date));
   }
 
-  nextMonth(): void {
-    if (this.currentMonth === 11) {
-      this.currentMonth = 0;
-      this.currentYear++;
-    } else {
-      this.currentMonth++;
-    }
-    this.buildGrid();
+  eventColor(date: { year: number; month: number; day: number }): string {
+    return this.eventMap.get(this.partsToDateStr(date)) ?? '#e07b54';
   }
 
-  select(cell: CalendarCell): void {
-    if (!cell.date || cell.isPast) return;
-    this.dateSelected.emit(cell.date);
+  private partsToDateStr(d: { year: number; month: number; day: number }): string {
+    return `${d.year}-${String(d.month + 1).padStart(2, '0')}-${String(d.day).padStart(2, '0')}`;
+  }
+
+  private toDateStr(date: Date): string {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   }
 }
