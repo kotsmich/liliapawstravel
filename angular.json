@@ -3,50 +3,42 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "lilia-paws-travel": {
+    "user-app": {
       "projectType": "application",
       "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        }
+        "@schematics/angular:component": { "style": "scss" }
       },
-      "root": "",
-      "sourceRoot": "src",
+      "root": "apps/user-app",
+      "sourceRoot": "apps/user-app/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/lilia-paws-travel",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
-            "tsConfig": "tsconfig.app.json",
+            "outputPath": "dist/apps/user-app",
+            "index": "apps/user-app/src/index.html",
+            "main": "apps/user-app/src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "apps/user-app/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
+            "assets": ["apps/user-app/src/favicon.ico", "apps/user-app/src/assets"],
             "styles": [
-              "src/styles.scss"
+              "node_modules/primeicons/primeicons.css",
+              "apps/user-app/src/styles.scss"
             ],
             "scripts": []
           },
           "configurations": {
             "production": {
-              "budgets": [
+              "fileReplacements": [
                 {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "replace": "apps/user-app/src/environments/environment.development.ts",
+                  "with": "apps/user-app/src/environments/environment.ts"
                 }
+              ],
+              "budgets": [
+                { "type": "initial", "maximumWarning": "1mb", "maximumError": "2mb" },
+                { "type": "anyComponentStyle", "maximumWarning": "10kb", "maximumError": "20kb" }
               ],
               "outputHashing": "all"
             },
@@ -64,39 +56,78 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
-            "production": {
-              "browserTarget": "lilia-paws-travel:build:production"
-            },
-            "development": {
-              "browserTarget": "lilia-paws-travel:build:development"
-            }
+            "production": { "browserTarget": "user-app:build:production" },
+            "development": { "browserTarget": "user-app:build:development" }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": { "browserTarget": "user-app:build" }
+        }
+      }
+    },
+    "admin-app": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": { "style": "scss" }
+      },
+      "root": "apps/admin-app",
+      "sourceRoot": "apps/admin-app/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "browserTarget": "lilia-paws-travel:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
-            "tsConfig": "tsconfig.spec.json",
+            "outputPath": "dist/apps/admin-app",
+            "index": "apps/admin-app/src/index.html",
+            "main": "apps/admin-app/src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "apps/admin-app/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
+            "assets": ["apps/admin-app/src/assets"],
             "styles": [
-              "src/styles.scss"
+              "node_modules/primeicons/primeicons.css",
+              "apps/admin-app/src/styles.scss"
             ],
             "scripts": []
-          }
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/admin-app/src/environments/environment.development.ts",
+                  "with": "apps/admin-app/src/environments/environment.ts"
+                }
+              ],
+              "budgets": [
+                { "type": "initial", "maximumWarning": "1mb", "maximumError": "2mb" },
+                { "type": "anyComponentStyle", "maximumWarning": "10kb", "maximumError": "20kb" }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": { "browserTarget": "admin-app:build:production" },
+            "development": { "browserTarget": "admin-app:build:development" }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": { "browserTarget": "admin-app:build" }
         }
       }
     }

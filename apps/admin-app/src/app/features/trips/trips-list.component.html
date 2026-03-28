@@ -1,0 +1,62 @@
+<div class="trips-page">
+  <div class="page-header">
+    <h1>Trips</h1>
+    <p-button label="New Trip" icon="pi pi-plus" routerLink="/admin/trips/new" />
+  </div>
+
+  <p-toast />
+  <p-confirmdialog />
+
+  <ui-loading-spinner *ngIf="loading$ | async" message="Loading trips..." />
+
+  <ng-container *ngIf="!(loading$ | async)">
+    <div class="grid-layout">
+      <!-- Calendar -->
+      <p-card styleClass="cal-card">
+        <ng-template pTemplate="title">Schedule</ng-template>
+        <ui-trip-calendar
+          [events]="calendarEvents"
+          [selectedDate]="selectedDate"
+          (dateSelected)="onDateSelected($event)">
+        </ui-trip-calendar>
+        <p class="cal-hint" *ngIf="selectedDate">
+          <i class="pi pi-info-circle"></i> Showing date: <strong>{{ selectedDate }}</strong>
+        </p>
+      </p-card>
+
+      <!-- Trips list -->
+      <div class="trips-list">
+        <p-card class="trip-card" *ngFor="let trip of trips$ | async">
+          <ng-template pTemplate="header">
+            <div class="trip-header">
+              <div class="trip-route">
+                <strong>{{ trip.departureCity }}, {{ trip.departureCountry }}</strong>
+                <i class="pi pi-arrow-right mx-2"></i>
+                <strong>{{ trip.arrivalCity }}, {{ trip.arrivalCountry }}</strong>
+              </div>
+              <p-tag [value]="trip.status" [severity]="statusSeverity(trip.status)" />
+            </div>
+          </ng-template>
+          <div class="trip-body">
+            <span class="trip-date"><i class="pi pi-calendar"></i> {{ trip.date }}</span>
+            <span class="dogs-count">🐶 {{ trip.dogs.length }} dog{{ trip.dogs.length !== 1 ? 's' : '' }}</span>
+            <p *ngIf="trip.notes" class="notes">{{ trip.notes }}</p>
+          </div>
+          <ng-template pTemplate="footer">
+            <div class="trip-actions">
+              <p-button label="Edit" icon="pi pi-pencil" [outlined]="true" size="small"
+                [routerLink]="['/admin/trips', trip.id, 'edit']" />
+              <p-button label="Delete" icon="pi pi-trash" severity="danger" [text]="true" size="small"
+                (onClick)="deleteTrip(trip)" />
+            </div>
+          </ng-template>
+        </p-card>
+
+        <div *ngIf="(trips$ | async)?.length === 0" class="empty">
+          <i class="pi pi-car"></i>
+          <p>No trips yet. <a routerLink="/admin/trips/new">Create one</a>.</p>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

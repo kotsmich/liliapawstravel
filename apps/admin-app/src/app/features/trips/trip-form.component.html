@@ -1,0 +1,106 @@
+<div class="form-page">
+  <div class="page-header">
+    <p-button icon="pi pi-arrow-left" [text]="true" [rounded]="true" routerLink="/admin/trips" />
+    <h1>{{ isEdit ? 'Edit Trip' : 'New Trip' }}</h1>
+  </div>
+
+  <p-toast />
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <p-card styleClass="form-card">
+      <ng-template pTemplate="title">Trip Details</ng-template>
+
+      <div class="row">
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="date" formControlName="date" placeholder="YYYY-MM-DD" />
+            <label for="date">Date</label>
+          </p-ifta-label>
+          <small class="p-error" *ngIf="form.get('date')?.touched && form.get('date')?.invalid">Required (YYYY-MM-DD).</small>
+        </div>
+        <div class="field fw">
+          <p-ifta-label>
+            <p-select inputId="status" formControlName="status" [options]="statuses"
+              optionLabel="label" optionValue="value" styleClass="w-full" />
+            <label for="status">Status</label>
+          </p-ifta-label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="depCountry" formControlName="departureCountry" placeholder="Romania" />
+            <label for="depCountry">Departure Country</label>
+          </p-ifta-label>
+          <small class="p-error" *ngIf="form.get('departureCountry')?.touched && form.get('departureCountry')?.invalid">Required.</small>
+        </div>
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="depCity" formControlName="departureCity" placeholder="Bucharest" />
+            <label for="depCity">Departure City</label>
+          </p-ifta-label>
+          <small class="p-error" *ngIf="form.get('departureCity')?.touched && form.get('departureCity')?.invalid">Required.</small>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="arrCountry" formControlName="arrivalCountry" placeholder="Netherlands" />
+            <label for="arrCountry">Arrival Country</label>
+          </p-ifta-label>
+          <small class="p-error" *ngIf="form.get('arrivalCountry')?.touched && form.get('arrivalCountry')?.invalid">Required.</small>
+        </div>
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="arrCity" formControlName="arrivalCity" placeholder="Amsterdam" />
+            <label for="arrCity">Arrival City</label>
+          </p-ifta-label>
+          <small class="p-error" *ngIf="form.get('arrivalCity')?.touched && form.get('arrivalCity')?.invalid">Required.</small>
+        </div>
+      </div>
+
+      <div class="field fw">
+        <p-ifta-label>
+          <textarea pTextarea id="notes" formControlName="notes" rows="2" autoResize></textarea>
+          <label for="notes">Notes (optional)</label>
+        </p-ifta-label>
+      </div>
+    </p-card>
+
+    <!-- Dogs section -->
+    <p-card styleClass="form-card dogs-section">
+      <ng-template pTemplate="title">
+        <div class="dogs-header">
+          <span>🐶 Dogs</span>
+          <p-button type="button" label="Add Dog" icon="pi pi-plus" [outlined]="true" size="small" (onClick)="addDog()" />
+        </div>
+      </ng-template>
+
+      <div formArrayName="dogs">
+        <ui-dog-form
+          *ngFor="let dog of dogs.controls; let i = index"
+          [formGroup]="$any(dogs.at(i))"
+          [index]="i"
+          [canRemove]="true"
+          (removeClicked)="removeDog(i)">
+        </ui-dog-form>
+      </div>
+
+      <p *ngIf="dogs.length === 0" class="no-dogs">No dogs added yet. Use the button above.</p>
+    </p-card>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <p-button type="button" label="Cancel" [outlined]="true" routerLink="/admin/trips" />
+      <p-button
+        type="submit"
+        [label]="(mutating$ | async) ? 'Saving...' : (isEdit ? 'Update Trip' : 'Create Trip')"
+        icon="pi pi-save"
+        [loading]="!!(mutating$ | async)"
+        [disabled]="!!(mutating$ | async)"
+      />
+    </div>
+  </form>
+</div>

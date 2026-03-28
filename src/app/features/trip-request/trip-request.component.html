@@ -1,0 +1,222 @@
+<div class="trip-page">
+  <!-- Header -->
+  <div class="trip-header">
+    <div class="container">
+      <span class="section-tag">Transport Request</span>
+      <h1>Book a Transport</h1>
+      <p>Select a travel date, add your dogs, and submit your request.</p>
+    </div>
+  </div>
+
+  <div class="container trip-body">
+
+    <!-- ── CALENDAR ── -->
+    <section class="calendar-section">
+      <h2 class="section-title">🗓️ Upcoming Travel Dates</h2>
+      <p class="section-sub">Click a highlighted date to see route details.</p>
+
+      <div *ngIf="calendarLoading$ | async" class="loading-row">
+        <mat-spinner diameter="32"></mat-spinner>
+        <span>Loading schedule...</span>
+      </div>
+
+      <ng-container *ngIf="!(calendarLoading$ | async)">
+        <div class="calendar">
+          <div class="calendar__header">
+            <span>{{ currentMonthLabel }}</span>
+          </div>
+          <div class="calendar__days-header">
+            <span *ngFor="let d of ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']">{{ d }}</span>
+          </div>
+          <div class="calendar__grid">
+            <div
+              *ngFor="let cell of calendarGrid"
+              class="calendar__cell"
+              [class.has-event]="cell.hasEvent"
+              [class.selected]="cell.date === selectedDateLocal"
+              [class.past]="cell.isPast"
+              [class.empty]="!cell.label"
+              (click)="cell.date && !cell.isPast && selectDate(cell.date)"
+              [matTooltip]="cell.hasEvent ? 'Transport available' : ''"
+            >
+              <span *ngIf="cell.label">{{ cell.label }}</span>
+              <span *ngIf="cell.hasEvent" class="cell-dot"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event Details -->
+        <div class="event-list" *ngIf="filteredEvents$ | async as events">
+          <ng-container *ngIf="events.length > 0; else noEvents">
+            <mat-card class="event-card" *ngFor="let event of events" appearance="outlined">
+              <mat-card-header>
+                <mat-card-title>{{ event.title }}</mat-card-title>
+                <mat-card-subtitle>{{ event.date }}</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <p>{{ event.description }}</p>
+                <div class="event-meta">
+                  <span>📍 {{ event.fromCountry }} → {{ event.toCountry }}</span>
+                  <span class="spots" [class.low]="event.spotsAvailable <= 2">
+                    🐾 {{ event.spotsAvailable }} spot{{ event.spotsAvailable !== 1 ? 's' : '' }} available
+                  </span>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </ng-container>
+          <ng-template #noEvents>
+            <p *ngIf="selectedDateLocal" class="no-events">No transports scheduled for this date.</p>
+          </ng-template>
+        </div>
+
+        <!-- All upcoming events list -->
+        <div class="all-events" *ngIf="!selectedDateLocal">
+          <h3>All Scheduled Routes</h3>
+          <div class="event-chips" *ngIf="events$ | async as allEvts">
+            <div class="event-chip" *ngFor="let e of allEvts">
+              <span class="event-chip__date">{{ e.date }}</span>
+              <span class="event-chip__title">{{ e.title }}</span>
+              <span class="event-chip__spots">{{ e.spotsAvailable }} spots</span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </section>
+
+    <mat-divider></mat-divider>
+
+    <!-- ── SUCCESS STATE ── -->
+    <div *ngIf="success$ | async" class="feedback-box feedback-box--success">
+      <mat-icon>pets</mat-icon>
+      <div>
+        <h3>Request submitted! 🐾</h3>
+        <p>We've received your transport request and will be in touch within 24 hours to confirm details.</p>
+      </div>
+      <button mat-stroked-button (click)="onReset()">Submit Another</button>
+    </div>
+
+    <!-- ── ERROR STATE ── -->
+    <div *ngIf="error$ | async as error" class="feedback-box feedback-box--error">
+      <mat-icon>error</mat-icon>
+      <div>
+        <h3>Submission failed</h3>
+        <p>{{ error }}</p>
+      </div>
+    </div>
+
+    <!-- ── FORM ── -->
+    <section class="form-section" *ngIf="!(success$ | async)">
+      <h2 class="section-title">🐕 Dog Details</h2>
+      <p class="section-sub">Add one or more dogs for this transport request.</p>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div formArrayName="dogs">
+          <div
+            *ngFor="let dog of dogs.controls; let i = index"
+            [formGroupName]="i"
+            class="dog-card"
+          >
+            <div class="dog-card__header">
+              <h3>🐶 Dog {{ i + 1 }}</h3>
+              <button
+                mat-icon-button
+                type="button"
+                color="warn"
+                *ngIf="dogs.length > 1"
+                (click)="removeDog(i)"
+                matTooltip="Remove this dog"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+
+            <div class="dog-fields">
+              <mat-form-field appearance="outline" class="field-half">
+                <mat-label>Dog Name</mat-label>
+                <input matInput formControlName="name" placeholder="Buddy" />
+                <mat-error>{{ getError(i, 'name') }}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="field-quarter">
+                <mat-label>Size</mat-label>
+                <mat-select formControlName="size">
+                  <mat-option *ngFor="let s of dogSizes" [value]="s">{{ s }}</mat-option>
+                </mat-select>
+                <mat-error>{{ getError(i, 'size') }}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="field-quarter">
+                <mat-label>Microchip ID</mat-label>
+                <input matInput formControlName="microchipId" placeholder="123456789012345" maxlength="15" />
+                <mat-error>{{ getError(i, 'microchipId') }}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="field-quarter">
+                <mat-label>From Country</mat-label>
+                <input matInput formControlName="fromCountry" placeholder="Romania" />
+                <mat-error>{{ getError(i, 'fromCountry') }}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="field-quarter">
+                <mat-label>From City</mat-label>
+                <input matInput formControlName="fromCity" placeholder="Bucharest" />
+                <mat-error>{{ getError(i, 'fromCity') }}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="field-quarter">
+                <mat-label>To Country</mat-label>
+                <input matInput formControlName="toCountry" placeholder="Netherlands" />
+                <mat-error>{{ getError(i, 'toCountry') }}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="field-quarter">
+                <mat-label>To City</mat-label>
+                <input matInput formControlName="toCity" placeholder="Amsterdam" />
+                <mat-error>{{ getError(i, 'toCity') }}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="field-full">
+                <mat-label>Special Notes (optional)</mat-label>
+                <textarea matInput formControlName="specialNotes" rows="2"
+                  placeholder="Allergies, behaviour, medical needs..."></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <button mat-stroked-button type="button" (click)="addDog()" class="add-dog-btn">
+          <mat-icon>add</mat-icon> Add Another Dog
+        </button>
+
+        <mat-divider class="form-divider"></mat-divider>
+
+        <!-- Summary Preview -->
+        <div *ngIf="showSummary" class="summary">
+          <h3>📋 Summary Preview</h3>
+          <div class="summary__dog" *ngFor="let dog of form.value.dogs; let i = index">
+            <strong>Dog {{ i + 1 }}: {{ dog.name }}</strong>
+            <span>{{ dog.size }} | Chip: {{ dog.microchipId }}</span>
+            <span>{{ dog.fromCity }}, {{ dog.fromCountry }} → {{ dog.toCity }}, {{ dog.toCountry }}</span>
+            <span *ngIf="dog.specialNotes" class="summary__notes">📝 {{ dog.specialNotes }}</span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button mat-stroked-button type="button" (click)="previewSummary()">
+            <mat-icon>preview</mat-icon> Preview Summary
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="loading$ | async"
+          >
+            <mat-spinner *ngIf="loading$ | async" diameter="20"></mat-spinner>
+            <mat-icon *ngIf="!(loading$ | async)">send</mat-icon>
+            <span>{{ (loading$ | async) ? 'Submitting...' : 'Submit Request' }}</span>
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+.dog-card {
+  background: #fdf6ee;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #f0dfc0;
+  margin-bottom: 1.5rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    h3 { font-size: 1rem; font-weight: 600; color: #2d2016; margin: 0; }
+  }
+}
+
+.dog-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.field { display: flex; flex-direction: column; gap: 0.25rem; }
+.p-error { font-size: 0.75rem; color: #dc2626; }
+
+.f-full    { width: 100%; }
+.f-half    { flex: 1 1 calc(50% - 0.5rem); min-width: 180px; }
+.f-quarter { flex: 1 1 calc(25% - 0.75rem); min-width: 150px; }

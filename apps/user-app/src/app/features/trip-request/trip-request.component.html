@@ -1,0 +1,106 @@
+<div class="page">
+  <div class="page-header">
+    <div class="container">
+      <span class="tag">Transport Request</span>
+      <h1>Book a Transport</h1>
+      <p>Select a travel date, add your dogs, and submit.</p>
+    </div>
+  </div>
+
+  <div class="container body">
+    <!-- Calendar -->
+    <section class="card">
+      <h2>🗓️ Upcoming Travel Dates</h2>
+      <ui-loading-spinner *ngIf="loading$ | async" message="Loading schedule..." />
+      <ng-container *ngIf="!(loading$ | async)">
+        <ui-trip-calendar
+          [events]="calendarEvents"
+          [selectedDate]="selectedDateLocal"
+          (dateSelected)="onDateSelected($event)">
+        </ui-trip-calendar>
+
+        <div class="event-list" *ngIf="filteredEvents$ | async as evts">
+          <div class="event-chip" *ngFor="let e of evts">
+            <strong>{{ e.date }}</strong>
+            <span>{{ e.title }}</span>
+          </div>
+          <p *ngIf="evts.length === 0 && selectedDateLocal" class="no-events">No transports on this date.</p>
+        </div>
+
+        <div *ngIf="!selectedDateLocal" class="all-events">
+          <p class="hint">Click a highlighted date to see transport details, or submit your request below.</p>
+          <div class="event-chip" *ngFor="let e of events$ | async">
+            <strong>{{ e.date }}</strong>
+            <span>{{ e.title }}</span>
+          </div>
+        </div>
+      </ng-container>
+    </section>
+
+    <p-divider />
+
+    <!-- Success -->
+    <div *ngIf="success$ | async" class="feedback success">
+      <i class="pi pi-heart-fill"></i>
+      <div><h3>Request submitted! 🐾</h3><p>We'll confirm within 24 hours.</p></div>
+      <p-button label="Submit Another" [outlined]="true" severity="success" (onClick)="onReset()" />
+    </div>
+
+    <!-- Error -->
+    <p-message *ngIf="error$ | async as e" severity="error" [text]="'Failed: ' + e" styleClass="mb-3" />
+
+    <!-- Form -->
+    <section class="card" *ngIf="!(success$ | async)">
+      <h2>🐕 Dog Details</h2>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div formArrayName="dogs">
+          <ui-dog-form
+            *ngFor="let dog of dogs.controls; let i = index"
+            [formGroup]="$any(dogs.at(i))"
+            [index]="i"
+            [canRemove]="dogs.length > 1"
+            (removeClicked)="removeDog(i)">
+          </ui-dog-form>
+        </div>
+
+        <p-button
+          type="button"
+          label="Add Another Dog"
+          icon="pi pi-plus"
+          [outlined]="true"
+          styleClass="add-btn"
+          (onClick)="addDog()"
+        />
+
+        <p-divider />
+
+        <!-- Summary preview -->
+        <div *ngIf="showSummary" class="summary">
+          <h3>📋 Summary</h3>
+          <div *ngFor="let d of form.value.dogs; let i = index" class="summary-row">
+            <strong>Dog {{ i+1 }}: {{ d.name }}</strong>
+            <span>{{ d.size }} | {{ d.chipId }}</span>
+            <span>{{ d.fromCity }}, {{ d.fromCountry }} → {{ d.toCity }}, {{ d.toCountry }}</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <p-button
+            type="button"
+            label="Preview"
+            icon="pi pi-eye"
+            [outlined]="true"
+            (onClick)="preview()"
+          />
+          <p-button
+            type="submit"
+            [label]="(submitting$ | async) ? 'Submitting...' : 'Submit Request'"
+            [icon]="(submitting$ | async) ? '' : 'pi pi-send'"
+            [loading]="!!(submitting$ | async)"
+            [disabled]="!!(submitting$ | async)"
+          />
+        </div>
+      </form>
+    </section>
+  </div>
+</div>

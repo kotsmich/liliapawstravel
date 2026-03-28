@@ -1,0 +1,121 @@
+<div class="contact-page">
+  <!-- Header -->
+  <div class="contact-header">
+    <div class="container">
+      <span class="section-tag">Get In Touch</span>
+      <h1>We'd love to hear from you</h1>
+      <p>Have a question about a transport? Want to partner with us? Drop us a message.</p>
+    </div>
+  </div>
+
+  <div class="container contact-body">
+    <div class="contact-info">
+      <div class="info-card">
+        <span class="info-card__icon">📧</span>
+        <h3>Email</h3>
+        <p>hello&#64;liliapawstravel.com</p>
+      </div>
+      <div class="info-card">
+        <span class="info-card__icon">📞</span>
+        <h3>Phone</h3>
+        <p>+31 6 12 34 56 78</p>
+      </div>
+      <div class="info-card">
+        <span class="info-card__icon">⏰</span>
+        <h3>Response Time</h3>
+        <p>Within 24 hours on weekdays</p>
+      </div>
+      <div class="info-card">
+        <span class="info-card__icon">🌍</span>
+        <h3>Coverage</h3>
+        <p>18 European countries</p>
+      </div>
+    </div>
+
+    <div class="contact-form-wrapper">
+      <!-- Success State -->
+      <div *ngIf="success$ | async" class="feedback-box feedback-box--success">
+        <mat-icon>check_circle</mat-icon>
+        <div>
+          <h3>Message sent successfully!</h3>
+          <p>Thank you for reaching out. We'll respond within 24 hours.</p>
+        </div>
+        <button mat-stroked-button (click)="onReset()">Send Another</button>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="error$ | async as error" class="feedback-box feedback-box--error">
+        <mat-icon>error</mat-icon>
+        <div>
+          <h3>Something went wrong</h3>
+          <p>{{ error }}</p>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <form
+        *ngIf="!(success$ | async)"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+        class="contact-form"
+        novalidate
+      >
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Full Name</mat-label>
+            <input matInput formControlName="fullName" placeholder="Jane Doe" />
+            <mat-icon matSuffix>person</mat-icon>
+            <mat-error>{{ getError('fullName') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email Address</mat-label>
+            <input matInput formControlName="email" type="email" placeholder="jane@example.com" />
+            <mat-icon matSuffix>email</mat-icon>
+            <mat-hint *ngIf="emailHint">{{ emailHint }}</mat-hint>
+            <mat-error>{{ getError('email') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Phone (optional)</mat-label>
+            <input matInput formControlName="phone" type="tel" placeholder="+31 6 00 00 00 00" />
+            <mat-icon matSuffix>phone</mat-icon>
+            <mat-error>{{ getError('phone') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Subject</mat-label>
+            <input matInput formControlName="subject" placeholder="Transport inquiry" />
+            <mat-icon matSuffix>subject</mat-icon>
+            <mat-error>{{ getError('subject') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Message</mat-label>
+          <textarea
+            matInput
+            formControlName="message"
+            placeholder="Tell us about your transport needs..."
+            rows="6"
+          ></textarea>
+          <mat-error>{{ getError('message') }}</mat-error>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="submit-btn"
+          [disabled]="loading$ | async"
+        >
+          <mat-spinner *ngIf="loading$ | async" diameter="20"></mat-spinner>
+          <span *ngIf="!(loading$ | async)">Send Message</span>
+          <span *ngIf="loading$ | async">Sending...</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

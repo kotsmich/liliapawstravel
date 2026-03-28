@@ -1,0 +1,31 @@
+<div class="calendar">
+  <div class="calendar__header">
+    <button class="nav-btn" type="button" (click)="prevMonth()">
+      <i class="pi pi-chevron-left"></i>
+    </button>
+    <span>{{ monthLabel }}</span>
+    <button class="nav-btn" type="button" (click)="nextMonth()">
+      <i class="pi pi-chevron-right"></i>
+    </button>
+  </div>
+  <div class="calendar__days">
+    <span *ngFor="let d of weekDays">{{ d }}</span>
+  </div>
+  <div class="calendar__grid">
+    <div
+      *ngFor="let cell of grid"
+      class="cell"
+      [class.has-event]="cell.hasEvent"
+      [class.selected]="cell.date === selectedDate"
+      [class.past]="cell.isPast"
+      [class.empty]="!cell.label"
+      [style.--dot-color]="cell.color || '#e07b54'"
+      (click)="select(cell)"
+      [pTooltip]="cell.hasEvent ? 'Transport scheduled' : ''"
+      tooltipPosition="top"
+    >
+      <span *ngIf="cell.label">{{ cell.label }}</span>
+      <span *ngIf="cell.hasEvent" class="dot"></span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 7rem 1.5rem 4rem; gap: 4rem;
+  background: linear-gradient(135deg,#fdf6ee,#f5e6d0 60%,#eedbb8);
+  max-width: 1200px; margin: 0 auto;
+  @media(max-width:768px){flex-direction:column;padding:6rem 1.5rem 3rem;min-height:auto;}
+  &__content { flex:1; max-width:600px; }
+  &__actions { display:flex; gap:1rem; flex-wrap:wrap; }
+  &__visual { flex:0 0 auto; }
+}
+.badge { display:inline-block; background:rgba(196,124,62,.15); color:#c47c3e; padding:.4rem 1rem; border-radius:20px; font-size:.875rem; font-weight:600; margin-bottom:1.5rem; }
+h1 { font-size:clamp(2.25rem,5vw,3.5rem); font-weight:800; line-height:1.15; color:#2d2016; margin-bottom:1.25rem; }
+.accent { color:#c47c3e; }
+p { color:#5c4a3a; line-height:1.7; margin-bottom:2rem; font-size:1.1rem; }
+.paw-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; font-size:2.5rem; opacity:.7; animation:float 4s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+.stats { background:#2d2016; padding:3rem 1.5rem; }
+.stats__grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2rem; text-align:center; @media(max-width:768px){grid-template-columns:repeat(2,1fr);} }
+.stat { display:flex; flex-direction:column; gap:.5rem;
+  &__value { font-size:2.5rem; font-weight:800; color:#c47c3e; }
+  &__label { font-size:.8rem; color:#d4b896; text-transform:uppercase; letter-spacing:.08em; }
+}
+
+.about { padding:5rem 1.5rem; background:#fff; }
+.about__grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; @media(max-width:900px){grid-template-columns:1fr;} }
+.about__story { h2{font-size:2rem;font-weight:700;color:#2d2016;margin:.75rem 0 1.5rem;} p{color:#5c4a3a;line-height:1.8;margin-bottom:1rem;} }
+.values { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; @media(max-width:480px){grid-template-columns:1fr;} }
+.value-card { background:#fdf6ee; border-radius:12px; padding:1.5rem; span{font-size:2rem;display:block;margin-bottom:.75rem;} h3{font-size:1rem;font-weight:600;color:#2d2016;margin-bottom:.5rem;} p{font-size:.875rem;color:#7a6358;line-height:1.6;margin:0;} }
+
+.how { padding:5rem 1.5rem; background:#fdf6ee; }
+.section-header { text-align:center; margin-bottom:2rem; h2{font-size:2rem;font-weight:700;color:#2d2016;margin:.5rem 0;} }
+.steps { display:grid; grid-template-columns:repeat(4,1fr); gap:2rem; @media(max-width:900px){grid-template-columns:repeat(2,1fr);} @media(max-width:480px){grid-template-columns:1fr;} }
+.step { text-align:center; &__num{width:56px;height:56px;background:#c47c3e;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin:0 auto 1rem;} h3{font-size:1rem;font-weight:600;color:#2d2016;margin-bottom:.5rem;} p{font-size:.875rem;color:#7a6358;} }
+
+.cta { padding:5rem 1.5rem; background:#fff; }
+.cta__box { background:linear-gradient(135deg,#c47c3e,#a86535); border-radius:20px; padding:4rem 3rem; text-align:center; color:#fff;
+  span{font-size:3rem;display:block;margin-bottom:1rem;} h2{font-size:2rem;font-weight:700;margin-bottom:1rem;} p{opacity:.9;margin-bottom:2rem;}
+}
+.cta__actions { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+
+.container { max-width:1200px; margin:0 auto; }
+.tag { display:inline-block; color:#c47c3e; font-weight:600; font-size:.875rem; text-transform:uppercase; letter-spacing:.1em; }
+
+.btn-primary { display:inline-block; background:#c47c3e; color:#fff; padding:.75rem 1.75rem; border-radius:30px; font-weight:600; text-decoration:none; transition:background .2s; &:hover{background:#a86535;color:#fff;} }
+.btn-outline { display:inline-block; border:2px solid #c47c3e; color:#c47c3e; padding:.75rem 1.75rem; border-radius:30px; font-weight:600; text-decoration:none; transition:all .2s; &:hover{background:#c47c3e;color:#fff;} }
+.btn-outline-light { display:inline-block; border:2px solid rgba(255,255,255,.8); color:#fff; padding:.75rem 1.75rem; border-radius:30px; font-weight:600; text-decoration:none; &:hover{background:rgba(255,255,255,.2);} }

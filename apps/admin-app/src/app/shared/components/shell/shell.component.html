@@ -1,0 +1,55 @@
+<div class="layout" [class.sidebar-closed]="!sidebarOpen">
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <span class="sidebar__paw">🐾</span>
+      <span class="sidebar__title" *ngIf="sidebarOpen">Lilia Paws</span>
+    </div>
+
+    <nav class="sidebar__nav">
+      <a
+        *ngFor="let item of navItems"
+        class="nav-item"
+        [routerLink]="item.link"
+        routerLinkActive="active"
+        [pTooltip]="sidebarOpen ? '' : item.label"
+        tooltipPosition="right"
+      >
+        <i [class]="item.icon"></i>
+        <span *ngIf="sidebarOpen">{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <div class="sidebar__footer">
+      <div class="user-info" *ngIf="sidebarOpen && (user$ | async) as user">
+        <i class="pi pi-user"></i>
+        <span>{{ user.email }}</span>
+      </div>
+      <p-button
+        icon="pi pi-sign-out"
+        [text]="true"
+        [rounded]="true"
+        severity="secondary"
+        styleClass="logout-btn"
+        pTooltip="Logout"
+        tooltipPosition="right"
+        (onClick)="logout()"
+      />
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <p-button
+        [icon]="sidebarOpen ? 'pi pi-align-right' : 'pi pi-align-left'"
+        [text]="true"
+        [rounded]="true"
+        severity="secondary"
+        (onClick)="toggleSidebar()"
+      />
+      <span class="topbar__title">Admin Panel</span>
+    </header>
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

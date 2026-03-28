@@ -1,0 +1,90 @@
+<div class="dog-card" [formGroup]="formGroup">
+  <div class="dog-card__header">
+    <h3>🐶 Dog {{ index + 1 }}</h3>
+    <p-button
+      *ngIf="canRemove"
+      icon="pi pi-trash"
+      severity="danger"
+      [text]="true"
+      [rounded]="true"
+      size="small"
+      type="button"
+      pTooltip="Remove dog"
+      tooltipPosition="top"
+      (onClick)="removeClicked.emit()"
+    />
+  </div>
+
+  <div class="dog-fields">
+    <div class="field f-half">
+      <p-ifta-label>
+        <input pInputText id="name-{{index}}" formControlName="name" placeholder="Buddy" />
+        <label for="name-{{index}}">Dog Name</label>
+      </p-ifta-label>
+      <small class="p-error" *ngIf="ctrl('name').touched && errorFor('name')">{{ errorFor('name') }}</small>
+    </div>
+
+    <div class="field f-quarter">
+      <p-ifta-label>
+        <p-select
+          inputId="size-{{index}}"
+          formControlName="size"
+          [options]="sizes"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select size"
+        />
+        <label for="size-{{index}}">Size</label>
+      </p-ifta-label>
+      <small class="p-error" *ngIf="ctrl('size').touched && errorFor('size')">{{ errorFor('size') }}</small>
+    </div>
+
+    <div class="field f-quarter">
+      <p-ifta-label>
+        <input pInputText id="chip-{{index}}" formControlName="chipId" placeholder="123456789012345" maxlength="15" />
+        <label for="chip-{{index}}">Microchip ID</label>
+      </p-ifta-label>
+      <small class="p-error" *ngIf="ctrl('chipId').touched && errorFor('chipId')">{{ errorFor('chipId') }}</small>
+    </div>
+
+    <div class="field f-quarter">
+      <p-ifta-label>
+        <input pInputText id="fromCountry-{{index}}" formControlName="fromCountry" placeholder="Romania" />
+        <label for="fromCountry-{{index}}">From Country</label>
+      </p-ifta-label>
+      <small class="p-error" *ngIf="ctrl('fromCountry').touched && errorFor('fromCountry')">{{ errorFor('fromCountry') }}</small>
+    </div>
+
+    <div class="field f-quarter">
+      <p-ifta-label>
+        <input pInputText id="fromCity-{{index}}" formControlName="fromCity" placeholder="Bucharest" />
+        <label for="fromCity-{{index}}">From City</label>
+      </p-ifta-label>
+      <small class="p-error" *ngIf="ctrl('fromCity').touched && errorFor('fromCity')">{{ errorFor('fromCity') }}</small>
+    </div>
+
+    <div class="field f-quarter">
+      <p-ifta-label>
+        <input pInputText id="toCountry-{{index}}" formControlName="toCountry" placeholder="Netherlands" />
+        <label for="toCountry-{{index}}">To Country</label>
+      </p-ifta-label>
+      <small class="p-error" *ngIf="ctrl('toCountry').touched && errorFor('toCountry')">{{ errorFor('toCountry') }}</small>
+    </div>
+
+    <div class="field f-quarter">
+      <p-ifta-label>
+        <input pInputText id="toCity-{{index}}" formControlName="toCity" placeholder="Amsterdam" />
+        <label for="toCity-{{index}}">To City</label>
+      </p-ifta-label>
+      <small class="p-error" *ngIf="ctrl('toCity').touched && errorFor('toCity')">{{ errorFor('toCity') }}</small>
+    </div>
+
+    <div class="field f-full">
+      <p-ifta-label>
+        <textarea pTextarea id="notes-{{index}}" formControlName="notes" rows="2"
+          placeholder="Allergies, behaviour, medical needs..." autoResize></textarea>
+        <label for="notes-{{index}}">Special Notes (optional)</label>
+      </p-ifta-label>
+    </div>
+  </div>
+</div>

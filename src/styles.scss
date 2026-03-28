@@ -1,1 +1,100 @@
-/* You can add global styles to this file, and also import other style files */
+// Angular Material custom theme
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$primary-palette: mat.define-palette(mat.$orange-palette, 700, 400, 900);
+$accent-palette:  mat.define-palette(mat.$brown-palette, 600, 300, 800);
+$warn-palette:    mat.define-palette(mat.$red-palette);
+
+$lilia-theme: mat.define-light-theme((
+  color: (
+    primary: $primary-palette,
+    accent:  $accent-palette,
+    warn:    $warn-palette,
+  ),
+  typography: mat.define-typography-config(
+    $font-family: "'Inter', 'Segoe UI', sans-serif",
+  ),
+  density: 0,
+));
+
+@include mat.all-component-themes($lilia-theme);
+
+// Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+// ── Reset & Base ────────────────────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #2d2016;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+// ── Angular Material overrides ──────────────────────────────────────────────
+.mat-mdc-raised-button.mat-primary {
+  background-color: #c47c3e !important;
+  border-radius: 30px !important;
+  padding: 0 1.75rem !important;
+  height: 44px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+}
+
+.mat-mdc-outlined-button {
+  border-radius: 30px !important;
+}
+
+.mat-mdc-form-field {
+  &.mat-focused .mdc-notched-outline__leading,
+  &.mat-focused .mdc-notched-outline__notch,
+  &.mat-focused .mdc-notched-outline__trailing {
+    border-color: #c47c3e !important;
+  }
+  .mat-mdc-floating-label.mdc-floating-label--float-above {
+    color: #c47c3e !important;
+  }
+}
+
+// ── Utility ─────────────────────────────────────────────────────────────────
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+// ── Page transition ──────────────────────────────────────────────────────────
+router-outlet + * {
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

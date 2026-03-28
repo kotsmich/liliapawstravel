@@ -1,0 +1,15 @@
+.page { min-height:100vh; padding-top:70px; }
+.page-header { background:linear-gradient(135deg,#fdf6ee,#f5e6d0); padding:4rem 1.5rem; text-align:center; h1{font-size:clamp(1.75rem,4vw,2.75rem);font-weight:700;color:#2d2016;margin:.5rem 0 1rem;} p{color:#7a6358;font-size:1.1rem;} }
+.container { max-width:960px; margin:0 auto; }
+.body { display:flex; flex-direction:column; gap:2rem; padding:3rem 1.5rem 5rem; }
+.card { background:#fff; border-radius:16px; border:1px solid #f0dfc0; padding:2rem; h2{font-size:1.25rem;font-weight:700;color:#2d2016;margin:0 0 1.25rem;} }
+.tag { display:inline-block; color:#c47c3e; font-weight:600; font-size:.875rem; text-transform:uppercase; letter-spacing:.1em; margin-bottom:.5rem; }
+.hint { color:#7a6358; font-size:.9rem; margin-bottom:1rem; }
+.event-list,.all-events { display:flex; flex-direction:column; gap:.5rem; margin-top:1rem; }
+.event-chip { display:flex; gap:1rem; align-items:center; padding:.6rem 1rem; background:#fdf6ee; border-radius:8px; border:1px solid #f0dfc0; strong{color:#c47c3e;font-size:.8rem;min-width:90px;} span{color:#2d2016;font-size:.9rem;} }
+.no-events { color:#7a6358; font-style:italic; padding:.5rem 0; }
+.add-btn { border-color:#c47c3e !important; color:#c47c3e !important; margin-bottom:1rem; }
+.summary { background:#fdf6ee; border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; border:1px solid #f0dfc0; h3{font-size:1rem;font-weight:600;color:#2d2016;margin:0 0 1rem;} }
+.summary-row { display:flex; flex-direction:column; background:#fff; border-radius:8px; padding:.75rem; margin-bottom:.5rem; strong{color:#2d2016;} span{color:#5c4a3a;font-size:.875rem;} }
+.actions { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; }
+.feedback { display:flex; align-items:flex-start; gap:1rem; padding:1.5rem; border-radius:12px; flex-wrap:wrap; mat-icon{font-size:2rem;width:2rem;height:2rem;} h3{margin:0 0 .25rem;font-weight:600;} p{margin:0;} &.success{background:#f0fdf4;border:1px solid #86efac;color:#166534;mat-icon{color:#16a34a;}} &.error{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b;mat-icon{color:#dc2626;}} }

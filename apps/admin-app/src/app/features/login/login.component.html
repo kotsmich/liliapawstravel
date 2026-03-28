@@ -1,0 +1,50 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-card__brand">
+      <span>🐾</span>
+      <h1>Lilia Paws Admin</h1>
+    </div>
+
+    <p-message *ngIf="error$ | async as error" severity="error" [text]="error" styleClass="mb-3 w-full" />
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="field">
+        <p-ifta-label>
+          <input pInputText id="email" formControlName="email" type="email" class="w-full" />
+          <label for="email">Email</label>
+        </p-ifta-label>
+        <small class="p-error" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+          Valid email required.
+        </small>
+      </div>
+
+      <div class="field">
+        <p-ifta-label>
+          <p-password
+            inputId="password"
+            formControlName="password"
+            [feedback]="false"
+            [toggleMask]="true"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+          />
+          <label for="password">Password</label>
+        </p-ifta-label>
+        <small class="p-error" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+          Min 6 characters.
+        </small>
+      </div>
+
+      <p-button
+        type="submit"
+        styleClass="w-full submit-btn"
+        [label]="(loading$ | async) ? 'Signing in...' : 'Sign In'"
+        icon="pi pi-sign-in"
+        [loading]="!!(loading$ | async)"
+        [disabled]="!!(loading$ | async)"
+      />
+    </form>
+
+    <p class="hint">Demo: admin&#64;liliapaws.com / admin123</p>
+  </div>
+</div>
