@@ -118,6 +118,15 @@
               severity="danger"
               (onClick)="selectedRequest = req; reject()"
             />
+            <p-button
+              *ngIf="req.status !== 'pending'"
+              icon="pi pi-trash"
+              label="Delete"
+              [text]="true"
+              size="small"
+              severity="danger"
+              (onClick)="deleteRequest(req)"
+            />
           </div>
         </td>
       </tr>
@@ -201,6 +210,13 @@
         [outlined]="true"
         [disabled]="selectedRequest?.status !== 'pending'"
         (onClick)="reject()"
+      />
+      <p-button
+        *ngIf="selectedRequest?.status !== 'pending'"
+        label="Delete"
+        icon="pi pi-trash"
+        severity="danger"
+        (onClick)="deleteRequest(selectedRequest!)"
       />
       <p-button
         label="Cancel"

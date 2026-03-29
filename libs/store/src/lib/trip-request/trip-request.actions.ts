@@ -17,5 +17,8 @@ export const TripRequestActions = createActionGroup({
     'Update Request Status': props<{ id: string; status: TripRequest['status'] }>(),
     'Update Request Status Success': props<{ request: TripRequest }>(),
     'Update Request Status Failure': props<{ error: string }>(),
+    'Delete Request': props<{ requestId: string }>(),
+    'Delete Request Success': props<{ requestId: string }>(),
+    'Delete Request Failure': props<{ error: string }>(),
   },
 });

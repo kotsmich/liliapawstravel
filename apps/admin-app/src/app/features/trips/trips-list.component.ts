@@ -189,6 +189,20 @@ export class TripsListComponent implements OnInit {
     });
   }
 
+  deleteRequestInDetail(req: TripRequest): void {
+    this.confirmationService.confirm({
+      header: 'Delete Request',
+      message: `Delete the request from <strong>${req.requesterName}</strong>?${req.status === 'approved' ? ' The dogs added to the trip will remain.' : ''}`,
+      acceptLabel: 'Delete',
+      rejectLabel: 'Cancel',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.store.dispatch(TripRequestActions.deleteRequest({ requestId: req.id }));
+        this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Request deleted.' });
+      },
+    });
+  }
+
   fmtDate(date: string): string {
     if (!date) return '—';
     const [y, m, d] = date.split('-');

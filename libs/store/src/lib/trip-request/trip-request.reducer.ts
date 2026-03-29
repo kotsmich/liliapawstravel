@@ -46,7 +46,14 @@ export const tripRequestFeature = createFeature({
       requests: s.requests.map((r) => (r.id === request.id ? request : r)),
       requestsLoading: false,
     })),
-    on(TripRequestActions.updateRequestStatusFailure, (s, { error }) => ({ ...s, requestsLoading: false, error }))
+    on(TripRequestActions.updateRequestStatusFailure, (s, { error }) => ({ ...s, requestsLoading: false, error })),
+    on(TripRequestActions.deleteRequest, (s) => ({ ...s, requestsLoading: true, error: null })),
+    on(TripRequestActions.deleteRequestSuccess, (s, { requestId }) => ({
+      ...s,
+      requests: s.requests.filter((r) => r.id !== requestId),
+      requestsLoading: false,
+    })),
+    on(TripRequestActions.deleteRequestFailure, (s, { error }) => ({ ...s, requestsLoading: false, error }))
   ),
 });
 

@@ -36,4 +36,8 @@ export class TripRequestService {
   approveRequest(id: string): Observable<{ request: TripRequest; trip: Trip }> {
     return this.http.post<{ request: TripRequest; trip: Trip }>(`${this.base}/${id}/approve`, {});
   }
+
+  deleteRequest(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${id}`);
+  }
 }

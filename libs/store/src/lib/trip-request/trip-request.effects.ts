@@ -78,5 +78,17 @@ export class TripRequestEffects {
     )
   );
 
+  deleteRequest$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TripRequestActions.deleteRequest),
+      switchMap(({ requestId }) =>
+        this.tripRequestService.deleteRequest(requestId).pipe(
+          map(() => TripRequestActions.deleteRequestSuccess({ requestId })),
+          catchError((error) => of(TripRequestActions.deleteRequestFailure({ error: error.message })))
+        )
+      )
+    )
+  );
+
   constructor(private actions$: Actions, private tripRequestService: TripRequestService) {}
 }

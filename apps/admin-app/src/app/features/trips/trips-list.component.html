@@ -281,6 +281,8 @@
                 </ng-container>
                 <ng-template #statusOnly>
                   <p-tag [value]="req.status" [severity]="requestStatusSeverity(req.status)" />
+                  <p-button label="Delete" icon="pi pi-trash" severity="danger" [text]="true" size="small"
+                    (onClick)="deleteRequestInDetail(req)" />
                 </ng-template>
               </div>
             </p-accordion-content>
