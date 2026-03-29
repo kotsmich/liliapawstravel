@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -19,7 +19,7 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
-  private store = inject(Store);
+  constructor(private store: Store) {}
 
   trips$ = this.store.select(selectAllTrips);
   loading$ = this.store.select(selectTripsIsLoading);

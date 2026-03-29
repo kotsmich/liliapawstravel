@@ -1,4 +1,4 @@
-import { Component, OnInit, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -30,9 +30,11 @@ import {
   styleUrls: ['./contact.component.scss'],
 })
 export class ContactComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  private store = inject(Store);
-  private destroyRef = inject(DestroyRef);
+  constructor(
+    private fb: FormBuilder,
+    private store: Store,
+    private destroyRef: DestroyRef,
+  ) {}
 
   form!: FormGroup;
   emailHint = '';

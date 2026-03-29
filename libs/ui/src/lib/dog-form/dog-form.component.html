@@ -1,78 +1,50 @@
-<div class="dog-card" [formGroup]="formGroup">
-  <div class="dog-card__header">
-    <h3>🐶 Dog {{ index + 1 }}</h3>
-    <p-button
-      *ngIf="canRemove"
-      icon="pi pi-trash"
-      severity="danger"
-      [text]="true"
-      [rounded]="true"
-      size="small"
-      type="button"
-      pTooltip="Remove dog"
-      tooltipPosition="top"
-      (onClick)="removeClicked.emit()"
-    />
-  </div>
+<div class="dog-form flex flex-column gap-2" [formGroup]="formGroup">
 
-  <div class="formgrid grid">
-    <div class="field col-12 md:col-6">
-      <p-ifta-label class="w-full">
-        <input pInputText class="w-full" id="name-{{index}}" formControlName="name" placeholder="Buddy" />
-        <label for="name-{{index}}">Dog Name</label>
-      </p-ifta-label>
+  <div class="dog-form__row flex flex-wrap gap-2">
+    <div class="dog-form__field flex flex-column">
+      <label [for]="'name-' + index">Name</label>
+      <input pInputText [id]="'name-' + index" formControlName="name" placeholder="Buddy" />
       <small class="p-error" *ngIf="ctrl('name').touched && errorFor('name')">{{ errorFor('name') }}</small>
     </div>
-
-    <div class="field col-12 md:col-6">
-      <p-ifta-label class="w-full">
-        <p-select class="w-full" inputId="size-{{index}}" formControlName="size"
-          [options]="sizes" optionLabel="label" optionValue="value"
-          placeholder="Select size" styleClass="w-full" />
-        <label for="size-{{index}}">Size</label>
-      </p-ifta-label>
+    <div class="dog-form__field flex flex-column">
+      <label [for]="'size-' + index">Size</label>
+      <p-select [inputId]="'size-' + index" formControlName="size"
+        [options]="sizes" optionLabel="label" optionValue="value"
+        placeholder="Select" styleClass="w-full" />
       <small class="p-error" *ngIf="ctrl('size').touched && errorFor('size')">{{ errorFor('size') }}</small>
     </div>
-
-    <div class="field col-12 md:col-6">
-      <p-ifta-label class="w-full">
-        <p-inputnumber class="w-full" inputId="age-{{index}}" formControlName="age"
-          [min]="0" [showButtons]="false" styleClass="w-full" />
-        <label for="age-{{index}}">Age (years)</label>
-      </p-ifta-label>
+    <div class="dog-form__field dog-form__field--sm flex flex-column">
+      <label [for]="'age-' + index">Age (yrs)</label>
+      <p-inputnumber [inputId]="'age-' + index" formControlName="age"
+        [min]="0" [showButtons]="false" styleClass="w-full" />
       <small class="p-error" *ngIf="ctrl('age').touched && errorFor('age')">{{ errorFor('age') }}</small>
     </div>
-
-    <div class="field col-12 md:col-6">
-      <p-ifta-label class="w-full">
-        <input pInputText class="w-full" id="chip-{{index}}" formControlName="chipId" placeholder="123456789012345" maxlength="15" />
-        <label for="chip-{{index}}">Microchip ID</label>
-      </p-ifta-label>
+    <div class="dog-form__field flex flex-column">
+      <label [for]="'chip-' + index">Microchip ID</label>
+      <input pInputText [id]="'chip-' + index" formControlName="chipId"
+        placeholder="123456789012345" maxlength="15" />
       <small class="p-error" *ngIf="ctrl('chipId').touched && errorFor('chipId')">{{ errorFor('chipId') }}</small>
     </div>
+  </div>
 
-    <div class="field col-12">
-      <p-ifta-label class="w-full">
-        <input pInputText class="w-full" id="pickup-{{index}}" formControlName="pickupLocation" placeholder="e.g. Bucharest, Romania" />
-        <label for="pickup-{{index}}">Pickup Location</label>
-      </p-ifta-label>
+  <div class="dog-form__row flex flex-wrap gap-2">
+    <div class="dog-form__field flex flex-column">
+      <label [for]="'pickup-' + index">Pickup</label>
+      <input pInputText [id]="'pickup-' + index" formControlName="pickupLocation"
+        placeholder="e.g. Bucharest, Romania" />
       <small class="p-error" *ngIf="ctrl('pickupLocation').touched && errorFor('pickupLocation')">{{ errorFor('pickupLocation') }}</small>
     </div>
-
-    <div class="field col-12">
-      <p-ifta-label class="w-full">
-        <input pInputText class="w-full" id="drop-{{index}}" formControlName="dropLocation" placeholder="e.g. Amsterdam, Netherlands" />
-        <label for="drop-{{index}}">Drop Location</label>
-      </p-ifta-label>
+    <div class="dog-form__field flex flex-column">
+      <label [for]="'drop-' + index">Drop</label>
+      <input pInputText [id]="'drop-' + index" formControlName="dropLocation"
+        placeholder="e.g. Amsterdam, Netherlands" />
       <small class="p-error" *ngIf="ctrl('dropLocation').touched && errorFor('dropLocation')">{{ errorFor('dropLocation') }}</small>
     </div>
-
-    <div class="field col-12">
-      <p-ifta-label class="w-full">
-        <textarea pTextarea class="w-full" id="notes-{{index}}" formControlName="notes" rows="2"
-          placeholder="Allergies, behaviour, medical needs..." autoResize></textarea>
-        <label for="notes-{{index}}">Special Notes (optional)</label>
-      </p-ifta-label>
+    <div class="dog-form__field flex flex-column">
+      <label [for]="'notes-' + index">Notes</label>
+      <input pInputText [id]="'notes-' + index" formControlName="notes"
+        placeholder="Allergies, behaviour... (optional)" />
     </div>
   </div>
+
 </div>

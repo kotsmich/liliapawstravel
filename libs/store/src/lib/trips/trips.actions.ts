@@ -7,6 +7,7 @@ export const TripActions = createActionGroup({
     'Load Trips': emptyProps(),
     'Load Trips Success': props<{ trips: Trip[] }>(),
     'Load Trips Failure': props<{ error: string }>(),
+    'Refresh Trips': emptyProps(),
     'Select Trip': props<{ id: string }>(),
     'Clear Selected Trip': emptyProps(),
     'Add Trip': props<{ trip: Omit<Trip, 'id'> }>(),

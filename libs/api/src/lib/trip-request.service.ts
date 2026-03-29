@@ -1,13 +1,19 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { TripRequest } from '@myorg/models';
+import { TripRequest, Trip } from '@myorg/models';
 import { API_URL } from './api-url.token';
 
 @Injectable({ providedIn: 'root' })
 export class TripRequestService {
-  private http = inject(HttpClient);
-  private base = `${inject(API_URL)}/api/trip-requests`;
+  private base: string;
+
+  constructor(
+    private http: HttpClient,
+    @Inject(API_URL) apiUrl: string,
+  ) {
+    this.base = `${apiUrl}/api/requests`;
+  }
 
   submitRequest(
     dogs: TripRequest['dogs'],
@@ -25,5 +31,9 @@ export class TripRequestService {
 
   updateStatus(id: string, status: TripRequest['status']): Observable<TripRequest> {
     return this.http.patch<TripRequest>(`${this.base}/${id}/status`, { status });
+  }
+
+  approveRequest(id: string): Observable<{ request: TripRequest; trip: Trip }> {
+    return this.http.post<{ request: TripRequest; trip: Trip }>(`${this.base}/${id}/approve`, {});
   }
 }

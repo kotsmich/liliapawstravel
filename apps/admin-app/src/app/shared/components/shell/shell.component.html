@@ -1,26 +1,33 @@
-<div class="layout" [class.sidebar-closed]="!sidebarOpen">
-  <aside class="sidebar">
-    <div class="sidebar__brand">
+<div class="layout flex" [class.sidebar-closed]="!sidebarOpen">
+  <aside class="sidebar flex flex-column flex-shrink-0">
+    <div class="sidebar__brand flex align-items-center">
       <span class="sidebar__paw">🐾</span>
       <span class="sidebar__title" *ngIf="sidebarOpen">Lilia Paws</span>
     </div>
 
-    <nav class="sidebar__nav">
+    <nav class="sidebar__nav flex flex-column flex-1">
       <a
         *ngFor="let item of navItems"
-        class="nav-item"
+        class="nav-item flex align-items-center"
         [routerLink]="item.link"
         routerLinkActive="active"
         [pTooltip]="sidebarOpen ? '' : item.label"
         tooltipPosition="right"
       >
-        <i [class]="item.icon"></i>
+        <span class="nav-item__icon-wrap flex align-items-center justify-content-center flex-shrink-0">
+          <i [class]="item.icon"></i>
+          <span
+            *ngIf="item.link === '/admin/requests' && (pendingCount$ | async) as count"
+            class="nav-badge flex align-items-center justify-content-center">
+            {{ count }}
+          </span>
+        </span>
         <span *ngIf="sidebarOpen">{{ item.label }}</span>
       </a>
     </nav>
 
-    <div class="sidebar__footer">
-      <div class="user-info" *ngIf="sidebarOpen && (user$ | async) as user">
+    <div class="sidebar__footer flex align-items-center justify-content-between">
+      <div class="user-info flex align-items-center" *ngIf="sidebarOpen && (user$ | async) as user">
         <i class="pi pi-user"></i>
         <span>{{ user.email }}</span>
       </div>
@@ -37,8 +44,8 @@
     </div>
   </aside>
 
-  <div class="main">
-    <header class="topbar">
+  <div class="main flex flex-column flex-1">
+    <header class="topbar flex align-items-center flex-shrink-0">
       <p-button
         [icon]="sidebarOpen ? 'pi pi-align-right' : 'pi pi-align-left'"
         [text]="true"
@@ -48,7 +55,7 @@
       />
       <span class="topbar__title">Admin Panel</span>
     </header>
-    <div class="content">
+    <div class="content flex-1">
       <router-outlet></router-outlet>
     </div>
   </div>

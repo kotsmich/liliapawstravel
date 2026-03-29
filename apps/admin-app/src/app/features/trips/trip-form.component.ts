@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
@@ -39,11 +39,6 @@ import { Dog } from '@myorg/models';
   styleUrls: ['./trip-form.component.scss'],
 })
 export class TripFormComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  private store = inject(Store);
-  private route = inject(ActivatedRoute);
-  private messageService = inject(MessageService);
-
   form!: FormGroup;
   dogEditForm!: FormGroup;
   isEdit = false;
@@ -69,7 +64,12 @@ export class TripFormComponent implements OnInit {
   editingDogIndex: number | null = null;
   isNewDog = false;
 
-  constructor() {
+  constructor(
+    private fb: FormBuilder,
+    private store: Store,
+    private route: ActivatedRoute,
+    private messageService: MessageService,
+  ) {
     this.error$.pipe(
       filter(Boolean),
       takeUntilDestroyed()
@@ -81,12 +81,12 @@ export class TripFormComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.fb.group({
       date: [null as Date | null, Validators.required],
-      departureCountry: ['', Validators.required],
-      departureCity: ['', Validators.required],
-      arrivalCountry: ['', Validators.required],
-      arrivalCity: ['', Validators.required],
+      departureCountry: ['Greece', Validators.required],
+      departureCity: ['Larisa', Validators.required],
+      arrivalCountry: ['Germany', Validators.required],
+      arrivalCity: ['Stuguard', Validators.required],
       status: ['upcoming', Validators.required],
-      totalCapacity: [1, [Validators.required, Validators.min(1)]],
+      totalCapacity: [50, [Validators.required, Validators.min(1)]],
       notes: [''],
       dogs: this.fb.array([]),
     });

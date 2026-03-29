@@ -40,11 +40,11 @@ export class TripRequestEffects {
   approveRequest$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TripRequestActions.approveRequest),
-      switchMap(({ requestId, tripId }) =>
-        this.tripRequestService.updateStatus(requestId, 'confirmed').pipe(
-          mergeMap((request) => [
-            TripRequestActions.approveRequestSuccess({ request }),
-            TripActions.loadTripById({ id: tripId }),
+      switchMap(({ requestId }) =>
+        this.tripRequestService.approveRequest(requestId).pipe(
+          mergeMap(({ request, trip }) => [
+            TripRequestActions.approveRequestSuccess({ request, trip }),
+            TripActions.loadTripByIdSuccess({ trip }),
           ]),
           catchError((error) => of(TripRequestActions.approveRequestFailure({ error: error.message })))
         )
@@ -61,6 +61,20 @@ export class TripRequestEffects {
           catchError((error) => of(TripRequestActions.updateRequestStatusFailure({ error: error.message })))
         )
       )
+    )
+  );
+
+  reloadAfterApprove$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TripRequestActions.approveRequestSuccess),
+      map(() => TripRequestActions.loadRequests())
+    )
+  );
+
+  reloadAfterReject$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TripRequestActions.updateRequestStatusSuccess),
+      map(() => TripRequestActions.loadRequests())
     )
   );
 

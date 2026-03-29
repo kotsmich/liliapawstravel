@@ -1,34 +1,51 @@
-.dog-card {
-  background: #fdf6ee;
-  border-radius: 12px;
-  padding: 1.5rem;
-  border: 1px solid #f0dfc0;
-  margin-bottom: 1rem;
-  overflow: visible;
+.dog-form {
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
 
-  &__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
+  &__row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
 
-    h3 { font-size: 1rem; font-weight: 600; color: #2d2016; margin: 0; }
+  &__field {
+    flex-direction: column;
+    flex: 1 1 160px;
+    min-width: 0;
+
+    &--sm {
+      flex: 0 1 100px;
+    }
+
+    label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #7a6358;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.2rem;
+      white-space: nowrap;
+    }
+
+    input.p-inputtext,
+    ::ng-deep .p-inputtext,
+    ::ng-deep .p-select {
+      height: 34px;
+      font-size: 0.875rem;
+      padding: 0 0.6rem;
+      width: 100%;
+    }
+
+    ::ng-deep .p-inputnumber-input {
+      height: 34px;
+      font-size: 0.875rem;
+      padding: 0 0.6rem;
+    }
   }
 }
 
-.p-error { font-size: 0.75rem; color: #dc2626; }
-
-// p-ifta-label is an inline element by default; make it fill its grid column
-::ng-deep p-ifta-label {
-  display: block;
-  width: 100%;
-
-  .p-iftalabel {
-    width: 100%;
-
-    input,
-    textarea {
-      width: 100%;
-    }
-  }
+.p-error {
+  font-size: 0.7rem;
+  color: #dc2626;
+  margin-top: 0.15rem;
 }

@@ -1,9 +1,9 @@
-.dashboard { display: flex; flex-direction: column; gap: 1.5rem; }
-.page-header { display: flex; align-items: center; justify-content: space-between;
+.dashboard { flex-direction: column; gap: 1.5rem; }
+.page-header { align-items: center; justify-content: space-between;
   h1 { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin: 0; } }
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; @media(max-width:600px){grid-template-columns:1fr;} }
 
-.stat-content { display: flex; align-items: center; gap: 1rem; }
+.stat-content { align-items: center; gap: 1rem; }
 .stat-icon { font-size: 2rem; color: #64748b; }
 .stat-value { display: block; font-size: 2rem; font-weight: 700; color: #1e293b; line-height: 1; }
 .stat-label { font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; }
@@ -11,7 +11,7 @@
 .stat-card.upcoming .stat-icon { color: #e07b54; }
 .stat-card.done .stat-icon { color: #16a34a; }
 
-.card-header { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; }
+.card-header { align-items: center; justify-content: space-between; padding: 0.5rem 0; }
 .card-title { font-size: 1rem; font-weight: 700; color: #1e293b; }
 
 .arrow { color: #64748b; font-size: 0.85rem; }

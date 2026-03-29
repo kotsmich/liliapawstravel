@@ -1,15 +1,19 @@
-import { Component, OnInit, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, DestroyRef, Inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
 import { MessageModule } from 'primeng/message';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { IftaLabelModule } from 'primeng/iftalabel';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TagModule } from 'primeng/tag';
 import { Store } from '@ngrx/store';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { filter } from 'rxjs/operators';
+import { timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DogFormComponent, TripCalendarComponent, LoadingSpinnerComponent, ToastNotificationComponent } from '@myorg/ui';
 import { CalendarEvent, Trip, Dog } from '@myorg/models';
@@ -17,10 +21,10 @@ import {
   CalendarActions,
   TripActions,
   TripRequestActions,
-  selectAllEvents,
-  selectCalendarIsLoading,
+  selectTripsAsCalendarEvents,
+  selectTripsIsLoading,
   selectCalendarSelectedDate,
-  selectSelectedTrip,
+  selectTripForSelectedDate,
   selectTripRequestIsLoading,
   selectTripRequestIsSuccess,
   selectTripRequestHasError,
@@ -31,41 +35,47 @@ import {
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule,
-    ButtonModule, DividerModule, MessageModule, ConfirmDialogModule,
-    InputTextModule, IftaLabelModule,
+    ButtonModule, CardModule, DividerModule, MessageModule, ConfirmDialogModule,
+    InputTextModule, IftaLabelModule, SkeletonModule, TagModule,
     DogFormComponent, TripCalendarComponent, LoadingSpinnerComponent, ToastNotificationComponent,
   ],
   templateUrl: './trip-request.component.html',
   styleUrls: ['./trip-request.component.scss'],
 })
 export class TripRequestComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  private store = inject(Store);
-  private destroyRef = inject(DestroyRef);
-  private messageService = inject(MessageService);
-  private confirmationService = inject(ConfirmationService);
-  private doc = inject(DOCUMENT);
+  constructor(
+    private fb: FormBuilder,
+    private store: Store,
+    private destroyRef: DestroyRef,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    @Inject(DOCUMENT) private doc: Document,
+  ) {}
 
   form!: FormGroup;
   showSummary = false;
+  expandedIndex: number | null = 0;
   selectedDateLocal: string | null = null;
   calendarEvents: CalendarEvent[] = [];
   selectedTrip: Trip | null = null;
 
-  loading$ = this.store.select(selectCalendarIsLoading);
+  loading$ = this.store.select(selectTripsIsLoading);
   selectedDate$ = this.store.select(selectCalendarSelectedDate);
-  selectedTrip$ = this.store.select(selectSelectedTrip);
+  selectedTrip$ = this.store.select(selectTripForSelectedDate);
   submitting$ = this.store.select(selectTripRequestIsLoading);
   success$ = this.store.select(selectTripRequestIsSuccess);
   error$ = this.store.select(selectTripRequestHasError);
-  events$ = this.store.select(selectAllEvents);
+  events$ = this.store.select(selectTripsAsCalendarEvents);
 
   ngOnInit(): void {
-    this.store.dispatch(CalendarActions.loadEvents());
+    timer(0, 60000).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.store.dispatch(TripActions.refreshTrips());
+    });
+
     this.form = this.fb.group({
-      requesterName: ['', Validators.required],
-      requesterEmail: ['', [Validators.required, Validators.email]],
-      requesterPhone: ['', Validators.required],
+      requesterName: ['Kots', Validators.required],
+      requesterEmail: ['Mich@gmail.com', [Validators.required, Validators.email]],
+      requesterPhone: ['6948225016', Validators.required],
       dogs: this.fb.array([this.dogGroup()]),
     });
 
@@ -100,19 +110,23 @@ export class TripRequestComponent implements OnInit {
 
   dogGroup(): FormGroup {
     return this.fb.group({
-      name: ['', Validators.required],
-      size: ['', Validators.required],
-      age: [0, [Validators.required, Validators.min(0)]],
-      chipId: ['', [Validators.required, Validators.pattern(/^\d{15}$/)]],
-      pickupLocation: ['', Validators.required],
-      dropLocation: ['', Validators.required],
+      name: ['Buzz', Validators.required],
+      size: ['medium', Validators.required],
+      age: [2, [Validators.required, Validators.min(0)]],
+      chipId: ['123456789123456', [Validators.required, Validators.pattern(/^\d{15}$/)]],
+      pickupLocation: ['Bucharest, Romania', Validators.required],
+      dropLocation: ['Amsterdam, Netherlands', Validators.required],
       notes: [''],
     });
   }
 
-  addDog(): void { this.dogs.push(this.dogGroup()); this.showSummary = false; }
+  addDog(): void {
+    this.dogs.push(this.dogGroup());
+    this.expandedIndex = this.dogs.length - 1;
+    this.showSummary = false;
+  }
 
-  confirmRemoveDog(index: number): void {
+  removeDog(index: number): void {
     this.confirmationService.confirm({
       header: 'Remove Dog',
       message: `Remove Dog ${index + 1} from this request?`,
@@ -122,18 +136,18 @@ export class TripRequestComponent implements OnInit {
       accept: () => {
         this.dogs.removeAt(index);
         this.showSummary = false;
+        if (this.expandedIndex === index) {
+          this.expandedIndex = null;
+        } else if (this.expandedIndex !== null && this.expandedIndex > index) {
+          this.expandedIndex -= 1;
+        }
       },
     });
   }
 
   onDateSelected(date: string): void {
     this.store.dispatch(CalendarActions.selectDate({ date }));
-    const event = this.calendarEvents.find((e) => e.date === date);
-    if (event) {
-      this.store.dispatch(TripActions.loadTripById({ id: event.tripId }));
-    } else {
-      this.store.dispatch(TripActions.clearSelectedTrip());
-    }
+    this.store.dispatch(TripActions.refreshTrips());
   }
 
   preview(): void {
@@ -160,6 +174,7 @@ export class TripRequestComponent implements OnInit {
     this.form.reset();
     this.dogs.clear();
     this.dogs.push(this.dogGroup());
+    this.expandedIndex = 0;
     this.showSummary = false;
     this.store.dispatch(TripRequestActions.resetRequest());
     this.store.dispatch(TripActions.clearSelectedTrip());

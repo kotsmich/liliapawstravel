@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Trip, Dog } from '@myorg/models';
@@ -6,8 +6,14 @@ import { API_URL } from './api-url.token';
 
 @Injectable({ providedIn: 'root' })
 export class TripService {
-  private http = inject(HttpClient);
-  private base = `${inject(API_URL)}/api/trips`;
+  private base: string;
+
+  constructor(
+    private http: HttpClient,
+    @Inject(API_URL) apiUrl: string,
+  ) {
+    this.base = `${apiUrl}/api/trips`;
+  }
 
   getTrips(): Observable<Trip[]> {
     return this.http.get<Trip[]>(this.base);

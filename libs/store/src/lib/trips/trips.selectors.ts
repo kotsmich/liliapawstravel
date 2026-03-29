@@ -1,10 +1,13 @@
 import { createSelector } from '@ngrx/store';
 import { CalendarEvent } from '@myorg/models';
 import { selectTripsState } from './trips.reducer';
+import { selectCalendarSelectedDate } from '../calendar/calendar.selectors';
 
 // selectSelectedTrip, selectTripsError, selectTrips, selectTripsLoading, selectTripsMutating
 // are already exported from trips.reducer via createFeature
 export const selectAllTrips = createSelector(selectTripsState, (s) => s.trips);
+export const selectTripById = (id: string) =>
+  createSelector(selectAllTrips, (trips) => trips.find((t) => t.id === id) ?? null);
 export const selectTripsIsLoading = createSelector(selectTripsState, (s) => s.loading);
 export const selectTripsIsMutating = createSelector(selectTripsState, (s) => s.mutating);
 
@@ -14,6 +17,17 @@ export const selectUpcomingTrips = createSelector(selectAllTrips, (trips) =>
 
 export const selectTripsByStatus = (status: string) =>
   createSelector(selectAllTrips, (trips) => trips.filter((t) => t.status === status));
+
+export const selectTripsByDate = createSelector(
+  selectAllTrips,
+  selectCalendarSelectedDate,
+  (trips, date) => (date ? trips.filter((t) => t.date === date) : [])
+);
+
+export const selectTripForSelectedDate = createSelector(
+  selectTripsByDate,
+  (trips) => trips[0] ?? null
+);
 
 // Mirrors the server-side /api/calendar logic so the admin calendar updates instantly on trip edits.
 export const selectTripsAsCalendarEvents = createSelector(selectAllTrips, (trips): CalendarEvent[] =>

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ButtonModule } from 'primeng/button';
@@ -19,7 +19,7 @@ export interface ConfirmOptions {
   template: `<p-confirmdialog />`,
 })
 export class ConfirmDialogComponent {
-  private confirmationService = inject(ConfirmationService);
+  constructor(private confirmationService: ConfirmationService) {}
 
   confirm(opts: ConfirmOptions): void {
     this.confirmationService.confirm({

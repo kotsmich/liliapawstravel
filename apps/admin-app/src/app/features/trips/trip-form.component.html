@@ -1,5 +1,5 @@
-<div class="form-page">
-  <div class="page-header">
+<div class="form-page flex flex-column gap-4">
+  <div class="page-header flex align-items-center">
     <p-button icon="pi pi-arrow-left" [text]="true" [rounded]="true" routerLink="/admin/trips" />
     <h1>{{ isEdit ? 'Edit Trip' : 'New Trip' }}</h1>
   </div>
@@ -85,22 +85,22 @@
     <!-- Dogs section -->
     <p-card styleClass="form-card dogs-section">
       <ng-template pTemplate="title">
-        <div class="dogs-header">
+        <div class="dogs-header flex align-items-center justify-content-between">
           <span>🐶 Dogs</span>
           <p-button type="button" label="Add Dog" icon="pi pi-plus" [outlined]="true" size="small" (onClick)="addDog()" />
         </div>
       </ng-template>
 
-      <div class="dogs-list" formArrayName="dogs">
-        <div *ngFor="let dog of dogs.controls; let i = index" class="dog-row">
-          <div class="dog-row__info">
+      <div class="dogs-list flex flex-column gap-2" formArrayName="dogs">
+        <div *ngFor="let dog of dogs.controls; let i = index" class="dog-row flex align-items-center justify-content-between">
+          <div class="dog-row__info flex align-items-center flex-wrap">
             <span class="dog-name">🐶 {{ dog.get('name')?.value || 'Unnamed' }}</span>
             <span class="dog-badge">{{ dog.get('size')?.value }}</span>
             <span class="dog-age" *ngIf="dog.get('age')?.value !== null">{{ dog.get('age')?.value }} yr</span>
             <span class="dog-route">{{ dog.get('pickupLocation')?.value }} → {{ dog.get('dropLocation')?.value }}</span>
             <span class="dog-chip">{{ dog.get('chipId')?.value }}</span>
           </div>
-          <div class="dog-row__actions">
+          <div class="dog-row__actions flex flex-shrink-0 gap-1">
             <p-button icon="pi pi-pencil" [outlined]="true" size="small" type="button"
               pTooltip="Edit dog" (onClick)="openDogDialog(i)" />
             <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" type="button"
@@ -112,7 +112,7 @@
     </p-card>
 
     <!-- Actions -->
-    <div class="form-actions">
+    <div class="form-actions flex justify-content-end">
       <p-button type="button" label="Cancel" [outlined]="true" routerLink="/admin/trips" />
       <p-button
         type="submit"

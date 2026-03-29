@@ -23,7 +23,11 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
-        tap(() => this.router.navigate(['/admin/dashboard']))
+        tap(({ user }) => {
+          localStorage.setItem('admin_token', user.token);
+          localStorage.setItem('admin_token_expiry', String(Date.now() + 24 * 60 * 60 * 1000));
+          this.router.navigate(['/admin/dashboard']);
+        })
       ),
     { dispatch: false }
   );
@@ -32,7 +36,11 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.logout),
-        tap(() => this.router.navigate(['/admin/login']))
+        tap(() => {
+          localStorage.removeItem('admin_token');
+          localStorage.removeItem('admin_token_expiry');
+          this.router.navigate(['/admin/login']);
+        })
       ),
     { dispatch: false }
   );

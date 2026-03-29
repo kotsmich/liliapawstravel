@@ -5,9 +5,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
-import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
-import { IftaLabelModule } from 'primeng/iftalabel';
 
 @Component({
   selector: 'ui-dog-form',
@@ -19,9 +17,7 @@ import { IftaLabelModule } from 'primeng/iftalabel';
     InputNumberModule,
     SelectModule,
     ButtonModule,
-    TextareaModule,
     TooltipModule,
-    IftaLabelModule,
   ],
   templateUrl: './dog-form.component.html',
   styleUrls: ['./dog-form.component.scss'],

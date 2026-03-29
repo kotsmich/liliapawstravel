@@ -36,7 +36,13 @@ export const authFeature = createFeature({
       loading: false,
       error,
     })),
-    on(AuthActions.logout, () => ({ ...initialState }))
+    on(AuthActions.logout, () => ({ ...initialState })),
+    on(AuthActions.restoreSession, (state, { token }) => ({
+      ...state,
+      token,
+      isAuthenticated: true,
+      user: { id: 'admin', email: '', token },
+    }))
   ),
 });
 

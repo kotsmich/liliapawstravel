@@ -19,6 +19,18 @@ export class TripsEffects {
     )
   );
 
+  refreshTrips$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TripActions.refreshTrips),
+      switchMap(() =>
+        this.tripService.getTrips().pipe(
+          map((trips) => TripActions.loadTripsSuccess({ trips })),
+          catchError((error) => of(TripActions.loadTripsFailure({ error: error.message })))
+        )
+      )
+    )
+  );
+
   addTrip$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TripActions.addTrip),

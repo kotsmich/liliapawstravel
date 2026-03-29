@@ -1,7 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+:root {
+  --color-primary: #e07b54;
+  --color-primary-light: #f0a07a;
+  --color-primary-dark: #c05a33;
+  --color-primary-hover: rgba(224, 123, 84, 0.15);
+  --color-surface: #fff8f0;
+  --color-surface-alt: #fdf3e8;
+  --color-border: #f0e0d0;
+  --color-border-alt: #e8d0c0;
+  --color-text: #3d2b1f;
+  --color-text-muted: #a0a0a0;
+  --color-error: #ef4444;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-white: #ffffff;
+  --color-sidebar: #1e293b;
+  --color-sidebar-text: #94a3b8;
+  --color-sidebar-active: #ffffff;
+  --color-slate-text: #1e293b;
+  --color-slate-mid: #64748b;
+  --color-slate-light: #94a3b8;
+  --color-error-alt: #dc2626;
+  --color-bg-light: #f8fafc;
+  --color-border-light: #e2e8f0;
+  --color-border-subtle: #f1f5f9;
+  --color-dog-badge-bg: #fff3ed;
+  --color-dog-badge-border: #fbd5c0;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; -webkit-font-smoothing: antialiased; }
+body { font-family: 'Inter', sans-serif; background: var(--color-bg-light); color: var(--color-slate-text); -webkit-font-smoothing: antialiased; }
 
 /* PrimeNG global overrides */
 .p-button { font-family: 'Inter', sans-serif; font-weight: 600; }
@@ -14,7 +43,7 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; -w
 /* Field layout */
 .field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.75rem; }
 .fw { width: 100%; }
-.p-error { font-size: 0.75rem; color: var(--p-red-500, #ef4444); }
+.p-error { font-size: 0.75rem; color: var(--color-error); }
 
 /* Row grid */
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }

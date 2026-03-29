@@ -1,11 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { AvatarModule } from 'primeng/avatar';
 import { Store } from '@ngrx/store';
-import { AuthActions, selectCurrentUser } from '@myorg/store';
+import { AuthActions, selectCurrentUser, TripRequestActions, selectPendingRequestsCount } from '@myorg/store';
 
 @Component({
   selector: 'app-shell',
@@ -14,10 +14,16 @@ import { AuthActions, selectCurrentUser } from '@myorg/store';
   templateUrl: './shell.component.html',
   styleUrls: ['./shell.component.scss'],
 })
-export class ShellComponent {
-  private store = inject(Store);
+export class ShellComponent implements OnInit {
+  constructor(private store: Store) {}
+
   user$ = this.store.select(selectCurrentUser);
+  pendingCount$ = this.store.select(selectPendingRequestsCount);
   sidebarOpen = true;
+
+  ngOnInit(): void {
+    this.store.dispatch(TripRequestActions.loadRequests());
+  }
 
   logout(): void {
     this.store.dispatch(AuthActions.logout());

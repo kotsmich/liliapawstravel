@@ -1,22 +1,19 @@
 .trips-page {
-  display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
 .page-header {
-  display: flex;
   align-items: center;
   justify-content: space-between;
 
-  h1 { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin: 0; }
+  h1 { font-size: 1.5rem; font-weight: 700; color: var(--color-slate-text); margin: 0; }
 }
 
 /* ── Tab bar ── */
 .tab-bar {
-  display: flex;
   gap: 0;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--color-border-light);
 }
 
 .tab-btn {
@@ -27,15 +24,14 @@
   padding: 0.6rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--color-slate-mid);
   cursor: pointer;
-  display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   transition: color 0.15s, border-color 0.15s;
 
   &.active { color: #e07b54; border-bottom-color: #e07b54; }
-  &:hover:not(.active) { color: #1e293b; }
+  &:hover:not(.active) { color: var(--color-slate-text); }
 }
 
 /* ── Calendar tab layout ── */
@@ -56,9 +52,8 @@
 
 .cal-hint {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--color-slate-mid);
   margin-top: 0.75rem;
-  display: flex;
   align-items: center;
   gap: 0.4rem;
 }
@@ -70,52 +65,46 @@
   margin-top: 1rem;
   background: #f8fafc;
   border-radius: 8px;
-  border: 1px dashed #e2e8f0;
-  color: #64748b;
+  border: 1px dashed var(--color-border-light);
+  color: var(--color-slate-mid);
 
   i { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
   p { margin: 0 0 0.75rem; font-size: 0.875rem; }
 }
 
 /* ── Trip cards (right column) ── */
-.trips-list { display: flex; flex-direction: column; gap: 1rem; }
+.trips-list { flex-direction: column; gap: 1rem; }
 
 .trip-header {
-  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  flex-wrap: wrap;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #f1f5f9;
 }
 
 .trip-route {
-  display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex-wrap: wrap;
 
-  strong { color: #1e293b; font-size: 0.95rem; }
+  strong { color: var(--color-slate-text); font-size: 0.95rem; }
 }
 
 .trip-body {
-  display: flex;
   align-items: center;
   gap: 1rem;
-  flex-wrap: wrap;
   font-size: 0.875rem;
 
-  .trip-date  { color: #64748b; display: flex; align-items: center; gap: 0.3rem; }
-  .dogs-count { color: #64748b; }
+  .trip-date  { color: var(--color-slate-mid); align-items: center; gap: 0.3rem; }
+  .dogs-count { color: var(--color-slate-mid); }
   .spots-count {
-    color: #64748b;
+    color: var(--color-slate-mid);
     &.low { color: #dc2626; font-weight: 600; }
   }
-  .notes { color: #64748b; font-style: italic; width: 100%; }
+  .notes { color: var(--color-slate-mid); font-style: italic; width: 100%; }
 }
 
-.trip-actions { display: flex; gap: 0.5rem; }
+.trip-actions { gap: 0.5rem; }
 
 .empty {
   text-align: center;
@@ -128,3 +117,66 @@
 
 /* ── All-trips table ── */
 .low-spots { color: #dc2626; font-weight: 600; }
+
+/* ── Trip detail dialog ── */
+.tab-content {
+  margin-top: 1rem;
+}
+
+/* ── Requester accordion ── */
+.req-header {
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.req-name {
+  font-weight: 600;
+  color: var(--color-slate-text);
+}
+
+.req-meta {
+  font-size: 0.85rem;
+  color: var(--color-slate-mid);
+}
+
+.req-actions {
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  margin-top: 0.75rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.empty-requests {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: #94a3b8;
+
+  i { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+  p { margin: 0; font-size: 0.875rem; }
+}
+
+/* ── Dog edit dialog ── */
+.dog-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.field {
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #4a4a4a;
+  }
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+}
+
+.w-full { width: 100%; }

@@ -1,13 +1,13 @@
 <nav class="navbar" [class.scrolled]="scrolled">
-  <div class="navbar__container">
-    <a class="navbar__brand" routerLink="/" (click)="closeMenu()">
+  <div class="navbar__container flex align-items-center justify-content-between">
+    <a class="navbar__brand flex align-items-center" routerLink="/" (click)="closeMenu()">
       <span>🐾</span>
       <span class="navbar__name">Lilia Paws Travel</span>
     </a>
     <button class="navbar__burger" (click)="toggleMenu()">
       <i class="pi" [ngClass]="menuOpen ? 'pi-times' : 'pi-bars'"></i>
     </button>
-    <ul class="navbar__links" [class.open]="menuOpen">
+    <ul class="navbar__links flex align-items-center" [class.open]="menuOpen">
       <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" (click)="closeMenu()">Home</a></li>
       <li><a routerLink="/request" routerLinkActive="active" (click)="closeMenu()">Request Transport</a></li>
       <li><a routerLink="/contact" routerLinkActive="active" (click)="closeMenu()">Contact</a></li>

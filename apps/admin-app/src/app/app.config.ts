@@ -1,8 +1,8 @@
-import { ApplicationConfig, isDevMode } from '@angular/core';
+import { ApplicationConfig, APP_INITIALIZER, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideStore } from '@ngrx/store';
+import { provideStore, Store } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { providePrimeNG } from 'primeng/config';
@@ -15,7 +15,7 @@ import { APP_ROUTES } from './app.routes';
 import { authInterceptor } from './auth.interceptor';
 import { API_URL } from '@myorg/api';
 import {
-  authReducer, AuthEffects,
+  authReducer, AuthEffects, AuthActions,
   tripsReducer, TripsEffects,
   calendarReducer, CalendarEffects,
   tripRequestReducer, TripRequestEffects,
@@ -38,6 +38,21 @@ const LiliaPreset = definePreset(Aura, {
     },
   },
 });
+
+function initializeAuth(store: Store): () => void {
+  return () => {
+    const token = localStorage.getItem('admin_token');
+    const expiry = localStorage.getItem('admin_token_expiry');
+    const isValid = expiry && Date.now() < Number(expiry);
+
+    if (token && isValid) {
+      store.dispatch(AuthActions.restoreSession({ token }));
+    } else {
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_token_expiry');
+    }
+  };
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -62,5 +77,11 @@ export const appConfig: ApplicationConfig = {
     }),
     MessageService,
     ConfirmationService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeAuth,
+      deps: [Store],
+      multi: true,
+    },
   ],
 };

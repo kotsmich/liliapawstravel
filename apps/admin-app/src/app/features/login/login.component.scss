@@ -1,6 +1,5 @@
 .login-page {
   min-height: 100vh;
-  display: flex;
   align-items: center;
   justify-content: center;
   background: #1e293b;
@@ -30,7 +29,6 @@
   padding: 0.75rem 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
-  display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
@@ -45,7 +43,6 @@
   width: 100% !important;
   height: 48px !important;
   font-size: 1rem !important;
-  display: flex !important;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;

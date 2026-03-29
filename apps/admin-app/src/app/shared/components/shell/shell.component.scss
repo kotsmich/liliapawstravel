@@ -2,7 +2,6 @@ $sidebar-w: 240px;
 $sidebar-collapsed: 64px;
 
 .layout {
-  display: flex;
   min-height: 100vh;
 }
 
@@ -10,7 +9,6 @@ $sidebar-collapsed: 64px;
   width: $sidebar-w;
   background: #1e293b;
   color: #cbd5e1;
-  display: flex;
   flex-direction: column;
   flex-shrink: 0;
   transition: width 0.25s ease;
@@ -21,7 +19,6 @@ $sidebar-collapsed: 64px;
   }
 
   &__brand {
-    display: flex;
     align-items: center;
     gap: 0.75rem;
     padding: 1.25rem 1rem;
@@ -40,7 +37,6 @@ $sidebar-collapsed: 64px;
 
   &__nav {
     flex: 1;
-    display: flex;
     flex-direction: column;
     padding: 1rem 0;
     gap: 0.25rem;
@@ -49,7 +45,6 @@ $sidebar-collapsed: 64px;
   &__footer {
     padding: 1rem;
     border-top: 1px solid rgba(255,255,255,0.1);
-    display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
@@ -57,7 +52,6 @@ $sidebar-collapsed: 64px;
 }
 
 .nav-item {
-  display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
@@ -66,7 +60,15 @@ $sidebar-collapsed: 64px;
   transition: background 0.15s, color 0.15s;
   white-space: nowrap;
 
-  i { flex-shrink: 0; font-size: 1rem; }
+  &__icon-wrap {
+    position: relative;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+  }
+
+  i { font-size: 1rem; }
 
   &:hover {
     background: rgba(255,255,255,0.05);
@@ -81,7 +83,6 @@ $sidebar-collapsed: 64px;
 }
 
 .user-info {
-  display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8rem;
@@ -91,11 +92,28 @@ $sidebar-collapsed: 64px;
   span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 
+.nav-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+}
+
 .logout-btn { color: #94a3b8 !important; flex-shrink: 0; }
 
 .main {
   flex: 1;
-  display: flex;
   flex-direction: column;
   min-width: 0;
   background: #f8fafc;
@@ -105,7 +123,6 @@ $sidebar-collapsed: 64px;
   height: 60px;
   background: #fff;
   border-bottom: 1px solid #e2e8f0;
-  display: flex;
   align-items: center;
   gap: 1rem;
   padding: 0 1.5rem;

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -22,8 +22,10 @@ import { AuthActions, selectAuthIsLoading, selectAuthError } from '@myorg/store'
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
-  private fb = inject(FormBuilder);
-  private store = inject(Store);
+  constructor(
+    private fb: FormBuilder,
+    private store: Store,
+  ) {}
 
   form = this.fb.group({
     email: ['admin@liliapaws.com', [Validators.required, Validators.email]],

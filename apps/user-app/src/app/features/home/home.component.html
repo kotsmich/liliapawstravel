@@ -1,9 +1,9 @@
-<section class="hero">
+<section class="hero flex align-items-center">
   <div class="hero__content">
     <span class="badge">🐾 Europe's trusted dog transport</span>
     <h1>Every dog deserves a <span class="accent">loving journey home.</span></h1>
     <p>Lilia Paws Travel safely transports adopted dogs across Europe — connecting shelters with loving families, one paw at a time.</p>
-    <div class="hero__actions">
+    <div class="hero__actions flex flex-wrap gap-3">
       <a routerLink="/request" class="btn-primary">Request Transport</a>
       <a routerLink="/contact" class="btn-outline">Get in Touch</a>
     </div>
@@ -16,7 +16,7 @@
 <section class="stats">
   <div class="container">
     <div class="stats__grid">
-      <div class="stat" *ngFor="let s of stats">
+      <div class="stat flex flex-column gap-2" *ngFor="let s of stats">
         <span class="stat__value">{{ s.value }}</span>
         <span class="stat__label">{{ s.label }}</span>
       </div>
@@ -50,7 +50,7 @@
     </div>
     <div class="steps">
       <div class="step" *ngFor="let s of steps">
-        <div class="step__num">{{ s.step }}</div>
+        <div class="step__num flex align-items-center justify-content-center">{{ s.step }}</div>
         <h3>{{ s.title }}</h3>
         <p>{{ s.desc }}</p>
       </div>
@@ -64,7 +64,7 @@
       <span>🐶</span>
       <h2>Ready to bring your dog home?</h2>
       <p>Submit a transport request and we'll respond within 24 hours.</p>
-      <div class="cta__actions">
+      <div class="cta__actions flex justify-content-center flex-wrap">
         <a routerLink="/request" class="btn-primary">Book a Transport</a>
         <a routerLink="/contact" class="btn-outline-light">Ask a Question</a>
       </div>

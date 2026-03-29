@@ -24,6 +24,7 @@
             "assets": ["apps/user-app/src/favicon.ico", "apps/user-app/src/assets"],
             "styles": [
               "node_modules/primeicons/primeicons.css",
+              "node_modules/primeflex/primeflex.css",
               "apps/user-app/src/styles.scss"
             ],
             "scripts": []
@@ -88,6 +89,7 @@
             "assets": ["apps/admin-app/src/assets"],
             "styles": [
               "node_modules/primeicons/primeicons.css",
+              "node_modules/primeflex/primeflex.css",
               "apps/admin-app/src/styles.scss"
             ],
             "scripts": []

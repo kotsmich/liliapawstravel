@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <div class="container body">
+  <div class="container body flex flex-column gap-5">
     <ui-toast />
     <p-confirmdialog />
 
@@ -15,7 +15,9 @@
     <section class="card">
       <h2>🗓️ Select a Travel Date</h2>
       <p class="hint">Click a highlighted date to select a trip.</p>
-      <ui-loading-spinner *ngIf="loading$ | async" message="Loading schedule..." />
+      <ng-container *ngIf="loading$ | async">
+        <p-skeleton width="100%" height="320px" borderRadius="8px" />
+      </ng-container>
       <ng-container *ngIf="!(loading$ | async)">
         <ui-trip-calendar
           [events]="calendarEvents"
@@ -29,13 +31,13 @@
     <ng-container *ngIf="selectedTrip$ | async as trip">
       <section class="card trip-details">
         <div class="trip-details__label">Selected Trip</div>
-        <div class="trip-details__route">
+        <div class="trip-details__route flex align-items-center flex-wrap">
           <span class="trip-details__city">{{ trip.departureCity }}, {{ trip.departureCountry }}</span>
           <i class="pi pi-arrow-right trip-details__arrow"></i>
           <span class="trip-details__city">{{ trip.arrivalCity }}, {{ trip.arrivalCountry }}</span>
         </div>
-        <div class="trip-details__meta">
-          <span class="trip-details__date"><i class="pi pi-calendar"></i> {{ trip.date }}</span>
+        <div class="trip-details__meta flex flex-wrap align-items-center gap-4">
+          <span class="trip-details__date flex align-items-center"><i class="pi pi-calendar"></i> {{ trip.date }}</span>
           <span *ngIf="trip.spotsAvailable !== undefined" class="trip-details__spots"
                 [class.low]="trip.spotsAvailable <= 2">
             🐾 {{ trip.spotsAvailable }} spot{{ trip.spotsAvailable !== 1 ? 's' : '' }} available
@@ -78,14 +80,67 @@
 
           <!-- Dogs -->
           <h2>🐕 Add Dogs for this Trip</h2>
-          <div formArrayName="dogs">
-            <ui-dog-form
-              *ngFor="let dog of dogs.controls; let i = index"
-              [formGroup]="$any(dogs.at(i))"
-              [index]="i"
-              [canRemove]="dogs.length > 1"
-              (removeClicked)="confirmRemoveDog(i)">
-            </ui-dog-form>
+          <div formArrayName="dogs" class="dogs-list flex flex-column gap-2">
+            <div *ngFor="let dog of dogs.controls; let i = index">
+
+              <!-- Collapsed row -->
+              <div class="dog-row-collapsed flex align-items-center"
+                   *ngIf="expandedIndex !== i"
+                   [class.has-error]="dog.invalid && dog.touched"
+                   (click)="expandedIndex = i">
+                <i class="pi pi-chevron-right collapse-icon"></i>
+                <span class="dog-label">Dog #{{ i + 1 }}</span>
+                <span class="dog-name">{{ dog.get('name')?.value || 'Unnamed' }}</span>
+                <p-tag *ngIf="dog.get('size')?.value" [value]="dog.get('size')?.value" severity="secondary" />
+                <span class="chip-id">Chip: {{ dog.get('chipId')?.value || 'N/A' }}</span>
+                <div class="dog-row-actions flex align-items-center flex-shrink-0" (click)="$event.stopPropagation()">
+                  <p-button icon="pi pi-pencil"
+                            [text]="true"
+                            size="small"
+                            pTooltip="Edit"
+                            tooltipPosition="top"
+                            (onClick)="expandedIndex = i">
+                  </p-button>
+                  <p-button icon="pi pi-trash"
+                            [text]="true"
+                            size="small"
+                            severity="danger"
+                            pTooltip="Remove"
+                            tooltipPosition="top"
+                            (onClick)="removeDog(i)">
+                  </p-button>
+                </div>
+              </div>
+
+              <!-- Expanded card -->
+              <p-card *ngIf="expandedIndex === i" class="dog-card-expanded">
+                <ui-dog-form
+                  [formGroup]="$any(dogs.at(i))"
+                  [index]="i"
+                  [canRemove]="false">
+                </ui-dog-form>
+                <ng-template pTemplate="footer">
+                  <div class="dog-card-footer flex justify-content-between align-items-center">
+                    <p-button
+                      *ngIf="dogs.length > 1"
+                      icon="pi pi-trash"
+                      label="Remove Dog"
+                      severity="danger"
+                      [text]="true"
+                      size="small"
+                      (onClick)="removeDog(i)">
+                    </p-button>
+                    <p-button
+                      label="Collapse"
+                      icon="pi pi-chevron-up"
+                      [text]="true"
+                      (onClick)="expandedIndex = null">
+                    </p-button>
+                  </div>
+                </ng-template>
+              </p-card>
+
+            </div>
           </div>
 
           <p-button
@@ -105,14 +160,14 @@
           <div *ngIf="showSummary" class="summary">
             <h3>📋 Summary</h3>
             <p><strong>{{ form.value.requesterName }}</strong> · {{ form.value.requesterEmail }} · {{ form.value.requesterPhone }}</p>
-            <div *ngFor="let d of form.value.dogs; let i = index" class="summary-row">
+            <div *ngFor="let d of form.value.dogs; let i = index" class="summary-row flex flex-column">
               <strong>Dog {{ i+1 }}: {{ d.name }}</strong>
               <span>{{ d.size }} | {{ d.age }} yr | {{ d.chipId }}</span>
               <span>{{ d.pickupLocation }} → {{ d.dropLocation }}</span>
             </div>
           </div>
 
-          <div class="actions">
+          <div class="actions flex align-items-center flex-wrap gap-3">
             <p-button
               type="button"
               label="Preview"
@@ -133,7 +188,7 @@
     </ng-container>
 
     <!-- No trip selected hint -->
-    <div *ngIf="!(selectedTrip$ | async) && !(loading$ | async)" class="no-trip-hint">
+    <div *ngIf="!(selectedTrip$ | async) && !(loading$ | async)" class="no-trip-hint flex flex-column align-items-center">
       <i class="pi pi-calendar-plus"></i>
       <p>Select a highlighted date on the calendar above to start your booking.</p>
     </div>
