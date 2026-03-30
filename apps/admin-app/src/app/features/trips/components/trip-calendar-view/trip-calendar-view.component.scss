@@ -7,6 +7,11 @@
   @media (max-width: 900px) { grid-template-columns: 1fr; }
 }
 
+.trip-actions {
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .cal-hint {
   font-size: 0.8rem;
   color: var(--color-slate-mid);

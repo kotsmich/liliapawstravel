@@ -1,3 +1,4 @@
+export * from './lib/utils';
 export * from './lib/dog.model';
 export * from './lib/trip.model';
 export * from './lib/calendar-event.model';

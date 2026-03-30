@@ -18,7 +18,7 @@ import { Trip } from '@models/lib/trip.model';
       [visible]="visible"
       (visibleChange)="visibleChange.emit($event)"
       [modal]="true"
-      [style]="{ width: '600px' }"
+      [style]="{ width: '90vw', maxWidth: '600px' }"
       [draggable]="false"
       >
       @if (request; as req) {
@@ -40,7 +40,8 @@ import { Trip } from '@models/lib/trip.model';
         </div>
         <div class="detail-section">
           <h3>Dogs ({{ req.dogs.length }})</h3>
-          <p-table [value]="req.dogs" styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '100%' }">
+          <div style="overflow-x:auto">
+          <p-table [value]="req.dogs" styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '36rem' }">
             <ng-template pTemplate="header">
               <tr>
                 <th>Name</th>
@@ -62,6 +63,7 @@ import { Trip } from '@models/lib/trip.model';
               </tr>
             </ng-template>
           </p-table>
+          </div>
         </div>
       }
     

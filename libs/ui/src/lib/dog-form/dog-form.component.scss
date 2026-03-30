@@ -13,8 +13,11 @@
     flex: 1 1 160px;
     min-width: 0;
 
+    @media (max-width: 480px) { flex: 1 1 100%; }
+
     &--sm {
       flex: 0 1 100px;
+      @media (max-width: 480px) { flex: 1 1 100%; }
     }
 
     label {

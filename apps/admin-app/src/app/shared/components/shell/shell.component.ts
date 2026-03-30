@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -7,6 +7,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { Store } from '@ngrx/store';
 import { AuthActions, selectCurrentUser } from '@admin/store/auth';
 import { TripRequestActions, selectPendingRequestsCount } from '@admin/store/requests';
+import { MessagesActions, selectUnreadCount } from '@admin/store/messages';
 import { AdminUser } from '@models/lib/admin-user.model';
 
 @Component({
@@ -21,10 +22,21 @@ export class ShellComponent implements OnInit {
 
   user$ = this.store.select(selectCurrentUser) as import('rxjs').Observable<AdminUser | null>;
   pendingCount$ = this.store.select(selectPendingRequestsCount);
+  unreadMessagesCount$ = this.store.select(selectUnreadCount);
   sidebarOpen = true;
+
+  get isMobile(): boolean { return window.innerWidth < 768; }
 
   ngOnInit(): void {
     this.store.dispatch(TripRequestActions.loadRequests());
+    this.store.dispatch(MessagesActions.loadMessages());
+    if (this.isMobile) this.sidebarOpen = false;
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    if (!this.isMobile && !this.sidebarOpen) this.sidebarOpen = true;
+    if (this.isMobile && this.sidebarOpen) this.sidebarOpen = false;
   }
 
   logout(): void {
@@ -37,6 +49,7 @@ export class ShellComponent implements OnInit {
 
   navigateTo(path: string): void {
     this.router.navigate([path]);
+    if (this.isMobile) this.sidebarOpen = false;
   }
 
   isActive(link: string): boolean {
@@ -47,5 +60,6 @@ export class ShellComponent implements OnInit {
     { icon: 'pi pi-th-large', label: 'Dashboard', link: '/admin/dashboard' },
     { icon: 'pi pi-car', label: 'Trips', link: '/admin/trips' },
     { icon: 'pi pi-inbox', label: 'Requests', link: '/admin/requests' },
+    { icon: 'pi pi-envelope', label: 'Messages', link: '/admin/messages' },
   ];
 }

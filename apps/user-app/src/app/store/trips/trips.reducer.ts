@@ -21,7 +21,8 @@ export const tripsFeature = createFeature({
     on(TripActions.refreshTrips, (s) => ({ ...s, loading: true, error: null })),
     on(TripActions.loadTripsSuccess, (s, { trips }) => ({ ...s, trips, loading: false })),
     on(TripActions.loadTripsFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(TripActions.clearSelectedTrip, (s) => ({ ...s }))
+    on(TripActions.clearSelectedTrip, (s) => ({ ...s })),
+    on(TripActions.wsTripsReceived, (s, { trips }) => ({ ...s, trips }))
   ),
 });
 

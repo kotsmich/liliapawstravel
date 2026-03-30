@@ -20,6 +20,7 @@ import { Trip } from '@models/lib/trip.model';
         </div>
       </ng-template>
 
+      <div style="overflow-x:auto">
       <p-table [value]="trips" [tableStyle]="{ 'min-width': '50rem' }">
         <ng-template pTemplate="header">
           <tr>
@@ -52,6 +53,7 @@ import { Trip } from '@models/lib/trip.model';
           <tr><td colspan="5" class="empty">No trips yet.</td></tr>
         </ng-template>
       </p-table>
+      </div>
     </p-card>
   `,
   styles: [],

@@ -1,4 +1,7 @@
 <div class="layout flex" [class.sidebar-closed]="!sidebarOpen">
+  @if (sidebarOpen && isMobile) {
+    <div class="mobile-backdrop" (click)="toggleSidebar()"></div>
+  }
   <aside class="sidebar flex flex-column flex-shrink-0">
     <div class="sidebar__brand flex align-items-center">
       <span class="sidebar__paw">🐾</span>
@@ -20,10 +23,10 @@
           <span class="nav-item__icon-wrap flex align-items-center justify-content-center flex-shrink-0">
             <i [class]="item.icon"></i>
             @if (item.link === '/admin/requests' && (pendingCount$ | async); as count) {
-              <span
-                class="nav-badge flex align-items-center justify-content-center">
-                {{ count }}
-              </span>
+              <span class="nav-badge flex align-items-center justify-content-center">{{ count }}</span>
+            }
+            @if (item.link === '/admin/messages' && (unreadMessagesCount$ | async); as count) {
+              <span class="nav-badge flex align-items-center justify-content-center">{{ count }}</span>
             }
           </span>
           @if (sidebarOpen) {

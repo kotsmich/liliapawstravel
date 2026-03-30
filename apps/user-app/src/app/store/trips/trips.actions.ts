@@ -8,5 +8,6 @@ export const TripActions = createActionGroup({
     'Load Trips Success': props<{ trips: Trip[] }>(),
     'Load Trips Failure': props<{ error: string }>(),
     'Clear Selected Trip': emptyProps(),
+    'Ws Trips Received': props<{ trips: Trip[] }>(),
   },
 });

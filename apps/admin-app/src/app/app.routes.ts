@@ -33,6 +33,10 @@ export const APP_ROUTES: Routes = [
         path: 'requests',
         loadComponent: () => import('./features/requests/requests-list.component').then((m) => m.RequestsListComponent),
       },
+      {
+        path: 'messages',
+        loadComponent: () => import('./features/messages/messages-page.component').then((m) => m.MessagesPageComponent),
+      },
     ],
   },
   { path: '**', redirectTo: 'admin/login' },

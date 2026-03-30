@@ -1,5 +1,6 @@
 .requests-page {
   padding: 1.5rem;
+  @media(max-width:480px){padding:1rem;}
 }
 
 .filter-bar {
@@ -7,6 +8,7 @@
 
   .trip-select {
     min-width: 320px;
+    @media (max-width: 600px) { min-width: 0; width: 100%; }
   }
 }
 

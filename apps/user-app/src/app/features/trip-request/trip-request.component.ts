@@ -19,6 +19,7 @@ import { DogFormComponent } from '@ui/lib/dog-form/dog-form.component';
 import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
 import { ToastNotificationComponent } from '@ui/lib/toast-notification/toast-notification.component';
 import { CalendarEvent } from '@models/lib/calendar-event.model';
+import { generateId } from '@models/lib/utils';
 import { Trip } from '@models/lib/trip.model';
 import { Dog } from '@models/lib/dog.model';
 import { TripActions, selectTripsAsCalendarEvents, selectTripsIsLoading } from '@user/store/trips';
@@ -153,7 +154,7 @@ export class TripRequestComponent implements OnInit {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const { requesterName, requesterEmail, requesterPhone } = this.form.value;
     const dogs: Dog[] = this.form.value.dogs.map((d: Partial<Dog>) => ({
-      ...d, id: crypto.randomUUID(),
+      ...d, id: generateId(),
     }));
     this.store.dispatch(TripRequestActions.submitRequest({
       dogs,

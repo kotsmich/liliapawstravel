@@ -9,4 +9,5 @@ export interface ContactForm {
 export interface ContactSubmission extends ContactForm {
   id: string;
   submittedAt: string;
+  isRead: boolean;
 }

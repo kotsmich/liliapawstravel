@@ -18,7 +18,7 @@ import { MessageModule } from 'primeng/message';
     ButtonModule,
     IftaLabelModule,
     MessageModule
-],
+  ],
   template: `
     <div class="form-wrapper">
       @if (success) {
@@ -31,10 +31,10 @@ import { MessageModule } from 'primeng/message';
       @if (error) {
         <p-message severity="error" [text]="'Error: ' + error" styleClass="mb-3" />
       }
-    
+
       @if (!success) {
         <form [formGroup]="form" (ngSubmit)="formSubmit.emit()" novalidate>
-          <div class="row">
+          <div class="fields-row">
             <div class="field fw">
               <p-ifta-label>
                 <input pInputText id="name" formControlName="name" />
@@ -57,7 +57,7 @@ import { MessageModule } from 'primeng/message';
               }
             </div>
           </div>
-          <div class="row">
+          <div class="fields-row">
             <div class="field fw">
               <p-ifta-label>
                 <input pInputText id="phone" formControlName="phone" type="tel" />
@@ -86,17 +86,79 @@ import { MessageModule } from 'primeng/message';
               <small class="p-error">{{ err('message') }}</small>
             }
           </div>
-          <p-button
-            type="submit"
-            label="{{ loading ? 'Sending...' : 'Send Message' }}"
-            [loading]="loading"
-            [disabled]="loading"
-            />
+          <div class="submit-row">
+            <p-button
+              type="submit"
+              label="{{ loading ? 'Sending...' : 'Send Message' }}"
+              [loading]="loading"
+              [disabled]="loading"
+              />
+          </div>
         </form>
       }
     </div>
     `,
-  styles: [],
+  styles: [`
+    :host { display: block; }
+
+    .form-wrapper {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #f0dfc0;
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    @media (max-width: 480px) {
+      .form-wrapper { padding: 1.5rem 1.25rem; }
+    }
+
+    .fields-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .fields-row { grid-template-columns: 1fr; }
+    }
+
+    .fw { width: 100%; margin-bottom: 0.5rem; }
+
+    .submit-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 0.5rem;
+    }
+
+    .feedback {
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      h3 { margin: 0 0 0.25rem; font-weight: 600; }
+      p { margin: 0; }
+    }
+
+    .feedback.success {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      color: #166534;
+      i { font-size: 2rem; color: #16a34a; }
+    }
+
+    .feedback.error {
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+      i { font-size: 2rem; color: #dc2626; }
+    }
+
+    .hint { color: #7a8a7a; font-size: 0.78rem; }
+  `],
 })
 export class ContactFormComponent {
   @Input() form!: FormGroup;

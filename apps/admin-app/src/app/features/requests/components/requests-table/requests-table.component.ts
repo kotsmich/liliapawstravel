@@ -12,6 +12,7 @@ import { TripRequest } from '@models/lib/trip-request.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, DatePipe, TableModule, TagModule, ButtonModule, BadgeModule],
   template: `
+    <div style="overflow-x:auto">
     <p-table
       [value]="requests"
       [loading]="loading"
@@ -99,6 +100,7 @@ import { TripRequest } from '@models/lib/trip-request.model';
         </tr>
       </ng-template>
     </p-table>
+    </div>
     `,
   styles: [],
 })

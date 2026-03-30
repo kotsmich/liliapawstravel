@@ -21,6 +21,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, take } from 'rxjs';
 import { TripActions, selectSelectedTrip, selectTripsMutating, selectTripsError } from '@admin/store/trips';
 import { Dog } from '@models/lib/dog.model';
+import { generateId } from '@models/lib/utils';
 
 @Component({
   selector: 'app-trip-form',
@@ -147,7 +148,7 @@ export class TripFormComponent implements OnInit {
   }
 
   addDog(): void {
-    const newId = crypto.randomUUID();
+    const newId = generateId();
     this.dogs.push(this.dogGroup({ id: newId }));
     this.editingDogIndex = this.dogs.length - 1;
     this.isNewDog = true;
@@ -209,7 +210,7 @@ export class TripFormComponent implements OnInit {
 
     const dogs: Dog[] = this.form.value.dogs.map((d: Partial<Dog>) => ({
       ...d,
-      id: d.id || crypto.randomUUID(),
+      id: d.id || generateId(),
     }));
     const rawDate = this.form.value.date as Date | null;
     const dateStr = rawDate

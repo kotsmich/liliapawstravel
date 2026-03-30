@@ -139,4 +139,41 @@ $sidebar-collapsed: 64px;
   flex: 1;
   padding: 2rem;
   overflow: auto;
+
+  @media (max-width: 767px) { padding: 1rem; }
+}
+
+.mobile-backdrop {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 999;
+  }
+}
+
+@media (max-width: 767px) {
+  .layout { position: relative; }
+
+  .sidebar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: $sidebar-w !important;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+
+    .layout:not(.sidebar-closed) & {
+      transform: translateX(0);
+    }
+  }
+
+  .main { width: 100%; }
+
+  .topbar { padding: 0 1rem; }
 }
