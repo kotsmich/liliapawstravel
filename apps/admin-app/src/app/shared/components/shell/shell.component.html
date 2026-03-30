@@ -2,35 +2,44 @@
   <aside class="sidebar flex flex-column flex-shrink-0">
     <div class="sidebar__brand flex align-items-center">
       <span class="sidebar__paw">🐾</span>
-      <span class="sidebar__title" *ngIf="sidebarOpen">Lilia Paws</span>
+      @if (sidebarOpen) {
+        <span class="sidebar__title">Lilia Paws</span>
+      }
     </div>
 
     <nav class="sidebar__nav flex flex-column flex-1">
-      <a
-        *ngFor="let item of navItems"
-        class="nav-item flex align-items-center"
-        [routerLink]="item.link"
-        routerLinkActive="active"
-        [pTooltip]="sidebarOpen ? '' : item.label"
-        tooltipPosition="right"
-      >
-        <span class="nav-item__icon-wrap flex align-items-center justify-content-center flex-shrink-0">
-          <i [class]="item.icon"></i>
-          <span
-            *ngIf="item.link === '/admin/requests' && (pendingCount$ | async) as count"
-            class="nav-badge flex align-items-center justify-content-center">
-            {{ count }}
+      @for (item of navItems; track item) {
+        <a
+          class="nav-item flex align-items-center"
+          [class.active]="isActive(item.link)"
+          [pTooltip]="sidebarOpen ? '' : item.label"
+          tooltipPosition="right"
+          style="cursor:pointer"
+          (click)="navigateTo(item.link)"
+          >
+          <span class="nav-item__icon-wrap flex align-items-center justify-content-center flex-shrink-0">
+            <i [class]="item.icon"></i>
+            @if (item.link === '/admin/requests' && (pendingCount$ | async); as count) {
+              <span
+                class="nav-badge flex align-items-center justify-content-center">
+                {{ count }}
+              </span>
+            }
           </span>
-        </span>
-        <span *ngIf="sidebarOpen">{{ item.label }}</span>
-      </a>
+          @if (sidebarOpen) {
+            <span>{{ item.label }}</span>
+          }
+        </a>
+      }
     </nav>
 
     <div class="sidebar__footer flex align-items-center justify-content-between">
-      <div class="user-info flex align-items-center" *ngIf="sidebarOpen && (user$ | async) as user">
-        <i class="pi pi-user"></i>
-        <span>{{ user.email }}</span>
-      </div>
+      @if (sidebarOpen && (user$ | async); as user) {
+        <div class="user-info flex align-items-center">
+          <i class="pi pi-user"></i>
+          <span>{{ user.email }}</span>
+        </div>
+      }
       <p-button
         icon="pi pi-sign-out"
         [text]="true"
@@ -40,7 +49,7 @@
         pTooltip="Logout"
         tooltipPosition="right"
         (onClick)="logout()"
-      />
+        />
     </div>
   </aside>
 
@@ -52,7 +61,7 @@
         [rounded]="true"
         severity="secondary"
         (onClick)="toggleSidebar()"
-      />
+        />
       <span class="topbar__title">Admin Panel</span>
     </header>
     <div class="content flex-1">

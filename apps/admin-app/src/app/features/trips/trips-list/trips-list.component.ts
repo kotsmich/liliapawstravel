@@ -1,20 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
-import { TableModule } from 'primeng/table';
-import { DialogModule } from 'primeng/dialog';
-import { TabsModule } from 'primeng/tabs';
-import { AccordionModule } from 'primeng/accordion';
-import { SelectModule } from 'primeng/select';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { BadgeModule } from 'primeng/badge';
 import { Store } from '@ngrx/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { BehaviorSubject, combineLatest, map } from 'rxjs';
@@ -24,17 +14,24 @@ import {
   selectAllTrips, selectTripsIsLoading, selectCalendarSelectedDate,
   selectTripsAsCalendarEvents, selectAllRequests,
 } from '@myorg/store';
-import { LoadingSpinnerComponent, TripCalendarComponent } from '@myorg/ui';
-import { Trip, Dog, TripRequest } from '@myorg/models';
+import { LoadingSpinnerComponent } from '@myorg/ui';
+import { Trip, Dog, TripRequest, CalendarEvent } from '@myorg/models';
+import { TripCalendarViewComponent } from '../components/trip-calendar-view/trip-calendar-view.component';
+import { AllTripsTabComponent } from '../components/all-trips-tab/all-trips-tab.component';
+import { TripDetailDialogComponent } from '../components/trip-detail-dialog/trip-detail-dialog.component';
+import { DogFormDialogComponent } from '../components/dog-form-dialog/dog-form-dialog.component';
 
 @Component({
-  selector: 'app-trips-list',
+  selector: 'app-trip-list-page',
   standalone: true,
   imports: [
-    CommonModule, RouterLink, FormsModule,
-    CardModule, ButtonModule, TagModule, ConfirmDialogModule, ToastModule, TableModule,
-    DialogModule, TabsModule, AccordionModule, SelectModule, InputTextModule, InputNumberModule, BadgeModule,
-    LoadingSpinnerComponent, TripCalendarComponent,
+    CommonModule,
+    CardModule, ButtonModule, ConfirmDialogModule, ToastModule,
+    LoadingSpinnerComponent,
+    TripCalendarViewComponent,
+    AllTripsTabComponent,
+    TripDetailDialogComponent,
+    DogFormDialogComponent,
   ],
   templateUrl: './trips-list.component.html',
   styleUrls: ['./trips-list.component.scss'],
@@ -49,6 +46,13 @@ export class TripsListComponent implements OnInit {
     this.store.select(selectAllTrips),
     this.store.select(selectCalendarSelectedDate),
   ]).pipe(map(([trips, date]) => (date ? trips.filter((t: Trip) => t.date === date) : [])));
+
+  // Sync properties for strict-template bindings to typed dumb components
+  trips: Trip[] = [];
+  calendarEvents: CalendarEvent[] = [];
+  tripsForDate: Trip[] = [];
+  detailTrip: Trip | null = null;
+  detailRequests: TripRequest[] = [];
 
   selectedDate: string | null = null;
   activeTab: 'calendar' | 'all' = 'calendar';
@@ -84,12 +88,6 @@ export class TripsListComponent implements OnInit {
   dogEditValues: Dog | null = null;
   dogEditTripId: string | null = null;
 
-  dogSizes = [
-    { label: 'Small (< 10 kg)', value: 'small' },
-    { label: 'Medium (10–25 kg)', value: 'medium' },
-    { label: 'Large (> 25 kg)', value: 'large' },
-  ];
-
   constructor(
     private store: Store,
     private router: Router,
@@ -115,6 +113,14 @@ export class TripsListComponent implements OnInit {
     this.router.navigate(['/admin/trips/new'], { queryParams });
   }
 
+  navigateNewTrip(): void {
+    this.router.navigate(['/admin/trips/new']);
+  }
+
+  onEditTrip(trip: Trip): void {
+    this.router.navigate(['/admin/trips', trip.id, 'edit']);
+  }
+
   deleteTrip(trip: Trip): void {
     this.confirmationService.confirm({
       header: 'Delete Trip',
@@ -130,7 +136,12 @@ export class TripsListComponent implements OnInit {
   }
 
   openDetail(trip: Trip): void {
-    this.detailHeader = `${trip.departureCity} → ${trip.arrivalCity}  ·  ${this.fmtDate(trip.date)}`;
+    const fmtDate = (d: string) => {
+      if (!d) return '—';
+      const [y, m, day] = d.split('-');
+      return `${day}/${m}/${y}`;
+    };
+    this.detailHeader = `${trip.departureCity} → ${trip.arrivalCity}  ·  ${fmtDate(trip.date)}`;
     this.detailActiveTab = 'dogs';
     this.detailTripId$.next(trip.id);
     this.store.dispatch(TripActions.loadTripById({ id: trip.id }));
@@ -143,20 +154,20 @@ export class TripsListComponent implements OnInit {
     this.dogEditVisible = false;
   }
 
-  openEditDog(dog: Dog, tripId: string): void {
-    this.dogEditValues = { ...dog };
-    this.dogEditTripId = tripId;
+  onEditDog(event: { dog: Dog; tripId: string }): void {
+    this.dogEditValues = { ...event.dog };
+    this.dogEditTripId = event.tripId;
     this.dogEditVisible = true;
   }
 
-  saveEditDog(): void {
-    if (!this.dogEditTripId || !this.dogEditValues) return;
-    this.store.dispatch(TripActions.updateDog({ tripId: this.dogEditTripId, dog: this.dogEditValues }));
-    this.messageService.add({ severity: 'success', summary: 'Dog Updated', detail: `${this.dogEditValues.name} saved.` });
+  onSaveDog(dog: Dog): void {
+    if (!this.dogEditTripId) return;
+    this.store.dispatch(TripActions.updateDog({ tripId: this.dogEditTripId, dog }));
+    this.messageService.add({ severity: 'success', summary: 'Dog Updated', detail: `${dog.name} saved.` });
     this.dogEditVisible = false;
   }
 
-  cancelEditDog(): void {
+  onCancelDog(): void {
     this.dogEditVisible = false;
     this.dogEditValues = null;
   }
@@ -201,22 +212,5 @@ export class TripsListComponent implements OnInit {
         this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Request deleted.' });
       },
     });
-  }
-
-  fmtDate(date: string): string {
-    if (!date) return '—';
-    const [y, m, d] = date.split('-');
-    return `${d}/${m}/${y}`;
-  }
-
-  statusSeverity(status: Trip['status']): 'info' | 'success' | 'secondary' {
-    return status === 'upcoming' ? 'info' : status === 'completed' ? 'success' : 'secondary';
-  }
-
-  requestStatusSeverity(status: TripRequest['status']): 'warn' | 'success' | 'danger' | 'secondary' {
-    if (status === 'pending') return 'warn';
-    if (status === 'approved') return 'success';
-    if (status === 'rejected') return 'danger';
-    return 'secondary';
   }
 }

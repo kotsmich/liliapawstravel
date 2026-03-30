@@ -1,0 +1,55 @@
+<p-table
+  [value]="trips"
+  [rowHover]="true"
+  styleClass="p-datatable-sm"
+  [tableStyle]="{ 'min-width': '60rem' }"
+  >
+  <ng-template pTemplate="header">
+    <tr>
+      <th pSortableColumn="date">Date <p-sortIcon field="date" /></th>
+      <th>Route</th>
+      <th>Capacity</th>
+      <th>Filled</th>
+      <th>Remaining</th>
+      <th>Accepting</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-trip>
+    <tr style="cursor:pointer" (click)="viewDetails.emit(trip)">
+      <td>{{ trip.date }}</td>
+      <td>{{ trip.departureCity }} → {{ trip.arrivalCity }}</td>
+      <td>{{ trip.totalCapacity }}</td>
+      <td>{{ trip.dogs.length }}</td>
+      <td [class.low-spots]="trip.spotsAvailable <= 2">{{ trip.spotsAvailable }}</td>
+      <td>
+        @if (trip.isFull || trip.spotsAvailable <= 0) {
+          <p-tag severity="danger" value="Full" />
+        }
+        @if (!trip.isFull && trip.spotsAvailable > 0 && !trip.acceptingRequests) {
+          <p-tag severity="warn" value="Freezed" />
+        }
+        @if (!trip.isFull && trip.spotsAvailable > 0 && trip.acceptingRequests) {
+          <p-tag severity="success" value="Open" />
+        }
+      </td>
+      <td>
+        <p-tag [value]="trip.status" [severity]="statusSeverity(trip.status)" />
+      </td>
+      <td (click)="$event.stopPropagation()">
+        <div class="trip-actions flex gap-2">
+          <p-button icon="pi pi-pencil" [outlined]="true" size="small"
+            (onClick)="editTrip.emit(trip)" pTooltip="Edit" />
+          <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small"
+            (onClick)="deleteTrip.emit(trip)" pTooltip="Delete" />
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="8" style="text-align:center">No trips yet.</td>
+    </tr>
+  </ng-template>
+</p-table>

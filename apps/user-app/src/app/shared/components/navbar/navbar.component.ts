@@ -1,16 +1,18 @@
 import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, ButtonModule],
+  imports: [CommonModule, ButtonModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent {
+  constructor(private router: Router) {}
+
   menuOpen = false;
   scrolled = false;
 
@@ -19,4 +21,13 @@ export class NavbarComponent {
 
   toggleMenu(): void { this.menuOpen = !this.menuOpen; }
   closeMenu(): void { this.menuOpen = false; }
+
+  navigateTo(path: string): void {
+    this.router.navigate([path]);
+    this.closeMenu();
+  }
+
+  isActive(path: string): boolean {
+    return this.router.url === path || (path !== '/' && this.router.url.startsWith(path));
+  }
 }

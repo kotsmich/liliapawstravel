@@ -1,17 +1,21 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
+
+import { Router } from '@angular/router';
+import { HeroComponent } from './components/hero/hero.component';
+import { StatsSectionComponent } from './components/stats-section/stats-section.component';
+import { AboutSectionComponent } from './components/about-section/about-section.component';
+import { CtaSectionComponent } from './components/cta-section/cta-section.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, ButtonModule, CardModule],
+  imports: [HeroComponent, StatsSectionComponent, AboutSectionComponent, CtaSectionComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
+  constructor(private router: Router) {}
+
   stats = [
     { value: '1,200+', label: 'Dogs Transported' },
     { value: '18', label: 'Countries' },
@@ -25,9 +29,12 @@ export class HomeComponent {
     { icon: '🤝', title: 'Shelter Partners', desc: 'We work with 200+ certified shelters and verified adopters.' },
   ];
   steps = [
-    { step: '01', title: 'Adopter Approved', desc: 'Shelter confirms the adoption.' },
-    { step: '02', title: 'Book a Trip', desc: 'Submit the transport request.' },
-    { step: '03', title: 'We Prepare', desc: 'Route planned, documents checked.' },
-    { step: '04', title: 'Safe Delivery', desc: 'Your dog arrives happy and healthy.' },
+    { step: 1, title: 'Adopter Approved', desc: 'Shelter confirms the adoption.' },
+    { step: 2, title: 'Book a Trip', desc: 'Submit the transport request.' },
+    { step: 3, title: 'We Prepare', desc: 'Route planned, documents checked.' },
+    { step: 4, title: 'Safe Delivery', desc: 'Your dog arrives happy and healthy.' },
   ];
+
+  goToRequest(): void { this.router.navigate(['/request']); }
+  goToContact(): void { this.router.navigate(['/contact']); }
 }

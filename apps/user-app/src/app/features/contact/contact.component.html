@@ -14,62 +14,13 @@
       <div class="info-card"><span>🌍</span><h3>Coverage</h3><p>18 countries</p></div>
     </div>
 
-    <div class="form-wrapper">
-      <div *ngIf="success$ | async" class="feedback success flex align-items-start flex-wrap gap-3">
-        <i class="pi pi-check-circle"></i>
-        <div><h3>Message sent!</h3><p>We'll respond within 24 hours.</p></div>
-        <p-button label="Send Another" [outlined]="true" severity="success" (onClick)="onReset()" />
-      </div>
-      <p-message *ngIf="error$ | async as e" severity="error" [text]="'Error: ' + e" styleClass="mb-3" />
-
-      <form *ngIf="!(success$ | async)" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-        <div class="row">
-          <div class="field fw">
-            <p-ifta-label>
-              <input pInputText id="name" formControlName="name" />
-              <label for="name">Full Name</label>
-            </p-ifta-label>
-            <small class="p-error" *ngIf="form.get('name')?.touched && err('name')">{{ err('name') }}</small>
-          </div>
-          <div class="field fw">
-            <p-ifta-label>
-              <input pInputText id="email" formControlName="email" type="email" />
-              <label for="email">Email</label>
-            </p-ifta-label>
-            <small class="hint" *ngIf="emailHint">{{ emailHint }}</small>
-            <small class="p-error" *ngIf="form.get('email')?.touched && err('email')">{{ err('email') }}</small>
-          </div>
-        </div>
-        <div class="row">
-          <div class="field fw">
-            <p-ifta-label>
-              <input pInputText id="phone" formControlName="phone" type="tel" />
-              <label for="phone">Phone (optional)</label>
-            </p-ifta-label>
-            <small class="p-error" *ngIf="form.get('phone')?.touched && err('phone')">{{ err('phone') }}</small>
-          </div>
-          <div class="field fw">
-            <p-ifta-label>
-              <input pInputText id="subject" formControlName="subject" />
-              <label for="subject">Subject</label>
-            </p-ifta-label>
-            <small class="p-error" *ngIf="form.get('subject')?.touched && err('subject')">{{ err('subject') }}</small>
-          </div>
-        </div>
-        <div class="field fw">
-          <p-ifta-label>
-            <textarea pTextarea id="message" formControlName="message" rows="6" autoResize></textarea>
-            <label for="message">Message</label>
-          </p-ifta-label>
-          <small class="p-error" *ngIf="form.get('message')?.touched && err('message')">{{ err('message') }}</small>
-        </div>
-        <p-button
-          type="submit"
-          label="{{ (loading$ | async) ? 'Sending...' : 'Send Message' }}"
-          [loading]="!!(loading$ | async)"
-          [disabled]="!!(loading$ | async)"
-        />
-      </form>
-    </div>
+    <app-contact-form
+      [form]="form"
+      [loading]="!!(loading$ | async)"
+      [success]="!!(success$ | async)"
+      [error]="(error$ | async)"
+      (formSubmit)="onSubmit()"
+      (reset)="onReset()"
+    />
   </div>
 </div>

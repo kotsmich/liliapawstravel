@@ -7,9 +7,9 @@
     <div>
       <h4>Navigation</h4>
       <ul>
-        <li><a routerLink="/">Home</a></li>
-        <li><a routerLink="/request">Request Transport</a></li>
-        <li><a routerLink="/contact">Contact</a></li>
+        <li><a style="cursor:pointer" (click)="navigateTo('/')">Home</a></li>
+        <li><a style="cursor:pointer" (click)="navigateTo('/request')">Request Transport</a></li>
+        <li><a style="cursor:pointer" (click)="navigateTo('/contact')">Contact</a></li>
       </ul>
     </div>
     <div>

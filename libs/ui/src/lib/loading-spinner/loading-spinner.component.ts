@@ -1,17 +1,19 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'ui-loading-spinner',
   standalone: true,
-  imports: [CommonModule, ProgressSpinnerModule],
+  imports: [ProgressSpinnerModule],
   template: `
     <div class="spinner-wrap" [class.overlay]="overlay">
       <p-progressspinner [style]="{ width: diameter + 'px', height: diameter + 'px' }" strokeWidth="4" />
-      <p *ngIf="message" class="spinner-msg">{{ message }}</p>
+      @if (message) {
+        <p class="spinner-msg">{{ message }}</p>
+      }
     </div>
-  `,
+    `,
   styles: [`
     .spinner-wrap {
       display: flex;

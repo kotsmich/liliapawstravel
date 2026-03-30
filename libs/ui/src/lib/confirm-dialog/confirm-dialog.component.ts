@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmationService } from 'primeng/api';
@@ -15,7 +15,7 @@ export interface ConfirmOptions {
 @Component({
   selector: 'ui-confirm-dialog',
   standalone: true,
-  imports: [CommonModule, ConfirmDialogModule, ButtonModule],
+  imports: [ConfirmDialogModule, ButtonModule],
   template: `<p-confirmdialog />`,
 })
 export class ConfirmDialogComponent {

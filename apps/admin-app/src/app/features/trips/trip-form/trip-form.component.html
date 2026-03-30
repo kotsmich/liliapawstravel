@@ -1,0 +1,300 @@
+<div class="form-page flex flex-column gap-4">
+  <div class="page-header flex align-items-center">
+    <p-button icon="pi pi-arrow-left" [text]="true" [rounded]="true" (onClick)="navigateToTrips()" />
+    <h1>{{ isEdit ? 'Edit Trip' : 'New Trip' }}</h1>
+  </div>
+
+  <p-toast />
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <p-card styleClass="form-card">
+      <ng-template pTemplate="title">Trip Details</ng-template>
+
+      <div class="row">
+        <div class="field fw">
+          <p-ifta-label>
+            <p-datepicker inputId="date" formControlName="date" [minDate]="today"
+              dateFormat="dd/mm/yy" [showTime]="false" [showIcon]="true" styleClass="w-full" />
+            <label for="date">Date</label>
+          </p-ifta-label>
+          @if (form.get('date')?.touched && form.get('date')?.invalid) {
+            <small class="p-error">Please select a valid future date.</small>
+          }
+        </div>
+        <div class="field fw">
+          <p-ifta-label>
+            <p-select inputId="status" formControlName="status" [options]="statuses"
+              optionLabel="label" optionValue="value" styleClass="w-full" />
+            <label for="status">Status</label>
+          </p-ifta-label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field fw">
+          <p-ifta-label>
+            <p-inputnumber inputId="totalCapacity" formControlName="totalCapacity"
+              [min]="1" [showButtons]="true" styleClass="w-full" />
+            <label for="totalCapacity">Total Capacity (spots)</label>
+          </p-ifta-label>
+          @if (capacityWarning) {
+            <small class="p-warn">{{ capacityWarning }}</small>
+          }
+          @if (!capacityWarning && form.get('totalCapacity')?.touched && form.get('totalCapacity')?.invalid) {
+            <small class="p-error">Must be at least 1.</small>
+          }
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="depCountry" formControlName="departureCountry" placeholder="Romania" />
+            <label for="depCountry">Departure Country</label>
+          </p-ifta-label>
+          @if (form.get('departureCountry')?.touched && form.get('departureCountry')?.invalid) {
+            <small class="p-error">Required.</small>
+          }
+        </div>
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="depCity" formControlName="departureCity" placeholder="Bucharest" />
+            <label for="depCity">Departure City</label>
+          </p-ifta-label>
+          @if (form.get('departureCity')?.touched && form.get('departureCity')?.invalid) {
+            <small class="p-error">Required.</small>
+          }
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="arrCountry" formControlName="arrivalCountry" placeholder="Netherlands" />
+            <label for="arrCountry">Arrival Country</label>
+          </p-ifta-label>
+          @if (form.get('arrivalCountry')?.touched && form.get('arrivalCountry')?.invalid) {
+            <small class="p-error">Required.</small>
+          }
+        </div>
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="arrCity" formControlName="arrivalCity" placeholder="Amsterdam" />
+            <label for="arrCity">Arrival City</label>
+          </p-ifta-label>
+          @if (form.get('arrivalCity')?.touched && form.get('arrivalCity')?.invalid) {
+            <small class="p-error">Required.</small>
+          }
+        </div>
+      </div>
+
+      <div class="field fw">
+        <p-ifta-label>
+          <textarea pTextarea id="notes" formControlName="notes" rows="2" autoResize></textarea>
+          <label for="notes">Notes (optional)</label>
+        </p-ifta-label>
+      </div>
+
+      <div class="row">
+        <div class="field fw">
+          <label class="field-section-label">Trip Capacity</label>
+          <!-- Auto-locked: dogs reached capacity — show read-only indicator -->
+          @if (isAtCapacity) {
+            <div class="status-display status-display--danger">
+              <div class="status-display__body">
+                <span class="status-display__title">
+                  <i class="pi pi-lock"></i> Trip is Full
+                </span>
+                <span class="status-display__desc">
+                  Dogs ({{ dogs.length }}) reached capacity ({{ form.get('totalCapacity')?.value }}).
+                  Increase <strong>Total Capacity</strong> to unblock.
+                </span>
+              </div>
+              <span class="status-check__badge status-check__badge--danger">Full</span>
+            </div>
+          }
+          <!-- Manual toggle: admin can mark full even with available spots -->
+          @if (!isAtCapacity) {
+            <label for="isFull" class="status-check" [class.status-check--danger]="form.get('isFull')?.value">
+              <p-checkbox formControlName="isFull" [binary]="true" inputId="isFull" />
+              <div class="status-check__body">
+                <span class="status-check__title">Mark as Full</span>
+                <span class="status-check__desc">Manually close this trip to new dogs</span>
+              </div>
+              @if (form.get('isFull')?.value) {
+                <span class="status-check__badge status-check__badge--danger">
+                  <i class="pi pi-lock"></i> Full
+                </span>
+              }
+              @if (!form.get('isFull')?.value) {
+                <span class="status-check__badge status-check__badge--ok">
+                  <i class="pi pi-lock-open"></i> Open
+                </span>
+              }
+            </label>
+          }
+        </div>
+        <div class="field fw">
+          <label class="field-section-label">Request Acceptance</label>
+          <label for="acceptingRequests" class="status-check" [class.status-check--warn]="!form.get('acceptingRequests')?.value">
+            <p-checkbox formControlName="acceptingRequests" [binary]="true" inputId="acceptingRequests" />
+            <div class="status-check__body">
+              <span class="status-check__title">Accepting Requests</span>
+              <span class="status-check__desc">Uncheck to freeze and stop new requests</span>
+            </div>
+            @if (form.get('acceptingRequests')?.value) {
+              <span class="status-check__badge status-check__badge--ok">
+                <i class="pi pi-check-circle"></i> Open
+              </span>
+            }
+            @if (!form.get('acceptingRequests')?.value) {
+              <span class="status-check__badge status-check__badge--warn">
+                <i class="pi pi-ban"></i> Freezed
+              </span>
+            }
+          </label>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- Dogs section -->
+    <p-card styleClass="form-card dogs-section">
+      <ng-template pTemplate="title">
+        <div class="dogs-header flex align-items-center justify-content-between">
+          <span>🐶 Dogs</span>
+          <p-button type="button" label="Add Dog" icon="pi pi-plus" [outlined]="true" size="small" (onClick)="addDog()" />
+        </div>
+      </ng-template>
+
+      <div class="dogs-list flex flex-column gap-2" formArrayName="dogs">
+        @for (dog of dogs.controls; track dog; let i = $index) {
+          <div class="dog-row flex align-items-center justify-content-between">
+            <div class="dog-row__info flex align-items-center flex-wrap">
+              <span class="dog-name">🐶 {{ dog.get('name')?.value || 'Unnamed' }}</span>
+              <span class="dog-badge">{{ dog.get('size')?.value }}</span>
+              @if (dog.get('age')?.value !== null) {
+                <span class="dog-age">{{ dog.get('age')?.value }} yr</span>
+              }
+              <span class="dog-route">{{ dog.get('pickupLocation')?.value }} → {{ dog.get('dropLocation')?.value }}</span>
+              <span class="dog-chip">{{ dog.get('chipId')?.value }}</span>
+            </div>
+            <div class="dog-row__actions flex flex-shrink-0 gap-1">
+              <p-button icon="pi pi-pencil" [outlined]="true" size="small" type="button"
+                pTooltip="Edit dog" (onClick)="openDogDialog(i)" />
+              <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" type="button"
+                pTooltip="Remove dog" (onClick)="removeDog(i)" />
+            </div>
+          </div>
+        }
+        @if (dogs.length === 0) {
+          <p class="no-dogs">No dogs added yet. Use the button above.</p>
+        }
+      </div>
+    </p-card>
+
+    <!-- Actions -->
+    <div class="form-actions flex justify-content-end">
+      <p-button type="button" label="Cancel" [outlined]="true" (onClick)="navigateToTrips()" />
+      <p-button
+        type="submit"
+        [label]="(mutating$ | async) ? 'Saving...' : (isEdit ? 'Update Trip' : 'Create Trip')"
+        icon="pi pi-save"
+        [loading]="!!(mutating$ | async)"
+        [disabled]="!!(mutating$ | async)"
+        />
+    </div>
+  </form>
+</div>
+
+<!-- Dog add / edit dialog — outside the main form to avoid FormGroup nesting conflicts -->
+<p-dialog
+  [(visible)]="dogDialogVisible"
+  [modal]="true"
+  [style]="{ width: '620px', maxWidth: '95vw' }"
+  [contentStyle]="{ overflow: 'visible', padding: '1.25rem 1.5rem' }"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="false"
+  [header]="isNewDog ? 'Add Dog' : ('Edit Dog ' + ((editingDogIndex ?? 0) + 1))">
+
+  @if (dogEditForm) {
+    <div [formGroup]="dogEditForm" class="dlg-form">
+      <div class="row">
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="dlg-name" formControlName="name" class="w-full" />
+            <label for="dlg-name">Dog Name</label>
+          </p-ifta-label>
+          @if (dogEditForm.get('name')?.touched && dogEditForm.get('name')?.invalid) {
+            <small class="p-error">Required.</small>
+          }
+        </div>
+        <div class="field fw">
+          <p-ifta-label>
+            <p-select inputId="dlg-size" formControlName="size" [options]="sizes"
+              optionLabel="label" optionValue="value" styleClass="w-full" />
+            <label for="dlg-size">Size</label>
+          </p-ifta-label>
+          @if (dogEditForm.get('size')?.touched && dogEditForm.get('size')?.invalid) {
+            <small class="p-error">Required.</small>
+          }
+        </div>
+      </div>
+      <div class="row">
+        <div class="field fw">
+          <p-ifta-label>
+            <p-inputnumber inputId="dlg-age" formControlName="age" [min]="0"
+              [showButtons]="false" styleClass="w-full" />
+            <label for="dlg-age">Age (years)</label>
+          </p-ifta-label>
+          @if (dogEditForm.get('age')?.touched && dogEditForm.get('age')?.invalid) {
+            <small class="p-error">Must be 0 or greater.</small>
+          }
+        </div>
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="dlg-chip" formControlName="chipId" class="w-full" maxlength="15" />
+            <label for="dlg-chip">Microchip ID</label>
+          </p-ifta-label>
+          @if (dogEditForm.get('chipId')?.touched && dogEditForm.get('chipId')?.invalid) {
+            <small class="p-error">15-digit chip ID required.</small>
+          }
+        </div>
+      </div>
+      <div class="field fw">
+        <p-ifta-label>
+          <input pInputText id="dlg-pickup" formControlName="pickupLocation" class="w-full" />
+          <label for="dlg-pickup">Pickup Location</label>
+        </p-ifta-label>
+        @if (dogEditForm.get('pickupLocation')?.touched && dogEditForm.get('pickupLocation')?.invalid) {
+          <small class="p-error">Required.</small>
+        }
+      </div>
+      <div class="field fw">
+        <p-ifta-label>
+          <input pInputText id="dlg-drop" formControlName="dropLocation" class="w-full" />
+          <label for="dlg-drop">Drop Location</label>
+        </p-ifta-label>
+        @if (dogEditForm.get('dropLocation')?.touched && dogEditForm.get('dropLocation')?.invalid) {
+          <small class="p-error">Required.</small>
+        }
+      </div>
+      <div class="field fw">
+        <p-ifta-label>
+          <textarea pTextarea id="dlg-notes" formControlName="notes" rows="3"
+          class="w-full" autoResize></textarea>
+          <label for="dlg-notes">Special Notes (optional)</label>
+        </p-ifta-label>
+      </div>
+    </div>
+  }
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancel" [outlined]="true" type="button" (onClick)="cancelDogDialog()" />
+    <p-button
+      [label]="isNewDog ? 'Add Dog' : 'Update'"
+      icon="pi pi-check"
+      type="button"
+      (onClick)="saveDogDialog()" />
+  </ng-template>
+</p-dialog>

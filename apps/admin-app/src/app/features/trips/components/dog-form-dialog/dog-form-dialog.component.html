@@ -1,0 +1,52 @@
+<p-dialog
+  header="Edit Dog"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '480px' }"
+  [draggable]="false"
+  (onHide)="onHide()"
+  >
+  @if (editValues; as dog) {
+    <div class="dog-edit-grid">
+      <div class="field">
+        <label>Name</label>
+        <input pInputText [(ngModel)]="dog.name" class="w-full" />
+      </div>
+      <div class="field">
+        <label>Size</label>
+        <p-select
+          [(ngModel)]="dog.size"
+          [options]="dogSizes"
+          optionLabel="label"
+          optionValue="value"
+          styleClass="w-full"
+          />
+      </div>
+      <div class="field">
+        <label>Age (years)</label>
+        <p-inputnumber [(ngModel)]="dog.age" [min]="0" [max]="30" styleClass="w-full" />
+      </div>
+      <div class="field">
+        <label>Chip ID</label>
+        <input pInputText [(ngModel)]="dog.chipId" class="w-full" />
+      </div>
+      <div class="field">
+        <label>Pickup Location</label>
+        <input pInputText [(ngModel)]="dog.pickupLocation" class="w-full" />
+      </div>
+      <div class="field">
+        <label>Drop Location</label>
+        <input pInputText [(ngModel)]="dog.dropLocation" class="w-full" />
+      </div>
+      <div class="field field--full">
+        <label>Notes</label>
+        <input pInputText [(ngModel)]="dog.notes" class="w-full" />
+      </div>
+    </div>
+  }
+
+  <ng-template pTemplate="footer">
+    <p-button label="Save" icon="pi pi-check" severity="success" (onClick)="onSave()" />
+    <p-button label="Cancel" icon="pi pi-times" severity="secondary" [outlined]="true" (onClick)="onCancel()" />
+  </ng-template>
+</p-dialog>

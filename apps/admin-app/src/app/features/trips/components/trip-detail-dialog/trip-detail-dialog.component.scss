@@ -1,0 +1,33 @@
+.tab-content { margin-top: 1rem; }
+
+.req-header {
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.req-name {
+  font-weight: 600;
+  color: var(--color-slate-text);
+}
+
+.req-meta {
+  font-size: 0.85rem;
+  color: var(--color-slate-mid);
+}
+
+.req-actions {
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  margin-top: 0.75rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.empty-requests {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: #94a3b8;
+
+  i { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+  p { margin: 0; font-size: 0.875rem; }
+}

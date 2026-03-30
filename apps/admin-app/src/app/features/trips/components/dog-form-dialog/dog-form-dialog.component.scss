@@ -1,0 +1,23 @@
+.dog-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.field {
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #4a4a4a;
+  }
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+}
+
+.w-full { width: 100%; }

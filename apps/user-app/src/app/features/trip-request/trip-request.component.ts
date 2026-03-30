@@ -15,7 +15,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { filter } from 'rxjs/operators';
 import { timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DogFormComponent, TripCalendarComponent, LoadingSpinnerComponent, ToastNotificationComponent } from '@myorg/ui';
+import { DogFormComponent, TripCalendarComponent, ToastNotificationComponent } from '@myorg/ui';
 import { CalendarEvent, Trip, Dog } from '@myorg/models';
 import {
   CalendarActions,
@@ -37,7 +37,7 @@ import {
     CommonModule, ReactiveFormsModule,
     ButtonModule, CardModule, DividerModule, MessageModule, ConfirmDialogModule,
     InputTextModule, IftaLabelModule, SkeletonModule, TagModule,
-    DogFormComponent, TripCalendarComponent, LoadingSpinnerComponent, ToastNotificationComponent,
+    DogFormComponent, TripCalendarComponent, ToastNotificationComponent,
   ],
   templateUrl: './trip-request.component.html',
   styleUrls: ['./trip-request.component.scss'],

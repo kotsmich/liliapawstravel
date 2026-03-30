@@ -1,0 +1,90 @@
+.grid-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 400px) 1fr;
+  gap: 1.5rem;
+  align-items: start;
+
+  @media (max-width: 900px) { grid-template-columns: 1fr; }
+}
+
+.cal-hint {
+  font-size: 0.8rem;
+  color: var(--color-slate-mid);
+  margin-top: 0.75rem;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.no-date-trip {
+  text-align: center;
+  padding: 1.25rem;
+  margin-top: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px dashed var(--color-border-light);
+  color: var(--color-slate-mid);
+
+  i { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+  p { margin: 0 0 0.75rem; font-size: 0.875rem; }
+}
+
+.trips-list { flex-direction: column; gap: 1rem; }
+
+.trip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+
+  &__main {
+    gap: 0.2rem;
+  }
+}
+
+.trip-date-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-primary, #e07b54);
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  i { font-size: 0.75rem; }
+}
+
+.trip-route {
+  align-items: center;
+  gap: 0.5rem;
+  strong { color: var(--color-slate-text); font-size: 0.95rem; }
+}
+
+.trip-body {
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+
+  .dogs-count { color: var(--color-slate-mid); }
+  .spots-count {
+    color: var(--color-slate-mid);
+    &.low { color: #dc2626; font-weight: 600; }
+  }
+  .notes { color: var(--color-slate-mid); font-style: italic; width: 100%; }
+}
+
+.trip-actions { gap: 0.5rem; }
+
+.empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #94a3b8;
+
+  i { font-size: 3rem; display: block; margin: 0 auto 1rem; }
+}
+
+.event--locked {
+  opacity: 0.65;
+  filter: grayscale(0.35);
+}

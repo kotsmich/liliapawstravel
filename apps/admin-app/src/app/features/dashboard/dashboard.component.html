@@ -1,84 +1,30 @@
 <div class="dashboard flex flex-column gap-4">
   <div class="page-header flex align-items-center justify-content-between">
     <h1>Dashboard</h1>
-    <p-button label="New Trip" icon="pi pi-plus" routerLink="/admin/trips/new" />
+    <p-button label="New Trip" icon="pi pi-plus" (onClick)="navigateToNewTrip()" />
   </div>
 
-  <ui-loading-spinner *ngIf="loading$ | async" message="Loading trips..." />
+  @if (loading$ | async) {
+    <ui-loading-spinner message="Loading trips..." />
+  }
 
-  <ng-container *ngIf="!(loading$ | async)">
-    <!-- Stats -->
-    <div class="stats">
-      <p-card styleClass="stat-card">
-        <div class="stat-content flex align-items-center">
-          <i class="pi pi-car stat-icon"></i>
-          <div>
-            <span class="stat-value">{{ (trips$ | async)?.length ?? 0 }}</span>
-            <span class="stat-label">Total Trips</span>
-          </div>
-        </div>
-      </p-card>
-      <p-card styleClass="stat-card upcoming">
-        <div class="stat-content flex align-items-center">
-          <i class="pi pi-calendar stat-icon"></i>
-          <div>
-            <span class="stat-value">{{ (upcoming$ | async)?.length ?? 0 }}</span>
-            <span class="stat-label">Upcoming</span>
-          </div>
-        </div>
-      </p-card>
-      <p-card styleClass="stat-card done">
-        <div class="stat-content flex align-items-center">
-          <i class="pi pi-check-circle stat-icon"></i>
-          <div>
-            <span class="stat-value">{{ (completed$ | async)?.length ?? 0 }}</span>
-            <span class="stat-label">Completed</span>
-          </div>
-        </div>
-      </p-card>
-    </div>
-
-    <!-- Recent trips table -->
-    <p-card styleClass="recent-card">
-      <ng-template pTemplate="header">
-        <div class="card-header flex align-items-center justify-content-between">
-          <span class="card-title">Recent Trips</span>
-          <p-button label="View All" [text]="true" routerLink="/admin/trips" />
-        </div>
-      </ng-template>
-
-      <p-table [value]="(recentTrips$ | async) ?? []" [tableStyle]="{ 'min-width': '50rem' }">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Route</th>
-            <th>Date</th>
-            <th>Dogs</th>
-            <th>Status</th>
-            <th></th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-trip>
-          <tr>
-            <td>
-              <strong>{{ trip.departureCity }}, {{ trip.departureCountry }}</strong>
-              <span class="arrow"> → </span>
-              {{ trip.arrivalCity }}, {{ trip.arrivalCountry }}
-            </td>
-            <td>{{ trip.date }}</td>
-            <td>{{ trip.dogs?.length ?? 0 }}</td>
-            <td>
-              <p-tag [value]="trip.status" [severity]="statusSeverity(trip.status)" />
-            </td>
-            <td>
-              <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" size="small"
-                [routerLink]="['/admin/trips', trip.id, 'edit']" />
-            </td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-          <tr><td colspan="5" class="empty">No trips yet.</td></tr>
-        </ng-template>
-      </p-table>
-    </p-card>
-  </ng-container>
+  @if (!(loading$ | async)) {
+    @if ({
+      total: totalTrips$ | async,
+      upcoming: upcomingCount$ | async,
+      completed: completedCount$ | async,
+      recent: recentTrips$ | async
+      }; as vm) {
+      <app-dashboard-stats
+        [totalTrips]="vm.total ?? 0"
+        [upcomingTrips]="vm.upcoming ?? 0"
+        [completedTrips]="vm.completed ?? 0"
+        />
+      <app-recent-trips
+        [trips]="vm.recent ?? []"
+        (navigateToAllTrips)="navigateToAllTrips()"
+        (viewTrip)="onViewTrip($event)"
+        />
+    }
+  }
 </div>

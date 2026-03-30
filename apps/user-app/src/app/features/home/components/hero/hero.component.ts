@@ -1,0 +1,30 @@
+import { Component, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+
+
+@Component({
+  selector: 'app-hero',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [],
+  template: `
+    <section class="hero flex align-items-center">
+      <div class="hero__content">
+        <span class="badge">🐾 Europe's trusted dog transport</span>
+        <h1>Every dog deserves a <span class="accent">loving journey home.</span></h1>
+        <p>Lilia Paws Travel safely transports adopted dogs across Europe — connecting shelters with loving families, one paw at a time.</p>
+        <div class="hero__actions flex flex-wrap gap-3">
+          <a class="btn-primary" (click)="requestClicked.emit()" style="cursor:pointer">Request Transport</a>
+          <a class="btn-outline" (click)="contactClicked.emit()" style="cursor:pointer">Get in Touch</a>
+        </div>
+      </div>
+      <div class="hero__visual">
+        <div class="paw-grid">🐾🐶🐾🐕❤️🐕🐾🐶🐾</div>
+      </div>
+    </section>
+  `,
+  styles: [],
+})
+export class HeroComponent {
+  @Output() requestClicked = new EventEmitter<void>();
+  @Output() contactClicked = new EventEmitter<void>();
+}

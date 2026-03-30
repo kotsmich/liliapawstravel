@@ -4,19 +4,21 @@
   [(ngModel)]="selectedDateObj"
   (onSelect)="onSelect($event)"
   styleClass="trip-cal"
->
+  [panelStyle]="{ width: '100%', boxSizing: 'border-box' }"
+  >
   <ng-template pTemplate="date" let-date>
     <span
       class="date-cell flex flex-column align-items-center justify-content-center"
-      [pTooltip]="hasEvent(date) ? 'Transport scheduled' : ''"
+      [pTooltip]="getEventTooltip(date)"
       tooltipPosition="top"
-    >
+      >
       {{ date.day }}
-      <span
-        *ngIf="hasEvent(date)"
-        class="dot"
-        [style.background]="eventColor(date)"
-      ></span>
+      @if (hasEvent(date)) {
+        <span
+          class="dot"
+          [style.background]="eventColor(date)"
+        ></span>
+      }
     </span>
   </ng-template>
 </p-datepicker>

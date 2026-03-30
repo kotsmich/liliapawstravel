@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
 import { TooltipModule } from 'primeng/tooltip';
@@ -8,7 +8,7 @@ import { CalendarEvent } from '@myorg/models';
 @Component({
   selector: 'ui-trip-calendar',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePickerModule, TooltipModule],
+  imports: [FormsModule, DatePickerModule, TooltipModule],
   templateUrl: './trip-calendar.component.html',
   styleUrls: ['./trip-calendar.component.scss'],
 })
@@ -20,9 +20,11 @@ export class TripCalendarComponent implements OnChanges {
   selectedDateObj: Date | null = null;
   minDate = new Date();
   private eventMap = new Map<string, string>();
+  private eventDataMap = new Map<string, CalendarEvent>();
 
   ngOnChanges(): void {
     this.eventMap = new Map(this.events.map((e) => [e.date, e.color]));
+    this.eventDataMap = new Map(this.events.map((e) => [e.date, e]));
     this.selectedDateObj = this.selectedDate ? new Date(this.selectedDate + 'T00:00:00') : null;
     // New reference forces p-datepicker (OnPush) to re-evaluate date-cell templates.
     this.minDate = new Date();
@@ -39,6 +41,24 @@ export class TripCalendarComponent implements OnChanges {
 
   eventColor(date: { year: number; month: number; day: number }): string {
     return this.eventMap.get(this.partsToDateStr(date)) ?? '#e07b54';
+  }
+
+  getEventTooltip(date: { year: number; month: number; day: number }): string {
+    const key = this.partsToDateStr(date);
+    const event = this.eventDataMap.get(key);
+    if (!event) return '';
+    const lines: string[] = [event.title, event.date];
+    if (event.dogsCount !== undefined && event.totalCapacity !== undefined) {
+      lines.push(`Dogs: ${event.dogsCount} / ${event.totalCapacity}`);
+    }
+    if (event.isFull) {
+      lines.push('Status: Full');
+    } else if (event.acceptingRequests === false) {
+      lines.push('Requests: Closed');
+    } else {
+      lines.push('Requests: Open');
+    }
+    return lines.join('\n');
   }
 
   private partsToDateStr(d: { year: number; month: number; day: number }): string {

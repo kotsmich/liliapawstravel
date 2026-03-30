@@ -4,26 +4,34 @@
     <div class="dog-form__field flex flex-column">
       <label [for]="'name-' + index">Name</label>
       <input pInputText [id]="'name-' + index" formControlName="name" placeholder="Buddy" />
-      <small class="p-error" *ngIf="ctrl('name').touched && errorFor('name')">{{ errorFor('name') }}</small>
+      @if (ctrl('name').touched && errorFor('name')) {
+        <small class="p-error">{{ errorFor('name') }}</small>
+      }
     </div>
     <div class="dog-form__field flex flex-column">
       <label [for]="'size-' + index">Size</label>
       <p-select [inputId]="'size-' + index" formControlName="size"
         [options]="sizes" optionLabel="label" optionValue="value"
         placeholder="Select" styleClass="w-full" />
-      <small class="p-error" *ngIf="ctrl('size').touched && errorFor('size')">{{ errorFor('size') }}</small>
+      @if (ctrl('size').touched && errorFor('size')) {
+        <small class="p-error">{{ errorFor('size') }}</small>
+      }
     </div>
     <div class="dog-form__field dog-form__field--sm flex flex-column">
       <label [for]="'age-' + index">Age (yrs)</label>
       <p-inputnumber [inputId]="'age-' + index" formControlName="age"
         [min]="0" [showButtons]="false" styleClass="w-full" />
-      <small class="p-error" *ngIf="ctrl('age').touched && errorFor('age')">{{ errorFor('age') }}</small>
+      @if (ctrl('age').touched && errorFor('age')) {
+        <small class="p-error">{{ errorFor('age') }}</small>
+      }
     </div>
     <div class="dog-form__field flex flex-column">
       <label [for]="'chip-' + index">Microchip ID</label>
       <input pInputText [id]="'chip-' + index" formControlName="chipId"
         placeholder="123456789012345" maxlength="15" />
-      <small class="p-error" *ngIf="ctrl('chipId').touched && errorFor('chipId')">{{ errorFor('chipId') }}</small>
+      @if (ctrl('chipId').touched && errorFor('chipId')) {
+        <small class="p-error">{{ errorFor('chipId') }}</small>
+      }
     </div>
   </div>
 
@@ -32,13 +40,17 @@
       <label [for]="'pickup-' + index">Pickup</label>
       <input pInputText [id]="'pickup-' + index" formControlName="pickupLocation"
         placeholder="e.g. Bucharest, Romania" />
-      <small class="p-error" *ngIf="ctrl('pickupLocation').touched && errorFor('pickupLocation')">{{ errorFor('pickupLocation') }}</small>
+      @if (ctrl('pickupLocation').touched && errorFor('pickupLocation')) {
+        <small class="p-error">{{ errorFor('pickupLocation') }}</small>
+      }
     </div>
     <div class="dog-form__field flex flex-column">
       <label [for]="'drop-' + index">Drop</label>
       <input pInputText [id]="'drop-' + index" formControlName="dropLocation"
         placeholder="e.g. Amsterdam, Netherlands" />
-      <small class="p-error" *ngIf="ctrl('dropLocation').touched && errorFor('dropLocation')">{{ errorFor('dropLocation') }}</small>
+      @if (ctrl('dropLocation').touched && errorFor('dropLocation')) {
+        <small class="p-error">{{ errorFor('dropLocation') }}</small>
+      }
     </div>
     <div class="dog-form__field flex flex-column">
       <label [for]="'notes-' + index">Notes</label>

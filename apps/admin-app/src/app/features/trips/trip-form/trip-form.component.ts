@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -14,6 +14,7 @@ import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
+import { CheckboxModule } from 'primeng/checkbox';
 import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -22,18 +23,16 @@ import {
   TripActions,
   selectSelectedTrip, selectTripsMutating, selectTripsError,
 } from '@myorg/store';
-import { DogFormComponent, LoadingSpinnerComponent } from '@myorg/ui';
 import { Dog } from '@myorg/models';
 
 @Component({
   selector: 'app-trip-form',
   standalone: true,
   imports: [
-    CommonModule, RouterLink, ReactiveFormsModule,
+    CommonModule, RouterModule, ReactiveFormsModule,
     InputTextModule, InputNumberModule, SelectModule, ButtonModule, CardModule,
     IftaLabelModule, TextareaModule, DatePickerModule,
-    MessageModule, ToastModule, DialogModule, TooltipModule,
-    DogFormComponent, LoadingSpinnerComponent,
+    MessageModule, ToastModule, DialogModule, TooltipModule, CheckboxModule,
   ],
   templateUrl: './trip-form.component.html',
   styleUrls: ['./trip-form.component.scss'],
@@ -68,6 +67,7 @@ export class TripFormComponent implements OnInit {
     private fb: FormBuilder,
     private store: Store,
     private route: ActivatedRoute,
+    private router: Router,
     private messageService: MessageService,
   ) {
     this.error$.pipe(
@@ -88,6 +88,8 @@ export class TripFormComponent implements OnInit {
       status: ['upcoming', Validators.required],
       totalCapacity: [50, [Validators.required, Validators.min(1)]],
       notes: [''],
+      isFull: [false],
+      acceptingRequests: [true],
       dogs: this.fb.array([]),
     });
 
@@ -116,9 +118,12 @@ export class TripFormComponent implements OnInit {
 
   get dogs(): FormArray { return this.form.get('dogs') as FormArray; }
 
+  /** True when dogs have reached/exceeded capacity — isFull is auto-locked and uneditable */
+  get isAtCapacity(): boolean {
+    return this.dogs.length >= (this.form.get('totalCapacity')?.value ?? 0);
+  }
+
   dogGroup(dog?: Partial<Dog>): FormGroup {
-    // No validators here — dogs are validated individually in the dialog (buildDogEditForm).
-    // The FormArray is a data store only; the dialog is the validation boundary.
     return this.fb.group({
       id: [dog?.id ?? ''],
       name: [dog?.name ?? ''],
@@ -158,7 +163,6 @@ export class TripFormComponent implements OnInit {
   openDogDialog(index: number): void {
     this.editingDogIndex = index;
     this.isNewDog = false;
-    // Deep copy of current dog values — dialog edits this copy, not the list
     this.dogEditForm = this.buildDogEditForm({ ...this.dogs.at(index).value });
     this.dogDialogVisible = true;
   }
@@ -170,10 +174,8 @@ export class TripFormComponent implements OnInit {
 
     const values: Dog = { ...this.dogEditForm.value };
 
-    // Reflect changes locally in the FormArray (used when trip form is submitted)
     (this.dogs.at(this.editingDogIndex) as FormGroup).patchValue(values);
 
-    // If editing an existing trip dog, persist immediately via store
     if (this.isEdit && this.editId && !this.isNewDog) {
       this.store.dispatch(TripActions.updateDog({ tripId: this.editId, dog: values }));
       this.messageService.add({ severity: 'success', summary: 'Dog Updated', detail: 'Dog updated successfully.' });
@@ -193,17 +195,20 @@ export class TripFormComponent implements OnInit {
     this.isNewDog = false;
   }
 
-  get capacityError(): string | null {
+  get capacityWarning(): string | null {
     const capacity = this.form.get('totalCapacity')?.value ?? 0;
     if (capacity < this.dogs.length) {
-      return `Capacity (${capacity}) cannot be less than current dogs (${this.dogs.length}).`;
+      return `Capacity (${capacity}) is below current dogs (${this.dogs.length}) — trip will be auto-marked Full.`;
     }
     return null;
   }
 
+  navigateToTrips(): void {
+    this.router.navigate(['/admin/trips']);
+  }
+
   onSubmit(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    if (this.capacityError) return;
 
     const dogs: Dog[] = this.form.value.dogs.map((d: Partial<Dog>) => ({
       ...d,

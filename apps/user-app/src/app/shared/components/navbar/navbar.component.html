@@ -1,6 +1,6 @@
 <nav class="navbar" [class.scrolled]="scrolled">
   <div class="navbar__container flex align-items-center justify-content-between">
-    <a class="navbar__brand flex align-items-center" routerLink="/" (click)="closeMenu()">
+    <a class="navbar__brand flex align-items-center" style="cursor:pointer" (click)="navigateTo('/')">
       <span>🐾</span>
       <span class="navbar__name">Lilia Paws Travel</span>
     </a>
@@ -8,10 +8,10 @@
       <i class="pi" [ngClass]="menuOpen ? 'pi-times' : 'pi-bars'"></i>
     </button>
     <ul class="navbar__links flex align-items-center" [class.open]="menuOpen">
-      <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" (click)="closeMenu()">Home</a></li>
-      <li><a routerLink="/request" routerLinkActive="active" (click)="closeMenu()">Request Transport</a></li>
-      <li><a routerLink="/contact" routerLinkActive="active" (click)="closeMenu()">Contact</a></li>
-      <li class="navbar__cta"><a routerLink="/request" class="btn-cta" (click)="closeMenu()">Book a Trip</a></li>
+      <li><a style="cursor:pointer" [class.active]="isActive('/')" (click)="navigateTo('/')">Home</a></li>
+      <li><a style="cursor:pointer" [class.active]="isActive('/request')" (click)="navigateTo('/request')">Request Transport</a></li>
+      <li><a style="cursor:pointer" [class.active]="isActive('/contact')" (click)="navigateTo('/contact')">Contact</a></li>
+      <li class="navbar__cta"><a class="btn-cta" style="cursor:pointer" (click)="navigateTo('/request')">Book a Trip</a></li>
     </ul>
   </div>
 </nav>

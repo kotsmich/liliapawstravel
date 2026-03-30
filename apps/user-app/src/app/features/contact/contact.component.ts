@@ -1,13 +1,7 @@
 import { Component, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { TextareaModule } from 'primeng/textarea';
-import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { IftaLabelModule } from 'primeng/iftalabel';
-import { MessageModule } from 'primeng/message';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Store } from '@ngrx/store';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -17,14 +11,14 @@ import {
   selectContactIsSuccess,
   selectContactHasError,
 } from '@myorg/store';
+import { ContactFormComponent } from './components/contact-form/contact-form.component';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule,
-    InputTextModule, TextareaModule, ButtonModule, CardModule,
-    IftaLabelModule, MessageModule, ProgressSpinnerModule,
+    CardModule, ContactFormComponent,
   ],
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss'],

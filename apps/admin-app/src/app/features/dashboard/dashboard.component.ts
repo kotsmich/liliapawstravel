@@ -1,38 +1,38 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { CardModule } from 'primeng/card';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { TableModule } from 'primeng/table';
 import { Store } from '@ngrx/store';
 import { TripActions, selectAllTrips, selectTripsIsLoading } from '@myorg/store';
 import { LoadingSpinnerComponent } from '@myorg/ui';
 import { Trip } from '@myorg/models';
 import { map } from 'rxjs/operators';
+import { DashboardStatsComponent } from './components/dashboard-stats/dashboard-stats.component';
+import { RecentTripsComponent } from './components/recent-trips/recent-trips.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, CardModule, ButtonModule, TagModule, TableModule, LoadingSpinnerComponent],
+  imports: [CommonModule, ButtonModule, LoadingSpinnerComponent, DashboardStatsComponent, RecentTripsComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
-  constructor(private store: Store) {}
+  constructor(private store: Store, private router: Router) {}
 
-  trips$ = this.store.select(selectAllTrips);
+  trips$ = this.store.select(selectAllTrips) as import('rxjs').Observable<Trip[]>;
   loading$ = this.store.select(selectTripsIsLoading);
 
-  upcoming$ = this.trips$.pipe(map((t) => t.filter((x) => x.status === 'upcoming')));
-  completed$ = this.trips$.pipe(map((t) => t.filter((x) => x.status === 'completed')));
+  totalTrips$ = this.trips$.pipe(map((t) => t.length));
+  upcomingCount$ = this.trips$.pipe(map((t) => t.filter((x) => x.status === 'upcoming').length));
+  completedCount$ = this.trips$.pipe(map((t) => t.filter((x) => x.status === 'completed').length));
   recentTrips$ = this.trips$.pipe(map((t) => t.slice(0, 5)));
 
   ngOnInit(): void {
     this.store.dispatch(TripActions.loadTrips());
   }
 
-  statusSeverity(status: Trip['status']): 'info' | 'success' | 'secondary' {
-    return status === 'upcoming' ? 'info' : status === 'completed' ? 'success' : 'secondary';
-  }
+  navigateToAllTrips(): void { this.router.navigate(['/admin/trips']); }
+  navigateToNewTrip(): void { this.router.navigate(['/admin/trips/new']); }
+  onViewTrip(trip: Trip): void { this.router.navigate(['/admin/trips', trip.id, 'edit']); }
 }

@@ -14,4 +14,6 @@ export interface Trip {
   spotsAvailable: number;
   notes: string;
   dogs: Dog[];
+  isFull: boolean;
+  acceptingRequests: boolean;
 }

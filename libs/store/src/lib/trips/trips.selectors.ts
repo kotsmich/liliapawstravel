@@ -38,7 +38,15 @@ export const selectTripsAsCalendarEvents = createSelector(selectAllTrips, (trips
       tripId: t.id,
       title: `${t.departureCity} → ${t.arrivalCity}`,
       date: t.date,
-      color: t.status === 'in-progress' ? '#e07b54' : '#4caf50',
+      color: t.isFull || t.spotsAvailable <= 0 || !t.acceptingRequests
+        ? '#94a3b8'
+        : t.status === 'in-progress'
+          ? '#e07b54'
+          : '#4caf50',
+      dogsCount: t.dogs?.length ?? 0,
+      totalCapacity: t.totalCapacity,
+      isFull: t.isFull,
+      acceptingRequests: t.acceptingRequests,
     }))
 );
 

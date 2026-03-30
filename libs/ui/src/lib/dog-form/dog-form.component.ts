@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormGroup, AbstractControl } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -11,14 +11,13 @@ import { TooltipModule } from 'primeng/tooltip';
   selector: 'ui-dog-form',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     InputTextModule,
     InputNumberModule,
     SelectModule,
     ButtonModule,
-    TooltipModule,
-  ],
+    TooltipModule
+],
   templateUrl: './dog-form.component.html',
   styleUrls: ['./dog-form.component.scss'],
 })

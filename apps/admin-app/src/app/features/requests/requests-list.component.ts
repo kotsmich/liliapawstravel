@@ -1,34 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map, filter, take } from 'rxjs/operators';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { SelectModule } from 'primeng/select';
-import { TabsModule } from 'primeng/tabs';
-import { BadgeModule } from 'primeng/badge';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import {
   TripRequestActions, TripActions,
   selectAllRequests, selectRequestsIsLoading, selectAllTrips,
-  selectPendingRequestsCount, selectApprovedRequestsCount, selectRejectedRequestsCount,
 } from '@myorg/store';
 import { TripRequest, Trip } from '@myorg/models';
+import { RequestsFilterComponent } from './components/requests-filter/requests-filter.component';
+import { RequestsTableComponent } from './components/requests-table/requests-table.component';
+import { RequestDetailDialogComponent } from './components/request-detail-dialog/request-detail-dialog.component';
 
 @Component({
   selector: 'app-requests-list',
   standalone: true,
   imports: [
-    CommonModule, FormsModule,
-    TableModule, TagModule, DialogModule, ButtonModule,
+    CommonModule,
+    ButtonModule,
     ToastModule, ConfirmDialogModule,
-    SelectModule, TabsModule, BadgeModule,
+    RequestsFilterComponent, RequestsTableComponent, RequestDetailDialogComponent,
   ],
   templateUrl: './requests-list.component.html',
   styleUrls: ['./requests-list.component.scss'],
@@ -39,12 +35,10 @@ export class RequestsListComponent implements OnInit {
     private store: Store,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
+    private router: Router,
   ) {}
 
   loading$ = this.store.select(selectRequestsIsLoading);
-  pendingCount$ = this.store.select(selectPendingRequestsCount);
-  approvedCount$ = this.store.select(selectApprovedRequestsCount);
-  rejectedCount$ = this.store.select(selectRejectedRequestsCount);
 
   selectedTripId$ = new BehaviorSubject<string | null>(null);
   activeTab$ = new BehaviorSubject<string>('all');
@@ -54,14 +48,22 @@ export class RequestsListComponent implements OnInit {
   trips: Trip[] = [];
   tripOptions: Array<{ label: string; value: string | null }> = [{ label: 'All Trips', value: null }];
 
-  finalRequests$ = combineLatest([
-    this.store.select(selectAllRequests),
+  // Filter requests by selected trip only (no tab filter) — used for badge counts
+  private filteredByTrip$ = combineLatest([
+    this.store.select(selectAllRequests) as import('rxjs').Observable<TripRequest[]>,
     this.selectedTripId$,
-    this.activeTab$,
   ]).pipe(
-    map(([requests, tripId, tab]) => {
-      let filtered = tripId ? requests.filter((r) => r.tripId === tripId) : requests;
-      if (tab !== 'all') filtered = filtered.filter((r) => r.status === tab);
+    map(([requests, tripId]) => tripId ? requests.filter((r) => r.tripId === tripId) : requests)
+  );
+
+  // Badge counts reflect the current trip selection so they always match the table
+  pendingCount$ = this.filteredByTrip$.pipe(map((r) => r.filter((x) => x.status === 'pending').length));
+  approvedCount$ = this.filteredByTrip$.pipe(map((r) => r.filter((x) => x.status === 'approved').length));
+  rejectedCount$ = this.filteredByTrip$.pipe(map((r) => r.filter((x) => x.status === 'rejected').length));
+
+  finalRequests$ = combineLatest([this.filteredByTrip$, this.activeTab$]).pipe(
+    map(([requests, tab]) => {
+      const filtered = tab !== 'all' ? requests.filter((r) => r.status === tab) : requests;
       return filtered.map((r) => ({ ...r, dogsCount: r.dogs.length }));
     })
   );
@@ -70,13 +72,13 @@ export class RequestsListComponent implements OnInit {
     this.store.dispatch(TripRequestActions.loadRequests());
     this.store.dispatch(TripActions.loadTrips());
 
-    this.store.select(selectAllTrips).subscribe((trips) => {
+    (this.store.select(selectAllTrips) as import('rxjs').Observable<Trip[]>).subscribe((trips) => {
       this.trips = trips;
       this.buildTripOptions(trips);
     });
 
     // Pre-select nearest upcoming trip once trips load
-    this.store.select(selectAllTrips).pipe(
+    (this.store.select(selectAllTrips) as import('rxjs').Observable<Trip[]>).pipe(
       filter((trips) => trips.length > 0),
       take(1),
     ).subscribe((trips) => {
@@ -170,10 +172,13 @@ export class RequestsListComponent implements OnInit {
     this.dialogVisible = false;
   }
 
-  statusSeverity(status: TripRequest['status']): 'warn' | 'success' | 'danger' | 'secondary' {
-    if (status === 'pending') return 'warn';
-    if (status === 'approved') return 'success';
-    if (status === 'rejected') return 'danger';
-    return 'secondary';
+  onApproveFromTable(req: TripRequest): void {
+    this.selectedRequest = req;
+    this.approve();
+  }
+
+  onRejectFromTable(req: TripRequest): void {
+    this.selectedRequest = req;
+    this.reject();
   }
 }

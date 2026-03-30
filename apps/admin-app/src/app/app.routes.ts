@@ -19,15 +19,15 @@ export const APP_ROUTES: Routes = [
       },
       {
         path: 'trips',
-        loadComponent: () => import('./features/trips/trips-list.component').then((m) => m.TripsListComponent),
+        loadComponent: () => import('./features/trips/trips-list/trips-list.component').then((m) => m.TripsListComponent),
       },
       {
         path: 'trips/new',
-        loadComponent: () => import('./features/trips/trip-form.component').then((m) => m.TripFormComponent),
+        loadComponent: () => import('./features/trips/trip-form/trip-form.component').then((m) => m.TripFormComponent),
       },
       {
         path: 'trips/:id/edit',
-        loadComponent: () => import('./features/trips/trip-form.component').then((m) => m.TripFormComponent),
+        loadComponent: () => import('./features/trips/trip-form/trip-form.component').then((m) => m.TripFormComponent),
       },
       {
         path: 'requests',

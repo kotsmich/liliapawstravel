@@ -6,225 +6,43 @@
   <p-toast />
   <p-confirmdialog />
 
-  <!-- Trip filter -->
-  <div class="filter-bar">
-    <p-select
-      [options]="tripOptions"
-      [ngModel]="selectedTripId$ | async"
-      (ngModelChange)="selectedTripId$.next($event)"
-      optionLabel="label"
-      optionValue="value"
-      placeholder="All Trips"
-      styleClass="trip-select"
+  @if ({
+    pending: pendingCount$ | async,
+    approved: approvedCount$ | async,
+    rejected: rejectedCount$ | async,
+    requests: finalRequests$ | async,
+    loading: loading$ | async,
+    selectedTripId: selectedTripId$ | async,
+    activeTab: activeTab$ | async
+    }; as vm) {
+    <app-requests-filter
+      [tripOptions]="tripOptions"
+      [selectedTripId]="vm.selectedTripId"
+      [activeTab]="vm.activeTab ?? 'all'"
+      [pendingCount]="vm.pending ?? 0"
+      [approvedCount]="vm.approved ?? 0"
+      [rejectedCount]="vm.rejected ?? 0"
+      (tripSelected)="selectedTripId$.next($event)"
+      (tabChanged)="activeTab$.next($event)"
+      />
+    <app-requests-table
+      [requests]="vm.requests ?? []"
+      [loading]="!!vm.loading"
+      (rowClicked)="openDetail($event)"
+      (approve)="onApproveFromTable($event)"
+      (reject)="onRejectFromTable($event)"
+      (deleteRequest)="deleteRequest($event)"
+      />
+  }
+
+  <app-request-detail-dialog
+    [visible]="dialogVisible"
+    [request]="selectedRequest"
+    [trips]="trips"
+    (visibleChange)="dialogVisible = $event"
+    (approve)="approve()"
+    (reject)="reject()"
+    (deleteRequest)="deleteRequest($event)"
+    (cancel)="cancel()"
     />
-  </div>
-
-  <!-- Status tabs -->
-  <p-tabs [value]="(activeTab$ | async) ?? 'all'" (valueChange)="activeTab$.next($event.toString())">
-    <p-tablist>
-      <p-tab value="all">All</p-tab>
-      <p-tab value="pending">
-        Pending
-        <p-badge
-          *ngIf="(pendingCount$ | async) as c"
-          [value]="c.toString()"
-          severity="warn"
-          class="tab-badge"
-        />
-      </p-tab>
-      <p-tab value="approved">
-        Approved
-        <p-badge
-          *ngIf="(approvedCount$ | async) as c"
-          [value]="c.toString()"
-          severity="success"
-          class="tab-badge"
-        />
-      </p-tab>
-      <p-tab value="rejected">
-        Rejected
-        <p-badge
-          *ngIf="(rejectedCount$ | async) as c"
-          [value]="c.toString()"
-          severity="danger"
-          class="tab-badge"
-        />
-      </p-tab>
-    </p-tablist>
-  </p-tabs>
-
-  <!-- Requests table -->
-  <p-table
-    [value]="(finalRequests$ | async) ?? []"
-    [loading]="!!(loading$ | async)"
-    [rowHover]="true"
-    sortField="submittedAt"
-    [sortOrder]="-1"
-    styleClass="p-datatable-sm"
-    [tableStyle]="{ 'min-width': '60rem' }"
-  >
-    <ng-template pTemplate="header">
-      <tr>
-        <th pSortableColumn="requesterName">
-          Requester <p-sortIcon field="requesterName" />
-        </th>
-        <th pSortableColumn="dogsCount">
-          Dogs <p-sortIcon field="dogsCount" />
-        </th>
-        <th pSortableColumn="status">
-          Status <p-sortIcon field="status" />
-        </th>
-        <th pSortableColumn="submittedAt">
-          Submitted <p-sortIcon field="submittedAt" />
-        </th>
-        <th>Actions</th>
-      </tr>
-    </ng-template>
-
-    <ng-template pTemplate="body" let-req>
-      <tr style="cursor:pointer" (click)="openDetail(req)">
-        <td>{{ req.requesterName }}</td>
-        <td>
-          <p-badge [value]="req.dogsCount.toString()" severity="secondary" />
-        </td>
-        <td>
-          <p-tag [value]="req.status" [severity]="statusSeverity(req.status)" />
-        </td>
-        <td>{{ req.submittedAt | date:'dd/MM/yyyy HH:mm' }}</td>
-        <td (click)="$event.stopPropagation()">
-          <div class="row-actions flex align-items-center gap-1">
-            <p-button
-              icon="pi pi-eye"
-              label="View"
-              [text]="true"
-              size="small"
-              (onClick)="openDetail(req)"
-            />
-            <p-button
-              *ngIf="req.status === 'pending'"
-              icon="pi pi-check"
-              label="Approve"
-              [text]="true"
-              size="small"
-              severity="success"
-              (onClick)="selectedRequest = req; approve()"
-            />
-            <p-button
-              *ngIf="req.status === 'pending'"
-              icon="pi pi-times"
-              label="Reject"
-              [text]="true"
-              size="small"
-              severity="danger"
-              (onClick)="selectedRequest = req; reject()"
-            />
-            <p-button
-              *ngIf="req.status !== 'pending'"
-              icon="pi pi-trash"
-              label="Delete"
-              [text]="true"
-              size="small"
-              severity="danger"
-              (onClick)="deleteRequest(req)"
-            />
-          </div>
-        </td>
-      </tr>
-    </ng-template>
-
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="5" style="text-align:center">No requests found.</td>
-      </tr>
-    </ng-template>
-  </p-table>
-
-  <!-- Detail Dialog -->
-  <p-dialog
-    header="Request Details"
-    [(visible)]="dialogVisible"
-    [modal]="true"
-    [style]="{ width: '600px' }"
-    [draggable]="false"
-  >
-    <ng-container *ngIf="selectedRequest as req">
-
-      <p class="request-summary">
-        Request for trip <strong>{{ tripDate(req.tripId) }}</strong>
-        under requester <strong>{{ req.requesterName }}</strong>
-      </p>
-
-      <div class="detail-section">
-        <h3>Requester</h3>
-        <p class="flex align-items-center gap-2"><i class="pi pi-user"></i> {{ req.requesterName }}</p>
-        <p class="flex align-items-center gap-2"><i class="pi pi-envelope"></i> {{ req.requesterEmail }}</p>
-        <p class="flex align-items-center gap-2"><i class="pi pi-phone"></i> {{ req.requesterPhone }}</p>
-      </div>
-
-      <div class="detail-section">
-        <h3>Trip</h3>
-        <p class="flex align-items-center gap-2"><i class="pi pi-calendar"></i> <strong>{{ tripDate(req.tripId) }}</strong></p>
-        <p>Submitted: {{ req.submittedAt | date:'dd/MM/yyyy HH:mm' }}</p>
-        <p>Status: <p-tag [value]="req.status" [severity]="statusSeverity(req.status)" /></p>
-      </div>
-
-      <div class="detail-section">
-        <h3>Dogs ({{ req.dogs.length }})</h3>
-        <p-table [value]="req.dogs" styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '100%' }">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Name</th>
-              <th>Size</th>
-              <th>Age</th>
-              <th>Chip ID</th>
-              <th>Pickup</th>
-              <th>Drop</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-dog>
-            <tr>
-              <td>{{ dog.name }}</td>
-              <td>{{ dog.size }}</td>
-              <td>{{ dog.age }} yr</td>
-              <td>{{ dog.chipId }}</td>
-              <td>{{ dog.pickupLocation }}</td>
-              <td>{{ dog.dropLocation }}</td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-    </ng-container>
-
-    <ng-template pTemplate="footer">
-      <p-button
-        label="Approve"
-        icon="pi pi-check"
-        severity="success"
-        [disabled]="selectedRequest?.status !== 'pending'"
-        (onClick)="approve()"
-      />
-      <p-button
-        label="Reject"
-        icon="pi pi-times"
-        severity="danger"
-        [outlined]="true"
-        [disabled]="selectedRequest?.status !== 'pending'"
-        (onClick)="reject()"
-      />
-      <p-button
-        *ngIf="selectedRequest?.status !== 'pending'"
-        label="Delete"
-        icon="pi pi-trash"
-        severity="danger"
-        (onClick)="deleteRequest(selectedRequest!)"
-      />
-      <p-button
-        label="Cancel"
-        icon="pi pi-arrow-left"
-        severity="secondary"
-        [outlined]="true"
-        (onClick)="cancel()"
-      />
-    </ng-template>
-  </p-dialog>
 </div>

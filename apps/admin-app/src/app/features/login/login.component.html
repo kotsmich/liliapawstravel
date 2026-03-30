@@ -5,7 +5,9 @@
       <h1>Lilia Paws Admin</h1>
     </div>
 
-    <p-message *ngIf="error$ | async as error" severity="error" [text]="error" styleClass="mb-3 w-full" />
+    @if (error$ | async; as error) {
+      <p-message severity="error" [text]="error" styleClass="mb-3 w-full" />
+    }
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
       <div class="field">
@@ -13,9 +15,11 @@
           <input pInputText id="email" formControlName="email" type="email" class="w-full" />
           <label for="email">Email</label>
         </p-ifta-label>
-        <small class="p-error" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
-          Valid email required.
-        </small>
+        @if (form.get('email')?.touched && form.get('email')?.invalid) {
+          <small class="p-error">
+            Valid email required.
+          </small>
+        }
       </div>
 
       <div class="field">
@@ -27,12 +31,14 @@
             [toggleMask]="true"
             styleClass="w-full"
             inputStyleClass="w-full"
-          />
+            />
           <label for="password">Password</label>
         </p-ifta-label>
-        <small class="p-error" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
-          Min 6 characters.
-        </small>
+        @if (form.get('password')?.touched && form.get('password')?.invalid) {
+          <small class="p-error">
+            Min 6 characters.
+          </small>
+        }
       </div>
 
       <p-button
@@ -42,7 +48,7 @@
         icon="pi pi-sign-in"
         [loading]="!!(loading$ | async)"
         [disabled]="!!(loading$ | async)"
-      />
+        />
     </form>
 
     <p class="hint">Demo: admin&#64;liliapaws.com / admin123</p>

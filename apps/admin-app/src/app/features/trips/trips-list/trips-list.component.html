@@ -1,0 +1,85 @@
+<div class="trips-page flex flex-column gap-4">
+  <div class="page-header flex align-items-center justify-content-between">
+    <h1>Trips</h1>
+    <p-button label="New Trip" icon="pi pi-plus" (onClick)="navigateNewTrip()" />
+  </div>
+
+  <p-toast />
+  <p-confirmdialog />
+
+  @if (loading$ | async) {
+    <ui-loading-spinner message="Loading trips..." />
+  }
+
+  @if (!(loading$ | async)) {
+    @if ({
+      trips: trips$ | async,
+      calendarEvents: calendarEvents$ | async,
+      tripsForDate: tripsForDate$ | async
+      }; as vm) {
+      <!-- Tab bar -->
+      <div class="tab-bar flex">
+        <button class="tab-btn inline-flex align-items-center" [class.active]="activeTab === 'calendar'" (click)="activeTab = 'calendar'">
+          <i class="pi pi-calendar"></i> Calendar View
+        </button>
+        <button class="tab-btn inline-flex align-items-center" [class.active]="activeTab === 'all'" (click)="activeTab = 'all'">
+          <i class="pi pi-list"></i> All Trips
+        </button>
+      </div>
+      <!-- Calendar Tab -->
+      @if (activeTab === 'calendar') {
+        <app-trip-calendar-view
+          [trips]="vm.trips || []"
+          [selectedDate]="selectedDate"
+          [calendarEvents]="vm.calendarEvents || []"
+          [tripsForDate]="vm.tripsForDate || []"
+          (dateSelected)="onDateSelected($event)"
+          (addTripClicked)="addTripForDate()"
+          (editTrip)="onEditTrip($event)"
+          (deleteTrip)="deleteTrip($event)"
+          (viewDetails)="openDetail($event)"
+          />
+      }
+      <!-- All Trips Tab -->
+      @if (activeTab === 'all') {
+        <app-all-trips-tab
+          [trips]="vm.trips || []"
+          (editTrip)="onEditTrip($event)"
+          (deleteTrip)="deleteTrip($event)"
+          (viewDetails)="openDetail($event)"
+          />
+      }
+    }
+  }
+</div>
+
+<!-- Trip Detail Dialog -->
+@if ({
+  trip: detailTrip$ | async,
+  requests: detailRequests$ | async
+  }; as detail) {
+  <app-trip-detail-dialog
+    [visible]="detailDialogVisible"
+    [header]="detailHeader"
+    [trip]="detail.trip"
+    [requests]="detail.requests || []"
+    [activeTab]="detailActiveTab"
+    (visibleChange)="detailDialogVisible = $event"
+    (tabChanged)="detailActiveTab = $event"
+    (editDog)="onEditDog($event)"
+    (approveRequest)="approveRequestInDetail($event)"
+    (rejectRequest)="rejectRequestInDetail($event)"
+    (deleteRequest)="deleteRequestInDetail($event)"
+    (closed)="closeDetail()"
+    />
+}
+
+<!-- Dog Edit Dialog -->
+<app-dog-form-dialog
+  [visible]="dogEditVisible"
+  [dog]="dogEditValues"
+  [tripId]="dogEditTripId || ''"
+  (visibleChange)="dogEditVisible = $event"
+  (save)="onSaveDog($event)"
+  (cancel)="onCancelDog()"
+  />

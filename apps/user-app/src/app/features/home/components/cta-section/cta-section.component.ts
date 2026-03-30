@@ -1,0 +1,29 @@
+import { Component, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+
+
+@Component({
+  selector: 'app-cta-section',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [],
+  template: `
+    <section class="cta">
+      <div class="container">
+        <div class="cta__box">
+          <span>🐶</span>
+          <h2>Ready to bring your dog home?</h2>
+          <p>Submit a transport request and we'll respond within 24 hours.</p>
+          <div class="cta__actions flex justify-content-center flex-wrap">
+            <a class="btn-primary" (click)="requestClicked.emit()" style="cursor:pointer">Book a Transport</a>
+            <a class="btn-outline-light" (click)="contactClicked.emit()" style="cursor:pointer">Ask a Question</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  `,
+  styles: [],
+})
+export class CtaSectionComponent {
+  @Output() requestClicked = new EventEmitter<void>();
+  @Output() contactClicked = new EventEmitter<void>();
+}
