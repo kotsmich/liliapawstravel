@@ -19,11 +19,8 @@ import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, take } from 'rxjs';
-import {
-  TripActions,
-  selectSelectedTrip, selectTripsMutating, selectTripsError,
-} from '@myorg/store';
-import { Dog } from '@myorg/models';
+import { TripActions, selectSelectedTrip, selectTripsMutating, selectTripsError } from '@admin/store/trips';
+import { Dog } from '@models/lib/dog.model';
 
 @Component({
   selector: 'app-trip-form',

@@ -4,7 +4,7 @@ import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
-import { Trip } from '@myorg/models';
+import { Trip } from '@models/lib/trip.model';
 
 @Component({
   selector: 'app-recent-trips',

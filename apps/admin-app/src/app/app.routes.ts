@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
+import { authGuard } from '@admin/guards/auth.guard';
 
 export const APP_ROUTES: Routes = [
   { path: '', redirectTo: 'admin/dashboard', pathMatch: 'full' },

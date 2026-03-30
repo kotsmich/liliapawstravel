@@ -5,6 +5,8 @@
   (onSelect)="onSelect($event)"
   styleClass="trip-cal"
   [panelStyle]="{ width: '100%', boxSizing: 'border-box' }"
+  [showOtherMonths]="true"
+  [selectOtherMonths]="true"
   >
   <ng-template pTemplate="date" let-date>
     <span

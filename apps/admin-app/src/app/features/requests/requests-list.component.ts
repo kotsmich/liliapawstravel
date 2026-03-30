@@ -8,11 +8,10 @@ import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import {
-  TripRequestActions, TripActions,
-  selectAllRequests, selectRequestsIsLoading, selectAllTrips,
-} from '@myorg/store';
-import { TripRequest, Trip } from '@myorg/models';
+import { TripActions, selectAllTrips } from '@admin/store/trips';
+import { TripRequestActions, selectAllRequests, selectRequestsIsLoading } from '@admin/store/requests';
+import { TripRequest } from '@models/lib/trip-request.model';
+import { Trip } from '@models/lib/trip.model';
 import { RequestsFilterComponent } from './components/requests-filter/requests-filter.component';
 import { RequestsTableComponent } from './components/requests-table/requests-table.component';
 import { RequestDetailDialogComponent } from './components/request-detail-dialog/request-detail-dialog.component';

@@ -20,10 +20,19 @@
     "useDefineForClassFields": false,
     "lib": ["ES2022", "dom"],
     "paths": {
-      "@myorg/models": ["libs/models/src/index.ts"],
-      "@myorg/api": ["libs/api/src/index.ts"],
-      "@myorg/store": ["libs/store/src/index.ts"],
-      "@myorg/ui": ["libs/ui/src/index.ts"]
+      "@models/*": ["libs/models/src/*"],
+      "@ui/*": ["libs/ui/src/*"],
+      "@admin/store/*": ["apps/admin-app/src/app/store/*"],
+      "@admin/services/*": ["apps/admin-app/src/app/services/*"],
+      "@admin/shared/*": ["apps/admin-app/src/app/shared/*"],
+      "@admin/features/*": ["apps/admin-app/src/app/features/*"],
+      "@admin/interceptors/*": ["apps/admin-app/src/app/interceptors/*"],
+      "@admin/guards/*": ["apps/admin-app/src/app/core/guards/*"],
+      "@user/store/*": ["apps/user-app/src/app/store/*"],
+      "@user/services/*": ["apps/user-app/src/app/services/*"],
+      "@user/shared/*": ["apps/user-app/src/app/shared/*"],
+      "@user/features/*": ["apps/user-app/src/app/features/*"],
+      "@user/interceptors/*": ["apps/user-app/src/app/interceptors/*"]
     }
   },
   "angularCompilerOptions": {

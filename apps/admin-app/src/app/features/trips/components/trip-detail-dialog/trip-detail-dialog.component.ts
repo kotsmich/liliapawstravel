@@ -6,7 +6,9 @@ import { TagModule } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
 import { TabsModule } from 'primeng/tabs';
 import { AccordionModule } from 'primeng/accordion';
-import { Trip, Dog, TripRequest } from '@myorg/models';
+import { Trip } from '@models/lib/trip.model';
+import { Dog } from '@models/lib/dog.model';
+import { TripRequest } from '@models/lib/trip-request.model';
 
 @Component({
   selector: 'app-trip-detail-dialog',

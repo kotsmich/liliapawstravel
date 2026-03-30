@@ -7,15 +7,16 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { Store } from '@ngrx/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, take } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  TripActions, TripRequestActions, CalendarActions,
-  selectAllTrips, selectTripsIsLoading, selectCalendarSelectedDate,
-  selectTripsAsCalendarEvents, selectAllRequests,
-} from '@myorg/store';
-import { LoadingSpinnerComponent } from '@myorg/ui';
-import { Trip, Dog, TripRequest, CalendarEvent } from '@myorg/models';
+import { TripActions, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents } from '@admin/store/trips';
+import { CalendarActions, selectCalendarSelectedDate } from '@admin/store/calendar';
+import { TripRequestActions, selectAllRequests } from '@admin/store/requests';
+import { LoadingSpinnerComponent } from '@ui/lib/loading-spinner/loading-spinner.component';
+import { Trip } from '@models/lib/trip.model';
+import { Dog } from '@models/lib/dog.model';
+import { TripRequest } from '@models/lib/trip-request.model';
+import { CalendarEvent } from '@models/lib/calendar-event.model';
 import { TripCalendarViewComponent } from '../components/trip-calendar-view/trip-calendar-view.component';
 import { AllTripsTabComponent } from '../components/all-trips-tab/all-trips-tab.component';
 import { TripDetailDialogComponent } from '../components/trip-detail-dialog/trip-detail-dialog.component';
@@ -99,9 +100,17 @@ export class TripsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(TripActions.loadTrips());
-    const now = new Date();
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-    this.store.dispatch(CalendarActions.selectDate({ date: todayStr }));
+
+    // Auto-select the closest upcoming trip date once trips are loaded
+    this.trips$.pipe(
+      filter(trips => trips.length > 0),
+      take(1),
+    ).subscribe((trips: Trip[]) => {
+      const today = new Date().toISOString().slice(0, 10);
+      const sorted = trips.map((t: Trip) => t.date).filter((d: string) => d >= today).sort();
+      const date = sorted[0] ?? [...trips.map((t: Trip) => t.date)].sort().reverse()[0];
+      if (date) this.store.dispatch(CalendarActions.selectDate({ date }));
+    });
   }
 
   onDateSelected(date: string): void {

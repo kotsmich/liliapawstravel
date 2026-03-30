@@ -10,16 +10,12 @@ import { definePreset } from '@primeng/themes';
 import Aura from '@primeng/themes/aura';
 import { MessageService, ConfirmationService } from 'primeng/api';
 
-import { environment } from '../environments/environment';
 import { APP_ROUTES } from './app.routes';
-import { authInterceptor } from './auth.interceptor';
-import { API_URL } from '@myorg/api';
-import {
-  authReducer, AuthEffects, AuthActions,
-  tripsReducer, TripsEffects,
-  calendarReducer, CalendarEffects,
-  tripRequestReducer, TripRequestEffects,
-} from '@myorg/store';
+import { adminApiInterceptor } from '@admin/interceptors/admin-api.interceptor';
+import { authReducer, AuthEffects, AuthActions } from '@admin/store/auth';
+import { tripsReducer, TripsEffects } from '@admin/store/trips';
+import { calendarReducer } from '@admin/store/calendar';
+import { requestsReducer, RequestsEffects } from '@admin/store/requests';
 
 const LiliaPreset = definePreset(Aura, {
   semantic: {
@@ -58,15 +54,14 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(APP_ROUTES),
     provideAnimationsAsync(),
-    provideHttpClient(withInterceptors([authInterceptor])),
-    { provide: API_URL, useValue: environment.apiUrl },
+    provideHttpClient(withInterceptors([adminApiInterceptor])),
     provideStore({
       auth: authReducer,
       trips: tripsReducer,
       calendar: calendarReducer,
-      tripRequest: tripRequestReducer,
+      requests: requestsReducer,
     }),
-    provideEffects([AuthEffects, TripsEffects, CalendarEffects, TripRequestEffects]),
+    provideEffects([AuthEffects, TripsEffects, RequestsEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     providePrimeNG({
       theme: {

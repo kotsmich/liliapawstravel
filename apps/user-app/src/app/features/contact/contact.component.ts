@@ -5,12 +5,7 @@ import { CardModule } from 'primeng/card';
 import { Store } from '@ngrx/store';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  ContactActions,
-  selectContactIsLoading,
-  selectContactIsSuccess,
-  selectContactHasError,
-} from '@myorg/store';
+import { ContactActions, selectContactIsLoading, selectContactIsSuccess, selectContactHasError } from '@user/store/contact';
 import { ContactFormComponent } from './components/contact-form/contact-form.component';
 
 @Component({

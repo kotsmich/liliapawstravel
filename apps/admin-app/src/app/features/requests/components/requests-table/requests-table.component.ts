@@ -4,7 +4,7 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { BadgeModule } from 'primeng/badge';
-import { TripRequest } from '@myorg/models';
+import { TripRequest } from '@models/lib/trip-request.model';
 
 @Component({
   selector: 'app-requests-table',

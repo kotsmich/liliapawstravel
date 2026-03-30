@@ -1,9 +1,7 @@
 import { ApplicationConfig, isDevMode } from '@angular/core';
 import { provideRouter, withRouterConfig } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient } from '@angular/common/http';
-import { environment } from '../environments/environment';
-import { API_URL } from '@myorg/api';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
@@ -13,16 +11,11 @@ import Aura from '@primeng/themes/aura';
 import { MessageService, ConfirmationService } from 'primeng/api';
 
 import { APP_ROUTES } from './app.routes';
-import {
-  calendarReducer,
-  contactReducer,
-  tripRequestReducer,
-  tripsReducer,
-  CalendarEffects,
-  ContactEffects,
-  TripRequestEffects,
-  TripsEffects,
-} from '@myorg/store';
+import { userApiInterceptor } from '@user/interceptors/user-api.interceptor';
+import { tripsReducer, TripsEffects } from '@user/store/trips';
+import { calendarReducer } from '@user/store/calendar';
+import { tripRequestReducer, TripRequestEffects } from '@user/store/trip-request';
+import { contactReducer, ContactEffects } from '@user/store/contact';
 
 const LiliaPreset = definePreset(Aura, {
   semantic: {
@@ -46,15 +39,14 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(APP_ROUTES, withRouterConfig({ onSameUrlNavigation: 'reload' })),
     provideAnimationsAsync(),
-    provideHttpClient(),
-    { provide: API_URL, useValue: environment.apiUrl },
+    provideHttpClient(withInterceptors([userApiInterceptor])),
     provideStore({
       calendar: calendarReducer,
       contact: contactReducer,
       tripRequest: tripRequestReducer,
       trips: tripsReducer,
     }),
-    provideEffects([CalendarEffects, ContactEffects, TripRequestEffects, TripsEffects]),
+    provideEffects([ContactEffects, TripRequestEffects, TripsEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     providePrimeNG({
       theme: {

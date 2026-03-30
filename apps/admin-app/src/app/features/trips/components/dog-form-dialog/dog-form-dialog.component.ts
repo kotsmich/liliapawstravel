@@ -6,7 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
-import { Dog } from '@myorg/models';
+import { Dog } from '@models/lib/dog.model';
 
 @Component({
   selector: 'app-dog-form-dialog',

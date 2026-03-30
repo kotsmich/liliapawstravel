@@ -5,8 +5,9 @@ import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { AvatarModule } from 'primeng/avatar';
 import { Store } from '@ngrx/store';
-import { AuthActions, selectCurrentUser, TripRequestActions, selectPendingRequestsCount } from '@myorg/store';
-import { AdminUser } from '@myorg/models';
+import { AuthActions, selectCurrentUser } from '@admin/store/auth';
+import { TripRequestActions, selectPendingRequestsCount } from '@admin/store/requests';
+import { AdminUser } from '@models/lib/admin-user.model';
 
 @Component({
   selector: 'app-shell',

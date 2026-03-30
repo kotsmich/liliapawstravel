@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core
 import { FormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
 import { TooltipModule } from 'primeng/tooltip';
-import { CalendarEvent } from '@myorg/models';
+import { CalendarEvent } from '@models/lib/calendar-event.model';
 
 @Component({
   selector: 'ui-trip-calendar',

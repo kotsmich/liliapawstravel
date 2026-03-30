@@ -15,20 +15,15 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { filter } from 'rxjs/operators';
 import { timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DogFormComponent, TripCalendarComponent, ToastNotificationComponent } from '@myorg/ui';
-import { CalendarEvent, Trip, Dog } from '@myorg/models';
-import {
-  CalendarActions,
-  TripActions,
-  TripRequestActions,
-  selectTripsAsCalendarEvents,
-  selectTripsIsLoading,
-  selectCalendarSelectedDate,
-  selectTripForSelectedDate,
-  selectTripRequestIsLoading,
-  selectTripRequestIsSuccess,
-  selectTripRequestHasError,
-} from '@myorg/store';
+import { DogFormComponent } from '@ui/lib/dog-form/dog-form.component';
+import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
+import { ToastNotificationComponent } from '@ui/lib/toast-notification/toast-notification.component';
+import { CalendarEvent } from '@models/lib/calendar-event.model';
+import { Trip } from '@models/lib/trip.model';
+import { Dog } from '@models/lib/dog.model';
+import { TripActions, selectTripsAsCalendarEvents, selectTripsIsLoading } from '@user/store/trips';
+import { CalendarActions, selectCalendarSelectedDate, selectTripForSelectedDate } from '@user/store/calendar';
+import { TripRequestActions, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestHasError } from '@user/store/trip-request';
 
 @Component({
   selector: 'app-trip-request',
@@ -147,7 +142,6 @@ export class TripRequestComponent implements OnInit {
 
   onDateSelected(date: string): void {
     this.store.dispatch(CalendarActions.selectDate({ date }));
-    this.store.dispatch(TripActions.refreshTrips());
   }
 
   preview(): void {

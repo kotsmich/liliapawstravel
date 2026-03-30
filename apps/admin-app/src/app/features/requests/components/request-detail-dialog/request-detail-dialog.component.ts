@@ -4,7 +4,8 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
-import { TripRequest, Trip } from '@myorg/models';
+import { TripRequest } from '@models/lib/trip-request.model';
+import { Trip } from '@models/lib/trip.model';
 
 @Component({
   selector: 'app-request-detail-dialog',

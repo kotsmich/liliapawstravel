@@ -4,7 +4,7 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
-import { Trip } from '@myorg/models';
+import { Trip } from '@models/lib/trip.model';
 
 @Component({
   selector: 'app-all-trips-tab',

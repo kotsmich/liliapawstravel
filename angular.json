@@ -55,6 +55,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "apps/user-app/proxy.conf.json"
+          },
           "configurations": {
             "production": { "buildTarget": "user-app:build:production" },
             "development": { "buildTarget": "user-app:build:development" }
@@ -118,6 +121,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "apps/admin-app/proxy.conf.json"
+          },
           "configurations": {
             "production": { "buildTarget": "admin-app:build:production" },
             "development": { "buildTarget": "admin-app:build:development" }

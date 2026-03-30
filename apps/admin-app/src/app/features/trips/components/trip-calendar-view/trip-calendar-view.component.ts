@@ -3,8 +3,9 @@ import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from 
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
-import { TripCalendarComponent } from '@myorg/ui';
-import { Trip, CalendarEvent } from '@myorg/models';
+import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
+import { Trip } from '@models/lib/trip.model';
+import { CalendarEvent } from '@models/lib/calendar-event.model';
 
 @Component({
   selector: 'app-trip-calendar-view',
