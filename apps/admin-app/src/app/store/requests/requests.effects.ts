@@ -23,10 +23,10 @@ export class RequestsEffects {
     this.actions$.pipe(
       ofType(TripRequestActions.approveRequest),
       switchMap(({ requestId }) =>
-        this.requestsService.updateRequestStatus(requestId, 'approved').pipe(
-          mergeMap((request) => [
+        this.requestsService.approveRequest(requestId).pipe(
+          mergeMap(({ request, trip }) => [
             TripRequestActions.approveRequestSuccess({ request }),
-            TripActions.loadTrips(),
+            TripActions.loadTripByIdSuccess({ trip }),
           ]),
           catchError((error) => of(TripRequestActions.approveRequestFailure({ error: error.message })))
         )
@@ -45,7 +45,7 @@ export class RequestsEffects {
     this.actions$.pipe(
       ofType(TripRequestActions.updateRequestStatus),
       switchMap(({ id, status }) =>
-        this.requestsService.updateRequestStatus(id, status as 'approved' | 'rejected').pipe(
+        this.requestsService.updateRequestStatus(id, status as 'rejected').pipe(
           map((request) => TripRequestActions.updateRequestStatusSuccess({ request })),
           catchError((error) => of(TripRequestActions.updateRequestStatusFailure({ error: error.message })))
         )

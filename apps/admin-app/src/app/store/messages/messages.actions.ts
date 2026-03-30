@@ -14,5 +14,6 @@ export const MessagesActions = createActionGroup({
     'Delete Message Success': props<{ id: string }>(),
     'Delete Message Failure': props<{ error: string }>(),
     'Mark As Read': props<{ id: string }>(),
+    'Add Message From Socket': props<{ message: ContactSubmission }>(),
   },
 });

@@ -41,7 +41,11 @@ export const requestsFeature = createFeature({
       requests: s.requests.filter((r) => r.id !== requestId),
       loading: false,
     })),
-    on(TripRequestActions.deleteRequestFailure, (s, { error }) => ({ ...s, loading: false, error }))
+    on(TripRequestActions.deleteRequestFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(TripRequestActions.addRequestFromSocket, (s, { request }) => ({
+      ...s,
+      requests: [request, ...s.requests],
+    }))
   ),
 });
 

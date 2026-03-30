@@ -43,6 +43,10 @@ export const messagesFeature = createFeature({
       ...s,
       messages: s.messages.map((m) => (m.id === id ? { ...m, isRead: true } : m)),
     })),
+    on(MessagesActions.addMessageFromSocket, (s, { message }) => ({
+      ...s,
+      messages: [message, ...s.messages],
+    })),
   ),
 });
 

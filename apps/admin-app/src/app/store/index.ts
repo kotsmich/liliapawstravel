@@ -3,3 +3,4 @@ export * from './trips';
 export * from './calendar';
 export * from './requests';
 export * from './messages';
+export * from './notifications';

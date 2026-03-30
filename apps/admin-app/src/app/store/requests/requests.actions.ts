@@ -16,5 +16,6 @@ export const TripRequestActions = createActionGroup({
     'Delete Request': props<{ requestId: string }>(),
     'Delete Request Success': props<{ requestId: string }>(),
     'Delete Request Failure': props<{ error: string }>(),
+    'Add Request From Socket': props<{ request: TripRequest }>(),
   },
 });

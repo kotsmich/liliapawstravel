@@ -17,6 +17,7 @@ import { tripsReducer, TripsEffects } from '@admin/store/trips';
 import { calendarReducer } from '@admin/store/calendar';
 import { requestsReducer, RequestsEffects } from '@admin/store/requests';
 import { messagesReducer, MessagesEffects } from '@admin/store/messages';
+import { notificationsReducer } from '@admin/store/notifications';
 
 const LiliaPreset = definePreset(Aura, {
   semantic: {
@@ -62,6 +63,7 @@ export const appConfig: ApplicationConfig = {
       calendar: calendarReducer,
       requests: requestsReducer,
       messages: messagesReducer,
+      notifications: notificationsReducer,
     }),
     provideEffects([AuthEffects, TripsEffects, RequestsEffects, MessagesEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
