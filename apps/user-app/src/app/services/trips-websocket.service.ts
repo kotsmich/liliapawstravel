@@ -26,8 +26,8 @@ export class TripsWebSocketService implements OnDestroy {
 
     this.ws.onmessage = (event) => {
       try {
-        const msg = JSON.parse(event.data as string);
-        if (msg.event === 'trips') this.trips$.next(msg.data as Trip[]);
+        const msg = JSON.parse(event.data as string) as { event: string; data: Trip[] };
+        if (msg.event === 'trips') this.trips$.next(msg.data);
       } catch { /* ignore malformed frames */ }
     };
 

@@ -51,7 +51,7 @@ import { CardModule } from 'primeng/card';
     }
     .stat-icon {
       font-size: 1.75rem;
-      color: #e07b54;
+      color: var(--p-primary-500);
       flex-shrink: 0;
     }
     .stat-content > div {
@@ -62,12 +62,12 @@ import { CardModule } from 'primeng/card';
     .stat-value {
       font-size: 1.5rem;
       font-weight: 700;
-      color: #1e293b;
+      color: var(--p-surface-900, #1e293b);
       line-height: 1;
     }
     .stat-label {
       font-size: 0.8rem;
-      color: #64748b;
+      color: var(--p-surface-500, #64748b);
       font-weight: 500;
     }
     @media (max-width: 640px) {

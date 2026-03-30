@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 import { Router } from '@angular/router';
 import { HeroComponent } from './components/hero/hero.component';
@@ -9,6 +9,7 @@ import { CtaSectionComponent } from './components/cta-section/cta-section.compon
 @Component({
   selector: 'app-home',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [HeroComponent, StatsSectionComponent, AboutSectionComponent, CtaSectionComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],

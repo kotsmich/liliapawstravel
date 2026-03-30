@@ -23,6 +23,7 @@ export class AppWebSocketService implements OnDestroy {
   listen<T>(event: SocketEvent): Observable<T> {
     return this.messages$.pipe(
       filter((msg) => msg.event === event),
+      // The cast is safe: callers always specify T matching the event type contract
       map((msg) => msg.data as T),
     );
   }
@@ -37,6 +38,7 @@ export class AppWebSocketService implements OnDestroy {
 
     this.ws.onmessage = (event) => {
       try {
+        // event.data is a string when the server sends text frames (JSON)
         const msg = JSON.parse(event.data as string) as WsMessage;
         this.messages$.next(msg);
       } catch {

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map, filter, take } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -35,7 +36,15 @@ export class RequestsListComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private router: Router,
-  ) {}
+  ) {
+    // Must be in constructor — takeUntilDestroyed() requires the injection context
+    this.store.select(selectAllTrips).pipe(
+      takeUntilDestroyed(),
+    ).subscribe((trips: Trip[]) => {
+      this.trips = trips;
+      this.buildTripOptions(trips);
+    });
+  }
 
   loading$ = this.store.select(selectRequestsIsLoading);
 
@@ -49,10 +58,12 @@ export class RequestsListComponent implements OnInit {
 
   // Filter requests by selected trip only (no tab filter) — used for badge counts
   private filteredByTrip$ = combineLatest([
-    this.store.select(selectAllRequests) as import('rxjs').Observable<TripRequest[]>,
+    this.store.select(selectAllRequests),
     this.selectedTripId$,
   ]).pipe(
-    map(([requests, tripId]) => tripId ? requests.filter((r) => r.tripId === tripId) : requests)
+    map(([requests, tripId]: [TripRequest[], string | null]) =>
+      tripId ? requests.filter((r) => r.tripId === tripId) : requests
+    )
   );
 
   // Badge counts reflect the current trip selection so they always match the table
@@ -71,16 +82,11 @@ export class RequestsListComponent implements OnInit {
     this.store.dispatch(TripRequestActions.loadRequests());
     this.store.dispatch(TripActions.loadTrips());
 
-    (this.store.select(selectAllTrips) as import('rxjs').Observable<Trip[]>).subscribe((trips) => {
-      this.trips = trips;
-      this.buildTripOptions(trips);
-    });
-
     // Pre-select nearest upcoming trip once trips load
-    (this.store.select(selectAllTrips) as import('rxjs').Observable<Trip[]>).pipe(
-      filter((trips) => trips.length > 0),
+    this.store.select(selectAllTrips).pipe(
+      filter((trips: Trip[]) => trips.length > 0),
       take(1),
-    ).subscribe((trips) => {
+    ).subscribe((trips: Trip[]) => {
       const nearest = [...trips]
         .filter((t) => t.status === 'upcoming')
         .sort((a, b) => a.date.localeCompare(b.date))[0];

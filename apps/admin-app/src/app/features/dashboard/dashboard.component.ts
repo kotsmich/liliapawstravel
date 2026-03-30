@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -13,6 +13,7 @@ import { RecentTripsComponent } from './components/recent-trips/recent-trips.com
 @Component({
   selector: 'app-dashboard',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ButtonModule, LoadingSpinnerComponent, DashboardStatsComponent, RecentTripsComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
@@ -20,13 +21,13 @@ import { RecentTripsComponent } from './components/recent-trips/recent-trips.com
 export class DashboardComponent implements OnInit {
   constructor(private store: Store, private router: Router) {}
 
-  trips$ = this.store.select(selectAllTrips) as import('rxjs').Observable<Trip[]>;
+  trips$ = this.store.select(selectAllTrips);
   loading$ = this.store.select(selectTripsIsLoading);
 
-  totalTrips$ = this.trips$.pipe(map((t) => t.length));
-  upcomingCount$ = this.trips$.pipe(map((t) => t.filter((x) => x.status === 'upcoming').length));
-  completedCount$ = this.trips$.pipe(map((t) => t.filter((x) => x.status === 'completed').length));
-  recentTrips$ = this.trips$.pipe(map((t) => t.slice(0, 5)));
+  totalTrips$ = this.trips$.pipe(map((t: Trip[]) => t.length));
+  upcomingCount$ = this.trips$.pipe(map((t: Trip[]) => t.filter((x) => x.status === 'upcoming').length));
+  completedCount$ = this.trips$.pipe(map((t: Trip[]) => t.filter((x) => x.status === 'completed').length));
+  recentTrips$ = this.trips$.pipe(map((t: Trip[]) => t.slice(0, 5)));
 
   ngOnInit(): void {
     this.store.dispatch(TripActions.loadTrips());

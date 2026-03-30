@@ -24,7 +24,7 @@ import { Trip } from '@models/lib/trip.model';
 import { Dog } from '@models/lib/dog.model';
 import { TripActions, selectTripsAsCalendarEvents, selectTripsIsLoading } from '@user/store/trips';
 import { CalendarActions, selectCalendarSelectedDate, selectTripForSelectedDate } from '@user/store/calendar';
-import { TripRequestActions, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestHasError } from '@user/store/trip-request';
+import { TripRequestActions, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError } from '@user/store/trip-request';
 
 @Component({
   selector: 'app-trip-request',
@@ -60,20 +60,21 @@ export class TripRequestComponent implements OnInit {
   selectedTrip$ = this.store.select(selectTripForSelectedDate);
   submitting$ = this.store.select(selectTripRequestIsLoading);
   success$ = this.store.select(selectTripRequestIsSuccess);
-  error$ = this.store.select(selectTripRequestHasError);
+  error$ = this.store.select(selectTripRequestError);
   events$ = this.store.select(selectTripsAsCalendarEvents);
 
   ngOnInit(): void {
     timer(0, 60000).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.store.dispatch(TripActions.refreshTrips());
     });
-
-    this.form = this.fb.group({
+    
+ this.form = this.fb.group({
       requesterName: ['Kots', Validators.required],
       requesterEmail: ['Mich@gmail.com', [Validators.required, Validators.email]],
       requesterPhone: ['6948225016', Validators.required],
       dogs: this.fb.array([this.dogGroup()]),
     });
+
 
     this.events$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((e) => {
       this.calendarEvents = e as CalendarEvent[];

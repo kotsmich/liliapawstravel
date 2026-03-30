@@ -1,10 +1,11 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { AvatarModule } from 'primeng/avatar';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { AuthActions, selectCurrentUser } from '@admin/store/auth';
 import { TripRequestActions, selectPendingRequestsCount } from '@admin/store/requests';
 import { MessagesActions, selectUnreadCount } from '@admin/store/messages';
@@ -13,6 +14,7 @@ import { AdminUser } from '@models/lib/admin-user.model';
 @Component({
   selector: 'app-shell',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterOutlet, ButtonModule, TooltipModule, AvatarModule],
   templateUrl: './shell.component.html',
   styleUrls: ['./shell.component.scss'],
@@ -20,7 +22,7 @@ import { AdminUser } from '@models/lib/admin-user.model';
 export class ShellComponent implements OnInit {
   constructor(private store: Store, private router: Router) {}
 
-  user$ = this.store.select(selectCurrentUser) as import('rxjs').Observable<AdminUser | null>;
+  user$: Observable<AdminUser | null> = this.store.select(selectCurrentUser);
   pendingCount$ = this.store.select(selectPendingRequestsCount);
   unreadMessagesCount$ = this.store.select(selectUnreadCount);
   sidebarOpen = true;

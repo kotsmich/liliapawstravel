@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -13,6 +13,7 @@ import { AuthActions, selectAuthIsLoading, selectAuthError } from '@admin/store/
 @Component({
   selector: 'app-login',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule, ReactiveFormsModule,
     InputTextModule, PasswordModule, ButtonModule, CardModule,
@@ -27,7 +28,7 @@ export class LoginComponent {
     private store: Store,
   ) {}
 
-  form = this.fb.group({
+   form = this.fb.group({
     email: ['admin@liliapaws.com', [Validators.required, Validators.email]],
     password: ['admin123', [Validators.required, Validators.minLength(6)]],
   });
