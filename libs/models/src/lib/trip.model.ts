@@ -13,7 +13,7 @@ export interface Trip {
   totalCapacity: number;
   spotsAvailable: number;
   notes: string;
-  dogs: Dog[];
+  dogs: Dog[] | undefined;
   isFull: boolean;
   acceptingRequests: boolean;
 }

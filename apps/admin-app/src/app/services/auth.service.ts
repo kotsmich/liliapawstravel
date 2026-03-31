@@ -10,14 +10,12 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(
-    email: string,
-    password: string,
-  ): Observable<{ token: string; user: AdminUser }> {
-    return this.http.post<{ token: string; user: AdminUser }>(
-      `${this.baseUrl}/login`,
-      { email, password },
-    );
+  login(email: string, password: string): Observable<{ token: string; user: { id: string; email: string } }> {
+    return this.http.post<{ token: string; user: { id: string; email: string } }>(`${this.baseUrl}/login`, { email, password });
+  }
+
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/logout`, {});
   }
 
   getProfile(): Observable<AdminUser> {

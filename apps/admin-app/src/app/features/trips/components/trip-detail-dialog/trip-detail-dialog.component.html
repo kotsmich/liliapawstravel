@@ -9,15 +9,26 @@
   @if (trip; as t) {
     <p-tabs [value]="activeTab" (valueChange)="tabChanged.emit($event?.toString() ?? activeTab)">
       <p-tablist>
-        <p-tab value="dogs">Dogs ({{ t.dogs.length }})</p-tab>
+        <p-tab value="dogs">Dogs ({{ t.dogs?.length ?? 0 }})</p-tab>
         <p-tab value="requests">Requesters ({{ requests.length }})</p-tab>
       </p-tablist>
     </p-tabs>
 
     @if (activeTab === 'dogs') {
       <div class="tab-content">
+        <div class="flex justify-content-between align-items-center mb-3">
+          <span class="font-semibold">Dogs ({{ t.dogs?.length ?? 0 }})</span>
+          <p-button
+            label="Export PDF"
+            icon="pi pi-file-pdf"
+            severity="secondary"
+            [outlined]="true"
+            [disabled]="!t.dogs?.length"
+            (onClick)="onExportPdf()">
+          </p-button>
+        </div>
         <app-generic-table
-          [data]="t.dogs"
+          [data]="t.dogs ?? []"
           [columns]="dogColumns"
           [actions]="dogActions"
           [config]="tableConfig">

@@ -11,6 +11,7 @@ import { TripRequest } from '@models/lib/trip-request.model';
 import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.interface';
 import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
 import { EmptyStateComponent } from '@ui/lib/components/empty-state/empty-state.component';
+import { ExportService } from '../../../../services/export.service';
 
 type RequestDog = TripRequest['dogs'][number];
 
@@ -23,6 +24,7 @@ type RequestDog = TripRequest['dogs'][number];
   styleUrls: ['./trip-detail-dialog.component.scss'],
 })
 export class TripDetailDialogComponent implements OnInit {
+  constructor(private exportService: ExportService) {}
   @Input() visible = false;
   @Input() header = 'Trip Details';
   @Input() trip: Trip | null = null;
@@ -67,6 +69,12 @@ export class TripDetailDialogComponent implements OnInit {
         action: (dog) => this.editDog.emit({ dog, tripId: this.trip!.id }),
       },
     ];
+  }
+
+  onExportPdf(): void {
+    if (this.trip) {
+      this.exportService.exportTripManifestPdf(this.trip);
+    }
   }
 
   onHide(): void {

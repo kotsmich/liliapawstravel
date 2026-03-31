@@ -37,7 +37,7 @@
             </div>
           </ng-template>
           <div class="trip-body">
-            <span class="dogs-count">🐶 {{ trip.dogs.length }} / {{ trip.totalCapacity }} dog{{ trip.totalCapacity !== 1 ? 's' : '' }}</span>
+            <span class="dogs-count">🐶 {{ trip.totalCapacity - trip.spotsAvailable }} / {{ trip.totalCapacity }} dog{{ trip.totalCapacity !== 1 ? 's' : '' }}</span>
             <span class="spots-count" [class.low]="trip.spotsAvailable <= 2">
               🐾 {{ trip.spotsAvailable }} spot{{ trip.spotsAvailable !== 1 ? 's' : '' }} remaining
             </span>
@@ -51,6 +51,9 @@
                 (onClick)="viewDetails.emit(trip)" />
               <p-button label="Edit" icon="pi pi-pencil" [outlined]="true" size="small"
                 (onClick)="editTrip.emit(trip)" />
+              <p-button label="Export PDF" icon="pi pi-file-pdf" severity="secondary" [outlined]="true" size="small"
+                [disabled]="trip.spotsAvailable === trip.totalCapacity"
+                (onClick)="exportPdf.emit(trip)" />
               <p-button label="Delete" icon="pi pi-trash" severity="danger" [text]="true" size="small"
                 (onClick)="deleteTrip.emit(trip)" />
             </div>

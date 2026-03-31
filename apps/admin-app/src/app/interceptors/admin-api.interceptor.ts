@@ -3,25 +3,19 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { MessageService } from 'primeng/api';
+import { environment } from '../../environments/environment';
 
 export const adminApiInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const messageService = inject(MessageService);
-  const token = sessionStorage.getItem('admin_token');
 
-  let modifiedReq = req;
-
-  if (token) {
-    modifiedReq = req.clone({
-      headers: req.headers.set('Authorization', `Bearer ${token}`),
-    });
-  }
+  const modifiedReq = req.url.startsWith(environment.apiUrl)
+    ? req.clone({ withCredentials: true })
+    : req;
 
   return next(modifiedReq).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
-        sessionStorage.removeItem('admin_token');
-        sessionStorage.removeItem('admin_token_expiry');
         router.navigate(['/admin/login']);
       }
       if (error.status === 403) {

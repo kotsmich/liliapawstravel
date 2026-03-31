@@ -62,10 +62,10 @@ export const tripsFeature = createFeature({
     on(TripActions.updateDogSuccess, (s, { tripId, dog }) => ({
       ...s,
       trips: s.trips.map((t) =>
-        t.id === tripId ? { ...t, dogs: t.dogs.map((d) => (d.id === dog.id ? dog : d)) } : t
+        t.id === tripId ? { ...t, dogs: t.dogs?.map((d) => (d.id === dog.id ? dog : d)) } : t
       ),
       selectedTrip: s.selectedTrip?.id === tripId
-        ? { ...s.selectedTrip, dogs: s.selectedTrip.dogs.map((d) => (d.id === dog.id ? dog : d)) }
+        ? { ...s.selectedTrip, dogs: s.selectedTrip.dogs?.map((d) => (d.id === dog.id ? dog : d)) }
         : s.selectedTrip,
       mutating: false,
     })),

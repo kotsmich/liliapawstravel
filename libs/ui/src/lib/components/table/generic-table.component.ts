@@ -16,7 +16,12 @@ import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GenericTableComponent<T extends object> {
-  @Input() data: T[] = [];
+  tableData: T[] = [];
+
+  @Input() set data(val: T[]) {
+    this.tableData = val ? [...val] : [];
+  }
+
   @Input() columns: TableColumn<T>[] = [];
   @Input() actions: TableAction<T>[] = [];
   @Input() config: TableConfig = {};

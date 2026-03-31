@@ -25,6 +25,7 @@ export class TripCalendarViewComponent {
   @Output() editTrip = new EventEmitter<Trip>();
   @Output() deleteTrip = new EventEmitter<Trip>();
   @Output() viewDetails = new EventEmitter<Trip>();
+  @Output() exportPdf = new EventEmitter<Trip>();
 
   trackByTripId(_: number, trip: Trip): string { return trip.id; }
 

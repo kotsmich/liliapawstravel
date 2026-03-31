@@ -1,9 +1,9 @@
 <p-table
-  [value]="data"
+  [value]="tableData"
   [loading]="loading"
   [paginator]="config.paginator ?? false"
   [rows]="config.rowsPerPage ?? 10"
-  [sortField]="config.sortField ?? ''"
+  [sortField]="config.sortField"
   [sortOrder]="config.sortOrder ?? -1"
   [rowHover]="true"
   [stripedRows]="config.striped ?? false">

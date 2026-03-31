@@ -9,6 +9,8 @@ import { providePrimeNG } from 'primeng/config';
 import { definePreset } from '@primeng/themes';
 import Aura from '@primeng/themes/aura';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { firstValueFrom, of } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 
 import { APP_ROUTES } from './app.routes';
 import { adminApiInterceptor } from '@admin/interceptors/admin-api.interceptor';
@@ -18,6 +20,7 @@ import { calendarReducer } from '@admin/store/calendar';
 import { requestsReducer, RequestsEffects } from '@admin/store/requests';
 import { messagesReducer, MessagesEffects } from '@admin/store/messages';
 import { notificationsReducer } from '@admin/store/notifications';
+import { AuthService } from '@admin/services/auth.service';
 
 const LiliaPreset = definePreset(Aura, {
   semantic: {
@@ -37,19 +40,14 @@ const LiliaPreset = definePreset(Aura, {
   },
 });
 
-function initializeAuth(store: Store): () => void {
-  return () => {
-    const token = sessionStorage.getItem('admin_token');
-    const expiry = sessionStorage.getItem('admin_token_expiry');
-    const isValid = expiry && Date.now() < Number(expiry);
-
-    if (token && isValid) {
-      store.dispatch(AuthActions.restoreSession({ token }));
-    } else {
-      sessionStorage.removeItem('admin_token');
-      sessionStorage.removeItem('admin_token_expiry');
-    }
-  };
+function initializeAuth(store: Store, authService: AuthService): () => Promise<void> {
+  return () =>
+    firstValueFrom(
+      authService.getProfile().pipe(
+        tap((user) => store.dispatch(AuthActions.restoreSession({ user }))),
+        catchError(() => of(null)),
+      ),
+    ).then(() => undefined);
 }
 
 export const appConfig: ApplicationConfig = {
@@ -79,7 +77,7 @@ export const appConfig: ApplicationConfig = {
     {
       provide: APP_INITIALIZER,
       useFactory: initializeAuth,
-      deps: [Store],
+      deps: [Store, AuthService],
       multi: true,
     },
   ],

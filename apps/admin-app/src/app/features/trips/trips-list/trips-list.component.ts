@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -18,10 +18,12 @@ import { Trip } from '@models/lib/trip.model';
 import { Dog } from '@models/lib/dog.model';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { CalendarEvent } from '@models/lib/calendar-event.model';
+import { sanitizeHtml } from '@admin/shared/utils/sanitize';
 import { TripCalendarViewComponent } from '../components/trip-calendar-view/trip-calendar-view.component';
 import { AllTripsTabComponent } from '../components/all-trips-tab/all-trips-tab.component';
 import { TripDetailDialogComponent } from '../components/trip-detail-dialog/trip-detail-dialog.component';
 import { DogFormDialogComponent } from '../components/dog-form-dialog/dog-form-dialog.component';
+import { ExportService } from '../../../services/export.service';
 
 @Component({
   selector: 'app-trip-list-page',
@@ -97,6 +99,8 @@ export class TripsListComponent implements OnInit {
     private router: Router,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
+    private exportService: ExportService,
+    private destroyRef: DestroyRef,
   ) {
     this.selectedDate$.pipe(takeUntilDestroyed()).subscribe((d) => { this.selectedDate = d; });
   }
@@ -161,6 +165,18 @@ export class TripsListComponent implements OnInit {
     this.detailDialogVisible = true;
   }
 
+  onExportPdfFromCard(trip: Trip): void {
+    this.store.dispatch(TripActions.loadTripById({ id: trip.id }));
+    this.store.select(selectAllTrips).pipe(
+      map(trips => trips.find(t => t.id === trip.id)),
+      filter(t => t?.dogs !== undefined),
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(t => {
+      if (t) this.exportService.exportTripManifestPdf(t);
+    });
+  }
+
   closeDetail(): void {
     this.detailTripId$.next(null);
     this.dogEditVisible = false;
@@ -187,7 +203,7 @@ export class TripsListComponent implements OnInit {
   approveRequestInDetail(req: TripRequest): void {
     this.confirmationService.confirm({
       header: 'Confirm Approval',
-      message: `Approve request by <strong>${req.requesterName}</strong> (${req.dogs.length} dog${req.dogs.length !== 1 ? 's' : ''})?`,
+      message: `Approve request by <strong>${sanitizeHtml(req.requesterName)}</strong> (${req.dogs.length} dog${req.dogs.length !== 1 ? 's' : ''})?`,
       acceptLabel: 'Approve',
       rejectLabel: 'Back',
       acceptButtonStyleClass: 'p-button-success',
@@ -201,7 +217,7 @@ export class TripsListComponent implements OnInit {
   rejectRequestInDetail(req: TripRequest): void {
     this.confirmationService.confirm({
       header: 'Confirm Rejection',
-      message: `Reject request by <strong>${req.requesterName}</strong>? This cannot be undone.`,
+      message: `Reject request by <strong>${sanitizeHtml(req.requesterName)}</strong>? This cannot be undone.`,
       acceptLabel: 'Reject',
       rejectLabel: 'Back',
       acceptButtonStyleClass: 'p-button-danger',
@@ -215,7 +231,7 @@ export class TripsListComponent implements OnInit {
   deleteRequestInDetail(req: TripRequest): void {
     this.confirmationService.confirm({
       header: 'Delete Request',
-      message: `Delete the request from <strong>${req.requesterName}</strong>?${req.status === 'approved' ? ' The dogs added to the trip will remain.' : ''}`,
+      message: `Delete the request from <strong>${sanitizeHtml(req.requesterName)}</strong>?${req.status === 'approved' ? ' The dogs added to the trip will remain.' : ''}`,
       acceptLabel: 'Delete',
       rejectLabel: 'Cancel',
       acceptButtonStyleClass: 'p-button-danger',

@@ -15,7 +15,7 @@ export class TripsService {
   }
 
   getTripById(id: string): Observable<Trip> {
-    return this.http.get<Trip>(`${this.baseUrl}/${id}`);
+    return this.http.get<Trip>(`${this.baseUrl}/${id}/detail`);
   }
 
   createTrip(trip: Partial<Trip>): Observable<Trip> {

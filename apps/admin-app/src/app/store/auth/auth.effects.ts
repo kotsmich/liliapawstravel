@@ -12,8 +12,12 @@ export class AuthEffects {
       ofType(AuthActions.login),
       switchMap(({ email, password }) =>
         this.authService.login(email, password).pipe(
-          map(({ token, user }) => AuthActions.loginSuccess({ user: { ...user, token } })),
-          catchError((error) => of(AuthActions.loginFailure({ error: error.message })))
+          map(({ token, user }) =>
+            AuthActions.loginSuccess({ token, user })
+          ),
+          catchError((error) =>
+            of(AuthActions.loginFailure({ error: error.error?.message ?? error.message }))
+          )
         )
       )
     )
@@ -23,11 +27,7 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
-        tap(({ user }) => {
-          sessionStorage.setItem('admin_token', user.token);
-          sessionStorage.setItem('admin_token_expiry', String(Date.now() + 24 * 60 * 60 * 1000));
-          this.router.navigate(['/admin/dashboard']);
-        })
+        tap(() => this.router.navigate(['/admin/dashboard']))
       ),
     { dispatch: false }
   );
@@ -36,11 +36,12 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.logout),
-        tap(() => {
-          sessionStorage.removeItem('admin_token');
-          sessionStorage.removeItem('admin_token_expiry');
-          this.router.navigate(['/admin/login']);
-        })
+        switchMap(() =>
+          this.authService.logout().pipe(
+            catchError(() => of(null))
+          )
+        ),
+        tap(() => this.router.navigate(['/admin/login']))
       ),
     { dispatch: false }
   );

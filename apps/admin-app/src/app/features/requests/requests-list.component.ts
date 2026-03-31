@@ -10,6 +10,7 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { TripActions, selectAllTrips } from '@admin/store/trips';
+import { sanitizeHtml } from '@admin/shared/utils/sanitize';
 import { TripRequestActions, selectAllRequests, selectRequestsIsLoading } from '@admin/store/requests';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { Trip } from '@models/lib/trip.model';
@@ -132,7 +133,7 @@ export class RequestsListComponent implements OnInit {
     const req = this.selectedRequest;
     this.confirmationService.confirm({
       header: 'Confirm Approval',
-      message: `Approve the request for trip <strong>${this.tripDate(req.tripId)}</strong> by <strong>${req.requesterName}</strong>?`,
+      message: `Approve the request for trip <strong>${sanitizeHtml(this.tripDate(req.tripId))}</strong> by <strong>${sanitizeHtml(req.requesterName)}</strong>?`,
       acceptLabel: 'Approve',
       rejectLabel: 'Back',
       acceptButtonStyleClass: 'p-button-success',
@@ -149,7 +150,7 @@ export class RequestsListComponent implements OnInit {
     const req = this.selectedRequest;
     this.confirmationService.confirm({
       header: 'Confirm Rejection',
-      message: `Reject the request for trip <strong>${this.tripDate(req.tripId)}</strong> by <strong>${req.requesterName}</strong>? This cannot be undone.`,
+      message: `Reject the request for trip <strong>${sanitizeHtml(this.tripDate(req.tripId))}</strong> by <strong>${sanitizeHtml(req.requesterName)}</strong>? This cannot be undone.`,
       acceptLabel: 'Reject',
       rejectLabel: 'Back',
       acceptButtonStyleClass: 'p-button-danger',
@@ -164,7 +165,7 @@ export class RequestsListComponent implements OnInit {
   deleteRequest(req: TripRequest): void {
     this.confirmationService.confirm({
       header: 'Delete Request',
-      message: `Delete the request from <strong>${req.requesterName}</strong>?${req.status === 'approved' ? ' The dogs added to the trip will remain.' : ''}`,
+      message: `Delete the request from <strong>${sanitizeHtml(req.requesterName)}</strong>?${req.status === 'approved' ? ' The dogs added to the trip will remain.' : ''}`,
       acceptLabel: 'Delete',
       rejectLabel: 'Cancel',
       acceptButtonStyleClass: 'p-button-danger',

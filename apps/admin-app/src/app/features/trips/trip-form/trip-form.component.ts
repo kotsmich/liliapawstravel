@@ -110,7 +110,7 @@ export class TripFormComponent implements OnInit {
       ).subscribe((trip) => {
         this.form.patchValue({ ...trip, date: trip.date ? new Date(trip.date + 'T00:00:00') : null });
         this.dogs.clear();
-        trip.dogs.forEach((d) => this.dogs.push(this.dogGroup(d)));
+        trip.dogs?.forEach((d) => this.dogs.push(this.dogGroup(d)));
       });
     }
   }
@@ -209,17 +209,13 @@ export class TripFormComponent implements OnInit {
   onSubmit(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
-    const dogs: Dog[] = this.form.value.dogs.map((d: Partial<Dog>) => ({
-      ...d,
-      id: d.id || generateId(),
-    }));
     const rawDate = this.form.value.date as Date | null;
     const dateStr = rawDate
       ? `${rawDate.getFullYear()}-${String(rawDate.getMonth() + 1).padStart(2, '0')}-${String(rawDate.getDate()).padStart(2, '0')}`
       : '';
     const totalCapacity: number = this.form.value.totalCapacity;
-    const spotsAvailable = Math.max(0, totalCapacity - dogs.length);
-    const payload = { ...this.form.value, date: dateStr, totalCapacity, spotsAvailable, dogs };
+    const { isFull: _isFull, dogs: _dogs, ...rest } = this.form.value;
+    const payload = { ...rest, date: dateStr, totalCapacity };
 
     if (this.isEdit && this.editId) {
       this.store.dispatch(TripActions.updateTrip({ id: this.editId, trip: payload }));

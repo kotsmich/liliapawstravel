@@ -5,7 +5,7 @@
 </ng-template>
 
 <ng-template #filledTpl let-row>
-  {{ row.dogs?.length ?? 0 }}
+  {{ row.totalCapacity - row.spotsAvailable }}
 </ng-template>
 
 <ng-template #remainingTpl let-row>
