@@ -1,7 +1,4 @@
 <div class="layout flex" [class.sidebar-closed]="!sidebarOpen">
-  @if (sidebarOpen && isMobile) {
-    <div class="mobile-backdrop" (click)="toggleSidebar()"></div>
-  }
   <aside class="sidebar flex flex-column flex-shrink-0">
     <div class="sidebar__brand flex align-items-center">
       <span class="sidebar__paw" aria-hidden="true">🐾</span>
@@ -59,6 +56,7 @@
   <div class="main flex flex-column flex-1">
     <header class="topbar flex align-items-center flex-shrink-0">
       <p-button
+        class="sidebar-toggle"
         [icon]="sidebarOpen ? 'pi pi-align-right' : 'pi pi-align-left'"
         [text]="true"
         [rounded]="true"
@@ -71,4 +69,37 @@
       <router-outlet></router-outlet>
     </div>
   </div>
+
+  <!-- Bottom navigation — replaces sidebar on mobile -->
+  <nav class="bottom-nav" aria-label="Mobile navigation">
+    @for (item of navItems; track item.link) {
+      <button
+        type="button"
+        class="bottom-nav__item flex flex-column align-items-center"
+        [class.active]="isActive(item.link)"
+        (click)="navigateTo(item.link)"
+        >
+        <span class="bottom-nav__icon-wrap">
+          <i [class]="item.icon"></i>
+          @if (item.link === '/admin/requests' && (pendingCount$ | async); as count) {
+            <span class="nav-badge flex align-items-center justify-content-center">{{ count }}</span>
+          }
+          @if (item.link === '/admin/messages' && (unreadMessagesCount$ | async); as count) {
+            <span class="nav-badge flex align-items-center justify-content-center">{{ count }}</span>
+          }
+        </span>
+        <span class="bottom-nav__label">{{ item.label }}</span>
+      </button>
+    }
+    <button
+      type="button"
+      class="bottom-nav__item flex flex-column align-items-center"
+      (click)="logout()"
+      >
+      <span class="bottom-nav__icon-wrap">
+        <i class="pi pi-sign-out"></i>
+      </span>
+      <span class="bottom-nav__label">Logout</span>
+    </button>
+  </nav>
 </div>

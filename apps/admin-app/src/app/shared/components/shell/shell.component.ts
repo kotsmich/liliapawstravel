@@ -32,13 +32,11 @@ export class ShellComponent implements OnInit {
   ngOnInit(): void {
     this.store.dispatch(loadRequests());
     this.store.dispatch(loadMessages());
-    if (this.isMobile) this.sidebarOpen = false;
   }
 
   @HostListener('window:resize')
   onResize(): void {
-    if (!this.isMobile && !this.sidebarOpen) this.sidebarOpen = true;
-    if (this.isMobile && this.sidebarOpen) this.sidebarOpen = false;
+    if (!this.isMobile) this.sidebarOpen = true;
   }
 
   logout(): void {
@@ -51,7 +49,6 @@ export class ShellComponent implements OnInit {
 
   navigateTo(path: string): void {
     this.router.navigate([path]);
-    if (this.isMobile) this.sidebarOpen = false;
   }
 
   isActive(link: string): boolean {

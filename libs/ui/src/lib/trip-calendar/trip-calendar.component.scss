@@ -85,9 +85,13 @@
     .dot { background: #fff; }
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 767px) {
     .p-datepicker-header .p-datepicker-title { font-size: 0.875rem; }
     .p-datepicker-weekday { font-size: 0.65rem; }
+
+    .p-datepicker-day {
+      padding: 0.2rem;
+    }
   }
 }
 

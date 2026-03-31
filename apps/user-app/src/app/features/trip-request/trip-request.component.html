@@ -138,31 +138,35 @@
                   <!-- Expanded card -->
                   @if (expandedIndex === i) {
                     <p-card class="dog-card-expanded">
+                      <ng-template pTemplate="header">
+                        <div class="dog-card-header flex justify-content-between align-items-center">
+                          <span class="dog-card-title">Dog #{{ i + 1 }}</span>
+                          <p-button
+                            icon="pi pi-chevron-up"
+                            label="Collapse"
+                            [text]="true"
+                            size="small"
+                            (onClick)="expandedIndex = null">
+                          </p-button>
+                        </div>
+                      </ng-template>
                       <ui-dog-form
                         [formGroup]="$any(dogs.at(i))"
                         [index]="i"
                         [canRemove]="false">
                       </ui-dog-form>
-                      <ng-template pTemplate="footer">
-                        <div class="dog-card-footer flex justify-content-between align-items-center">
-                          @if (dogs.length > 1) {
-                            <p-button
-                              icon="pi pi-trash"
-                              label="Remove Dog"
-                              severity="danger"
-                              [text]="true"
-                              size="small"
-                              (onClick)="removeDog(i)">
-                            </p-button>
-                          }
+                      @if (dogs.length > 1) {
+                        <ng-template pTemplate="footer">
                           <p-button
-                            label="Collapse"
-                            icon="pi pi-chevron-up"
+                            icon="pi pi-trash"
+                            label="Remove Dog"
+                            severity="danger"
                             [text]="true"
-                            (onClick)="expandedIndex = null">
+                            size="small"
+                            (onClick)="removeDog(i)">
                           </p-button>
-                        </div>
-                      </ng-template>
+                        </ng-template>
+                      }
                     </p-card>
                   }
                 </div>

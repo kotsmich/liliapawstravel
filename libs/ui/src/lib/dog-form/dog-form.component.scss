@@ -3,9 +3,16 @@
   gap: 0.5rem;
   padding: 0.75rem 1rem;
 
+  @media (max-width: 480px) {
+    padding: 0.5rem 0.5rem;
+    gap: 0.35rem;
+  }
+
   &__row {
     flex-wrap: wrap;
     gap: 0.5rem;
+
+    @media (max-width: 480px) { gap: 0.35rem; }
   }
 
   &__field {
@@ -13,11 +20,12 @@
     flex: 1 1 160px;
     min-width: 0;
 
-    @media (max-width: 480px) { flex: 1 1 100%; }
+    // 2 fields per row on mobile instead of stacking to full width
+    @media (max-width: 480px) { flex: 1 1 calc(50% - 0.175rem); }
 
     &--sm {
       flex: 0 1 100px;
-      @media (max-width: 480px) { flex: 1 1 100%; }
+      @media (max-width: 480px) { flex: 0 1 72px; }
     }
 
     label {
@@ -28,6 +36,8 @@
       letter-spacing: 0.04em;
       margin-bottom: 0.2rem;
       white-space: nowrap;
+
+      @media (max-width: 480px) { font-size: 0.62rem; letter-spacing: 0.02em; }
     }
 
     input.p-inputtext,
@@ -37,12 +47,16 @@
       font-size: 0.875rem;
       padding: 0 0.6rem;
       width: 100%;
+
+      @media (max-width: 480px) { height: 32px; font-size: 0.8rem; padding: 0 0.45rem; }
     }
 
     ::ng-deep .p-inputnumber-input {
       height: 34px;
       font-size: 0.875rem;
       padding: 0 0.6rem;
+
+      @media (max-width: 480px) { height: 32px; font-size: 0.8rem; }
     }
   }
 }
