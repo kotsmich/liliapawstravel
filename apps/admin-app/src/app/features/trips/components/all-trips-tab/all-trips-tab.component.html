@@ -1,29 +1,38 @@
-<!-- Template refs for generic table columns -->
-<ng-template #routeTemplate let-trip>
-  {{ trip.departureCity }} → {{ trip.arrivalCity }}
+<ng-template #routeTpl let-row>
+  <strong>{{ row.departureCity }}, {{ row.departureCountry }}</strong>
+  <span> → </span>
+  {{ row.arrivalCity }}, {{ row.arrivalCountry }}
 </ng-template>
 
-<ng-template #dogsCountTemplate let-trip>
-  {{ trip.dogs.length }}
+<ng-template #filledTpl let-row>
+  {{ row.dogs?.length ?? 0 }}
 </ng-template>
 
-<ng-template #remainingTemplate let-trip>
-  <span [class.low-spots]="trip.spotsAvailable <= 2">{{ trip.spotsAvailable }}</span>
+<ng-template #remainingTpl let-row>
+  <span [class.low-spots]="row.spotsAvailable <= 2">{{ row.spotsAvailable }}</span>
 </ng-template>
 
-<ng-template #acceptingTemplate let-trip>
-  @if (trip.isFull || trip.spotsAvailable <= 0) {
+<ng-template #acceptingTpl let-row>
+  @if (row.isFull || row.spotsAvailable <= 0) {
     <p-tag severity="danger" value="Full" />
-  }
-  @if (!trip.isFull && trip.spotsAvailable > 0 && !trip.acceptingRequests) {
+  } @else if (!row.acceptingRequests) {
     <p-tag severity="warn" value="Freezed" />
-  }
-  @if (!trip.isFull && trip.spotsAvailable > 0 && trip.acceptingRequests) {
+  } @else {
     <p-tag severity="success" value="Open" />
   }
 </ng-template>
 
-<div style="overflow-x:auto">
+<ng-template #statusTpl let-row>
+  @if (row.status === 'upcoming') {
+    <p-tag severity="info" [value]="row.status" />
+  } @else if (row.status === 'completed') {
+    <p-tag severity="success" [value]="row.status" />
+  } @else {
+    <p-tag severity="secondary" [value]="row.status" />
+  }
+</ng-template>
+
+<div class="table-scroll">
   <app-generic-table
     [data]="trips"
     [columns]="columns"

@@ -167,7 +167,7 @@
       </ng-template>
 
       <div class="dogs-list flex flex-column gap-2" formArrayName="dogs">
-        @for (dog of dogs.controls; track dog; let i = $index) {
+        @for (dog of dogs.controls; track $index; let i = $index) {
           <div class="dog-row flex align-items-center justify-content-between">
             <div class="dog-row__info flex align-items-center flex-wrap">
               <span class="dog-name">🐶 {{ dog.get('name')?.value || 'Unnamed' }}</span>

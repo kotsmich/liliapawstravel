@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
@@ -26,6 +26,7 @@ import { generateId } from '@models/lib/utils';
 @Component({
   selector: 'app-trip-form',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule, RouterModule, ReactiveFormsModule,
     InputTextModule, InputNumberModule, SelectModule, ButtonModule, CardModule,
@@ -79,12 +80,12 @@ export class TripFormComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.fb.group({
       date: [null as Date | null, Validators.required],
-      departureCountry: ['Greece', Validators.required],
-      departureCity: ['Larisa', Validators.required],
-      arrivalCountry: ['Germany', Validators.required],
-      arrivalCity: ['Stuguard', Validators.required],
+      departureCountry: ['', Validators.required],
+      departureCity: ['', Validators.required],
+      arrivalCountry: ['', Validators.required],
+      arrivalCity: ['', Validators.required],
       status: ['upcoming', Validators.required],
-      totalCapacity: [50, [Validators.required, Validators.min(1)]],
+      totalCapacity: [null, [Validators.required, Validators.min(1)]],
       notes: [''],
       isFull: [false],
       acceptingRequests: [true],

@@ -7,9 +7,9 @@
       <p>From a one-van operation to a network spanning 18 countries and 200+ shelters, we've safely transported over 1,200 dogs and counting.</p>
     </div>
     <div class="values">
-      @for (v of values; track v) {
+      @for (v of values; track v.title) {
         <div class="value-card">
-          <span>{{ v.icon }}</span>
+          <span aria-hidden="true">{{ v.icon }}</span>
           <h3>{{ v.title }}</h3>
           <p>{{ v.desc }}</p>
         </div>
@@ -25,7 +25,7 @@
       <h2>How adoption transport works</h2>
     </div>
     <div class="steps">
-      @for (s of steps; track s) {
+      @for (s of steps; track s.step) {
         <div class="step">
           <div class="step__num flex align-items-center justify-content-center">{{ s.step }}</div>
           <h3>{{ s.title }}</h3>

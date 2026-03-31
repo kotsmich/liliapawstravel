@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -26,6 +26,7 @@ import { DogFormDialogComponent } from '../components/dog-form-dialog/dog-form-d
 @Component({
   selector: 'app-trip-list-page',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     CardModule, ButtonModule, ConfirmDialogModule, ToastModule,

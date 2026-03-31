@@ -24,8 +24,8 @@ export class AuthEffects {
       this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
         tap(({ user }) => {
-          localStorage.setItem('admin_token', user.token);
-          localStorage.setItem('admin_token_expiry', String(Date.now() + 24 * 60 * 60 * 1000));
+          sessionStorage.setItem('admin_token', user.token);
+          sessionStorage.setItem('admin_token_expiry', String(Date.now() + 24 * 60 * 60 * 1000));
           this.router.navigate(['/admin/dashboard']);
         })
       ),
@@ -37,8 +37,8 @@ export class AuthEffects {
       this.actions$.pipe(
         ofType(AuthActions.logout),
         tap(() => {
-          localStorage.removeItem('admin_token');
-          localStorage.removeItem('admin_token_expiry');
+          sessionStorage.removeItem('admin_token');
+          sessionStorage.removeItem('admin_token_expiry');
           this.router.navigate(['/admin/login']);
         })
       ),

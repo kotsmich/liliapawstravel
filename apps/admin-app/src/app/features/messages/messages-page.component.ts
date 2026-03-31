@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
@@ -17,6 +17,7 @@ import { MessageDetailDialogComponent } from './components/message-detail-dialog
 @Component({
   selector: 'app-messages-page',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     ToastModule, CardModule, SkeletonModule,

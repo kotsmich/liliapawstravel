@@ -1,8 +1,6 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, TemplateRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
-import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { Trip } from '@models/lib/trip.model';
 import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.interface';
@@ -12,17 +10,14 @@ import { GenericTableComponent } from '@ui/lib/components/table/generic-table.co
   selector: 'app-recent-trips',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, TagModule, ButtonModule, GenericTableComponent],
+  imports: [CommonModule, CardModule, ButtonModule, GenericTableComponent],
   templateUrl: './recent-trips.component.html',
-  styles: [],
+  styles: [`:host ::ng-deep .table-scroll { overflow-x: auto; }`],
 })
-export class RecentTripsComponent implements AfterViewInit {
+export class RecentTripsComponent {
   @Input() trips: Trip[] = [];
   @Output() viewTrip = new EventEmitter<Trip>();
   @Output() navigateToAllTrips = new EventEmitter<void>();
-
-  @ViewChild('routeTemplate') routeTemplate!: TemplateRef<unknown>;
-  @ViewChild('dogsTemplate') dogsTemplate!: TemplateRef<unknown>;
 
   tableConfig: TableConfig = {
     trackByField: 'id',
@@ -30,7 +25,34 @@ export class RecentTripsComponent implements AfterViewInit {
     paginator: false,
   };
 
-  columns: TableColumn<Trip>[] = [];
+  columns: TableColumn<Trip>[] = [
+    {
+      field: 'route',
+      header: 'Route',
+      formatter: (_, row) => {
+        const t = row as Trip;
+        return `${t.departureCity}, ${t.departureCountry} → ${t.arrivalCity}, ${t.arrivalCountry}`;
+      },
+    },
+    { field: 'date', header: 'Date' },
+    {
+      field: 'dogs',
+      header: 'Dogs',
+      formatter: (_, row) => String((row as Trip).dogs?.length ?? 0),
+    },
+    {
+      field: 'status',
+      header: 'Status',
+      type: 'badge',
+      badgeConfig: {
+        severity: (_, row) => {
+          const trip = row as Trip;
+          return trip.status === 'upcoming' ? 'info' : trip.status === 'completed' ? 'success' : 'secondary';
+        },
+        label: (_, row) => (row as Trip).status,
+      },
+    },
+  ];
 
   actions: TableAction<Trip>[] = [
     {
@@ -40,29 +62,4 @@ export class RecentTripsComponent implements AfterViewInit {
       action: (trip) => this.viewTrip.emit(trip),
     },
   ];
-
-  constructor(private cdr: ChangeDetectorRef) {}
-
-  ngAfterViewInit(): void {
-    this.columns = [
-      { field: 'route', header: 'Route', type: 'template', template: this.routeTemplate },
-      { field: 'date', header: 'Date' },
-      { field: 'dogs', header: 'Dogs', type: 'template', template: this.dogsTemplate },
-      {
-        field: 'status', header: 'Status', type: 'badge',
-        badgeConfig: {
-          severity: (_, row) => {
-            const trip = row as Trip;
-            return trip.status === 'upcoming' ? 'info' : trip.status === 'completed' ? 'success' : 'secondary';
-          },
-          label: (_, row) => (row as Trip).status,
-        },
-      },
-    ];
-    this.cdr.markForCheck();
-  }
-
-  statusSeverity(status: Trip['status']): 'info' | 'success' | 'secondary' {
-    return status === 'upcoming' ? 'info' : status === 'completed' ? 'success' : 'secondary';
-  }
 }

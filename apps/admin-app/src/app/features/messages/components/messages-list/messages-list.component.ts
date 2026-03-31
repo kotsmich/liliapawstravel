@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
@@ -11,7 +11,7 @@ import { GenericTableComponent } from '@ui/lib/components/table/generic-table.co
   selector: 'app-messages-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DatePipe, ButtonModule, ConfirmDialogModule, GenericTableComponent],
+  imports: [CommonModule, ButtonModule, ConfirmDialogModule, GenericTableComponent],
   templateUrl: './messages-list.component.html',
   styles: [],
 })

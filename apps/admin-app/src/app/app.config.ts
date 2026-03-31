@@ -39,15 +39,15 @@ const LiliaPreset = definePreset(Aura, {
 
 function initializeAuth(store: Store): () => void {
   return () => {
-    const token = localStorage.getItem('admin_token');
-    const expiry = localStorage.getItem('admin_token_expiry');
+    const token = sessionStorage.getItem('admin_token');
+    const expiry = sessionStorage.getItem('admin_token_expiry');
     const isValid = expiry && Date.now() < Number(expiry);
 
     if (token && isValid) {
       store.dispatch(AuthActions.restoreSession({ token }));
     } else {
-      localStorage.removeItem('admin_token');
-      localStorage.removeItem('admin_token_expiry');
+      sessionStorage.removeItem('admin_token');
+      sessionStorage.removeItem('admin_token_expiry');
     }
   };
 }

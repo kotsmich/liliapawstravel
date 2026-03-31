@@ -1,22 +1,22 @@
 <footer class="footer">
   <div class="footer__grid">
     <div>
-      <div class="footer__brand">🐾 Lilia Paws Travel</div>
+      <div class="footer__brand"><span aria-hidden="true">🐾</span> Lilia Paws Travel</div>
       <p>Safely transporting adopted dogs across Europe.</p>
     </div>
     <div>
       <h4>Navigation</h4>
       <ul>
-        <li><a style="cursor:pointer" (click)="navigateTo('/')">Home</a></li>
-        <li><a style="cursor:pointer" (click)="navigateTo('/request')">Request Transport</a></li>
-        <li><a style="cursor:pointer" (click)="navigateTo('/contact')">Contact</a></li>
+        <li><button type="button" class="footer-link" (click)="navigateTo('/')">Home</button></li>
+        <li><button type="button" class="footer-link" (click)="navigateTo('/request')">Request Transport</button></li>
+        <li><button type="button" class="footer-link" (click)="navigateTo('/contact')">Contact</button></li>
       </ul>
     </div>
     <div>
       <h4>Contact</h4>
-      <p>📧 hello&#64;liliapawstravel.com</p>
-      <p>📞 +31 6 12 34 56 78</p>
+      <p><span aria-hidden="true">📧</span> hello&#64;liliapawstravel.com</p>
+      <p><span aria-hidden="true">📞</span> +31 6 12 34 56 78</p>
     </div>
   </div>
-  <div class="footer__bottom">&copy; {{ year }} Lilia Paws Travel. Made with ❤️ for dogs.</div>
+  <div class="footer__bottom">&copy; {{ year }} Lilia Paws Travel. Made with <span aria-hidden="true">❤️</span><span class="sr-only">love</span> for dogs.</div>
 </footer>

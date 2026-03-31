@@ -4,20 +4,20 @@
   }
   <aside class="sidebar flex flex-column flex-shrink-0">
     <div class="sidebar__brand flex align-items-center">
-      <span class="sidebar__paw">🐾</span>
+      <span class="sidebar__paw" aria-hidden="true">🐾</span>
       @if (sidebarOpen) {
         <span class="sidebar__title">Lilia Paws</span>
       }
     </div>
 
-    <nav class="sidebar__nav flex flex-column flex-1">
-      @for (item of navItems; track item) {
-        <a
+    <nav class="sidebar__nav flex flex-column flex-1" aria-label="Admin navigation">
+      @for (item of navItems; track item.link) {
+        <button
+          type="button"
           class="nav-item flex align-items-center"
           [class.active]="isActive(item.link)"
           [pTooltip]="sidebarOpen ? '' : item.label"
           tooltipPosition="right"
-          style="cursor:pointer"
           (click)="navigateTo(item.link)"
           >
           <span class="nav-item__icon-wrap flex align-items-center justify-content-center flex-shrink-0">
@@ -32,7 +32,7 @@
           @if (sidebarOpen) {
             <span>{{ item.label }}</span>
           }
-        </a>
+        </button>
       }
     </nav>
 

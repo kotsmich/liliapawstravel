@@ -2,9 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AdminUser } from '@models/lib/admin-user.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly baseUrl = `${environment.apiUrl}/auth`;
+
   constructor(private http: HttpClient) {}
 
   login(
@@ -12,12 +15,12 @@ export class AuthService {
     password: string,
   ): Observable<{ token: string; user: AdminUser }> {
     return this.http.post<{ token: string; user: AdminUser }>(
-      '/api/auth/login',
+      `${this.baseUrl}/login`,
       { email, password },
     );
   }
 
   getProfile(): Observable<AdminUser> {
-    return this.http.get<AdminUser>('/api/auth/profile');
+    return this.http.get<AdminUser>(`${this.baseUrl}/me`);
   }
 }

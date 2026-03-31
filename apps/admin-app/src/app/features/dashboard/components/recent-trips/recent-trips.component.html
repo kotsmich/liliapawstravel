@@ -1,14 +1,3 @@
-<!-- Template refs for generic table columns -->
-<ng-template #routeTemplate let-trip>
-  <strong>{{ trip.departureCity }}, {{ trip.departureCountry }}</strong>
-  <span class="arrow"> → </span>
-  {{ trip.arrivalCity }}, {{ trip.arrivalCountry }}
-</ng-template>
-
-<ng-template #dogsTemplate let-trip>
-  {{ trip.dogs?.length ?? 0 }}
-</ng-template>
-
 <p-card styleClass="recent-card">
   <ng-template pTemplate="header">
     <div class="card-header flex align-items-center justify-content-between">
@@ -17,7 +6,7 @@
     </div>
   </ng-template>
 
-  <div style="overflow-x:auto">
+  <div class="table-scroll">
     <app-generic-table
       [data]="trips"
       [columns]="columns"

@@ -22,7 +22,7 @@ import { ContactSubmission } from '@models/lib/contact-form.model';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, CommonModule, ToastModule],
-  template: `<p-toast position="top-right"></p-toast><router-outlet></router-outlet>`,
+  templateUrl: './app.component.html',
 })
 export class AppComponent {
   private readonly destroyRef = inject(DestroyRef);

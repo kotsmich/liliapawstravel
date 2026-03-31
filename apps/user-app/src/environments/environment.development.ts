@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000',
-  wsUrl: 'ws://localhost:3000/ws/trips',
+  apiUrl: '/api',
+  wsTripsUrl: 'ws://localhost:3000/ws/trips',
+  wsAppUrl: 'ws://localhost:3000/ws/app',
 };

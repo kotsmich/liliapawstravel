@@ -9,20 +9,24 @@
   }
   &__brand {
     align-items: center; gap: 0.5rem;
+    background: none; border: none; cursor: pointer;
     text-decoration: none; font-weight: 700; font-size: 1.2rem; color: #4a3728;
+    font-family: inherit;
   }
   &__name { color: #4a3728; }
   &__burger { display: none; background: none; border: none; cursor: pointer; color: #4a3728; }
   &__links {
     align-items: center; gap: 2rem; list-style: none; margin: 0; padding: 0;
-    li a {
+    li button {
+      background: none; border: none; cursor: pointer; font-family: inherit;
       text-decoration: none; color: #5c4a3a; font-weight: 500; font-size: 0.95rem;
-      transition: color 0.2s;
+      transition: color 0.2s; padding: 0;
       &:hover, &.active { color: #c47c3e; }
     }
   }
   &__cta .btn-cta {
     background: #c47c3e; color: #fff !important; padding: 0.5rem 1.25rem;
+    border: none; cursor: pointer; font-family: inherit;
     border-radius: 25px; font-weight: 600; transition: background 0.2s;
     &:hover { background: #a86535; }
   }
@@ -38,7 +42,7 @@
       &.open { transform: translateY(0); }
       li { width: 100%; border-bottom: 1px solid #f5ede4; }
       li:last-child { border-bottom: none; }
-      li a { display: block; padding: 0.875rem 0; font-size: 1rem; width: 100%; }
+      li button { display: block; padding: 0.875rem 0; font-size: 1rem; width: 100%; text-align: left; }
     }
     &__cta { width: 100%; }
     &__cta .btn-cta { display: block; text-align: center; margin-top: 0.75rem; width: 100%; }

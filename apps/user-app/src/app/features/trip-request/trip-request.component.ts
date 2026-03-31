@@ -1,4 +1,4 @@
-import { Component, OnInit, DestroyRef, Inject } from '@angular/core';
+import { Component, OnInit, DestroyRef, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -29,6 +29,7 @@ import { TripRequestActions, selectTripRequestIsLoading, selectTripRequestIsSucc
 @Component({
   selector: 'app-trip-request',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule, ReactiveFormsModule,
     ButtonModule, CardModule, DividerModule, MessageModule, ConfirmDialogModule,
@@ -68,10 +69,10 @@ export class TripRequestComponent implements OnInit {
       this.store.dispatch(TripActions.refreshTrips());
     });
     
- this.form = this.fb.group({
-      requesterName: ['Kots', Validators.required],
-      requesterEmail: ['Mich@gmail.com', [Validators.required, Validators.email]],
-      requesterPhone: ['6948225016', Validators.required],
+    this.form = this.fb.group({
+      requesterName: ['', Validators.required],
+      requesterEmail: ['', [Validators.required, Validators.email]],
+      requesterPhone: ['', Validators.required],
       dogs: this.fb.array([this.dogGroup()]),
     });
 
@@ -107,12 +108,12 @@ export class TripRequestComponent implements OnInit {
 
   dogGroup(): FormGroup {
     return this.fb.group({
-      name: ['Buzz', Validators.required],
+      name: ['', Validators.required],
       size: ['medium', Validators.required],
-      age: [2, [Validators.required, Validators.min(0)]],
-      chipId: ['123456789123456', [Validators.required, Validators.pattern(/^\d{15}$/)]],
-      pickupLocation: ['Bucharest, Romania', Validators.required],
-      dropLocation: ['Amsterdam, Netherlands', Validators.required],
+      age: [null, [Validators.required, Validators.min(0)]],
+      chipId: ['', [Validators.required, Validators.pattern(/^\d{15}$/)]],
+      pickupLocation: ['', Validators.required],
+      dropLocation: ['', Validators.required],
       notes: [''],
     });
   }

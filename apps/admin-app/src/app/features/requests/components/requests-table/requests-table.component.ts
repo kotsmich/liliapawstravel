@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.interface';
 import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
@@ -10,9 +10,9 @@ type RequestRow = TripRequest & { dogsCount: number };
   selector: 'app-requests-table',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DatePipe, GenericTableComponent],
+  imports: [CommonModule, GenericTableComponent],
   templateUrl: './requests-table.component.html',
-  styles: [],
+  styles: [`.table-scroll { overflow-x: auto; }`],
 })
 export class RequestsTableComponent implements OnInit {
   @Input() requests: RequestRow[] = [];

@@ -28,9 +28,9 @@ export class LoginComponent {
     private store: Store,
   ) {}
 
-   form = this.fb.group({
-    email: ['admin@liliapaws.com', [Validators.required, Validators.email]],
-    password: ['admin123', [Validators.required, Validators.minLength(6)]],
+  form = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   loading$ = this.store.select(selectAuthIsLoading);

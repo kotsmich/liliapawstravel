@@ -10,7 +10,10 @@
   h4 { color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
   ul { list-style: none; padding: 0; margin: 0; }
   li { margin-bottom: 0.4rem; }
-  a { color: #d4b896; text-decoration: none; font-size: 0.9rem;
-    &:hover { color: #c47c3e; } }
+  .footer-link {
+    background: none; border: none; cursor: pointer; font-family: inherit;
+    color: #d4b896; text-decoration: none; font-size: 0.9rem; padding: 0;
+    &:hover { color: #c47c3e; }
+  }
   &__bottom { border-top: 1px solid rgba(255,255,255,0.1); text-align: center; padding: 1.25rem; font-size: 0.85rem; opacity: 0.6; }
 }

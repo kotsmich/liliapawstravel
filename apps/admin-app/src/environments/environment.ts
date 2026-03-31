@@ -1,1 +1,5 @@
-export const environment = { production: true, apiUrl: 'https://api.liliapawstravel.com' };
+export const environment = {
+  production: true,
+  apiUrl: '/api',
+  wsAppUrl: 'wss://api.liliapawstravel.com/ws/app',
+};

@@ -29,7 +29,7 @@
       <div class="tab-content">
         @if (requests.length > 0) {
           <p-accordion [multiple]="true">
-            @for (req of requests; track req) {
+            @for (req of requests; track req.id) {
               <p-accordion-panel [value]="req.id">
                 <p-accordion-header>
                   <div class="req-header flex align-items-center flex-wrap flex-1">

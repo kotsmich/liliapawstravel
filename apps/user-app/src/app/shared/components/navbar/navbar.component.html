@@ -1,17 +1,17 @@
-<nav class="navbar" [class.scrolled]="scrolled">
+<nav class="navbar" [class.scrolled]="scrolled" aria-label="Main navigation">
   <div class="navbar__container flex align-items-center justify-content-between">
-    <a class="navbar__brand flex align-items-center" style="cursor:pointer" (click)="navigateTo('/')">
-      <span>🐾</span>
+    <button class="navbar__brand flex align-items-center" type="button" (click)="navigateTo('/')">
+      <span aria-hidden="true">🐾</span>
       <span class="navbar__name">Lilia Paws Travel</span>
-    </a>
-    <button class="navbar__burger" (click)="toggleMenu()">
+    </button>
+    <button class="navbar__burger" type="button" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen" aria-label="Toggle navigation menu">
       <i class="pi" [ngClass]="menuOpen ? 'pi-times' : 'pi-bars'"></i>
     </button>
-    <ul class="navbar__links flex align-items-center" [class.open]="menuOpen">
-      <li><a style="cursor:pointer" [class.active]="isActive('/')" (click)="navigateTo('/')">Home</a></li>
-      <li><a style="cursor:pointer" [class.active]="isActive('/request')" (click)="navigateTo('/request')">Request Transport</a></li>
-      <li><a style="cursor:pointer" [class.active]="isActive('/contact')" (click)="navigateTo('/contact')">Contact</a></li>
-      <li class="navbar__cta"><a class="btn-cta" style="cursor:pointer" (click)="navigateTo('/request')">Book a Trip</a></li>
+    <ul class="navbar__links flex align-items-center" [class.open]="menuOpen" role="menubar">
+      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/')" (click)="navigateTo('/')">Home</button></li>
+      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/request')" (click)="navigateTo('/request')">Request Transport</button></li>
+      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/contact')" (click)="navigateTo('/contact')">Contact</button></li>
+      <li class="navbar__cta" role="none"><button role="menuitem" class="btn-cta" type="button" (click)="navigateTo('/request')">Book a Trip</button></li>
     </ul>
   </div>
 </nav>
