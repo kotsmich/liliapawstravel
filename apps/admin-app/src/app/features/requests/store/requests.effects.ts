@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap, of, switchMap } from 'rxjs';
 import { RequestsService } from '@admin/services/requests.service';
@@ -12,13 +12,16 @@ import { loadTripByIdSuccess } from '@admin/features/trips/store';
 
 @Injectable()
 export class RequestsEffects {
+  private readonly actions$ = inject(Actions);
+  private readonly requestsService = inject(RequestsService);
+
   loadRequests$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loadRequests),
       switchMap(() =>
         this.requestsService.getRequests().pipe(
           map((requests) => loadRequestsSuccess({ requests })),
-          catchError((error) => of(loadRequestsFailure({ error: error.message })))
+          catchError((error) => of(loadRequestsFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )
@@ -33,7 +36,7 @@ export class RequestsEffects {
             approveRequestSuccess({ request }),
             loadTripByIdSuccess({ trip }),
           ]),
-          catchError((error) => of(approveRequestFailure({ error: error.message })))
+          catchError((error) => of(approveRequestFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )
@@ -52,7 +55,7 @@ export class RequestsEffects {
       switchMap(({ id, status }) =>
         this.requestsService.updateRequestStatus(id, status as 'rejected').pipe(
           map((request) => updateRequestStatusSuccess({ request })),
-          catchError((error) => of(updateRequestStatusFailure({ error: error.message })))
+          catchError((error) => of(updateRequestStatusFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )
@@ -71,11 +74,9 @@ export class RequestsEffects {
       switchMap(({ requestId }) =>
         this.requestsService.deleteRequest(requestId).pipe(
           map(() => deleteRequestSuccess({ requestId })),
-          catchError((error) => of(deleteRequestFailure({ error: error.message })))
+          catchError((error) => of(deleteRequestFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )
   );
-
-  constructor(private actions$: Actions, private requestsService: RequestsService) {}
 }

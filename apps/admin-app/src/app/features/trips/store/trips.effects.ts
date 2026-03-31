@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
@@ -15,13 +15,18 @@ import {
 
 @Injectable()
 export class TripsEffects {
+  private readonly actions$ = inject(Actions);
+  private readonly tripsService = inject(TripsService);
+  private readonly dogsService = inject(DogsService);
+  private readonly router = inject(Router);
+
   loadTrips$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loadTrips),
       switchMap(() =>
         this.tripsService.getTrips().pipe(
           map((trips) => loadTripsSuccess({ trips })),
-          catchError((error) => of(loadTripsFailure({ error: error.message })))
+          catchError((error) => of(loadTripsFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )
@@ -33,7 +38,7 @@ export class TripsEffects {
       switchMap(({ trip }) =>
         this.tripsService.createTrip(trip).pipe(
           map((saved) => addTripSuccess({ trip: saved })),
-          catchError((error) => of(addTripFailure({ error: error.message })))
+          catchError((error) => of(addTripFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )
@@ -54,7 +59,7 @@ export class TripsEffects {
       switchMap(({ id, trip }) =>
         this.tripsService.updateTrip(id, trip).pipe(
           map((updated) => updateTripSuccess({ trip: updated })),
-          catchError((error) => of(updateTripFailure({ error: error.message })))
+          catchError((error) => of(updateTripFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )
@@ -75,7 +80,7 @@ export class TripsEffects {
       switchMap(({ id }) =>
         this.tripsService.deleteTrip(id).pipe(
           map(({ id: deletedId }) => deleteTripSuccess({ id: deletedId })),
-          catchError((error) => of(deleteTripFailure({ error: error.message })))
+          catchError((error) => of(deleteTripFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )
@@ -87,7 +92,7 @@ export class TripsEffects {
       switchMap(({ tripId, dog }) =>
         this.dogsService.updateDog(dog.id, dog).pipe(
           map((updated) => updateDogSuccess({ tripId, dog: updated })),
-          catchError((error) => of(updateDogFailure({ error: error.message })))
+          catchError((error) => of(updateDogFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )
@@ -99,16 +104,9 @@ export class TripsEffects {
       switchMap(({ id }) =>
         this.tripsService.getTripById(id).pipe(
           map((trip) => loadTripByIdSuccess({ trip })),
-          catchError((error) => of(loadTripByIdFailure({ error: error.message })))
+          catchError((error) => of(loadTripByIdFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )
   );
-
-  constructor(
-    private actions$: Actions,
-    private tripsService: TripsService,
-    private dogsService: DogsService,
-    private router: Router
-  ) {}
 }

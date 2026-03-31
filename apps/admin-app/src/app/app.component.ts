@@ -1,112 +1,30 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Router, NavigationEnd } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { filter, take } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
-import { selectIsAuthenticated } from '@admin/core/store/auth';
-import { addRequestFromSocket, updateRequestStatusSuccess } from '@admin/features/requests/store';
-import { addMessageFromSocket } from '@admin/features/messages/store';
-import { increment, resetRequests, resetMessages, selectTotalCount } from '@admin/core/store/notifications';
-import { AppWebSocketService } from '@ui/lib/websocket/app-websocket.service';
-import { SocketEvent } from '@models/lib/socket-events.model';
-import { TripRequest } from '@models/lib/trip-request.model';
-import { ContactSubmission } from '@models/lib/contact-form.model';
+import { selectTotalCount } from '@admin/core/store/notifications';
+import { AdminSocketService } from '@admin/services/admin-socket.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet, CommonModule, ToastModule],
   templateUrl: './app.component.html',
 })
 export class AppComponent {
+  private readonly store = inject(Store);
+  private readonly titleService = inject(Title);
+  private readonly socketService = inject(AdminSocketService);
   private readonly destroyRef = inject(DestroyRef);
-  private socketInitialized = false;
 
-  constructor(
-    private readonly store: Store,
-    private readonly router: Router,
-    private readonly titleService: Title,
-    private readonly messageService: MessageService,
-    private readonly wsService: AppWebSocketService,
-  ) {
-    this.initRouteReset();
+  constructor() {
+    this.socketService.init();
     this.initTitleCounter();
-    this.initSocketAfterAuth();
-  }
-
-  private initSocketAfterAuth(): void {
-    this.store
-      .select(selectIsAuthenticated)
-      .pipe(
-        filter((auth) => auth && !this.socketInitialized),
-        take(1),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
-        this.socketInitialized = true;
-        this.wsService.connect();
-        this.initSocketListeners();
-      });
-  }
-
-  private initSocketListeners(): void {
-    this.wsService
-      .listen<TripRequest>(SocketEvent.REQUEST_NEW)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((request) => {
-        this.store.dispatch(addRequestFromSocket({ request }));
-        this.store.dispatch(increment({ notificationType: 'requests' }));
-        this.messageService.add({
-          severity: 'info',
-          summary: 'New Request',
-          detail: `New request from ${request.requesterName}`,
-          life: 5000,
-        });
-      });
-
-    this.wsService
-      .listen<TripRequest>(SocketEvent.REQUEST_UPDATED)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((request) => {
-        this.store.dispatch(updateRequestStatusSuccess({ request }));
-      });
-
-    this.wsService
-      .listen<ContactSubmission>(SocketEvent.MESSAGE_NEW)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((message) => {
-        this.store.dispatch(addMessageFromSocket({ message }));
-        this.store.dispatch(increment({ notificationType: 'messages' }));
-        this.messageService.add({
-          severity: 'info',
-          summary: 'New Message',
-          detail: `Message from ${message.name}`,
-          life: 5000,
-        });
-      });
-  }
-
-  private initRouteReset(): void {
-    this.router.events
-      .pipe(
-        filter((e) => e instanceof NavigationEnd),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((e) => {
-        const url = (e as NavigationEnd).url;
-        if (url.includes('/requests')) {
-          this.store.dispatch(resetRequests());
-        }
-        if (url.includes('/messages')) {
-          this.store.dispatch(resetMessages());
-        }
-      });
   }
 
   private initTitleCounter(): void {

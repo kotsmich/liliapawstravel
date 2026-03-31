@@ -10,14 +10,19 @@
 
   <ng-template pTemplate="header">
     <tr>
-      <th
-        *ngFor="let col of columns"
-        [pSortableColumn]="col.sortable ? col.field : ''"
-        [style.width]="col.width ?? ''">
-        {{ col.header }}
-        <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
-      </th>
-      <th *ngIf="actions.length">Actions</th>
+      @for (col of columns; track col.field) {
+        <th
+          [pSortableColumn]="col.sortable ? col.field : ''"
+          [style.width]="col.width ?? ''">
+          {{ col.header }}
+          @if (col.sortable) {
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          }
+        </th>
+      }
+      @if (actions.length) {
+        <th>Actions</th>
+      }
     </tr>
   </ng-template>
 
@@ -25,57 +30,56 @@
     <tr
       (click)="rowClicked.emit(row)"
       [class.cursor-pointer]="isRowClickable()">
-      <td *ngFor="let col of columns">
-        <ng-container [ngSwitch]="col.type">
+      @for (col of columns; track col.field) {
+        <td>
+          @switch (col.type) {
+            @case ('badge') {
+              <p-tag
+                [severity]="$any(getBadgeSeverity(col, row))"
+                [value]="getBadgeLabel(col, row)">
+              </p-tag>
+            }
+            @case ('date') {
+              {{ $any(getCellValue(row, col.field)) | date:(col.dateFormat ?? 'dd/MM/yyyy') }}
+            }
+            @case ('avatar') {
+              <p-avatar
+                [image]="getCellValue(row, col.field) ? getCellValue(row, col.field)!.toString() : ''"
+                [icon]="!getCellValue(row, col.field) ? 'pi pi-user' : ''"
+                shape="circle">
+              </p-avatar>
+            }
+            @case ('template') {
+              <ng-container
+                *ngTemplateOutlet="col.template ?? null; context: { $implicit: row }">
+              </ng-container>
+            }
+            @default {
+              {{ col.formatter ? col.formatter(getCellValue(row, col.field), row) : getCellValue(row, col.field) }}
+            }
+          }
+        </td>
+      }
 
-          <ng-container *ngSwitchCase="'badge'">
-            <p-tag
-              [severity]="$any(getBadgeSeverity(col, row))"
-              [value]="getBadgeLabel(col, row)">
-            </p-tag>
-          </ng-container>
-
-          <ng-container *ngSwitchCase="'date'">
-            {{ $any(getCellValue(row, col.field)) | date:(col.dateFormat ?? 'dd/MM/yyyy') }}
-          </ng-container>
-
-          <ng-container *ngSwitchCase="'avatar'">
-            <p-avatar
-              [image]="getCellValue(row, col.field) ? getCellValue(row, col.field)!.toString() : ''"
-              [icon]="!getCellValue(row, col.field) ? 'pi pi-user' : ''"
-              shape="circle">
-            </p-avatar>
-          </ng-container>
-
-          <ng-container *ngSwitchCase="'template'">
-            <ng-container
-              *ngTemplateOutlet="col.template ?? null; context: { $implicit: row }">
-            </ng-container>
-          </ng-container>
-
-          <ng-container *ngSwitchDefault>
-            {{ col.formatter ? col.formatter(getCellValue(row, col.field), row) : getCellValue(row, col.field) }}
-          </ng-container>
-
-        </ng-container>
-      </td>
-
-      <td *ngIf="actions.length" (click)="$event.stopPropagation()">
-        <div class="flex gap-2">
-          <p-button
-            *ngFor="let act of actions"
-            [icon]="act.icon"
-            [label]="act.label ?? ''"
-            [severity]="$any(act.severity ?? 'secondary')"
-            [pTooltip]="act.tooltip"
-            [disabled]="act.disabled?.(row) ?? false"
-            [style.display]="(act.visible?.(row) ?? true) ? '' : 'none'"
-            [text]="true"
-            size="small"
-            (onClick)="act.action(row)">
-          </p-button>
-        </div>
-      </td>
+      @if (actions.length) {
+        <td (click)="$event.stopPropagation()">
+          <div class="flex gap-2">
+            @for (act of actions; track act.icon) {
+              <p-button
+                [icon]="act.icon"
+                [label]="act.label ?? ''"
+                [severity]="$any(act.severity ?? 'secondary')"
+                [pTooltip]="act.tooltip"
+                [disabled]="act.disabled?.(row) ?? false"
+                [style.display]="(act.visible?.(row) ?? true) ? '' : 'none'"
+                [text]="true"
+                size="small"
+                (onClick)="act.action(row)">
+              </p-button>
+            }
+          </div>
+        </td>
+      }
     </tr>
   </ng-template>
 

@@ -1,9 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest } from 'rxjs';
-import { map, filter, take } from 'rxjs/operators';
+import { filter, map, shareReplay, take } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
@@ -12,6 +12,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { loadTrips, selectAllTrips } from '@admin/features/trips/store';
 import { sanitizeHtml } from '@admin/shared/utils/sanitize';
 import { loadRequests, approveRequest, updateRequestStatus, deleteRequest, selectAllRequests, selectRequestsIsLoading } from '@admin/features/requests/store';
+import { resetRequests } from '@admin/core/store/notifications';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { Trip } from '@models/lib/trip.model';
 import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
@@ -35,28 +36,19 @@ import { RequestDetailDialogComponent } from './components/request-detail-dialog
   providers: [DatePipe],
 })
 export class RequestsListComponent implements OnInit {
-  constructor(
-    private store: Store,
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService,
-    private router: Router,
-  ) {
-    // Must be in constructor — takeUntilDestroyed() requires the injection context
-    this.store.select(selectAllTrips).pipe(
-      takeUntilDestroyed(),
-    ).subscribe((trips: Trip[]) => {
-      this.trips = trips;
-      this.buildTripOptions(trips);
-    });
-  }
+  private readonly store = inject(Store);
+  private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   loading$ = this.store.select(selectRequestsIsLoading);
 
   selectedTripId$ = new BehaviorSubject<string | null>(null);
   activeTab$ = new BehaviorSubject<string>('all');
 
-  selectedRequest: TripRequest | null = null;
-  dialogVisible = false;
+  selectedRequest = signal<TripRequest | null>(null);
+  dialogVisible = signal(false);
   trips: Trip[] = [];
   tripOptions: Array<{ label: string; value: string | null }> = [{ label: 'All Trips', value: null }];
 
@@ -67,7 +59,8 @@ export class RequestsListComponent implements OnInit {
   ]).pipe(
     map(([requests, tripId]: [TripRequest[], string | null]) =>
       tripId ? requests.filter((r) => r.tripId === tripId) : requests
-    )
+    ),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   // Badge counts reflect the current trip selection so they always match the table
@@ -82,7 +75,18 @@ export class RequestsListComponent implements OnInit {
     })
   );
 
+  constructor() {
+    // Must be in constructor — takeUntilDestroyed() requires the injection context
+    this.store.select(selectAllTrips).pipe(
+      takeUntilDestroyed(),
+    ).subscribe((trips: Trip[]) => {
+      this.trips = trips;
+      this.buildTripOptions(trips);
+    });
+  }
+
   ngOnInit(): void {
+    this.store.dispatch(resetRequests());
     this.store.dispatch(loadRequests());
     this.store.dispatch(loadTrips());
 
@@ -90,6 +94,7 @@ export class RequestsListComponent implements OnInit {
     this.store.select(selectAllTrips).pipe(
       filter((trips: Trip[]) => trips.length > 0),
       take(1),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((trips: Trip[]) => {
       const nearest = [...trips]
         .filter((t) => t.status === 'upcoming')
@@ -124,13 +129,13 @@ export class RequestsListComponent implements OnInit {
   }
 
   openDetail(request: TripRequest): void {
-    this.selectedRequest = request;
-    this.dialogVisible = true;
+    this.selectedRequest.set(request);
+    this.dialogVisible.set(true);
   }
 
   approve(): void {
-    if (!this.selectedRequest?.tripId) return;
-    const req = this.selectedRequest;
+    if (!this.selectedRequest()?.tripId) return;
+    const req = this.selectedRequest()!;
     this.confirmationService.confirm({
       header: 'Confirm Approval',
       message: `Approve the request for trip <strong>${sanitizeHtml(this.tripDate(req.tripId))}</strong> by <strong>${sanitizeHtml(req.requesterName)}</strong>?`,
@@ -140,14 +145,14 @@ export class RequestsListComponent implements OnInit {
       accept: () => {
         this.store.dispatch(approveRequest({ requestId: req.id, tripId: req.tripId! }));
         this.messageService.add({ severity: 'success', summary: 'Approved', detail: 'Request confirmed. Trip dogs updated.' });
-        this.dialogVisible = false;
+        this.dialogVisible.set(false);
       },
     });
   }
 
   reject(): void {
-    if (!this.selectedRequest) return;
-    const req = this.selectedRequest;
+    if (!this.selectedRequest()) return;
+    const req = this.selectedRequest()!;
     this.confirmationService.confirm({
       header: 'Confirm Rejection',
       message: `Reject the request for trip <strong>${sanitizeHtml(this.tripDate(req.tripId))}</strong> by <strong>${sanitizeHtml(req.requesterName)}</strong>? This cannot be undone.`,
@@ -157,7 +162,7 @@ export class RequestsListComponent implements OnInit {
       accept: () => {
         this.store.dispatch(updateRequestStatus({ id: req.id, status: 'rejected' }));
         this.messageService.add({ severity: 'info', summary: 'Rejected', detail: 'Request has been rejected.' });
-        this.dialogVisible = false;
+        this.dialogVisible.set(false);
       },
     });
   }
@@ -172,22 +177,22 @@ export class RequestsListComponent implements OnInit {
       accept: () => {
         this.store.dispatch(deleteRequest({ requestId: req.id }));
         this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Request deleted.' });
-        this.dialogVisible = false;
+        this.dialogVisible.set(false);
       },
     });
   }
 
   cancel(): void {
-    this.dialogVisible = false;
+    this.dialogVisible.set(false);
   }
 
   onApproveFromTable(req: TripRequest): void {
-    this.selectedRequest = req;
+    this.selectedRequest.set(req);
     this.approve();
   }
 
   onRejectFromTable(req: TripRequest): void {
-    this.selectedRequest = req;
+    this.selectedRequest.set(req);
     this.reject();
   }
 }

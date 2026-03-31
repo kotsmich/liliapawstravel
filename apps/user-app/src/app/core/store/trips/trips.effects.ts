@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, of, switchMap } from 'rxjs';
 import { TripsService } from '@user/services/trips.service';
@@ -7,6 +7,8 @@ import { refreshTrips, loadTripsSuccess, loadTripsFailure, wsTripsReceived } fro
 
 @Injectable()
 export class TripsEffects {
+  private readonly actions$ = inject(Actions);
+  private readonly tripsService = inject(TripsService);
   private readonly wsService = inject(TripsWebSocketService);
 
   refreshTrips$ = createEffect(() =>
@@ -15,7 +17,7 @@ export class TripsEffects {
       switchMap(() =>
         this.tripsService.getTrips().pipe(
           map((trips) => loadTripsSuccess({ trips })),
-          catchError((error) => of(loadTripsFailure({ error: error.message })))
+          catchError((error) => of(loadTripsFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )
@@ -26,6 +28,4 @@ export class TripsEffects {
       map((trips) => wsTripsReceived({ trips }))
     )
   );
-
-  constructor(private actions$: Actions, private tripsService: TripsService) {}
 }

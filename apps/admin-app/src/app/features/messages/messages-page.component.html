@@ -18,8 +18,8 @@
 </div>
 
 <app-message-detail-dialog
-  [message]="selectedMessage"
-  [visible]="dialogVisible"
+  [message]="selectedMessage()"
+  [visible]="dialogVisible()"
   (visibleChange)="onDialogVisibleChange($event)"
   (deleteClicked)="deleteMessage($event)"
   />

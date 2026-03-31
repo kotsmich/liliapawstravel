@@ -34,10 +34,10 @@
   }
 
   <app-request-detail-dialog
-    [visible]="dialogVisible"
-    [request]="selectedRequest"
+    [visible]="dialogVisible()"
+    [request]="selectedRequest()"
     [trips]="trips"
-    (visibleChange)="dialogVisible = $event"
+    (visibleChange)="dialogVisible.set($event)"
     (approve)="approve()"
     (reject)="reject()"
     (deleteRequest)="deleteRequest($event)"

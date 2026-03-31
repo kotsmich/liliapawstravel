@@ -1,4 +1,4 @@
-import { Component, OnInit, DestroyRef, Inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -13,8 +13,7 @@ import { TagModule } from 'primeng/tag';
 import { Store } from '@ngrx/store';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { filter } from 'rxjs/operators';
-import { timer } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DogFormComponent } from '@ui/lib/dog-form/dog-form.component';
 import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
 import { ToastNotificationComponent } from '@ui/lib/toast-notification/toast-notification.component';
@@ -22,7 +21,7 @@ import { CalendarEvent } from '@models/lib/calendar-event.model';
 import { generateId } from '@models/lib/utils';
 import { Trip } from '@models/lib/trip.model';
 import { Dog } from '@models/lib/dog.model';
-import { refreshTrips, clearSelectedTrip, selectTripsAsCalendarEvents, selectTripsIsLoading } from '@user/core/store/trips';
+import { clearSelectedTrip, selectTripsAsCalendarEvents, selectTripsIsLoading } from '@user/core/store/trips';
 import { selectDate, clearDate, selectCalendarSelectedDate, selectTripForSelectedDate } from '@user/core/store/calendar';
 import { submitRequest, resetRequest, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError } from '@user/features/trip-request/store';
 
@@ -40,58 +39,33 @@ import { submitRequest, resetRequest, selectTripRequestIsLoading, selectTripRequ
   styleUrls: ['./trip-request.component.scss'],
 })
 export class TripRequestComponent implements OnInit {
-  constructor(
-    private fb: FormBuilder,
-    private store: Store,
-    private destroyRef: DestroyRef,
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService,
-    @Inject(DOCUMENT) private doc: Document,
-  ) {}
+  private readonly fb = inject(FormBuilder);
+  private readonly store = inject(Store);
+  private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly doc = inject(DOCUMENT);
 
   form!: FormGroup;
   showSummary = false;
   expandedIndex: number | null = 0;
-  selectedDateLocal: string | null = null;
-  calendarEvents: CalendarEvent[] = [];
-  selectedTrip: Trip | null = null;
 
+  // Signals for local state synced from the store — no manual subscriptions needed
+  readonly calendarEvents = toSignal(this.store.select(selectTripsAsCalendarEvents), { initialValue: [] as CalendarEvent[] });
+  readonly selectedDateLocal = toSignal(this.store.select(selectCalendarSelectedDate), { initialValue: null as string | null });
+  readonly selectedTrip = toSignal(this.store.select(selectTripForSelectedDate), { initialValue: null as Trip | null });
+
+  // Observables kept for async-pipe usage in the template
   loading$ = this.store.select(selectTripsIsLoading);
-  selectedDate$ = this.store.select(selectCalendarSelectedDate);
   selectedTrip$ = this.store.select(selectTripForSelectedDate);
   submitting$ = this.store.select(selectTripRequestIsLoading);
   success$ = this.store.select(selectTripRequestIsSuccess);
   error$ = this.store.select(selectTripRequestError);
-  events$ = this.store.select(selectTripsAsCalendarEvents);
 
-  ngOnInit(): void {
-    timer(0, 60000).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.store.dispatch(refreshTrips());
-    });
-    
-    this.form = this.fb.group({
-      requesterName: ['', Validators.required],
-      requesterEmail: ['', [Validators.required, Validators.email]],
-      requesterPhone: ['', Validators.required],
-      dogs: this.fb.array([this.dogGroup()]),
-    });
-
-
-    this.events$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((e) => {
-      this.calendarEvents = e as CalendarEvent[];
-    });
-
-    this.selectedDate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((d) => {
-      this.selectedDateLocal = d;
-    });
-
-    this.selectedTrip$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((trip) => {
-      this.selectedTrip = trip;
-    });
-
+  constructor() {
+    // React to successful submission
     this.success$.pipe(
       filter(Boolean),
-      takeUntilDestroyed(this.destroyRef)
+      takeUntilDestroyed(),
     ).subscribe(() => {
       this.messageService.add({
         severity: 'success',
@@ -104,17 +78,26 @@ export class TripRequestComponent implements OnInit {
     });
   }
 
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      requesterName: ['joanna', Validators.required],
+      requesterEmail: ['Brobisla', [Validators.required, Validators.email]],
+      requesterPhone: ['09065656565', Validators.required],
+      dogs: this.fb.array([this.dogGroup()]),
+    });
+  }
+
   get dogs(): FormArray { return this.form.get('dogs') as FormArray; }
 
   dogGroup(): FormGroup {
     return this.fb.group({
-      name: ['', Validators.required],
+      name: ['tztzifiogos', Validators.required],
       size: ['medium', Validators.required],
       age: [null, [Validators.required, Validators.min(0)]],
-      chipId: ['', [Validators.required, Validators.pattern(/^\d{15}$/)]],
-      pickupLocation: ['', Validators.required],
-      dropLocation: ['', Validators.required],
-      notes: [''],
+      chipId: ['123456789123456', [Validators.required, Validators.pattern(/^\d{15}$/)]],
+      pickupLocation: ['katerini', Validators.required],
+      dropLocation: ['germany', Validators.required],
+      notes: ['Not something special'],
     });
   }
 
@@ -160,7 +143,7 @@ export class TripRequestComponent implements OnInit {
     }));
     this.store.dispatch(submitRequest({
       dogs,
-      tripId: this.selectedTrip!.id,
+      tripId: this.selectedTrip()!.id,
       requesterName,
       requesterEmail,
       requesterPhone,

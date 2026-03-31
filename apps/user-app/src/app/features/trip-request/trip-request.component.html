@@ -20,8 +20,8 @@
       }
       @if (!(loading$ | async)) {
         <ui-trip-calendar
-          [events]="calendarEvents"
-          [selectedDate]="selectedDateLocal"
+          [events]="calendarEvents()"
+          [selectedDate]="selectedDateLocal()"
           (dateSelected)="onDateSelected($event)">
         </ui-trip-calendar>
       }

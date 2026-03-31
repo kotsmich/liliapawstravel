@@ -1,4 +1,4 @@
-import { createSelector } from '@ngrx/store';
+import { createSelector, MemoizedSelector } from '@ngrx/store';
 import { selectRequestsState } from './requests.reducer';
 import { TripRequest } from '@models/lib/trip-request.model';
 
@@ -10,13 +10,23 @@ export const selectPendingRequestsCount = createSelector(
 );
 
 /**
- * Factory selector — call once and cache the returned selector instance per tripId
- * to preserve memoization. The result is sorted by submittedAt descending.
+ * Factory selector — instances are cached per tripId to preserve memoization.
+ * Always call `selectRequestsByTripId(id)` at the class level (field or constructor),
+ * never inside a template expression or inside a pipe operator.
  */
-export const selectRequestsByTripId = (tripId: string) =>
-  createSelector(selectAllRequests, (requests: TripRequest[]) => {
-    const filtered = requests.filter((r) => r.tripId === tripId);
-    // Only allocate a new sorted array; the underlying filter already creates a new ref
-    // when the source requests array changes.
-    return filtered.slice().sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
-  });
+const _cache = new Map<string, MemoizedSelector<object, TripRequest[]>>();
+
+export const selectRequestsByTripId = (tripId: string): MemoizedSelector<object, TripRequest[]> => {
+  if (!_cache.has(tripId)) {
+    _cache.set(
+      tripId,
+      createSelector(selectAllRequests, (requests: TripRequest[]) =>
+        requests
+          .filter((r) => r.tripId === tripId)
+          .slice()
+          .sort((a, b) => b.submittedAt.localeCompare(a.submittedAt))
+      )
+    );
+  }
+  return _cache.get(tripId)!;
+};

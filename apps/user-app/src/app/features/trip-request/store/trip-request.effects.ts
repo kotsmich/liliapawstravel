@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, of, switchMap } from 'rxjs';
 import { TripRequestService } from '@user/services/trip-request.service';
@@ -6,6 +6,9 @@ import { submitRequest, submitRequestSuccess, submitRequestFailure } from './tri
 
 @Injectable()
 export class TripRequestEffects {
+  private readonly actions$ = inject(Actions);
+  private readonly tripRequestService = inject(TripRequestService);
+
   submitRequest$ = createEffect(() =>
     this.actions$.pipe(
       ofType(submitRequest),
@@ -16,13 +19,11 @@ export class TripRequestEffects {
             const message =
               error.status === 409
                 ? error.error?.message ?? 'This trip has no remaining capacity.'
-                : error.message ?? 'Something went wrong.';
+                : error?.error?.message ?? error?.message ?? 'Something went wrong.';
             return of(submitRequestFailure({ error: message }));
           })
         )
       )
     )
   );
-
-  constructor(private actions$: Actions, private tripRequestService: TripRequestService) {}
 }

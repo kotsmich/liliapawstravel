@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, DestroyRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -7,7 +7,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { Store } from '@ngrx/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { BehaviorSubject, combineLatest, filter, map, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, take } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { loadTrips, loadTripById, deleteTrip, updateDog, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents } from '@admin/features/trips/store';
 import { selectDate, selectCalendarSelectedDate } from '@admin/core/store/calendar';
@@ -43,6 +43,13 @@ import { ExportService } from '../../../services/export.service';
   styleUrls: ['./trips-list.component.scss'],
 })
 export class TripsListComponent implements OnInit {
+  private readonly store = inject(Store);
+  private readonly router = inject(Router);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly messageService = inject(MessageService);
+  private readonly exportService = inject(ExportService);
+  private readonly destroyRef = inject(DestroyRef);
+
   trips$ = this.store.select(selectAllTrips);
   loading$ = this.store.select(selectTripsIsLoading);
   selectedDate$ = this.store.select(selectCalendarSelectedDate);
@@ -94,14 +101,7 @@ export class TripsListComponent implements OnInit {
   dogEditValues: Dog | null = null;
   dogEditTripId: string | null = null;
 
-  constructor(
-    private store: Store,
-    private router: Router,
-    private confirmationService: ConfirmationService,
-    private messageService: MessageService,
-    private exportService: ExportService,
-    private destroyRef: DestroyRef,
-  ) {
+  constructor() {
     this.selectedDate$.pipe(takeUntilDestroyed()).subscribe((d) => { this.selectedDate = d; });
   }
 
@@ -112,6 +112,7 @@ export class TripsListComponent implements OnInit {
     this.trips$.pipe(
       filter(trips => trips.length > 0),
       take(1),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((trips: Trip[]) => {
       const today = new Date().toISOString().slice(0, 10);
       const sorted = trips.map((t: Trip) => t.date).filter((d: string) => d >= today).sort();
@@ -165,16 +166,15 @@ export class TripsListComponent implements OnInit {
     this.detailDialogVisible = true;
   }
 
-  onExportPdfFromCard(trip: Trip): void {
+  async onExportPdfFromCard(trip: Trip): Promise<void> {
     this.store.dispatch(loadTripById({ id: trip.id }));
-    this.store.select(selectAllTrips).pipe(
-      map(trips => trips.find(t => t.id === trip.id)),
-      filter(t => t?.dogs !== undefined),
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(t => {
-      if (t) this.exportService.exportTripManifestPdf(t);
-    });
+    const loaded = await firstValueFrom(
+      this.store.select(selectAllTrips).pipe(
+        map(trips => trips.find(t => t.id === trip.id)),
+        filter((t): t is Trip => t?.dogs !== undefined),
+      )
+    );
+    this.exportService.exportTripManifestPdf(loaded);
   }
 
   closeDetail(): void {

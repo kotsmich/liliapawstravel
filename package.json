@@ -7,6 +7,8 @@
     "start:admin-portal": "ng serve admin-app --port 4201 --configuration development",
     "start:api": "cd apps/api && npm run dev",
     "build": "ng build",
+    "build:all": "nx run-many -t build -p user-app admin-app api",
+    "watch:all": "concurrently \"ng build user-app --watch\" \"ng build admin-app --watch\" \"cd apps/api && npm run dev\"",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -46,6 +48,7 @@
     "@nx/angular": "22.6.3",
     "@nx/workspace": "22.6.3",
     "@types/jasmine": "~4.3.0",
+    "concurrently": "^9.2.1",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
