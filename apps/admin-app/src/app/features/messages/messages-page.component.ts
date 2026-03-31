@@ -7,7 +7,7 @@ import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
-import { MessagesActions, selectAllMessages, selectMessagesIsLoading, selectSelectedMessage, selectUnreadCount } from '@admin/store/messages';
+import { MessagesActions, selectAllMessages, selectMessagesIsLoading, selectSelectedMessage, selectUnreadCount } from '@admin/features/messages/store';
 import { ContactSubmission } from '@models/lib/contact-form.model';
 import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
 import { LoadingOverlayComponent } from '@ui/lib/components/loading/loading-overlay.component';

@@ -14,12 +14,12 @@ import { tap, catchError } from 'rxjs/operators';
 
 import { APP_ROUTES } from './app.routes';
 import { adminApiInterceptor } from '@admin/interceptors/admin-api.interceptor';
-import { authReducer, AuthEffects, AuthActions } from '@admin/store/auth';
-import { tripsReducer, TripsEffects } from '@admin/store/trips';
-import { calendarReducer } from '@admin/store/calendar';
-import { requestsReducer, RequestsEffects } from '@admin/store/requests';
-import { messagesReducer, MessagesEffects } from '@admin/store/messages';
-import { notificationsReducer } from '@admin/store/notifications';
+import { authReducer, AuthEffects, AuthActions } from '@admin/core/store/auth';
+import { tripsReducer, TripsEffects } from '@admin/features/trips/store';
+import { calendarReducer } from '@admin/core/store/calendar';
+import { requestsReducer, RequestsEffects } from '@admin/features/requests/store';
+import { messagesReducer, MessagesEffects } from '@admin/features/messages/store';
+import { notificationsReducer } from '@admin/core/store/notifications';
 import { AuthService } from '@admin/services/auth.service';
 
 const LiliaPreset = definePreset(Aura, {

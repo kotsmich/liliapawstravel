@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { Store } from '@ngrx/store';
-import { TripActions, selectAllTrips, selectTripsIsLoading } from '@admin/store/trips';
+import { TripActions, selectAllTrips, selectTripsIsLoading } from '@admin/features/trips/store';
 import { LoadingSpinnerComponent } from '@ui/lib/loading-spinner/loading-spinner.component';
 import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
 import { Trip } from '@models/lib/trip.model';

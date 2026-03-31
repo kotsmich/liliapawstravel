@@ -6,9 +6,9 @@ import { TooltipModule } from 'primeng/tooltip';
 import { AvatarModule } from 'primeng/avatar';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { AuthActions, selectCurrentUser } from '@admin/store/auth';
-import { TripRequestActions, selectPendingRequestsCount } from '@admin/store/requests';
-import { MessagesActions, selectUnreadCount } from '@admin/store/messages';
+import { AuthActions, selectCurrentUser } from '@admin/core/store/auth';
+import { TripRequestActions, selectPendingRequestsCount } from '@admin/features/requests/store';
+import { MessagesActions, selectUnreadCount } from '@admin/features/messages/store';
 import { AdminUser } from '@models/lib/admin-user.model';
 
 @Component({

@@ -9,10 +9,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
-import { selectIsAuthenticated } from '@admin/store/auth';
-import { TripRequestActions } from '@admin/store/requests';
-import { MessagesActions } from '@admin/store/messages';
-import { NotificationsActions, selectTotalCount } from '@admin/store/notifications';
+import { selectIsAuthenticated } from '@admin/core/store/auth';
+import { TripRequestActions } from '@admin/features/requests/store';
+import { MessagesActions } from '@admin/features/messages/store';
+import { NotificationsActions, selectTotalCount } from '@admin/core/store/notifications';
 import { AppWebSocketService } from '@ui/lib/websocket/app-websocket.service';
 import { SocketEvent } from '@models/lib/socket-events.model';
 import { TripRequest } from '@models/lib/trip-request.model';

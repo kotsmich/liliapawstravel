@@ -8,7 +8,7 @@ import { CardModule } from 'primeng/card';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { MessageModule } from 'primeng/message';
 import { Store } from '@ngrx/store';
-import { AuthActions, selectAuthIsLoading, selectAuthError } from '@admin/store/auth';
+import { AuthActions, selectAuthIsLoading, selectAuthError } from '@admin/core/store/auth';
 
 @Component({
   selector: 'app-login',

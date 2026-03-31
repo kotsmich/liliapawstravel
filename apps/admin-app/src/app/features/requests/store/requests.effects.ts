@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap, of, switchMap } from 'rxjs';
 import { RequestsService } from '@admin/services/requests.service';
 import { TripRequestActions } from './requests.actions';
-import { TripActions } from '@admin/store/trips';
+import { TripActions } from '@admin/features/trips/store';
 
 @Injectable()
 export class RequestsEffects {

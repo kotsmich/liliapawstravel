@@ -12,10 +12,10 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 
 import { APP_ROUTES } from './app.routes';
 import { userApiInterceptor } from '@user/interceptors/user-api.interceptor';
-import { tripsReducer, TripsEffects } from '@user/store/trips';
-import { calendarReducer } from '@user/store/calendar';
-import { tripRequestReducer, TripRequestEffects } from '@user/store/trip-request';
-import { contactReducer, ContactEffects } from '@user/store/contact';
+import { tripsReducer, TripsEffects } from '@user/core/store/trips';
+import { calendarReducer } from '@user/core/store/calendar';
+import { tripRequestReducer, TripRequestEffects } from '@user/features/trip-request/store';
+import { contactReducer, ContactEffects } from '@user/features/contact/store';
 
 const LiliaPreset = definePreset(Aura, {
   semantic: {

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { Store } from '@ngrx/store';
-import { ContactActions, selectContactIsLoading, selectContactIsSuccess, selectContactError } from '@user/store/contact';
+import { ContactActions, selectContactIsLoading, selectContactIsSuccess, selectContactError } from '@user/features/contact/store';
 import { ContactFormComponent } from './components/contact-form/contact-form.component';
 
 @Component({

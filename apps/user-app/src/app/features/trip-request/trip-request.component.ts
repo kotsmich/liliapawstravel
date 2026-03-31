@@ -22,9 +22,9 @@ import { CalendarEvent } from '@models/lib/calendar-event.model';
 import { generateId } from '@models/lib/utils';
 import { Trip } from '@models/lib/trip.model';
 import { Dog } from '@models/lib/dog.model';
-import { TripActions, selectTripsAsCalendarEvents, selectTripsIsLoading } from '@user/store/trips';
-import { CalendarActions, selectCalendarSelectedDate, selectTripForSelectedDate } from '@user/store/calendar';
-import { TripRequestActions, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError } from '@user/store/trip-request';
+import { TripActions, selectTripsAsCalendarEvents, selectTripsIsLoading } from '@user/core/store/trips';
+import { CalendarActions, selectCalendarSelectedDate, selectTripForSelectedDate } from '@user/core/store/calendar';
+import { TripRequestActions, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError } from '@user/features/trip-request/store';
 
 @Component({
   selector: 'app-trip-request',

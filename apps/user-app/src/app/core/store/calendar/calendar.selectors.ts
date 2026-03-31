@@ -1,6 +1,6 @@
 import { createSelector } from '@ngrx/store';
 import { selectCalendarState } from './calendar.reducer';
-import { selectAllTrips } from '@user/store/trips';
+import { selectAllTrips } from '@user/core/store/trips';
 
 export const selectCalendarSelectedDate = createSelector(selectCalendarState, (s) => s.selectedDate);
 

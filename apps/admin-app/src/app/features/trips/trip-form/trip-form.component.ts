@@ -19,7 +19,7 @@ import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, take } from 'rxjs';
-import { TripActions, selectSelectedTrip, selectTripsMutating, selectTripsError } from '@admin/store/trips';
+import { TripActions, selectSelectedTrip, selectTripsMutating, selectTripsError } from '@admin/features/trips/store';
 import { Dog } from '@models/lib/dog.model';
 import { generateId } from '@models/lib/utils';
 
