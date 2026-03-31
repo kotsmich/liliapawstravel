@@ -19,7 +19,7 @@ import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, take } from 'rxjs';
-import { TripActions, selectSelectedTrip, selectTripsMutating, selectTripsError } from '@admin/features/trips/store';
+import { clearSelectedTrip, loadTripById, updateDog, updateTrip, addTrip, selectSelectedTrip, selectTripsMutating, selectTripsError } from '@admin/features/trips/store';
 import { Dog } from '@models/lib/dog.model';
 import { generateId } from '@models/lib/utils';
 
@@ -100,10 +100,10 @@ export class TripFormComponent implements OnInit {
       this.form.patchValue({ date: new Date(prefilledDate + 'T00:00:00') });
     }
 
-    this.store.dispatch(TripActions.clearSelectedTrip());
+    this.store.dispatch(clearSelectedTrip());
 
     if (this.isEdit && this.editId) {
-      this.store.dispatch(TripActions.loadTripById({ id: this.editId }));
+      this.store.dispatch(loadTripById({ id: this.editId }));
       this.store.select(selectSelectedTrip).pipe(
         filter(Boolean),
         take(1)
@@ -176,7 +176,7 @@ export class TripFormComponent implements OnInit {
     (this.dogs.at(this.editingDogIndex) as FormGroup).patchValue(values);
 
     if (this.isEdit && this.editId && !this.isNewDog) {
-      this.store.dispatch(TripActions.updateDog({ tripId: this.editId, dog: values }));
+      this.store.dispatch(updateDog({ tripId: this.editId, dog: values }));
       this.messageService.add({ severity: 'success', summary: 'Dog Updated', detail: 'Dog updated successfully.' });
     }
 
@@ -218,9 +218,9 @@ export class TripFormComponent implements OnInit {
     const payload = { ...rest, date: dateStr, totalCapacity };
 
     if (this.isEdit && this.editId) {
-      this.store.dispatch(TripActions.updateTrip({ id: this.editId, trip: payload }));
+      this.store.dispatch(updateTrip({ id: this.editId, trip: payload }));
     } else {
-      this.store.dispatch(TripActions.addTrip({ trip: payload }));
+      this.store.dispatch(addTrip({ trip: payload }));
     }
   }
 }

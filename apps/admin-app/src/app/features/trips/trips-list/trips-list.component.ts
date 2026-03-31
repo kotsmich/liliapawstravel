@@ -9,9 +9,9 @@ import { Store } from '@ngrx/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { BehaviorSubject, combineLatest, filter, map, take } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TripActions, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents } from '@admin/features/trips/store';
-import { CalendarActions, selectCalendarSelectedDate } from '@admin/core/store/calendar';
-import { TripRequestActions, selectAllRequests } from '@admin/features/requests/store';
+import { loadTrips, loadTripById, deleteTrip, updateDog, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents } from '@admin/features/trips/store';
+import { selectDate, selectCalendarSelectedDate } from '@admin/core/store/calendar';
+import { loadRequests, approveRequest, updateRequestStatus, deleteRequest, selectAllRequests } from '@admin/features/requests/store';
 import { LoadingSpinnerComponent } from '@ui/lib/loading-spinner/loading-spinner.component';
 import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
 import { Trip } from '@models/lib/trip.model';
@@ -106,7 +106,7 @@ export class TripsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(TripActions.loadTrips());
+    this.store.dispatch(loadTrips());
 
     // Auto-select the closest upcoming trip date once trips are loaded
     this.trips$.pipe(
@@ -116,12 +116,12 @@ export class TripsListComponent implements OnInit {
       const today = new Date().toISOString().slice(0, 10);
       const sorted = trips.map((t: Trip) => t.date).filter((d: string) => d >= today).sort();
       const date = sorted[0] ?? [...trips.map((t: Trip) => t.date)].sort().reverse()[0];
-      if (date) this.store.dispatch(CalendarActions.selectDate({ date }));
+      if (date) this.store.dispatch(selectDate({ date }));
     });
   }
 
   onDateSelected(date: string): void {
-    this.store.dispatch(CalendarActions.selectDate({ date }));
+    this.store.dispatch(selectDate({ date }));
   }
 
   addTripForDate(): void {
@@ -145,7 +145,7 @@ export class TripsListComponent implements OnInit {
       rejectLabel: 'Cancel',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.store.dispatch(TripActions.deleteTrip({ id: trip.id }));
+        this.store.dispatch(deleteTrip({ id: trip.id }));
         this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Trip deleted.' });
       },
     });
@@ -160,13 +160,13 @@ export class TripsListComponent implements OnInit {
     this.detailHeader = `${trip.departureCity} → ${trip.arrivalCity}  ·  ${fmtDate(trip.date)}`;
     this.detailActiveTab = 'dogs';
     this.detailTripId$.next(trip.id);
-    this.store.dispatch(TripActions.loadTripById({ id: trip.id }));
-    this.store.dispatch(TripRequestActions.loadRequests());
+    this.store.dispatch(loadTripById({ id: trip.id }));
+    this.store.dispatch(loadRequests());
     this.detailDialogVisible = true;
   }
 
   onExportPdfFromCard(trip: Trip): void {
-    this.store.dispatch(TripActions.loadTripById({ id: trip.id }));
+    this.store.dispatch(loadTripById({ id: trip.id }));
     this.store.select(selectAllTrips).pipe(
       map(trips => trips.find(t => t.id === trip.id)),
       filter(t => t?.dogs !== undefined),
@@ -190,7 +190,7 @@ export class TripsListComponent implements OnInit {
 
   onSaveDog(dog: Dog): void {
     if (!this.dogEditTripId) return;
-    this.store.dispatch(TripActions.updateDog({ tripId: this.dogEditTripId, dog }));
+    this.store.dispatch(updateDog({ tripId: this.dogEditTripId, dog }));
     this.messageService.add({ severity: 'success', summary: 'Dog Updated', detail: `${dog.name} saved.` });
     this.dogEditVisible = false;
   }
@@ -208,7 +208,7 @@ export class TripsListComponent implements OnInit {
       rejectLabel: 'Back',
       acceptButtonStyleClass: 'p-button-success',
       accept: () => {
-        this.store.dispatch(TripRequestActions.approveRequest({ requestId: req.id, tripId: req.tripId! }));
+        this.store.dispatch(approveRequest({ requestId: req.id, tripId: req.tripId! }));
         this.messageService.add({ severity: 'success', summary: 'Approved', detail: 'Request approved. Dogs added to trip.' });
       },
     });
@@ -222,7 +222,7 @@ export class TripsListComponent implements OnInit {
       rejectLabel: 'Back',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.store.dispatch(TripRequestActions.updateRequestStatus({ id: req.id, status: 'rejected' }));
+        this.store.dispatch(updateRequestStatus({ id: req.id, status: 'rejected' }));
         this.messageService.add({ severity: 'info', summary: 'Rejected', detail: 'Request rejected.' });
       },
     });
@@ -236,7 +236,7 @@ export class TripsListComponent implements OnInit {
       rejectLabel: 'Cancel',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.store.dispatch(TripRequestActions.deleteRequest({ requestId: req.id }));
+        this.store.dispatch(deleteRequest({ requestId: req.id }));
         this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Request deleted.' });
       },
     });

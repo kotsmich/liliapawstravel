@@ -1,6 +1,6 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { ContactSubmission } from '@models/lib/contact-form.model';
-import { ContactActions } from './contact.actions';
+import { submitContact, submitContactSuccess, submitContactFailure, resetContact } from './contact.actions';
 
 export interface ContactState {
   lastSubmission: ContactSubmission | null;
@@ -20,15 +20,15 @@ export const contactFeature = createFeature({
   name: 'contact',
   reducer: createReducer(
     initialState,
-    on(ContactActions.submitContact, (s) => ({ ...s, loading: true, success: false, error: null })),
-    on(ContactActions.submitContactSuccess, (s, { submission }) => ({
+    on(submitContact, (s) => ({ ...s, loading: true, success: false, error: null })),
+    on(submitContactSuccess, (s, { submission }) => ({
       ...s,
       lastSubmission: submission,
       loading: false,
       success: true,
     })),
-    on(ContactActions.submitContactFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(ContactActions.resetContact, (s) => ({ ...s, loading: false, success: false, error: null }))
+    on(submitContactFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(resetContact, (s) => ({ ...s, loading: false, success: false, error: null }))
   ),
 });
 

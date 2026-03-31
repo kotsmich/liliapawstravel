@@ -4,17 +4,24 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { TripsService } from '@admin/services/trips.service';
 import { DogsService } from '@admin/services/dogs.service';
-import { TripActions } from './trips.actions';
+import {
+  loadTrips, loadTripsSuccess, loadTripsFailure,
+  addTrip, addTripSuccess, addTripFailure,
+  updateTrip, updateTripSuccess, updateTripFailure,
+  deleteTrip, deleteTripSuccess, deleteTripFailure,
+  updateDog, updateDogSuccess, updateDogFailure,
+  loadTripById, loadTripByIdSuccess, loadTripByIdFailure,
+} from './trips.actions';
 
 @Injectable()
 export class TripsEffects {
   loadTrips$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TripActions.loadTrips),
+      ofType(loadTrips),
       switchMap(() =>
         this.tripsService.getTrips().pipe(
-          map((trips) => TripActions.loadTripsSuccess({ trips })),
-          catchError((error) => of(TripActions.loadTripsFailure({ error: error.message })))
+          map((trips) => loadTripsSuccess({ trips })),
+          catchError((error) => of(loadTripsFailure({ error: error.message })))
         )
       )
     )
@@ -22,11 +29,11 @@ export class TripsEffects {
 
   addTrip$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TripActions.addTrip),
+      ofType(addTrip),
       switchMap(({ trip }) =>
         this.tripsService.createTrip(trip).pipe(
-          map((saved) => TripActions.addTripSuccess({ trip: saved })),
-          catchError((error) => of(TripActions.addTripFailure({ error: error.message })))
+          map((saved) => addTripSuccess({ trip: saved })),
+          catchError((error) => of(addTripFailure({ error: error.message })))
         )
       )
     )
@@ -35,7 +42,7 @@ export class TripsEffects {
   addTripSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(TripActions.addTripSuccess),
+        ofType(addTripSuccess),
         tap(() => this.router.navigate(['/admin/trips']))
       ),
     { dispatch: false }
@@ -43,11 +50,11 @@ export class TripsEffects {
 
   updateTrip$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TripActions.updateTrip),
+      ofType(updateTrip),
       switchMap(({ id, trip }) =>
         this.tripsService.updateTrip(id, trip).pipe(
-          map((updated) => TripActions.updateTripSuccess({ trip: updated })),
-          catchError((error) => of(TripActions.updateTripFailure({ error: error.message })))
+          map((updated) => updateTripSuccess({ trip: updated })),
+          catchError((error) => of(updateTripFailure({ error: error.message })))
         )
       )
     )
@@ -56,7 +63,7 @@ export class TripsEffects {
   updateTripSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(TripActions.updateTripSuccess),
+        ofType(updateTripSuccess),
         tap(() => this.router.navigate(['/admin/trips']))
       ),
     { dispatch: false }
@@ -64,11 +71,11 @@ export class TripsEffects {
 
   deleteTrip$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TripActions.deleteTrip),
+      ofType(deleteTrip),
       switchMap(({ id }) =>
         this.tripsService.deleteTrip(id).pipe(
-          map(({ id: deletedId }) => TripActions.deleteTripSuccess({ id: deletedId })),
-          catchError((error) => of(TripActions.deleteTripFailure({ error: error.message })))
+          map(({ id: deletedId }) => deleteTripSuccess({ id: deletedId })),
+          catchError((error) => of(deleteTripFailure({ error: error.message })))
         )
       )
     )
@@ -76,11 +83,11 @@ export class TripsEffects {
 
   updateDog$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TripActions.updateDog),
+      ofType(updateDog),
       switchMap(({ tripId, dog }) =>
         this.dogsService.updateDog(dog.id, dog).pipe(
-          map((updated) => TripActions.updateDogSuccess({ tripId, dog: updated })),
-          catchError((error) => of(TripActions.updateDogFailure({ error: error.message })))
+          map((updated) => updateDogSuccess({ tripId, dog: updated })),
+          catchError((error) => of(updateDogFailure({ error: error.message })))
         )
       )
     )
@@ -88,11 +95,11 @@ export class TripsEffects {
 
   loadTripById$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TripActions.loadTripById),
+      ofType(loadTripById),
       switchMap(({ id }) =>
         this.tripsService.getTripById(id).pipe(
-          map((trip) => TripActions.loadTripByIdSuccess({ trip })),
-          catchError((error) => of(TripActions.loadTripByIdFailure({ error: error.message })))
+          map((trip) => loadTripByIdSuccess({ trip })),
+          catchError((error) => of(loadTripByIdFailure({ error: error.message })))
         )
       )
     )

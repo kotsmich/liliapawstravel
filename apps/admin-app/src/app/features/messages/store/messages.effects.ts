@@ -2,17 +2,21 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, of, switchMap } from 'rxjs';
 import { MessagesService } from '@admin/services/messages.service';
-import { MessagesActions } from './messages.actions';
+import {
+  loadMessages, loadMessagesSuccess, loadMessagesFailure,
+  loadMessageById, loadMessageByIdSuccess, loadMessageByIdFailure,
+  deleteMessage, deleteMessageSuccess, deleteMessageFailure,
+} from './messages.actions';
 
 @Injectable()
 export class MessagesEffects {
   loadMessages$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(MessagesActions.loadMessages),
+      ofType(loadMessages),
       switchMap(() =>
         this.messagesService.getMessages().pipe(
-          map((messages) => MessagesActions.loadMessagesSuccess({ messages })),
-          catchError((error) => of(MessagesActions.loadMessagesFailure({ error: error.message }))),
+          map((messages) => loadMessagesSuccess({ messages })),
+          catchError((error) => of(loadMessagesFailure({ error: error.message }))),
         ),
       ),
     ),
@@ -20,11 +24,11 @@ export class MessagesEffects {
 
   loadMessageById$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(MessagesActions.loadMessageById),
+      ofType(loadMessageById),
       switchMap(({ id }) =>
         this.messagesService.getMessageById(id).pipe(
-          map((message) => MessagesActions.loadMessageByIdSuccess({ message })),
-          catchError((error) => of(MessagesActions.loadMessageByIdFailure({ error: error.message }))),
+          map((message) => loadMessageByIdSuccess({ message })),
+          catchError((error) => of(loadMessageByIdFailure({ error: error.message }))),
         ),
       ),
     ),
@@ -32,11 +36,11 @@ export class MessagesEffects {
 
   deleteMessage$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(MessagesActions.deleteMessage),
+      ofType(deleteMessage),
       switchMap(({ id }) =>
         this.messagesService.deleteMessage(id).pipe(
-          map(({ id: deletedId }) => MessagesActions.deleteMessageSuccess({ id: deletedId })),
-          catchError((error) => of(MessagesActions.deleteMessageFailure({ error: error.message }))),
+          map(({ id: deletedId }) => deleteMessageSuccess({ id: deletedId })),
+          catchError((error) => of(deleteMessageFailure({ error: error.message }))),
         ),
       ),
     ),

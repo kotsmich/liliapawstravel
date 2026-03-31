@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { Store } from '@ngrx/store';
-import { ContactActions, selectContactIsLoading, selectContactIsSuccess, selectContactError } from '@user/features/contact/store';
+import { submitContact, resetContact, selectContactIsLoading, selectContactIsSuccess, selectContactError } from '@user/features/contact/store';
 import { ContactFormComponent } from './components/contact-form/contact-form.component';
 
 @Component({
@@ -41,11 +41,11 @@ export class ContactComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    this.store.dispatch(ContactActions.submitContact({ form: this.form.value }));
+    this.store.dispatch(submitContact({ form: this.form.value }));
   }
 
   onReset(): void {
     this.form.reset();
-    this.store.dispatch(ContactActions.resetContact());
+    this.store.dispatch(resetContact());
   }
 }

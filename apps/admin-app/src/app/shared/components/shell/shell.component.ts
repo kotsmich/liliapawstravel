@@ -6,9 +6,9 @@ import { TooltipModule } from 'primeng/tooltip';
 import { AvatarModule } from 'primeng/avatar';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { AuthActions, selectCurrentUser } from '@admin/core/store/auth';
-import { TripRequestActions, selectPendingRequestsCount } from '@admin/features/requests/store';
-import { MessagesActions, selectUnreadCount } from '@admin/features/messages/store';
+import { logout, selectCurrentUser } from '@admin/core/store/auth';
+import { loadRequests, selectPendingRequestsCount } from '@admin/features/requests/store';
+import { loadMessages, selectUnreadCount } from '@admin/features/messages/store';
 import { AdminUser } from '@models/lib/admin-user.model';
 
 @Component({
@@ -30,8 +30,8 @@ export class ShellComponent implements OnInit {
   get isMobile(): boolean { return window.innerWidth < 768; }
 
   ngOnInit(): void {
-    this.store.dispatch(TripRequestActions.loadRequests());
-    this.store.dispatch(MessagesActions.loadMessages());
+    this.store.dispatch(loadRequests());
+    this.store.dispatch(loadMessages());
     if (this.isMobile) this.sidebarOpen = false;
   }
 
@@ -42,7 +42,7 @@ export class ShellComponent implements OnInit {
   }
 
   logout(): void {
-    this.store.dispatch(AuthActions.logout());
+    this.store.dispatch(logout());
   }
 
   toggleSidebar(): void {

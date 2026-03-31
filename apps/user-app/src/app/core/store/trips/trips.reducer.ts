@@ -1,6 +1,6 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { Trip } from '@models/lib/trip.model';
-import { TripActions } from './trips.actions';
+import { refreshTrips, loadTripsSuccess, loadTripsFailure, clearSelectedTrip, wsTripsReceived } from './trips.actions';
 
 export interface TripsState {
   trips: Trip[];
@@ -18,11 +18,11 @@ export const tripsFeature = createFeature({
   name: 'trips',
   reducer: createReducer(
     initialState,
-    on(TripActions.refreshTrips, (s) => ({ ...s, loading: true, error: null })),
-    on(TripActions.loadTripsSuccess, (s, { trips }) => ({ ...s, trips, loading: false })),
-    on(TripActions.loadTripsFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(TripActions.clearSelectedTrip, (s) => ({ ...s })),
-    on(TripActions.wsTripsReceived, (s, { trips }) => ({ ...s, trips }))
+    on(refreshTrips, (s) => ({ ...s, loading: true, error: null })),
+    on(loadTripsSuccess, (s, { trips }) => ({ ...s, trips, loading: false })),
+    on(loadTripsFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(clearSelectedTrip, (s) => ({ ...s })),
+    on(wsTripsReceived, (s, { trips }) => ({ ...s, trips }))
   ),
 });
 

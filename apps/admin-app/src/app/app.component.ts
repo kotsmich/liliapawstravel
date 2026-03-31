@@ -10,9 +10,9 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
 import { selectIsAuthenticated } from '@admin/core/store/auth';
-import { TripRequestActions } from '@admin/features/requests/store';
-import { MessagesActions } from '@admin/features/messages/store';
-import { NotificationsActions, selectTotalCount } from '@admin/core/store/notifications';
+import { addRequestFromSocket, updateRequestStatusSuccess } from '@admin/features/requests/store';
+import { addMessageFromSocket } from '@admin/features/messages/store';
+import { increment, resetRequests, resetMessages, selectTotalCount } from '@admin/core/store/notifications';
 import { AppWebSocketService } from '@ui/lib/websocket/app-websocket.service';
 import { SocketEvent } from '@models/lib/socket-events.model';
 import { TripRequest } from '@models/lib/trip-request.model';
@@ -60,8 +60,8 @@ export class AppComponent {
       .listen<TripRequest>(SocketEvent.REQUEST_NEW)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((request) => {
-        this.store.dispatch(TripRequestActions.addRequestFromSocket({ request }));
-        this.store.dispatch(NotificationsActions.increment({ notificationType: 'requests' }));
+        this.store.dispatch(addRequestFromSocket({ request }));
+        this.store.dispatch(increment({ notificationType: 'requests' }));
         this.messageService.add({
           severity: 'info',
           summary: 'New Request',
@@ -74,15 +74,15 @@ export class AppComponent {
       .listen<TripRequest>(SocketEvent.REQUEST_UPDATED)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((request) => {
-        this.store.dispatch(TripRequestActions.updateRequestStatusSuccess({ request }));
+        this.store.dispatch(updateRequestStatusSuccess({ request }));
       });
 
     this.wsService
       .listen<ContactSubmission>(SocketEvent.MESSAGE_NEW)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((message) => {
-        this.store.dispatch(MessagesActions.addMessageFromSocket({ message }));
-        this.store.dispatch(NotificationsActions.increment({ notificationType: 'messages' }));
+        this.store.dispatch(addMessageFromSocket({ message }));
+        this.store.dispatch(increment({ notificationType: 'messages' }));
         this.messageService.add({
           severity: 'info',
           summary: 'New Message',
@@ -101,10 +101,10 @@ export class AppComponent {
       .subscribe((e) => {
         const url = (e as NavigationEnd).url;
         if (url.includes('/requests')) {
-          this.store.dispatch(NotificationsActions.resetRequests());
+          this.store.dispatch(resetRequests());
         }
         if (url.includes('/messages')) {
-          this.store.dispatch(NotificationsActions.resetMessages());
+          this.store.dispatch(resetMessages());
         }
       });
   }

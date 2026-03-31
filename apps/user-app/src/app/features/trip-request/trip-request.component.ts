@@ -22,9 +22,9 @@ import { CalendarEvent } from '@models/lib/calendar-event.model';
 import { generateId } from '@models/lib/utils';
 import { Trip } from '@models/lib/trip.model';
 import { Dog } from '@models/lib/dog.model';
-import { TripActions, selectTripsAsCalendarEvents, selectTripsIsLoading } from '@user/core/store/trips';
-import { CalendarActions, selectCalendarSelectedDate, selectTripForSelectedDate } from '@user/core/store/calendar';
-import { TripRequestActions, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError } from '@user/features/trip-request/store';
+import { refreshTrips, clearSelectedTrip, selectTripsAsCalendarEvents, selectTripsIsLoading } from '@user/core/store/trips';
+import { selectDate, clearDate, selectCalendarSelectedDate, selectTripForSelectedDate } from '@user/core/store/calendar';
+import { submitRequest, resetRequest, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError } from '@user/features/trip-request/store';
 
 @Component({
   selector: 'app-trip-request',
@@ -66,7 +66,7 @@ export class TripRequestComponent implements OnInit {
 
   ngOnInit(): void {
     timer(0, 60000).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.store.dispatch(TripActions.refreshTrips());
+      this.store.dispatch(refreshTrips());
     });
     
     this.form = this.fb.group({
@@ -144,7 +144,7 @@ export class TripRequestComponent implements OnInit {
   }
 
   onDateSelected(date: string): void {
-    this.store.dispatch(CalendarActions.selectDate({ date }));
+    this.store.dispatch(selectDate({ date }));
   }
 
   preview(): void {
@@ -158,7 +158,7 @@ export class TripRequestComponent implements OnInit {
     const dogs: Dog[] = this.form.value.dogs.map((d: Partial<Dog>) => ({
       ...d, id: generateId(),
     }));
-    this.store.dispatch(TripRequestActions.submitRequest({
+    this.store.dispatch(submitRequest({
       dogs,
       tripId: this.selectedTrip!.id,
       requesterName,
@@ -173,8 +173,8 @@ export class TripRequestComponent implements OnInit {
     this.dogs.push(this.dogGroup());
     this.expandedIndex = 0;
     this.showSummary = false;
-    this.store.dispatch(TripRequestActions.resetRequest());
-    this.store.dispatch(TripActions.clearSelectedTrip());
-    this.store.dispatch(CalendarActions.clearDate());
+    this.store.dispatch(resetRequest());
+    this.store.dispatch(clearSelectedTrip());
+    this.store.dispatch(clearDate());
   }
 }

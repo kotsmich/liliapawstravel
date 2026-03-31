@@ -3,20 +3,20 @@ import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { AuthService } from '@admin/services/auth.service';
-import { AuthActions } from './auth.actions';
+import { login, loginSuccess, loginFailure, logout } from './auth.actions';
 
 @Injectable()
 export class AuthEffects {
   login$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(AuthActions.login),
+      ofType(login),
       switchMap(({ email, password }) =>
         this.authService.login(email, password).pipe(
           map(({ token, user }) =>
-            AuthActions.loginSuccess({ token, user })
+            loginSuccess({ token, user })
           ),
           catchError((error) =>
-            of(AuthActions.loginFailure({ error: error.error?.message ?? error.message }))
+            of(loginFailure({ error: error.error?.message ?? error.message }))
           )
         )
       )
@@ -26,7 +26,7 @@ export class AuthEffects {
   loginSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AuthActions.loginSuccess),
+        ofType(loginSuccess),
         tap(() => this.router.navigate(['/admin/dashboard']))
       ),
     { dispatch: false }
@@ -35,7 +35,7 @@ export class AuthEffects {
   logout$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AuthActions.logout),
+        ofType(logout),
         switchMap(() =>
           this.authService.logout().pipe(
             catchError(() => of(null))

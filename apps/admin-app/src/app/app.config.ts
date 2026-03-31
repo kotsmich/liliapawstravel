@@ -14,7 +14,7 @@ import { tap, catchError } from 'rxjs/operators';
 
 import { APP_ROUTES } from './app.routes';
 import { adminApiInterceptor } from '@admin/interceptors/admin-api.interceptor';
-import { authReducer, AuthEffects, AuthActions } from '@admin/core/store/auth';
+import { authReducer, AuthEffects, restoreSession } from '@admin/core/store/auth';
 import { tripsReducer, TripsEffects } from '@admin/features/trips/store';
 import { calendarReducer } from '@admin/core/store/calendar';
 import { requestsReducer, RequestsEffects } from '@admin/features/requests/store';
@@ -44,7 +44,7 @@ function initializeAuth(store: Store, authService: AuthService): () => Promise<v
   return () =>
     firstValueFrom(
       authService.getProfile().pipe(
-        tap((user) => store.dispatch(AuthActions.restoreSession({ user }))),
+        tap((user) => store.dispatch(restoreSession({ user }))),
         catchError(() => of(null)),
       ),
     ).then(() => undefined);

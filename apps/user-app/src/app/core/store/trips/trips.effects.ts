@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, of, switchMap } from 'rxjs';
 import { TripsService } from '@user/services/trips.service';
 import { TripsWebSocketService } from '@user/services/trips-websocket.service';
-import { TripActions } from './trips.actions';
+import { refreshTrips, loadTripsSuccess, loadTripsFailure, wsTripsReceived } from './trips.actions';
 
 @Injectable()
 export class TripsEffects {
@@ -11,11 +11,11 @@ export class TripsEffects {
 
   refreshTrips$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TripActions.refreshTrips),
+      ofType(refreshTrips),
       switchMap(() =>
         this.tripsService.getTrips().pipe(
-          map((trips) => TripActions.loadTripsSuccess({ trips })),
-          catchError((error) => of(TripActions.loadTripsFailure({ error: error.message })))
+          map((trips) => loadTripsSuccess({ trips })),
+          catchError((error) => of(loadTripsFailure({ error: error.message })))
         )
       )
     )
@@ -23,7 +23,7 @@ export class TripsEffects {
 
   wsTrips$ = createEffect(() =>
     this.wsService.connect().pipe(
-      map((trips) => TripActions.wsTripsReceived({ trips }))
+      map((trips) => wsTripsReceived({ trips }))
     )
   );
 

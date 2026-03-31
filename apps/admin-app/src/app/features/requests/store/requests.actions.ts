@@ -1,21 +1,20 @@
-import { createActionGroup, emptyProps, props } from '@ngrx/store';
+import { createAction, props } from '@ngrx/store';
 import { TripRequest } from '@models/lib/trip-request.model';
 
-export const TripRequestActions = createActionGroup({
-  source: 'TripRequest',
-  events: {
-    'Load Requests': emptyProps(),
-    'Load Requests Success': props<{ requests: TripRequest[] }>(),
-    'Load Requests Failure': props<{ error: string }>(),
-    'Approve Request': props<{ requestId: string; tripId: string }>(),
-    'Approve Request Success': props<{ request: TripRequest }>(),
-    'Approve Request Failure': props<{ error: string }>(),
-    'Update Request Status': props<{ id: string; status: TripRequest['status'] }>(),
-    'Update Request Status Success': props<{ request: TripRequest }>(),
-    'Update Request Status Failure': props<{ error: string }>(),
-    'Delete Request': props<{ requestId: string }>(),
-    'Delete Request Success': props<{ requestId: string }>(),
-    'Delete Request Failure': props<{ error: string }>(),
-    'Add Request From Socket': props<{ request: TripRequest }>(),
-  },
-});
+export const loadRequests = createAction('[TripRequest] Load Requests');
+export const loadRequestsSuccess = createAction('[TripRequest] Load Requests Success', props<{ requests: TripRequest[] }>());
+export const loadRequestsFailure = createAction('[TripRequest] Load Requests Failure', props<{ error: string }>());
+
+export const approveRequest = createAction('[TripRequest] Approve Request', props<{ requestId: string; tripId: string }>());
+export const approveRequestSuccess = createAction('[TripRequest] Approve Request Success', props<{ request: TripRequest }>());
+export const approveRequestFailure = createAction('[TripRequest] Approve Request Failure', props<{ error: string }>());
+
+export const updateRequestStatus = createAction('[TripRequest] Update Request Status', props<{ id: string; status: TripRequest['status'] }>());
+export const updateRequestStatusSuccess = createAction('[TripRequest] Update Request Status Success', props<{ request: TripRequest }>());
+export const updateRequestStatusFailure = createAction('[TripRequest] Update Request Status Failure', props<{ error: string }>());
+
+export const deleteRequest = createAction('[TripRequest] Delete Request', props<{ requestId: string }>());
+export const deleteRequestSuccess = createAction('[TripRequest] Delete Request Success', props<{ requestId: string }>());
+export const deleteRequestFailure = createAction('[TripRequest] Delete Request Failure', props<{ error: string }>());
+
+export const addRequestFromSocket = createAction('[TripRequest] Add Request From Socket', props<{ request: TripRequest }>());

@@ -9,9 +9,9 @@ import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { TripActions, selectAllTrips } from '@admin/features/trips/store';
+import { loadTrips, selectAllTrips } from '@admin/features/trips/store';
 import { sanitizeHtml } from '@admin/shared/utils/sanitize';
-import { TripRequestActions, selectAllRequests, selectRequestsIsLoading } from '@admin/features/requests/store';
+import { loadRequests, approveRequest, updateRequestStatus, deleteRequest, selectAllRequests, selectRequestsIsLoading } from '@admin/features/requests/store';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { Trip } from '@models/lib/trip.model';
 import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
@@ -83,8 +83,8 @@ export class RequestsListComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.store.dispatch(TripRequestActions.loadRequests());
-    this.store.dispatch(TripActions.loadTrips());
+    this.store.dispatch(loadRequests());
+    this.store.dispatch(loadTrips());
 
     // Pre-select nearest upcoming trip once trips load
     this.store.select(selectAllTrips).pipe(
@@ -138,7 +138,7 @@ export class RequestsListComponent implements OnInit {
       rejectLabel: 'Back',
       acceptButtonStyleClass: 'p-button-success',
       accept: () => {
-        this.store.dispatch(TripRequestActions.approveRequest({ requestId: req.id, tripId: req.tripId! }));
+        this.store.dispatch(approveRequest({ requestId: req.id, tripId: req.tripId! }));
         this.messageService.add({ severity: 'success', summary: 'Approved', detail: 'Request confirmed. Trip dogs updated.' });
         this.dialogVisible = false;
       },
@@ -155,7 +155,7 @@ export class RequestsListComponent implements OnInit {
       rejectLabel: 'Back',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.store.dispatch(TripRequestActions.updateRequestStatus({ id: req.id, status: 'rejected' }));
+        this.store.dispatch(updateRequestStatus({ id: req.id, status: 'rejected' }));
         this.messageService.add({ severity: 'info', summary: 'Rejected', detail: 'Request has been rejected.' });
         this.dialogVisible = false;
       },
@@ -170,7 +170,7 @@ export class RequestsListComponent implements OnInit {
       rejectLabel: 'Cancel',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.store.dispatch(TripRequestActions.deleteRequest({ requestId: req.id }));
+        this.store.dispatch(deleteRequest({ requestId: req.id }));
         this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Request deleted.' });
         this.dialogVisible = false;
       },

@@ -1,6 +1,12 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { TripRequest } from '@models/lib/trip-request.model';
-import { TripRequestActions } from './requests.actions';
+import {
+  loadRequests, loadRequestsSuccess, loadRequestsFailure,
+  approveRequest, approveRequestSuccess, approveRequestFailure,
+  updateRequestStatus, updateRequestStatusSuccess, updateRequestStatusFailure,
+  deleteRequest, deleteRequestSuccess, deleteRequestFailure,
+  addRequestFromSocket,
+} from './requests.actions';
 
 export interface RequestsState {
   requests: TripRequest[];
@@ -18,31 +24,31 @@ export const requestsFeature = createFeature({
   name: 'requests',
   reducer: createReducer(
     initialState,
-    on(TripRequestActions.loadRequests, (s) => ({ ...s, loading: true, error: null })),
-    on(TripRequestActions.loadRequestsSuccess, (s, { requests }) => ({ ...s, requests, loading: false })),
-    on(TripRequestActions.loadRequestsFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(TripRequestActions.approveRequest, (s) => ({ ...s, loading: true, error: null })),
-    on(TripRequestActions.approveRequestSuccess, (s, { request }) => ({
+    on(loadRequests, (s) => ({ ...s, loading: true, error: null })),
+    on(loadRequestsSuccess, (s, { requests }) => ({ ...s, requests, loading: false })),
+    on(loadRequestsFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(approveRequest, (s) => ({ ...s, loading: true, error: null })),
+    on(approveRequestSuccess, (s, { request }) => ({
       ...s,
       requests: s.requests.map((r) => (r.id === request.id ? request : r)),
       loading: false,
     })),
-    on(TripRequestActions.approveRequestFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(TripRequestActions.updateRequestStatus, (s) => ({ ...s, loading: true, error: null })),
-    on(TripRequestActions.updateRequestStatusSuccess, (s, { request }) => ({
+    on(approveRequestFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(updateRequestStatus, (s) => ({ ...s, loading: true, error: null })),
+    on(updateRequestStatusSuccess, (s, { request }) => ({
       ...s,
       requests: s.requests.map((r) => (r.id === request.id ? request : r)),
       loading: false,
     })),
-    on(TripRequestActions.updateRequestStatusFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(TripRequestActions.deleteRequest, (s) => ({ ...s, loading: true, error: null })),
-    on(TripRequestActions.deleteRequestSuccess, (s, { requestId }) => ({
+    on(updateRequestStatusFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(deleteRequest, (s) => ({ ...s, loading: true, error: null })),
+    on(deleteRequestSuccess, (s, { requestId }) => ({
       ...s,
       requests: s.requests.filter((r) => r.id !== requestId),
       loading: false,
     })),
-    on(TripRequestActions.deleteRequestFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(TripRequestActions.addRequestFromSocket, (s, { request }) => ({
+    on(deleteRequestFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(addRequestFromSocket, (s, { request }) => ({
       ...s,
       requests: [request, ...s.requests],
     }))

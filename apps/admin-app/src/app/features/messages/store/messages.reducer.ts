@@ -1,6 +1,11 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { ContactSubmission } from '@models/lib/contact-form.model';
-import { MessagesActions } from './messages.actions';
+import {
+  loadMessages, loadMessagesSuccess, loadMessagesFailure,
+  loadMessageById, loadMessageByIdSuccess, loadMessageByIdFailure,
+  deleteMessage, deleteMessageSuccess, deleteMessageFailure,
+  markAsRead, addMessageFromSocket,
+} from './messages.actions';
 
 export interface MessagesState {
   messages: ContactSubmission[];
@@ -20,30 +25,30 @@ export const messagesFeature = createFeature({
   name: 'messages',
   reducer: createReducer(
     initialState,
-    on(MessagesActions.loadMessages, (s) => ({ ...s, loading: true, error: null })),
-    on(MessagesActions.loadMessagesSuccess, (s, { messages }) => ({ ...s, messages, loading: false })),
-    on(MessagesActions.loadMessagesFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(MessagesActions.loadMessageById, (s) => ({ ...s, loading: true })),
-    on(MessagesActions.loadMessageByIdSuccess, (s, { message }) => ({
+    on(loadMessages, (s) => ({ ...s, loading: true, error: null })),
+    on(loadMessagesSuccess, (s, { messages }) => ({ ...s, messages, loading: false })),
+    on(loadMessagesFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(loadMessageById, (s) => ({ ...s, loading: true })),
+    on(loadMessageByIdSuccess, (s, { message }) => ({
       ...s,
       selectedMessage: message,
       messages: s.messages.map((m) => (m.id === message.id ? message : m)),
       loading: false,
     })),
-    on(MessagesActions.loadMessageByIdFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(MessagesActions.deleteMessage, (s) => ({ ...s, loading: true })),
-    on(MessagesActions.deleteMessageSuccess, (s, { id }) => ({
+    on(loadMessageByIdFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(deleteMessage, (s) => ({ ...s, loading: true })),
+    on(deleteMessageSuccess, (s, { id }) => ({
       ...s,
       messages: s.messages.filter((m) => m.id !== id),
       selectedMessage: s.selectedMessage?.id === id ? null : s.selectedMessage,
       loading: false,
     })),
-    on(MessagesActions.deleteMessageFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(MessagesActions.markAsRead, (s, { id }) => ({
+    on(deleteMessageFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(markAsRead, (s, { id }) => ({
       ...s,
       messages: s.messages.map((m) => (m.id === id ? { ...m, isRead: true } : m)),
     })),
-    on(MessagesActions.addMessageFromSocket, (s, { message }) => ({
+    on(addMessageFromSocket, (s, { message }) => ({
       ...s,
       messages: [message, ...s.messages],
     })),

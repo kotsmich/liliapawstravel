@@ -2,18 +2,23 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap, of, switchMap } from 'rxjs';
 import { RequestsService } from '@admin/services/requests.service';
-import { TripRequestActions } from './requests.actions';
-import { TripActions } from '@admin/features/trips/store';
+import {
+  loadRequests, loadRequestsSuccess, loadRequestsFailure,
+  approveRequest, approveRequestSuccess, approveRequestFailure,
+  updateRequestStatus, updateRequestStatusSuccess, updateRequestStatusFailure,
+  deleteRequest, deleteRequestSuccess, deleteRequestFailure,
+} from './requests.actions';
+import { loadTripByIdSuccess } from '@admin/features/trips/store';
 
 @Injectable()
 export class RequestsEffects {
   loadRequests$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TripRequestActions.loadRequests),
+      ofType(loadRequests),
       switchMap(() =>
         this.requestsService.getRequests().pipe(
-          map((requests) => TripRequestActions.loadRequestsSuccess({ requests })),
-          catchError((error) => of(TripRequestActions.loadRequestsFailure({ error: error.message })))
+          map((requests) => loadRequestsSuccess({ requests })),
+          catchError((error) => of(loadRequestsFailure({ error: error.message })))
         )
       )
     )
@@ -21,14 +26,14 @@ export class RequestsEffects {
 
   approveRequest$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TripRequestActions.approveRequest),
+      ofType(approveRequest),
       switchMap(({ requestId }) =>
         this.requestsService.approveRequest(requestId).pipe(
           mergeMap(({ request, trip }) => [
-            TripRequestActions.approveRequestSuccess({ request }),
-            TripActions.loadTripByIdSuccess({ trip }),
+            approveRequestSuccess({ request }),
+            loadTripByIdSuccess({ trip }),
           ]),
-          catchError((error) => of(TripRequestActions.approveRequestFailure({ error: error.message })))
+          catchError((error) => of(approveRequestFailure({ error: error.message })))
         )
       )
     )
@@ -36,18 +41,18 @@ export class RequestsEffects {
 
   reloadAfterApprove$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TripRequestActions.approveRequestSuccess),
-      map(() => TripRequestActions.loadRequests())
+      ofType(approveRequestSuccess),
+      map(() => loadRequests())
     )
   );
 
   updateRequestStatus$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TripRequestActions.updateRequestStatus),
+      ofType(updateRequestStatus),
       switchMap(({ id, status }) =>
         this.requestsService.updateRequestStatus(id, status as 'rejected').pipe(
-          map((request) => TripRequestActions.updateRequestStatusSuccess({ request })),
-          catchError((error) => of(TripRequestActions.updateRequestStatusFailure({ error: error.message })))
+          map((request) => updateRequestStatusSuccess({ request })),
+          catchError((error) => of(updateRequestStatusFailure({ error: error.message })))
         )
       )
     )
@@ -55,18 +60,18 @@ export class RequestsEffects {
 
   reloadAfterReject$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TripRequestActions.updateRequestStatusSuccess),
-      map(() => TripRequestActions.loadRequests())
+      ofType(updateRequestStatusSuccess),
+      map(() => loadRequests())
     )
   );
 
   deleteRequest$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TripRequestActions.deleteRequest),
+      ofType(deleteRequest),
       switchMap(({ requestId }) =>
         this.requestsService.deleteRequest(requestId).pipe(
-          map(() => TripRequestActions.deleteRequestSuccess({ requestId })),
-          catchError((error) => of(TripRequestActions.deleteRequestFailure({ error: error.message })))
+          map(() => deleteRequestSuccess({ requestId })),
+          catchError((error) => of(deleteRequestFailure({ error: error.message })))
         )
       )
     )

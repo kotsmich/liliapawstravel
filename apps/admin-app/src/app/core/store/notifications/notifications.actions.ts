@@ -1,10 +1,12 @@
-import { createActionGroup, emptyProps, props } from '@ngrx/store';
+import { createAction, props } from '@ngrx/store';
 
-export const NotificationsActions = createActionGroup({
-  source: 'Notifications',
-  events: {
-    'Increment': props<{ notificationType: 'requests' | 'messages' }>(),
-    'Reset Requests': emptyProps(),
-    'Reset Messages': emptyProps(),
-  },
-});
+export const increment = createAction(
+    '[Notifications] Increment',
+    props<{ notificationType: 'requests' | 'messages' }>()
+);
+export const resetRequests = createAction(
+    '[Notifications] Reset Requests'
+);
+export const resetMessages = createAction(
+    '[Notifications] Reset Messages'
+);

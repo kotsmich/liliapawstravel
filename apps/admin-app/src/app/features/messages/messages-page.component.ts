@@ -7,7 +7,7 @@ import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
-import { MessagesActions, selectAllMessages, selectMessagesIsLoading, selectSelectedMessage, selectUnreadCount } from '@admin/features/messages/store';
+import { loadMessages, loadMessageById, deleteMessage, selectAllMessages, selectMessagesIsLoading, selectSelectedMessage, selectUnreadCount } from '@admin/features/messages/store';
 import { ContactSubmission } from '@models/lib/contact-form.model';
 import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
 import { LoadingOverlayComponent } from '@ui/lib/components/loading/loading-overlay.component';
@@ -45,14 +45,14 @@ export class MessagesPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(MessagesActions.loadMessages());
+    this.store.dispatch(loadMessages());
   }
 
   openMessage(msg: ContactSubmission): void {
     this.selectedMessage = msg;
     this.dialogVisible = true;
     if (!msg.isRead) {
-      this.store.dispatch(MessagesActions.loadMessageById({ id: msg.id }));
+      this.store.dispatch(loadMessageById({ id: msg.id }));
     }
   }
 
@@ -62,7 +62,7 @@ export class MessagesPageComponent implements OnInit {
   }
 
   deleteMessage(msg: ContactSubmission): void {
-    this.store.dispatch(MessagesActions.deleteMessage({ id: msg.id }));
+    this.store.dispatch(deleteMessage({ id: msg.id }));
     this.dialogVisible = false;
     this.selectedMessage = null;
     this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Message deleted.' });

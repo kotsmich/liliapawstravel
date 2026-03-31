@@ -8,7 +8,7 @@ import { CardModule } from 'primeng/card';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { MessageModule } from 'primeng/message';
 import { Store } from '@ngrx/store';
-import { AuthActions, selectAuthIsLoading, selectAuthError } from '@admin/core/store/auth';
+import { login, selectAuthIsLoading, selectAuthError } from '@admin/core/store/auth';
 
 @Component({
   selector: 'app-login',
@@ -39,6 +39,6 @@ export class LoginComponent {
   onSubmit(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const { email, password } = this.form.value;
-    this.store.dispatch(AuthActions.login({ email: email!, password: password! }));
+    this.store.dispatch(login({ email: email!, password: password! }));
   }
 }

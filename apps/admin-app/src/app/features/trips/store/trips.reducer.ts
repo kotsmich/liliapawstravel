@@ -1,6 +1,14 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { Trip } from '@models/lib/trip.model';
-import { TripActions } from './trips.actions';
+import {
+  loadTrips, loadTripsSuccess, loadTripsFailure,
+  selectTrip, clearSelectedTrip,
+  addTrip, addTripSuccess, addTripFailure,
+  updateTrip, updateTripSuccess, updateTripFailure,
+  deleteTrip, deleteTripSuccess, deleteTripFailure,
+  loadTripById, loadTripByIdSuccess, loadTripByIdFailure,
+  updateDog, updateDogSuccess, updateDogFailure,
+} from './trips.actions';
 
 export interface TripsState {
   trips: Trip[];
@@ -22,44 +30,44 @@ export const tripsFeature = createFeature({
   name: 'trips',
   reducer: createReducer(
     initialState,
-    on(TripActions.loadTrips, (s) => ({ ...s, loading: true, error: null })),
-    on(TripActions.loadTripsSuccess, (s, { trips }) => ({ ...s, trips, loading: false })),
-    on(TripActions.loadTripsFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(TripActions.selectTrip, (s, { id }) => ({
+    on(loadTrips, (s) => ({ ...s, loading: true, error: null })),
+    on(loadTripsSuccess, (s, { trips }) => ({ ...s, trips, loading: false })),
+    on(loadTripsFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(selectTrip, (s, { id }) => ({
       ...s, selectedTrip: s.trips.find((t) => t.id === id) ?? null,
     })),
-    on(TripActions.clearSelectedTrip, (s) => ({ ...s, selectedTrip: null })),
-    on(TripActions.addTrip, (s) => ({ ...s, mutating: true, error: null })),
-    on(TripActions.addTripSuccess, (s, { trip }) => ({
+    on(clearSelectedTrip, (s) => ({ ...s, selectedTrip: null })),
+    on(addTrip, (s) => ({ ...s, mutating: true, error: null })),
+    on(addTripSuccess, (s, { trip }) => ({
       ...s, trips: [...s.trips, trip], mutating: false,
     })),
-    on(TripActions.addTripFailure, (s, { error }) => ({ ...s, mutating: false, error })),
-    on(TripActions.updateTrip, (s) => ({ ...s, mutating: true, error: null })),
-    on(TripActions.updateTripSuccess, (s, { trip }) => ({
+    on(addTripFailure, (s, { error }) => ({ ...s, mutating: false, error })),
+    on(updateTrip, (s) => ({ ...s, mutating: true, error: null })),
+    on(updateTripSuccess, (s, { trip }) => ({
       ...s,
       trips: s.trips.map((t) => (t.id === trip.id ? trip : t)),
       selectedTrip: trip,
       mutating: false,
     })),
-    on(TripActions.updateTripFailure, (s, { error }) => ({ ...s, mutating: false, error })),
-    on(TripActions.deleteTrip, (s) => ({ ...s, mutating: true, error: null })),
-    on(TripActions.deleteTripSuccess, (s, { id }) => ({
+    on(updateTripFailure, (s, { error }) => ({ ...s, mutating: false, error })),
+    on(deleteTrip, (s) => ({ ...s, mutating: true, error: null })),
+    on(deleteTripSuccess, (s, { id }) => ({
       ...s,
       trips: s.trips.filter((t) => t.id !== id),
       selectedTrip: s.selectedTrip?.id === id ? null : s.selectedTrip,
       mutating: false,
     })),
-    on(TripActions.deleteTripFailure, (s, { error }) => ({ ...s, mutating: false, error })),
-    on(TripActions.loadTripById, (s) => ({ ...s, loading: true })),
-    on(TripActions.loadTripByIdSuccess, (s, { trip }) => ({
+    on(deleteTripFailure, (s, { error }) => ({ ...s, mutating: false, error })),
+    on(loadTripById, (s) => ({ ...s, loading: true })),
+    on(loadTripByIdSuccess, (s, { trip }) => ({
       ...s,
       selectedTrip: trip,
       trips: s.trips.map((t) => (t.id === trip.id ? trip : t)),
       loading: false,
     })),
-    on(TripActions.loadTripByIdFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(TripActions.updateDog, (s) => ({ ...s, mutating: true, error: null })),
-    on(TripActions.updateDogSuccess, (s, { tripId, dog }) => ({
+    on(loadTripByIdFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(updateDog, (s) => ({ ...s, mutating: true, error: null })),
+    on(updateDogSuccess, (s, { tripId, dog }) => ({
       ...s,
       trips: s.trips.map((t) =>
         t.id === tripId ? { ...t, dogs: t.dogs?.map((d) => (d.id === dog.id ? dog : d)) } : t
@@ -69,7 +77,7 @@ export const tripsFeature = createFeature({
         : s.selectedTrip,
       mutating: false,
     })),
-    on(TripActions.updateDogFailure, (s, { error }) => ({ ...s, mutating: false, error }))
+    on(updateDogFailure, (s, { error }) => ({ ...s, mutating: false, error }))
   ),
 });
 
