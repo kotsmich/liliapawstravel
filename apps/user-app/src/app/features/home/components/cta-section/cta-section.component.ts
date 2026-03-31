@@ -6,39 +6,8 @@ import { Component, Output, EventEmitter, ChangeDetectionStrategy } from '@angul
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
-  template: `
-    <section class="cta">
-      <div class="container">
-        <div class="cta__box">
-          <span>🐶</span>
-          <h2>Ready to bring your dog home?</h2>
-          <p>Submit a transport request and we'll respond within 24 hours.</p>
-          <div class="cta__actions flex justify-content-center flex-wrap">
-            <a class="btn-primary" (click)="requestClicked.emit()" style="cursor:pointer">Book a Transport</a>
-            <a class="btn-outline-light" (click)="contactClicked.emit()" style="cursor:pointer">Ask a Question</a>
-          </div>
-        </div>
-      </div>
-    </section>
-  `,
-  styles: [`
-    :host { display: block; }
-    .container { max-width:1200px; margin:0 auto; }
-    .cta { padding:5rem 1.5rem; background:#fff; }
-    @media(max-width:480px){ .cta{padding:3rem 1rem;} }
-    .cta__box { background:linear-gradient(135deg,#c47c3e,#a86535); border-radius:20px; padding:4rem 3rem; text-align:center; color:#fff; }
-    .cta__box span { font-size:3rem; display:block; margin-bottom:1rem; }
-    .cta__box h2 { font-size:2rem; font-weight:700; margin-bottom:1rem; }
-    .cta__box p { opacity:.9; margin-bottom:2rem; }
-    @media(max-width:600px){ .cta__box{padding:2.5rem 1.5rem;} .cta__box h2{font-size:1.5rem;} }
-    @media(max-width:480px){ .cta__box{padding:2rem 1.25rem;} }
-    .cta__actions { gap:1rem; justify-content:center; }
-    @media(max-width:480px){ .cta__actions{flex-direction:column;align-items:stretch;} .cta__actions a{text-align:center;} }
-    .btn-primary { display:inline-block; background:#c47c3e; color:#fff; padding:.75rem 1.75rem; border-radius:30px; font-weight:600; text-decoration:none; transition:background .2s; }
-    .btn-primary:hover { background:#a86535; color:#fff; }
-    .btn-outline-light { display:inline-block; border:2px solid rgba(255,255,255,.8); color:#fff; padding:.75rem 1.75rem; border-radius:30px; font-weight:600; text-decoration:none; }
-    .btn-outline-light:hover { background:rgba(255,255,255,.2); }
-  `],
+  templateUrl: './cta-section.component.html',
+  styleUrls: ['./cta-section.component.scss'],
 })
 export class CtaSectionComponent {
   @Output() requestClicked = new EventEmitter<void>();

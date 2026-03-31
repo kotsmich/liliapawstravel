@@ -1,0 +1,15 @@
+<ng-container *ngIf="loading; else content">
+  <ng-container *ngIf="type === 'skeleton'">
+    <div *ngFor="let row of rowsArray" class="mb-2">
+      <p-skeleton height="2.5rem"></p-skeleton>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="type === 'spinner'">
+    <div class="flex justify-content-center align-items-center py-6">
+      <p-progressSpinner strokeWidth="3" styleClass="w-4rem h-4rem"></p-progressSpinner>
+    </div>
+  </ng-container>
+</ng-container>
+<ng-template #content>
+  <ng-content></ng-content>
+</ng-template>

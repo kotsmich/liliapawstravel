@@ -1,0 +1,29 @@
+<div class="stats">
+  <p-card styleClass="stat-card">
+    <div class="stat-content flex align-items-center">
+      <i class="pi pi-car stat-icon"></i>
+      <div>
+        <span class="stat-value">{{ totalTrips }}</span>
+        <span class="stat-label">Total Trips</span>
+      </div>
+    </div>
+  </p-card>
+  <p-card styleClass="stat-card upcoming">
+    <div class="stat-content flex align-items-center">
+      <i class="pi pi-calendar stat-icon"></i>
+      <div>
+        <span class="stat-value">{{ upcomingTrips }}</span>
+        <span class="stat-label">Upcoming</span>
+      </div>
+    </div>
+  </p-card>
+  <p-card styleClass="stat-card done">
+    <div class="stat-content flex align-items-center">
+      <i class="pi pi-check-circle stat-icon"></i>
+      <div>
+        <span class="stat-value">{{ completedTrips }}</span>
+        <span class="stat-label">Completed</span>
+      </div>
+    </div>
+  </p-card>
+</div>

@@ -10,57 +10,7 @@ import { BadgeModule } from 'primeng/badge';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, SelectModule, TabsModule, BadgeModule],
-  template: `
-    <!-- Trip filter -->
-    <div class="filter-bar">
-      <p-select
-        [options]="tripOptions"
-        [ngModel]="selectedTripId"
-        (ngModelChange)="tripSelected.emit($event)"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="All Trips"
-        styleClass="trip-select"
-        />
-    </div>
-    
-    <!-- Status tabs -->
-    <p-tabs [value]="activeTab" (valueChange)="tabChanged.emit($event?.toString() ?? activeTab)">
-      <p-tablist>
-        <p-tab value="all">All</p-tab>
-        <p-tab value="pending">
-          Pending
-          @if (pendingCount > 0) {
-            <p-badge
-              [value]="pendingCount.toString()"
-              severity="warn"
-              class="tab-badge"
-              />
-          }
-        </p-tab>
-        <p-tab value="approved">
-          Approved
-          @if (approvedCount > 0) {
-            <p-badge
-              [value]="approvedCount.toString()"
-              severity="success"
-              class="tab-badge"
-              />
-          }
-        </p-tab>
-        <p-tab value="rejected">
-          Rejected
-          @if (rejectedCount > 0) {
-            <p-badge
-              [value]="rejectedCount.toString()"
-              severity="danger"
-              class="tab-badge"
-              />
-          }
-        </p-tab>
-      </p-tablist>
-    </p-tabs>
-    `,
+  templateUrl: './requests-filter.component.html',
   styles: [],
 })
 export class RequestsFilterComponent {

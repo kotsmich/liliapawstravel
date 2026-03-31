@@ -1,0 +1,52 @@
+<p-dialog
+  header="Message Details"
+  [visible]="visible"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [style]="{ width: '620px', maxWidth: '95vw' }"
+  [draggable]="false"
+  >
+  @if (message; as msg) {
+    <div class="detail-section">
+      <h3>Sender</h3>
+      <div class="sender-grid">
+        <p><i class="pi pi-user"></i> <strong>Name:</strong> {{ msg.name }}</p>
+        <p><i class="pi pi-envelope"></i> <strong>Email:</strong> {{ msg.email }}</p>
+        @if (msg.phone) {
+          <p><i class="pi pi-phone"></i> <strong>Phone:</strong> {{ msg.phone }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h3>{{ msg.subject || 'No subject' }}</h3>
+      <div class="message-body">{{ msg.message }}</div>
+    </div>
+
+    <div class="detail-section meta-row">
+      <p><i class="pi pi-calendar"></i> Submitted: {{ msg.submittedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+      @if (!msg.isRead) {
+        <p-tag severity="warn" value="New" />
+      } @else {
+        <p-tag severity="secondary" value="Read" />
+      }
+    </div>
+  }
+
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Delete"
+      icon="pi pi-trash"
+      severity="danger"
+      [outlined]="true"
+      (onClick)="deleteClicked.emit(message!)"
+      />
+    <p-button
+      label="Close"
+      icon="pi pi-times"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="visibleChange.emit(false)"
+      />
+  </ng-template>
+</p-dialog>

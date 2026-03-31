@@ -1,0 +1,25 @@
+<p-toast />
+<div class="messages-page">
+  <app-page-header title="Messages">
+    @if ((unreadCount$ | async); as unread) {
+      <span actions class="unread-label">{{ unread }} unread</span>
+    }
+  </app-page-header>
+
+  <app-loading-overlay [loading]="!!(loading$ | async)" [rows]="3">
+    <p-card>
+      <app-messages-list
+        [messages]="(messages$ | async) ?? []"
+        (rowClicked)="openMessage($event)"
+        (deleteClicked)="deleteMessage($event)"
+        />
+    </p-card>
+  </app-loading-overlay>
+</div>
+
+<app-message-detail-dialog
+  [message]="selectedMessage"
+  [visible]="dialogVisible"
+  (visibleChange)="onDialogVisibleChange($event)"
+  (deleteClicked)="deleteMessage($event)"
+  />

@@ -13,6 +13,7 @@ import { TripActions, selectAllTrips } from '@admin/store/trips';
 import { TripRequestActions, selectAllRequests, selectRequestsIsLoading } from '@admin/store/requests';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { Trip } from '@models/lib/trip.model';
+import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
 import { RequestsFilterComponent } from './components/requests-filter/requests-filter.component';
 import { RequestsTableComponent } from './components/requests-table/requests-table.component';
 import { RequestDetailDialogComponent } from './components/request-detail-dialog/request-detail-dialog.component';
@@ -24,6 +25,7 @@ import { RequestDetailDialogComponent } from './components/request-detail-dialog
     CommonModule,
     ButtonModule,
     ToastModule, ConfirmDialogModule,
+    PageHeaderComponent,
     RequestsFilterComponent, RequestsTableComponent, RequestDetailDialogComponent,
   ],
   templateUrl: './requests-list.component.html',

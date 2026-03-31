@@ -13,6 +13,7 @@ import { TripActions, selectAllTrips, selectTripsIsLoading, selectTripsAsCalenda
 import { CalendarActions, selectCalendarSelectedDate } from '@admin/store/calendar';
 import { TripRequestActions, selectAllRequests } from '@admin/store/requests';
 import { LoadingSpinnerComponent } from '@ui/lib/loading-spinner/loading-spinner.component';
+import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
 import { Trip } from '@models/lib/trip.model';
 import { Dog } from '@models/lib/dog.model';
 import { TripRequest } from '@models/lib/trip-request.model';
@@ -29,6 +30,7 @@ import { DogFormDialogComponent } from '../components/dog-form-dialog/dog-form-d
     CommonModule,
     CardModule, ButtonModule, ConfirmDialogModule, ToastModule,
     LoadingSpinnerComponent,
+    PageHeaderComponent,
     TripCalendarViewComponent,
     AllTripsTabComponent,
     TripDetailDialogComponent,

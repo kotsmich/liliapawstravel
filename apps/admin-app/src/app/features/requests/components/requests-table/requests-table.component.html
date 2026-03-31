@@ -1,0 +1,10 @@
+<div style="overflow-x:auto">
+  <app-generic-table
+    [data]="requests"
+    [columns]="columns"
+    [actions]="actions"
+    [config]="tableConfig"
+    [loading]="loading"
+    (rowClicked)="rowClicked.emit($event)">
+  </app-generic-table>
+</div>

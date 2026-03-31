@@ -1,0 +1,90 @@
+<p-table
+  [value]="data"
+  [loading]="loading"
+  [paginator]="config.paginator ?? false"
+  [rows]="config.rowsPerPage ?? 10"
+  [sortField]="config.sortField ?? ''"
+  [sortOrder]="config.sortOrder ?? -1"
+  [rowHover]="true"
+  [stripedRows]="config.striped ?? false">
+
+  <ng-template pTemplate="header">
+    <tr>
+      <th
+        *ngFor="let col of columns"
+        [pSortableColumn]="col.sortable ? col.field : ''"
+        [style.width]="col.width ?? ''">
+        {{ col.header }}
+        <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
+      </th>
+      <th *ngIf="actions.length">Actions</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-row>
+    <tr
+      (click)="rowClicked.emit(row)"
+      [class.cursor-pointer]="isRowClickable()">
+      <td *ngFor="let col of columns">
+        <ng-container [ngSwitch]="col.type">
+
+          <ng-container *ngSwitchCase="'badge'">
+            <p-tag
+              [severity]="$any(getBadgeSeverity(col, row))"
+              [value]="getBadgeLabel(col, row)">
+            </p-tag>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'date'">
+            {{ $any(getCellValue(row, col.field)) | date:(col.dateFormat ?? 'dd/MM/yyyy') }}
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'avatar'">
+            <p-avatar
+              [image]="getCellValue(row, col.field) ? getCellValue(row, col.field)!.toString() : ''"
+              [icon]="!getCellValue(row, col.field) ? 'pi pi-user' : ''"
+              shape="circle">
+            </p-avatar>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'template'">
+            <ng-container
+              *ngTemplateOutlet="col.template ?? null; context: { $implicit: row }">
+            </ng-container>
+          </ng-container>
+
+          <ng-container *ngSwitchDefault>
+            {{ col.formatter ? col.formatter(getCellValue(row, col.field), row) : getCellValue(row, col.field) }}
+          </ng-container>
+
+        </ng-container>
+      </td>
+
+      <td *ngIf="actions.length" (click)="$event.stopPropagation()">
+        <div class="flex gap-2">
+          <p-button
+            *ngFor="let act of actions"
+            [icon]="act.icon"
+            [label]="act.label ?? ''"
+            [severity]="$any(act.severity ?? 'secondary')"
+            [pTooltip]="act.tooltip"
+            [disabled]="act.disabled?.(row) ?? false"
+            [style.display]="(act.visible?.(row) ?? true) ? '' : 'none'"
+            [text]="true"
+            size="small"
+            (onClick)="act.action(row)">
+          </p-button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="columns.length + (actions.length ? 1 : 0)" style="text-align:center;padding:2rem">
+        {{ config.emptyMessage ?? 'No records found' }}
+      </td>
+    </tr>
+  </ng-template>
+
+</p-table>

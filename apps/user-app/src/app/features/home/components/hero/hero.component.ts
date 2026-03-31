@@ -6,43 +6,8 @@ import { Component, Output, EventEmitter, ChangeDetectionStrategy } from '@angul
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
-  template: `
-    <section class="hero flex align-items-center">
-      <div class="hero__content">
-        <span class="badge">🐾 Europe's trusted dog transport</span>
-        <h1>Every dog deserves a <span class="accent">loving journey home.</span></h1>
-        <p>Lilia Paws Travel safely transports adopted dogs across Europe — connecting shelters with loving families, one paw at a time.</p>
-        <div class="hero__actions flex flex-wrap gap-3">
-          <a class="btn-primary" (click)="requestClicked.emit()" style="cursor:pointer">Request Transport</a>
-          <a class="btn-outline" (click)="contactClicked.emit()" style="cursor:pointer">Get in Touch</a>
-        </div>
-      </div>
-      <div class="hero__visual">
-        <div class="paw-grid">🐾🐶🐾🐕❤️🐕🐾🐶🐾</div>
-      </div>
-    </section>
-  `,
-  styles: [`
-    :host { display: block; }
-    .hero { min-height:100vh; align-items:center; padding:7rem 1.5rem 4rem; gap:4rem; background:linear-gradient(135deg,#fdf6ee,#f5e6d0 60%,#eedbb8); max-width:1200px; margin:0 auto; }
-    @media(max-width:768px){ .hero{flex-direction:column;padding:6rem 1.5rem 3rem;min-height:auto;gap:2rem;text-align:center;} }
-    @media(max-width:480px){ .hero{padding:5rem 1rem 2.5rem;} }
-    .hero__content { flex:1; max-width:600px; }
-    .hero__actions { gap:1rem; }
-    @media(max-width:480px){ .hero__actions{flex-direction:column;align-items:stretch;} .hero__actions a{text-align:center;} }
-    .hero__visual { flex:0 0 auto; }
-    @media(max-width:768px){ .hero__visual{display:none;} }
-    .badge { display:inline-block; background:rgba(196,124,62,.15); color:#c47c3e; padding:.4rem 1rem; border-radius:20px; font-size:.875rem; font-weight:600; margin-bottom:1.5rem; }
-    h1 { font-size:clamp(2.25rem,5vw,3.5rem); font-weight:800; line-height:1.15; color:#2d2016; margin-bottom:1.25rem; }
-    .accent { color:#c47c3e; }
-    p { color:#5c4a3a; line-height:1.7; margin-bottom:2rem; font-size:1.1rem; }
-    .paw-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; font-size:2.5rem; opacity:.7; animation:float 4s ease-in-out infinite; }
-    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-    .btn-primary { display:inline-block; background:#c47c3e; color:#fff; padding:.75rem 1.75rem; border-radius:30px; font-weight:600; text-decoration:none; transition:background .2s; }
-    .btn-primary:hover { background:#a86535; color:#fff; }
-    .btn-outline { display:inline-block; border:2px solid #c47c3e; color:#c47c3e; padding:.75rem 1.75rem; border-radius:30px; font-weight:600; text-decoration:none; transition:all .2s; }
-    .btn-outline:hover { background:#c47c3e; color:#fff; }
-  `],
+  templateUrl: './hero.component.html',
+  styleUrls: ['./hero.component.scss'],
 })
 export class HeroComponent {
   @Output() requestClicked = new EventEmitter<void>();

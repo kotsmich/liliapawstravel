@@ -5,6 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { Store } from '@ngrx/store';
 import { TripActions, selectAllTrips, selectTripsIsLoading } from '@admin/store/trips';
 import { LoadingSpinnerComponent } from '@ui/lib/loading-spinner/loading-spinner.component';
+import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
 import { Trip } from '@models/lib/trip.model';
 import { map } from 'rxjs/operators';
 import { DashboardStatsComponent } from './components/dashboard-stats/dashboard-stats.component';
@@ -14,7 +15,7 @@ import { RecentTripsComponent } from './components/recent-trips/recent-trips.com
   selector: 'app-dashboard',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, LoadingSpinnerComponent, DashboardStatsComponent, RecentTripsComponent],
+  imports: [CommonModule, ButtonModule, LoadingSpinnerComponent, PageHeaderComponent, DashboardStatsComponent, RecentTripsComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })

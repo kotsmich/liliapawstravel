@@ -3,108 +3,23 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
-import { TableModule } from 'primeng/table';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { Trip } from '@models/lib/trip.model';
+import { TableColumn, TableConfig } from '@models/lib/table-column.interface';
+import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
+
+type RequestDog = TripRequest['dogs'][number];
 
 @Component({
   selector: 'app-request-detail-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DatePipe, DialogModule, ButtonModule, TagModule, TableModule],
-  template: `
-    <p-dialog
-      header="Request Details"
-      [visible]="visible"
-      (visibleChange)="visibleChange.emit($event)"
-      [modal]="true"
-      [style]="{ width: '90vw', maxWidth: '600px' }"
-      [draggable]="false"
-      >
-      @if (request; as req) {
-        <p class="request-summary">
-          Request for trip <strong>{{ tripDate(req.tripId) }}</strong>
-          under requester <strong>{{ req.requesterName }}</strong>
-        </p>
-        <div class="detail-section">
-          <h3>Requester</h3>
-          <p class="flex align-items-center gap-2"><i class="pi pi-user"></i> {{ req.requesterName }}</p>
-          <p class="flex align-items-center gap-2"><i class="pi pi-envelope"></i> {{ req.requesterEmail }}</p>
-          <p class="flex align-items-center gap-2"><i class="pi pi-phone"></i> {{ req.requesterPhone }}</p>
-        </div>
-        <div class="detail-section">
-          <h3>Trip</h3>
-          <p class="flex align-items-center gap-2"><i class="pi pi-calendar"></i> <strong>{{ tripDate(req.tripId) }}</strong></p>
-          <p>Submitted: {{ req.submittedAt | date:'dd/MM/yyyy HH:mm' }}</p>
-          <p>Status: <p-tag [value]="req.status" [severity]="statusSeverity(req.status)" /></p>
-        </div>
-        <div class="detail-section">
-          <h3>Dogs ({{ req.dogs.length }})</h3>
-          <div style="overflow-x:auto">
-          <p-table [value]="req.dogs" styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '36rem' }">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Name</th>
-                <th>Size</th>
-                <th>Age</th>
-                <th>Chip ID</th>
-                <th>Pickup</th>
-                <th>Drop</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-dog>
-              <tr>
-                <td>{{ dog.name }}</td>
-                <td>{{ dog.size }}</td>
-                <td>{{ dog.age }} yr</td>
-                <td>{{ dog.chipId }}</td>
-                <td>{{ dog.pickupLocation }}</td>
-                <td>{{ dog.dropLocation }}</td>
-              </tr>
-            </ng-template>
-          </p-table>
-          </div>
-        </div>
-      }
-    
-      <ng-template pTemplate="footer">
-        <p-button
-          label="Approve"
-          icon="pi pi-check"
-          severity="success"
-          [disabled]="request?.status !== 'pending'"
-          (onClick)="approve.emit()"
-          />
-        <p-button
-          label="Reject"
-          icon="pi pi-times"
-          severity="danger"
-          [outlined]="true"
-          [disabled]="request?.status !== 'pending'"
-          (onClick)="reject.emit()"
-          />
-        @if (request?.status !== 'pending') {
-          <p-button
-            label="Delete"
-            icon="pi pi-trash"
-            severity="danger"
-            (onClick)="deleteRequest.emit(request!)"
-            />
-        }
-        <p-button
-          label="Cancel"
-          icon="pi pi-arrow-left"
-          severity="secondary"
-          [outlined]="true"
-          (onClick)="cancel.emit()"
-          />
-      </ng-template>
-    </p-dialog>
-    `,
+  imports: [CommonModule, DatePipe, DialogModule, ButtonModule, TagModule, GenericTableComponent],
+  templateUrl: './request-detail-dialog.component.html',
   styles: [],
 })
 export class RequestDetailDialogComponent {
-  @Input() visible: boolean = false;
+  @Input() visible = false;
   @Input() request: TripRequest | null = null;
   @Input() trips: Trip[] = [];
 
@@ -113,6 +28,17 @@ export class RequestDetailDialogComponent {
   @Output() reject = new EventEmitter<void>();
   @Output() deleteRequest = new EventEmitter<TripRequest>();
   @Output() cancel = new EventEmitter<void>();
+
+  dogColumns: TableColumn<RequestDog>[] = [
+    { field: 'name', header: 'Name' },
+    { field: 'size', header: 'Size' },
+    { field: 'age', header: 'Age', formatter: (val) => `${val} yr` },
+    { field: 'chipId', header: 'Chip ID' },
+    { field: 'pickupLocation', header: 'Pickup' },
+    { field: 'dropLocation', header: 'Drop' },
+  ];
+
+  dogConfig: TableConfig = { paginator: false, emptyMessage: 'No dogs.', trackByField: 'id' };
 
   statusSeverity(status: TripRequest['status']): 'warn' | 'success' | 'danger' | 'secondary' {
     if (status === 'pending') return 'warn';

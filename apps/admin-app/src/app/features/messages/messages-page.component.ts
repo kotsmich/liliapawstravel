@@ -9,6 +9,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
 import { MessagesActions, selectAllMessages, selectMessagesIsLoading, selectSelectedMessage, selectUnreadCount } from '@admin/store/messages';
 import { ContactSubmission } from '@models/lib/contact-form.model';
+import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
+import { LoadingOverlayComponent } from '@ui/lib/components/loading/loading-overlay.component';
 import { MessagesListComponent } from './components/messages-list/messages-list.component';
 import { MessageDetailDialogComponent } from './components/message-detail-dialog/message-detail-dialog.component';
 
@@ -18,48 +20,11 @@ import { MessageDetailDialogComponent } from './components/message-detail-dialog
   imports: [
     CommonModule,
     ToastModule, CardModule, SkeletonModule,
+    PageHeaderComponent, LoadingOverlayComponent,
     MessagesListComponent, MessageDetailDialogComponent,
   ],
-  template: `
-    <p-toast />
-    <div class="messages-page">
-      <div class="page-header flex align-items-center justify-content-between flex-wrap gap-2">
-        <div>
-          <h1>Messages</h1>
-          @if ((unreadCount$ | async); as unread) {
-            <span class="unread-label">{{ unread }} unread</span>
-          }
-        </div>
-      </div>
-
-      @if (loading$ | async) {
-        <p-skeleton height="3rem" styleClass="mb-2" />
-        <p-skeleton height="3rem" styleClass="mb-2" />
-        <p-skeleton height="3rem" />
-      } @else {
-        <p-card>
-          <app-messages-list
-            [messages]="(messages$ | async) ?? []"
-            (rowClicked)="openMessage($event)"
-            (deleteClicked)="deleteMessage($event)"
-            />
-        </p-card>
-      }
-    </div>
-
-    <app-message-detail-dialog
-      [message]="selectedMessage"
-      [visible]="dialogVisible"
-      (visibleChange)="onDialogVisibleChange($event)"
-      (deleteClicked)="deleteMessage($event)"
-      />
-  `,
-  styles: [`
-    .messages-page { padding: 1.5rem; }
-    @media (max-width: 480px) { .messages-page { padding: 1rem; } }
-    .page-header { margin-bottom: 1.5rem; h1 { margin: 0; font-size: 1.5rem; font-weight: 600; } }
-    .unread-label { font-size: 0.85rem; color: #f59e0b; font-weight: 600; margin-top: 0.25rem; display: block; }
-  `],
+  templateUrl: './messages-page.component.html',
+  styleUrls: ['./messages-page.component.scss'],
 })
 export class MessagesPageComponent implements OnInit {
   messages$ = this.store.select(selectAllMessages);

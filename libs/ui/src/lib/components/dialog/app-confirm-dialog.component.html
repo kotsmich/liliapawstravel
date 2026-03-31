@@ -1,0 +1,15 @@
+<app-generic-dialog
+  [(visible)]="visible"
+  [config]="{
+    title: title,
+    confirmLabel: confirmLabel,
+    confirmSeverity: severity,
+    confirmIcon: 'pi pi-check',
+    cancelLabel: 'Cancel',
+    width: '400px',
+    confirmLoading: loading
+  }"
+  (confirmed)="confirmed.emit()"
+  (cancelled)="cancelled.emit(); visibleChange.emit(false)">
+  <p>{{ message }}</p>
+</app-generic-dialog>

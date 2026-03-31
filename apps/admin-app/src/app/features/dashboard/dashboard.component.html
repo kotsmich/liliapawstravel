@@ -1,8 +1,7 @@
 <div class="dashboard flex flex-column gap-4">
-  <div class="page-header flex align-items-center justify-content-between">
-    <h1>Dashboard</h1>
-    <p-button label="New Trip" icon="pi pi-plus" (onClick)="navigateToNewTrip()" />
-  </div>
+  <app-page-header title="Dashboard">
+    <p-button actions label="New Trip" icon="pi pi-plus" (onClick)="navigateToNewTrip()" />
+  </app-page-header>
 
   @if (loading$ | async) {
     <ui-loading-spinner message="Loading trips..." />

@@ -6,3 +6,5 @@ export * from './lib/contact-form.model';
 export * from './lib/trip-request.model';
 export * from './lib/admin-user.model';
 export * from './lib/socket-events.model';
+export * from './lib/table-column.interface';
+export * from './lib/dialog-config.interface';

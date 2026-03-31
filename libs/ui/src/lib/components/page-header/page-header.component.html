@@ -1,0 +1,10 @@
+<div class="flex align-items-center justify-content-between mb-4">
+  <div class="flex align-items-center gap-3">
+    <i *ngIf="icon" [class]="icon + ' text-3xl'" style="color: var(--primary-color)"></i>
+    <div class="flex flex-column">
+      <h2 class="m-0 text-2xl font-bold">{{ title }}</h2>
+      <span *ngIf="subtitle" class="text-sm mt-1" style="color: var(--color-text-muted)">{{ subtitle }}</span>
+    </div>
+  </div>
+  <ng-content select="[actions]"></ng-content>
+</div>

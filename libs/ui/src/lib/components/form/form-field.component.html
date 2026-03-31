@@ -1,0 +1,55 @@
+<div class="flex flex-column gap-1 w-full">
+  <p-ifta-label>
+    <ng-container [ngSwitch]="type">
+
+      <textarea
+        *ngSwitchCase="'textarea'"
+        pTextarea
+        [id]="inputId"
+        [formControl]="$any(control)"
+        [rows]="rows"
+        [placeholder]="placeholder ?? ''"
+        [ngClass]="{ 'ng-invalid ng-dirty': isInvalid }"
+        class="w-full"
+        autoResize>
+      </textarea>
+
+      <p-select
+        *ngSwitchCase="'dropdown'"
+        [inputId]="inputId"
+        [options]="options ?? []"
+        [formControl]="$any(control)"
+        [placeholder]="placeholder ?? ''"
+        [ngClass]="{ 'ng-invalid ng-dirty': isInvalid }"
+        optionLabel="label"
+        optionValue="value"
+        styleClass="w-full">
+      </p-select>
+
+      <p-datepicker
+        *ngSwitchCase="'datepicker'"
+        [inputId]="inputId"
+        [formControl]="$any(control)"
+        [placeholder]="placeholder ?? ''"
+        [minDate]="minDate ?? null"
+        [maxDate]="maxDate ?? null"
+        [ngClass]="{ 'ng-invalid ng-dirty': isInvalid }"
+        styleClass="w-full">
+      </p-datepicker>
+
+      <input
+        *ngSwitchDefault
+        pInputText
+        [id]="inputId"
+        [type]="type"
+        [formControl]="$any(control)"
+        [placeholder]="placeholder ?? ''"
+        [ngClass]="{ 'ng-invalid ng-dirty': isInvalid }"
+        class="w-full" />
+
+    </ng-container>
+    <label [for]="inputId">{{ label }}</label>
+  </p-ifta-label>
+
+  <small *ngIf="isInvalid" class="p-error">{{ errorMessage }}</small>
+</div>

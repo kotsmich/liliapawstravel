@@ -1,8 +1,7 @@
 <div class="trips-page flex flex-column gap-4">
-  <div class="page-header flex align-items-center justify-content-between">
-    <h1>Trips</h1>
-    <p-button label="New Trip" icon="pi pi-plus" (onClick)="navigateNewTrip()" />
-  </div>
+  <app-page-header title="Trips">
+    <p-button actions label="New Trip" icon="pi pi-plus" (onClick)="navigateNewTrip()" />
+  </app-page-header>
 
   <p-toast />
   <p-confirmdialog />

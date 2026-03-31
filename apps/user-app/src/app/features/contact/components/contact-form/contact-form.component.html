@@ -1,0 +1,77 @@
+<div class="form-wrapper">
+  @if (success) {
+    <div class="feedback success flex align-items-start flex-wrap gap-3">
+      <i class="pi pi-check-circle"></i>
+      <div><h3>Message sent!</h3><p>We'll respond within 24 hours.</p></div>
+      <p-button label="Send Another" [outlined]="true" severity="success" (onClick)="reset.emit()" />
+    </div>
+  }
+  @if (error) {
+    <p-message severity="error" [text]="'Error: ' + error" styleClass="mb-3" />
+  }
+
+  @if (!success) {
+    <form [formGroup]="form" (ngSubmit)="formSubmit.emit()" novalidate>
+      <div class="fields-row">
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="name" formControlName="name" />
+            <label for="name">Full Name</label>
+          </p-ifta-label>
+          @if (form.get('name')?.touched && err('name')) {
+            <small class="p-error">{{ err('name') }}</small>
+          }
+        </div>
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="email" formControlName="email" type="email" />
+            <label for="email">Email</label>
+          </p-ifta-label>
+          @if (emailHint) {
+            <small class="hint">{{ emailHint }}</small>
+          }
+          @if (form.get('email')?.touched && err('email')) {
+            <small class="p-error">{{ err('email') }}</small>
+          }
+        </div>
+      </div>
+      <div class="fields-row">
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="phone" formControlName="phone" type="tel" />
+            <label for="phone">Phone (optional)</label>
+          </p-ifta-label>
+          @if (form.get('phone')?.touched && err('phone')) {
+            <small class="p-error">{{ err('phone') }}</small>
+          }
+        </div>
+        <div class="field fw">
+          <p-ifta-label>
+            <input pInputText id="subject" formControlName="subject" />
+            <label for="subject">Subject</label>
+          </p-ifta-label>
+          @if (form.get('subject')?.touched && err('subject')) {
+            <small class="p-error">{{ err('subject') }}</small>
+          }
+        </div>
+      </div>
+      <div class="field fw">
+        <p-ifta-label>
+          <textarea pTextarea id="message" formControlName="message" rows="6" autoResize></textarea>
+          <label for="message">Message</label>
+        </p-ifta-label>
+        @if (form.get('message')?.touched && err('message')) {
+          <small class="p-error">{{ err('message') }}</small>
+        }
+      </div>
+      <div class="submit-row">
+        <p-button
+          type="submit"
+          label="{{ loading ? 'Sending...' : 'Send Message' }}"
+          [loading]="loading"
+          [disabled]="loading"
+          />
+      </div>
+    </form>
+  }
+</div>

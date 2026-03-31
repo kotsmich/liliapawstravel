@@ -4,8 +4,8 @@
   [modal]="true"
   [style]="{ width: '900px' }"
   [draggable]="false"
-  (onHide)="onHide()"
-  >
+  (onHide)="onHide()">
+
   @if (trip; as t) {
     <p-tabs [value]="activeTab" (valueChange)="tabChanged.emit($event?.toString() ?? activeTab)">
       <p-tablist>
@@ -13,50 +13,18 @@
         <p-tab value="requests">Requesters ({{ requests.length }})</p-tab>
       </p-tablist>
     </p-tabs>
-    <!-- Tab 1: Dogs -->
+
     @if (activeTab === 'dogs') {
       <div class="tab-content">
-        <p-table
-          [value]="t.dogs"
-          styleClass="p-datatable-sm"
-          [tableStyle]="{ 'min-width': '100%' }"
-          >
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Name</th>
-              <th>Size</th>
-              <th>Age</th>
-              <th>Chip ID</th>
-              <th>Pickup</th>
-              <th>Drop</th>
-              <th>Notes</th>
-              <th style="width:4rem"></th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-dog>
-            <tr>
-              <td>{{ dog.name }}</td>
-              <td>{{ dog.size }}</td>
-              <td>{{ dog.age }} yr</td>
-              <td>{{ dog.chipId }}</td>
-              <td>{{ dog.pickupLocation }}</td>
-              <td>{{ dog.dropLocation }}</td>
-              <td>{{ dog.notes }}</td>
-              <td>
-                <p-button icon="pi pi-pencil" [text]="true" size="small"
-                  (onClick)="editDog.emit({ dog: dog, tripId: t.id })" />
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="8" style="text-align:center">No dogs on this trip yet.</td>
-            </tr>
-          </ng-template>
-        </p-table>
+        <app-generic-table
+          [data]="t.dogs"
+          [columns]="dogColumns"
+          [actions]="dogActions"
+          [config]="tableConfig">
+        </app-generic-table>
       </div>
     }
-    <!-- Tab 2: Requesters -->
+
     @if (activeTab === 'requests') {
       <div class="tab-content">
         @if (requests.length > 0) {
@@ -72,34 +40,11 @@
                   </div>
                 </p-accordion-header>
                 <p-accordion-content>
-                  <p-table
-                    [value]="req.dogs"
-                    styleClass="p-datatable-sm p-datatable-striped"
-                    [tableStyle]="{ 'min-width': '100%' }"
-                    >
-                    <ng-template pTemplate="header">
-                      <tr>
-                        <th>Name</th>
-                        <th>Size</th>
-                        <th>Age</th>
-                        <th>Chip ID</th>
-                        <th>Pickup</th>
-                        <th>Drop</th>
-                        <th>Notes</th>
-                      </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-dog>
-                      <tr>
-                        <td>{{ dog.name }}</td>
-                        <td>{{ dog.size }}</td>
-                        <td>{{ dog.age }} yr</td>
-                        <td>{{ dog.chipId }}</td>
-                        <td>{{ dog.pickupLocation }}</td>
-                        <td>{{ dog.dropLocation }}</td>
-                        <td>{{ dog.notes }}</td>
-                      </tr>
-                    </ng-template>
-                  </p-table>
+                  <app-generic-table
+                    [data]="req.dogs"
+                    [columns]="requestDogColumns"
+                    [config]="requestDogConfig">
+                  </app-generic-table>
                   <div class="req-actions flex align-items-center gap-2">
                     @if (req.status === 'pending') {
                       <p-button label="Approve" icon="pi pi-check" severity="success" size="small"
@@ -118,10 +63,7 @@
           </p-accordion>
         }
         @if (requests.length === 0) {
-          <div class="empty-requests">
-            <i class="pi pi-inbox"></i>
-            <p>No requests for this trip.</p>
-          </div>
+          <app-empty-state icon="pi pi-inbox" title="No requests for this trip."></app-empty-state>
         }
       </div>
     }

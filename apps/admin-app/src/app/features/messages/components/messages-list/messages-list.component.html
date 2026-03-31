@@ -1,0 +1,8 @@
+<p-confirmDialog />
+<app-generic-table
+  [data]="messages"
+  [columns]="columns"
+  [actions]="actions"
+  [config]="tableConfig"
+  (rowClicked)="rowClicked.emit($event)">
+</app-generic-table>
