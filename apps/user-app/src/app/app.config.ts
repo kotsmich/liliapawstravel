@@ -16,6 +16,7 @@ import { tripsReducer, TripsEffects } from '@user/core/store/trips';
 import { calendarReducer } from '@user/core/store/calendar';
 import { tripRequestReducer, TripRequestEffects } from '@user/features/trip-request/store';
 import { contactReducer, ContactEffects } from '@user/features/contact/store';
+import { NotificationEffects } from '@user/core/toast/notification.effects';
 
 const LiliaPreset = definePreset(Aura, {
   semantic: {
@@ -46,7 +47,7 @@ export const appConfig: ApplicationConfig = {
       tripRequest: tripRequestReducer,
       trips: tripsReducer,
     }),
-    provideEffects([ContactEffects, TripRequestEffects, TripsEffects]),
+    provideEffects([ContactEffects, TripRequestEffects, TripsEffects, NotificationEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     providePrimeNG({
       theme: {

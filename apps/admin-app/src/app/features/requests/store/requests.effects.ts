@@ -5,7 +5,7 @@ import { RequestsService } from '@admin/services/requests.service';
 import {
   loadRequests, loadRequestsSuccess, loadRequestsFailure,
   approveRequest, approveRequestSuccess, approveRequestFailure,
-  updateRequestStatus, updateRequestStatusSuccess, updateRequestStatusFailure,
+  rejectRequest, rejectRequestSuccess, rejectRequestFailure,
   deleteRequest, deleteRequestSuccess, deleteRequestFailure,
   bulkApproveRequests, bulkApproveRequestsSuccess, bulkApproveRequestsFailure,
   bulkRejectRequests, bulkRejectRequestsSuccess, bulkRejectRequestsFailure,
@@ -52,13 +52,13 @@ export class RequestsEffects {
     )
   );
 
-  updateRequestStatus$ = createEffect(() =>
+  rejectRequest$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(updateRequestStatus),
-      switchMap(({ id, status }) =>
-        this.requestsService.updateRequestStatus(id, status as 'rejected').pipe(
-          map((request) => updateRequestStatusSuccess({ request })),
-          catchError((error) => of(updateRequestStatusFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+      ofType(rejectRequest),
+      switchMap(({ id }) =>
+        this.requestsService.updateRequestStatus(id, 'rejected').pipe(
+          map((request) => rejectRequestSuccess({ request })),
+          catchError((error) => of(rejectRequestFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )
@@ -66,7 +66,7 @@ export class RequestsEffects {
 
   reloadAfterReject$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(updateRequestStatusSuccess),
+      ofType(rejectRequestSuccess),
       map(() => loadRequests())
     )
   );

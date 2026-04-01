@@ -7,4 +7,7 @@ export interface Dog {
   pickupLocation: string;
   dropLocation: string;
   notes: string;
+  requesterName?: string | null;
+  requesterEmail?: string | null;
+  requesterPhone?: string | null;
 }

@@ -12,16 +12,13 @@ import { TextareaModule } from 'primeng/textarea';
 import { DatePickerModule } from 'primeng/datepicker';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
-import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { CheckboxModule } from 'primeng/checkbox';
 import { Store } from '@ngrx/store';
-import { MessageService } from 'primeng/api';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, take } from 'rxjs';
-import { clearSelectedTrip, loadTripById, updateDog, updateTrip, addTrip, selectSelectedTrip, selectTripsMutating, selectTripsError } from '@admin/features/trips/store';
+import { clearSelectedTrip, loadTripById, updateTrip, addTrip, selectSelectedTrip, selectTripsMutating, selectTripsError } from '@admin/features/trips/store';
 import { Dog } from '@models/lib/dog.model';
-import { generateId } from '@models/lib/utils';
+import { DogFormDialogComponent } from '@admin/features/trips/components/dog-form-dialog/dog-form-dialog.component';
 
 @Component({
   selector: 'app-trip-form',
@@ -31,14 +28,14 @@ import { generateId } from '@models/lib/utils';
     CommonModule, RouterModule, ReactiveFormsModule,
     InputTextModule, InputNumberModule, SelectModule, ButtonModule, CardModule,
     IftaLabelModule, TextareaModule, DatePickerModule,
-    MessageModule, ToastModule, DialogModule, TooltipModule, CheckboxModule,
+    MessageModule, ToastModule, TooltipModule, CheckboxModule,
+    DogFormDialogComponent,
   ],
   templateUrl: './trip-form.component.html',
   styleUrls: ['./trip-form.component.scss'],
 })
 export class TripFormComponent implements OnInit {
   form!: FormGroup;
-  dogEditForm!: FormGroup;
   isEdit = false;
   editId: string | null = null;
 
@@ -52,30 +49,16 @@ export class TripFormComponent implements OnInit {
     { label: 'Completed', value: 'completed' },
   ];
 
-  sizes = [
-    { value: 'small', label: 'Small (< 10 kg)' },
-    { value: 'medium', label: 'Medium (10–25 kg)' },
-    { value: 'large', label: 'Large (> 25 kg)' },
-  ];
-
   dogDialogVisible = false;
   editingDogIndex: number | null = null;
-  isNewDog = false;
+  selectedDog: Dog | null = null;
 
   constructor(
     private fb: FormBuilder,
     private store: Store,
     private route: ActivatedRoute,
     private router: Router,
-    private messageService: MessageService,
-  ) {
-    this.error$.pipe(
-      filter(Boolean),
-      takeUntilDestroyed()
-    ).subscribe((err) => {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: err });
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -117,7 +100,6 @@ export class TripFormComponent implements OnInit {
 
   get dogs(): FormArray { return this.form.get('dogs') as FormArray; }
 
-  /** True when dogs have reached/exceeded capacity — isFull is auto-locked and uneditable */
   get isAtCapacity(): boolean {
     return this.dogs.length >= (this.form.get('totalCapacity')?.value ?? 0);
   }
@@ -135,64 +117,36 @@ export class TripFormComponent implements OnInit {
     });
   }
 
-  private buildDogEditForm(values: Partial<Dog>): FormGroup {
-    return this.fb.group({
-      id: [values.id ?? ''],
-      name: [values.name ?? '', Validators.required],
-      size: [values.size ?? '', Validators.required],
-      age: [values.age ?? 0, [Validators.required, Validators.min(0)]],
-      chipId: [values.chipId ?? '', [Validators.required, Validators.pattern(/^\d{15}$/)]],
-      pickupLocation: [values.pickupLocation ?? '', Validators.required],
-      dropLocation: [values.dropLocation ?? '', Validators.required],
-      notes: [values.notes ?? ''],
-    });
+  openAddDogDialog(): void {
+    this.selectedDog = null;
+    this.editingDogIndex = null;
+    this.dogDialogVisible = true;
   }
 
-  addDog(): void {
-    const newId = generateId();
-    this.dogs.push(this.dogGroup({ id: newId }));
-    this.editingDogIndex = this.dogs.length - 1;
-    this.isNewDog = true;
-    this.dogEditForm = this.buildDogEditForm({ id: newId });
+  openEditDogDialog(index: number): void {
+    this.selectedDog = { ...this.dogs.at(index).value } as Dog;
+    this.editingDogIndex = index;
     this.dogDialogVisible = true;
+  }
+
+  onDogSaved(dog: Dog): void {
+    if (this.editingDogIndex !== null) {
+      (this.dogs.at(this.editingDogIndex) as FormGroup).patchValue(dog);
+    } else {
+      this.dogs.push(this.dogGroup(dog));
+    }
+    this.dogDialogVisible = false;
+    this.selectedDog = null;
+    this.editingDogIndex = null;
+  }
+
+  onDogDialogCancelled(): void {
+    this.dogDialogVisible = false;
+    this.selectedDog = null;
+    this.editingDogIndex = null;
   }
 
   removeDog(i: number): void { this.dogs.removeAt(i); }
-
-  openDogDialog(index: number): void {
-    this.editingDogIndex = index;
-    this.isNewDog = false;
-    this.dogEditForm = this.buildDogEditForm({ ...this.dogs.at(index).value });
-    this.dogDialogVisible = true;
-  }
-
-  saveDogDialog(): void {
-    if (this.editingDogIndex === null) return;
-    this.dogEditForm.markAllAsTouched();
-    if (this.dogEditForm.invalid) return;
-
-    const values: Dog = { ...this.dogEditForm.value };
-
-    (this.dogs.at(this.editingDogIndex) as FormGroup).patchValue(values);
-
-    if (this.isEdit && this.editId && !this.isNewDog) {
-      this.store.dispatch(updateDog({ tripId: this.editId, dog: values }));
-      this.messageService.add({ severity: 'success', summary: 'Dog Updated', detail: 'Dog updated successfully.' });
-    }
-
-    this.dogDialogVisible = false;
-    this.editingDogIndex = null;
-    this.isNewDog = false;
-  }
-
-  cancelDogDialog(): void {
-    if (this.isNewDog && this.editingDogIndex !== null) {
-      this.dogs.removeAt(this.editingDogIndex);
-    }
-    this.dogDialogVisible = false;
-    this.editingDogIndex = null;
-    this.isNewDog = false;
-  }
 
   get capacityWarning(): string | null {
     const capacity = this.form.get('totalCapacity')?.value ?? 0;

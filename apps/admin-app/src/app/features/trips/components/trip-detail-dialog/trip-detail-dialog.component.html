@@ -2,7 +2,8 @@
   [header]="header"
   [(visible)]="visible"
   [modal]="true"
-  [style]="{ width: '900px' }"
+  [style]="{ width: '90vw', maxWidth: '900px' }"
+  [contentStyle]="{ overflowX: 'auto' }"
   [draggable]="false"
   (onHide)="onHide()">
 

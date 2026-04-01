@@ -24,16 +24,16 @@ export const approveRequestFailure = createAction(
   props<{ error: string }>()
 );
 
-export const updateRequestStatus = createAction(
-  '[TripRequest] Update Request Status',
-  props<{ id: string; status: TripRequest['status'] }>()
+export const rejectRequest = createAction(
+  '[TripRequest] Reject Request',
+  props<{ id: string }>()
 );
-export const updateRequestStatusSuccess = createAction(
-  '[TripRequest] Update Request Status Success',
+export const rejectRequestSuccess = createAction(
+  '[TripRequest] Reject Request Success',
   props<{ request: TripRequest }>()
 );
-export const updateRequestStatusFailure = createAction(
-  '[TripRequest] Update Request Status Failure',
+export const rejectRequestFailure = createAction(
+  '[TripRequest] Reject Request Failure',
   props<{ error: string }>()
 );
 
@@ -52,6 +52,11 @@ export const deleteRequestFailure = createAction(
 
 export const addRequestFromSocket = createAction(
   '[TripRequest] Add Request From Socket',
+  props<{ request: TripRequest }>()
+);
+
+export const requestUpdatedFromSocket = createAction(
+  '[TripRequest] Request Updated From Socket',
   props<{ request: TripRequest }>()
 );
 

@@ -1,14 +1,33 @@
-<section class="hero flex align-items-center">
+<section class="hero">
   <div class="hero__content">
-    <span class="badge" aria-hidden="true">🐾</span><span class="badge"> Europe's trusted dog transport</span>
+    <span class="badge">🐾 Europe's trusted dog transport</span>
     <h1>Every dog deserves a <span class="accent">loving journey home.</span></h1>
-    <p>Lilia Paws Travel safely transports adopted dogs across Europe — connecting shelters with loving families, one paw at a time.</p>
-    <div class="hero__actions flex flex-wrap gap-3">
+    <p>Safely transporting adopted dogs across Europe — connecting shelters with loving families, one paw at a time.</p>
+    <div class="hero__actions">
       <button class="btn-primary" type="button" (click)="requestClicked.emit()">Request Transport</button>
       <button class="btn-outline" type="button" (click)="contactClicked.emit()">Get in Touch</button>
     </div>
   </div>
-  <div class="hero__visual" aria-hidden="true">
-    <div class="paw-grid">🐾🐶🐾🐕❤️🐕🐾🐶🐾</div>
+
+  <div class="hero__carousel">
+    <div class="carousel">
+      <div class="carousel__track" [style.transform]="'translateX(-' + current() * 100 + '%)'">
+        @for (slide of slides; track $index) {
+          <div class="carousel__slide" [style.background]="slide.bg">
+            <span class="slide__emoji">{{ slide.emoji }}</span>
+            <span class="slide__label">{{ slide.label }}</span>
+          </div>
+        }
+      </div>
+
+      <button class="carousel__arrow carousel__arrow--prev" type="button" aria-label="Previous" (click)="prev()">&#8249;</button>
+      <button class="carousel__arrow carousel__arrow--next" type="button" aria-label="Next" (click)="next()">&#8250;</button>
+
+      <div class="carousel__dots">
+        @for (slide of slides; track $index; let i = $index) {
+          <button class="dot" [class.active]="i === current()" (click)="goTo(i)" [attr.aria-label]="slide.label"></button>
+        }
+      </div>
+    </div>
   </div>
 </section>

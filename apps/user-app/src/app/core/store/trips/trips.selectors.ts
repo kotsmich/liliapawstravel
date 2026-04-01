@@ -19,8 +19,9 @@ export const selectTripsAsCalendarEvents = createSelector(selectAllTrips, (trips
           : t.status === 'in-progress'
             ? '#e07b54'
             : '#4caf50',
-      dogsCount: t.dogs?.length ?? 0,
+      dogsCount: t.totalCapacity - t.spotsAvailable,
       totalCapacity: t.totalCapacity,
+      spotsAvailable: t.spotsAvailable,
       isFull: t.isFull,
       acceptingRequests: t.acceptingRequests,
     }))

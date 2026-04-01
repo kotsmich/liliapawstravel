@@ -9,15 +9,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { MessageService, ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { loadTrips, selectAllTrips } from '@admin/features/trips/store';
 import { sanitizeHtml } from '@admin/shared/utils/sanitize';
 import {
-  loadRequests, approveRequest, updateRequestStatus, deleteRequest,
+  loadRequests, approveRequest, rejectRequest, deleteRequest,
   selectAllRequests, selectRequestsIsLoading,
-  bulkApproveRequests, bulkApproveRequestsSuccess, bulkApproveRequestsFailure,
-  bulkRejectRequests, bulkRejectRequestsSuccess, bulkRejectRequestsFailure,
-  updateRequestNote, updateRequestNoteSuccess, updateRequestNoteFailure,
+  bulkApproveRequests, bulkApproveRequestsSuccess,
+  bulkRejectRequests, bulkRejectRequestsSuccess,
+  updateRequestNote,
 } from '@admin/features/requests/store';
 import { resetRequests } from '@admin/core/store/notifications';
 import { TripRequest } from '@models/lib/trip-request.model';
@@ -110,40 +110,12 @@ export class RequestsListComponent implements OnInit {
       }
     });
 
-    // Toast + selection clear after bulk actions
+    // Clear selection after bulk actions — toasts handled by NotificationEffects
     this.actions$.pipe(
       ofType(bulkApproveRequestsSuccess, bulkRejectRequestsSuccess),
       takeUntilDestroyed(),
-    ).subscribe((action) => {
-      this.selectedRequests.set([]);
-      const { succeeded, failed } = action;
-      const verb = action.type.includes('Approve') ? 'approved' : 'rejected';
-      if (failed.length === 0) {
-        this.messageService.add({ severity: 'success', summary: 'Done', detail: `${succeeded.length} request(s) ${verb}.` });
-      } else {
-        this.messageService.add({ severity: 'warn', summary: 'Partial success', detail: `${succeeded.length} ${verb}, ${failed.length} failed.` });
-      }
-    });
-
-    this.actions$.pipe(
-      ofType(bulkApproveRequestsFailure, bulkRejectRequestsFailure),
-      takeUntilDestroyed(),
-    ).subscribe(({ error }) => {
-      this.messageService.add({ severity: 'error', summary: 'Bulk action failed', detail: error });
-    });
-
-    this.actions$.pipe(
-      ofType(updateRequestNoteSuccess),
-      takeUntilDestroyed(),
     ).subscribe(() => {
-      this.messageService.add({ severity: 'success', summary: 'Note saved', detail: 'Admin note has been saved.' });
-    });
-
-    this.actions$.pipe(
-      ofType(updateRequestNoteFailure),
-      takeUntilDestroyed(),
-    ).subscribe(({ error }) => {
-      this.messageService.add({ severity: 'error', summary: 'Failed to save note', detail: error });
+      this.selectedRequests.set([]);
     });
   }
 
@@ -211,7 +183,6 @@ export class RequestsListComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-success',
       accept: () => {
         this.store.dispatch(approveRequest({ requestId: req.id, tripId: req.tripId! }));
-        this.messageService.add({ severity: 'success', summary: 'Approved', detail: 'Request confirmed. Trip dogs updated.' });
         this.dialogVisible.set(false);
       },
     });
@@ -227,8 +198,7 @@ export class RequestsListComponent implements OnInit {
       rejectLabel: 'Back',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.store.dispatch(updateRequestStatus({ id: req.id, status: 'rejected' }));
-        this.messageService.add({ severity: 'info', summary: 'Rejected', detail: 'Request has been rejected.' });
+        this.store.dispatch(rejectRequest({ id: req.id }));
         this.dialogVisible.set(false);
       },
     });
@@ -243,7 +213,6 @@ export class RequestsListComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.store.dispatch(deleteRequest({ requestId: req.id }));
-        this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Request deleted.' });
         this.dialogVisible.set(false);
       },
     });

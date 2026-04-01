@@ -48,21 +48,28 @@ export class TripCalendarComponent implements OnChanges {
     const event = this.eventDataMap.get(key);
     if (!event) return '';
     const lines: string[] = [event.title, event.date];
-    if (event.dogsCount !== undefined && event.totalCapacity !== undefined) {
-      lines.push(`Dogs: ${event.dogsCount} / ${event.totalCapacity}`);
-    }
     if (event.isFull) {
       lines.push('Status: Full');
     } else if (event.acceptingRequests === false) {
       lines.push('Requests: Closed');
     } else {
-      if (event.spotsAvailable !== undefined && event.spotsAvailable <= 2) {
-        lines.push(`⚠ Only ${event.spotsAvailable} spot${event.spotsAvailable === 1 ? '' : 's'} remaining!`);
+      const spots = event.spotsAvailable;
+      if (spots !== undefined && spots < 10) {
+        lines.push('⚠ ' + this.spotsLabel(spots));
       } else {
+        if (event.dogsCount !== undefined && event.totalCapacity !== undefined && event.totalCapacity > 0) {
+          lines.push(`${Math.round((event.dogsCount / event.totalCapacity) * 100)}% booked`);
+        }
         lines.push('Requests: Open');
       }
     }
     return lines.join('\n');
+  }
+
+  spotsLabel(spots: number): string {
+    if (spots >= 5) return 'Less than 10 spots left';
+    if (spots > 3) return 'Less than 5 spots left';
+    return `${spots} spot${spots === 1 ? '' : 's'} left`;
   }
 
   private partsToDateStr(d: { year: number; month: number; day: number }): string {

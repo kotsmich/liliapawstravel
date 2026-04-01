@@ -16,7 +16,7 @@
 
 .dogs-section { margin-top: 1rem; }
 
-.dogs-list { flex-direction: column; gap: 0.5rem; }
+.dogs-list { flex-direction: column; gap: 0.5rem; max-height: 320px; overflow-y: auto; padding-right: 0.25rem; }
 
 .dog-row {
   align-items: center;

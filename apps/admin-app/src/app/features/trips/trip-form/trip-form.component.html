@@ -162,7 +162,7 @@
       <ng-template pTemplate="title">
         <div class="dogs-header flex align-items-center justify-content-between">
           <span>🐶 Dogs</span>
-          <p-button type="button" label="Add Dog" icon="pi pi-plus" [outlined]="true" size="small" (onClick)="addDog()" />
+          <p-button type="button" label="Add Dog" icon="pi pi-plus" [outlined]="true" size="small" (onClick)="openAddDogDialog()" />
         </div>
       </ng-template>
 
@@ -180,7 +180,7 @@
             </div>
             <div class="dog-row__actions flex flex-shrink-0 gap-1">
               <p-button icon="pi pi-pencil" [outlined]="true" size="small" type="button"
-                pTooltip="Edit dog" (onClick)="openDogDialog(i)" />
+                pTooltip="Edit dog" (onClick)="openEditDogDialog(i)" />
               <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" type="button"
                 pTooltip="Remove dog" (onClick)="removeDog(i)" />
             </div>
@@ -206,95 +206,9 @@
   </form>
 </div>
 
-<!-- Dog add / edit dialog — outside the main form to avoid FormGroup nesting conflicts -->
-<p-dialog
+<app-dog-form-dialog
   [(visible)]="dogDialogVisible"
-  [modal]="true"
-  [style]="{ width: '620px', maxWidth: '95vw' }"
-  [contentStyle]="{ overflow: 'visible', padding: '1.25rem 1.5rem' }"
-  [draggable]="false"
-  [resizable]="false"
-  [closable]="false"
-  [header]="isNewDog ? 'Add Dog' : ('Edit Dog ' + ((editingDogIndex ?? 0) + 1))">
-
-  @if (dogEditForm) {
-    <div [formGroup]="dogEditForm" class="dlg-form">
-      <div class="row">
-        <div class="field fw">
-          <p-ifta-label>
-            <input pInputText id="dlg-name" formControlName="name" class="w-full" />
-            <label for="dlg-name">Dog Name</label>
-          </p-ifta-label>
-          @if (dogEditForm.get('name')?.touched && dogEditForm.get('name')?.invalid) {
-            <small class="p-error">Required.</small>
-          }
-        </div>
-        <div class="field fw">
-          <p-ifta-label>
-            <p-select inputId="dlg-size" formControlName="size" [options]="sizes"
-              optionLabel="label" optionValue="value" styleClass="w-full" />
-            <label for="dlg-size">Size</label>
-          </p-ifta-label>
-          @if (dogEditForm.get('size')?.touched && dogEditForm.get('size')?.invalid) {
-            <small class="p-error">Required.</small>
-          }
-        </div>
-      </div>
-      <div class="row">
-        <div class="field fw">
-          <p-ifta-label>
-            <p-inputnumber inputId="dlg-age" formControlName="age" [min]="0"
-              [showButtons]="false" styleClass="w-full" />
-            <label for="dlg-age">Age (years)</label>
-          </p-ifta-label>
-          @if (dogEditForm.get('age')?.touched && dogEditForm.get('age')?.invalid) {
-            <small class="p-error">Must be 0 or greater.</small>
-          }
-        </div>
-        <div class="field fw">
-          <p-ifta-label>
-            <input pInputText id="dlg-chip" formControlName="chipId" class="w-full" maxlength="15" />
-            <label for="dlg-chip">Microchip ID</label>
-          </p-ifta-label>
-          @if (dogEditForm.get('chipId')?.touched && dogEditForm.get('chipId')?.invalid) {
-            <small class="p-error">15-digit chip ID required.</small>
-          }
-        </div>
-      </div>
-      <div class="field fw">
-        <p-ifta-label>
-          <input pInputText id="dlg-pickup" formControlName="pickupLocation" class="w-full" />
-          <label for="dlg-pickup">Pickup Location</label>
-        </p-ifta-label>
-        @if (dogEditForm.get('pickupLocation')?.touched && dogEditForm.get('pickupLocation')?.invalid) {
-          <small class="p-error">Required.</small>
-        }
-      </div>
-      <div class="field fw">
-        <p-ifta-label>
-          <input pInputText id="dlg-drop" formControlName="dropLocation" class="w-full" />
-          <label for="dlg-drop">Drop Location</label>
-        </p-ifta-label>
-        @if (dogEditForm.get('dropLocation')?.touched && dogEditForm.get('dropLocation')?.invalid) {
-          <small class="p-error">Required.</small>
-        }
-      </div>
-      <div class="field fw">
-        <p-ifta-label>
-          <textarea pTextarea id="dlg-notes" formControlName="notes" rows="3"
-          class="w-full" autoResize></textarea>
-          <label for="dlg-notes">Special Notes (optional)</label>
-        </p-ifta-label>
-      </div>
-    </div>
-  }
-
-  <ng-template pTemplate="footer">
-    <p-button label="Cancel" [outlined]="true" type="button" (onClick)="cancelDogDialog()" />
-    <p-button
-      [label]="isNewDog ? 'Add Dog' : 'Update'"
-      icon="pi pi-check"
-      type="button"
-      (onClick)="saveDogDialog()" />
-  </ng-template>
-</p-dialog>
+  [tripId]="editId"
+  [dog]="selectedDog"
+  (dogSaved)="onDogSaved($event)"
+  (cancelled)="onDogDialogCancelled()" />

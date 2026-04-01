@@ -1,8 +1,4 @@
 <div class="trips-page flex flex-column gap-4">
-  <app-page-header title="Trips">
-    <p-button actions label="New Trip" icon="pi pi-plus" (onClick)="navigateNewTrip()" />
-  </app-page-header>
-
   <p-toast />
   <p-confirmdialog />
 
@@ -80,6 +76,6 @@
   [dog]="dogEditValues"
   [tripId]="dogEditTripId || ''"
   (visibleChange)="dogEditVisible = $event"
-  (save)="onSaveDog($event)"
-  (cancel)="onCancelDog()"
+  (dogSaved)="onSaveDog($event)"
+  (cancelled)="onCancelDog()"
   />

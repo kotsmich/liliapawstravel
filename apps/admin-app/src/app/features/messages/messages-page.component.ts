@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -30,7 +29,6 @@ import { MessageDetailDialogComponent } from './components/message-detail-dialog
 })
 export class MessagesPageComponent implements OnInit {
   private readonly store = inject(Store);
-  private readonly messageService = inject(MessageService);
 
   messages$ = this.store.select(selectAllMessages);
   loading$ = this.store.select(selectMessagesIsLoading);
@@ -70,6 +68,5 @@ export class MessagesPageComponent implements OnInit {
     this.store.dispatch(deleteMessage({ id: msg.id }));
     this.dialogVisible.set(false);
     this.selectedMessage.set(null);
-    this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Message deleted.' });
   }
 }

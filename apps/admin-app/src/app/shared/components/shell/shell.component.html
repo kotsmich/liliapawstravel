@@ -1,23 +1,21 @@
-<div class="layout flex" [class.sidebar-closed]="!sidebarOpen">
-  <aside class="sidebar flex flex-column flex-shrink-0">
-    <div class="sidebar__brand flex align-items-center">
-      <span class="sidebar__paw" aria-hidden="true">🐾</span>
-      @if (sidebarOpen) {
-        <span class="sidebar__title">Lilia Paws</span>
-      }
+<div class="layout flex flex-column">
+
+  <!-- Top navbar -->
+  <header class="topbar flex align-items-center flex-shrink-0">
+    <div class="topbar__brand flex align-items-center gap-2">
+      <span aria-hidden="true">🐾</span>
+      <span class="topbar__brand-name">Lilia Paws</span>
     </div>
 
-    <nav class="sidebar__nav flex flex-column flex-1" aria-label="Admin navigation">
+    <nav class="topbar__nav flex align-items-center flex-1" aria-label="Admin navigation">
       @for (item of navItems; track item.link) {
         <button
           type="button"
           class="nav-item flex align-items-center"
           [class.active]="isActive(item.link)"
-          [pTooltip]="sidebarOpen ? '' : item.label"
-          tooltipPosition="right"
           (click)="navigateTo(item.link)"
           >
-          <span class="nav-item__icon-wrap flex align-items-center justify-content-center flex-shrink-0">
+          <span class="nav-item__icon-wrap flex align-items-center justify-content-center">
             <i [class]="item.icon"></i>
             @if (item.link === '/admin/requests' && (pendingCount$ | async); as count) {
               <span class="nav-badge flex align-items-center justify-content-center">{{ count }}</span>
@@ -26,19 +24,14 @@
               <span class="nav-badge flex align-items-center justify-content-center">{{ count }}</span>
             }
           </span>
-          @if (sidebarOpen) {
-            <span>{{ item.label }}</span>
-          }
+          <span class="nav-item__label">{{ item.label }}</span>
         </button>
       }
     </nav>
 
-    <div class="sidebar__footer flex align-items-center justify-content-between">
-      @if (sidebarOpen && (user$ | async); as user) {
-        <div class="user-info flex align-items-center">
-          <i class="pi pi-user"></i>
-          <span>{{ user.email }}</span>
-        </div>
+    <div class="topbar__end flex align-items-center gap-2">
+      @if ((user$ | async); as user) {
+        <span class="topbar__user">{{ user.email }}</span>
       }
       <p-button
         icon="pi pi-sign-out"
@@ -47,59 +40,14 @@
         severity="secondary"
         styleClass="logout-btn"
         pTooltip="Logout"
-        tooltipPosition="right"
+        tooltipPosition="bottom"
         (onClick)="logout()"
         />
     </div>
-  </aside>
+  </header>
 
-  <div class="main flex flex-column flex-1">
-    <header class="topbar flex align-items-center flex-shrink-0">
-      <p-button
-        class="sidebar-toggle"
-        [icon]="sidebarOpen ? 'pi pi-align-right' : 'pi pi-align-left'"
-        [text]="true"
-        [rounded]="true"
-        severity="secondary"
-        (onClick)="toggleSidebar()"
-        />
-      <span class="topbar__title">Admin Panel</span>
-    </header>
-    <div class="content flex-1">
-      <router-outlet></router-outlet>
-    </div>
+  <div class="content flex-1">
+    <router-outlet></router-outlet>
   </div>
 
-  <!-- Bottom navigation — replaces sidebar on mobile -->
-  <nav class="bottom-nav" aria-label="Mobile navigation">
-    @for (item of navItems; track item.link) {
-      <button
-        type="button"
-        class="bottom-nav__item flex flex-column align-items-center"
-        [class.active]="isActive(item.link)"
-        (click)="navigateTo(item.link)"
-        >
-        <span class="bottom-nav__icon-wrap">
-          <i [class]="item.icon"></i>
-          @if (item.link === '/admin/requests' && (pendingCount$ | async); as count) {
-            <span class="nav-badge flex align-items-center justify-content-center">{{ count }}</span>
-          }
-          @if (item.link === '/admin/messages' && (unreadMessagesCount$ | async); as count) {
-            <span class="nav-badge flex align-items-center justify-content-center">{{ count }}</span>
-          }
-        </span>
-        <span class="bottom-nav__label">{{ item.label }}</span>
-      </button>
-    }
-    <button
-      type="button"
-      class="bottom-nav__item flex flex-column align-items-center"
-      (click)="logout()"
-      >
-      <span class="bottom-nav__icon-wrap">
-        <i class="pi pi-sign-out"></i>
-      </span>
-      <span class="bottom-nav__label">Logout</span>
-    </button>
-  </nav>
 </div>

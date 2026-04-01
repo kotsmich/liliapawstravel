@@ -1,9 +1,8 @@
-import { Component, OnInit, HostListener, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
-import { AvatarModule } from 'primeng/avatar';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { logout, selectCurrentUser } from '@admin/core/store/auth';
@@ -15,7 +14,7 @@ import { AdminUser } from '@models/lib/admin-user.model';
   selector: 'app-shell',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterOutlet, ButtonModule, TooltipModule, AvatarModule],
+  imports: [CommonModule, RouterOutlet, ButtonModule, TooltipModule],
   templateUrl: './shell.component.html',
   styleUrls: ['./shell.component.scss'],
 })
@@ -25,26 +24,13 @@ export class ShellComponent implements OnInit {
   user$: Observable<AdminUser | null> = this.store.select(selectCurrentUser);
   pendingCount$ = this.store.select(selectPendingRequestsCount);
   unreadMessagesCount$ = this.store.select(selectUnreadCount);
-  sidebarOpen = true;
-
-  get isMobile(): boolean { return window.innerWidth < 768; }
-
   ngOnInit(): void {
     this.store.dispatch(loadRequests());
     this.store.dispatch(loadMessages());
   }
 
-  @HostListener('window:resize')
-  onResize(): void {
-    if (!this.isMobile) this.sidebarOpen = true;
-  }
-
   logout(): void {
     this.store.dispatch(logout());
-  }
-
-  toggleSidebar(): void {
-    this.sidebarOpen = !this.sidebarOpen;
   }
 
   navigateTo(path: string): void {

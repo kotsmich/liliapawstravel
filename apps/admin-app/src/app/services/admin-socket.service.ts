@@ -5,7 +5,7 @@ import { MessageService } from 'primeng/api';
 import { filter, take } from 'rxjs';
 
 import { selectIsAuthenticated } from '@admin/core/store/auth';
-import { addRequestFromSocket, updateRequestStatusSuccess } from '@admin/features/requests/store';
+import { addRequestFromSocket, requestUpdatedFromSocket } from '@admin/features/requests/store';
 import { addMessageFromSocket } from '@admin/features/messages/store';
 import { increment } from '@admin/core/store/notifications';
 import { AppWebSocketService } from '@ui/lib/websocket/app-websocket.service';
@@ -54,7 +54,7 @@ export class AdminSocketService {
       .listen<TripRequest>(SocketEvent.REQUEST_UPDATED)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((request) => {
-        this.store.dispatch(updateRequestStatusSuccess({ request }));
+        this.store.dispatch(requestUpdatedFromSocket({ request }));
       });
 
     this.wsService

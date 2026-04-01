@@ -38,10 +38,17 @@
         </div>
         <div class="trip-details__meta flex flex-wrap align-items-center gap-4">
           <span class="trip-details__date flex align-items-center"><i class="pi pi-calendar"></i> {{ trip.date }}</span>
-          @if (trip.spotsAvailable !== undefined && !trip.isFull && trip.spotsAvailable > 0 && trip.acceptingRequests) {
-            <span class="trip-details__spots"
-              [class.low]="trip.spotsAvailable <= 2">
-              🐾 {{ trip.spotsAvailable }} spot{{ trip.spotsAvailable !== 1 ? 's' : '' }} available
+          @if (!trip.isFull && trip.spotsAvailable > 0 && trip.acceptingRequests) {
+            <span class="trip-details__spots" [class.low]="trip.spotsAvailable < 10">
+              @if (trip.spotsAvailable >= 10) {
+                🐾 {{ ((trip.totalCapacity - trip.spotsAvailable) / trip.totalCapacity * 100) | number:'1.0-0' }}% booked
+              } @else if (trip.spotsAvailable >= 5) {
+                ⚠ Less than 10 spots left
+              } @else if (trip.spotsAvailable > 3) {
+                ⚠ Less than 5 spots left
+              } @else {
+                ⚠ {{ trip.spotsAvailable }} spot{{ trip.spotsAvailable === 1 ? '' : 's' }} left
+              }
             </span>
           }
         </div>

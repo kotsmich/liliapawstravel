@@ -3,9 +3,9 @@ import { TripRequest } from '@models/lib/trip-request.model';
 import {
   loadRequests, loadRequestsSuccess, loadRequestsFailure,
   approveRequest, approveRequestSuccess, approveRequestFailure,
-  updateRequestStatus, updateRequestStatusSuccess, updateRequestStatusFailure,
+  rejectRequest, rejectRequestSuccess, rejectRequestFailure,
   deleteRequest, deleteRequestSuccess, deleteRequestFailure,
-  addRequestFromSocket,
+  addRequestFromSocket, requestUpdatedFromSocket,
   bulkApproveRequests, bulkApproveRequestsSuccess, bulkApproveRequestsFailure,
   bulkRejectRequests, bulkRejectRequestsSuccess, bulkRejectRequestsFailure,
   updateRequestNote, updateRequestNoteSuccess, updateRequestNoteFailure,
@@ -37,13 +37,13 @@ export const requestsFeature = createFeature({
       loading: false,
     })),
     on(approveRequestFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(updateRequestStatus, (s) => ({ ...s, loading: true, error: null })),
-    on(updateRequestStatusSuccess, (s, { request }) => ({
+    on(rejectRequest, (s) => ({ ...s, loading: true, error: null })),
+    on(rejectRequestSuccess, (s, { request }) => ({
       ...s,
       requests: s.requests.map((r) => (r.id === request.id ? request : r)),
       loading: false,
     })),
-    on(updateRequestStatusFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(rejectRequestFailure, (s, { error }) => ({ ...s, loading: false, error })),
     on(deleteRequest, (s) => ({ ...s, loading: true, error: null })),
     on(deleteRequestSuccess, (s, { requestId }) => ({
       ...s,
@@ -54,6 +54,10 @@ export const requestsFeature = createFeature({
     on(addRequestFromSocket, (s, { request }) => ({
       ...s,
       requests: [request, ...s.requests],
+    })),
+    on(requestUpdatedFromSocket, (s, { request }) => ({
+      ...s,
+      requests: s.requests.map((r) => (r.id === request.id ? request : r)),
     })),
     on(bulkApproveRequests, bulkRejectRequests, (s) => ({ ...s, loading: true, error: null })),
     on(bulkApproveRequestsSuccess, bulkRejectRequestsSuccess, (s) => ({ ...s, loading: false })),

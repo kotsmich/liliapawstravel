@@ -9,6 +9,7 @@ import {
   addTrip, addTripSuccess, addTripFailure,
   updateTrip, updateTripSuccess, updateTripFailure,
   deleteTrip, deleteTripSuccess, deleteTripFailure,
+  addDog, addDogSuccess, addDogFailure,
   updateDog, updateDogSuccess, updateDogFailure,
   loadTripById, loadTripByIdSuccess, loadTripByIdFailure,
 } from './trips.actions';
@@ -81,6 +82,18 @@ export class TripsEffects {
         this.tripsService.deleteTrip(id).pipe(
           map(({ id: deletedId }) => deleteTripSuccess({ id: deletedId })),
           catchError((error) => of(deleteTripFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+        )
+      )
+    )
+  );
+
+  addDog$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(addDog),
+      switchMap(({ tripId, dog }) =>
+        this.dogsService.createDog(tripId, dog).pipe(
+          map((saved) => addDogSuccess({ tripId, dog: saved })),
+          catchError((error) => of(addDogFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )

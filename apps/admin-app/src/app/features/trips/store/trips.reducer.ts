@@ -7,6 +7,7 @@ import {
   updateTrip, updateTripSuccess, updateTripFailure,
   deleteTrip, deleteTripSuccess, deleteTripFailure,
   loadTripById, loadTripByIdSuccess, loadTripByIdFailure,
+  addDog, addDogSuccess, addDogFailure,
   updateDog, updateDogSuccess, updateDogFailure,
 } from './trips.actions';
 
@@ -66,6 +67,18 @@ export const tripsFeature = createFeature({
       loading: false,
     })),
     on(loadTripByIdFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(addDog, (s) => ({ ...s, mutating: true, error: null })),
+    on(addDogSuccess, (s, { tripId, dog }) => ({
+      ...s,
+      trips: s.trips.map((t) =>
+        t.id === tripId ? { ...t, dogs: [...(t.dogs ?? []), dog] } : t
+      ),
+      selectedTrip: s.selectedTrip?.id === tripId
+        ? { ...s.selectedTrip, dogs: [...(s.selectedTrip.dogs ?? []), dog] }
+        : s.selectedTrip,
+      mutating: false,
+    })),
+    on(addDogFailure, (s, { error }) => ({ ...s, mutating: false, error })),
     on(updateDog, (s) => ({ ...s, mutating: true, error: null })),
     on(updateDogSuccess, (s, { tripId, dog }) => ({
       ...s,

@@ -11,7 +11,7 @@ import { IftaLabelModule } from 'primeng/iftalabel';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { Store } from '@ngrx/store';
-import { MessageService, ConfirmationService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { filter } from 'rxjs/operators';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DogFormComponent } from '@ui/lib/dog-form/dog-form.component';
@@ -41,7 +41,6 @@ import { submitRequest, resetRequest, selectTripRequestIsLoading, selectTripRequ
 export class TripRequestComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store);
-  private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly viewportScroller = inject(ViewportScroller);
 
@@ -63,16 +62,11 @@ export class TripRequestComponent implements OnInit {
 
   constructor() {
     // React to successful submission
+    // Toast handled by NotificationEffects — reset form and scroll on success
     this.success$.pipe(
       filter(Boolean),
       takeUntilDestroyed(),
     ).subscribe(() => {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Request Submitted!',
-        detail: 'Your transport request has been submitted. We\'ll confirm within 24 hours. 🐾',
-        life: 5000,
-      });
       this.onReset();
       this.viewportScroller.scrollToPosition([0, 0]);
     });

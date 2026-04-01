@@ -17,6 +17,10 @@ export class DogsService {
 
   constructor(private http: HttpClient) {}
 
+  createDog(tripId: string, dog: Partial<Dog>): Observable<Dog> {
+    return this.http.post<Dog>(`${environment.apiUrl}/trips/${tripId}/dogs`, dog);
+  }
+
   updateDog(id: string, dog: Partial<Dog>): Observable<Dog> {
     return this.http.put<Dog>(`${this.baseUrl}/${id}`, dog);
   }

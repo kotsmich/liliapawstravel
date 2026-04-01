@@ -6,14 +6,13 @@ import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { Store } from '@ngrx/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { BehaviorSubject, filter, of, switchMap, take } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { loadTrips, loadTripById, deleteTrip, updateDog, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents, selectTripsForSelectedDate, selectTripById } from '@admin/features/trips/store';
 import { selectDate, selectCalendarSelectedDate } from '@admin/core/store/calendar';
-import { loadRequests, approveRequest, updateRequestStatus, deleteRequest, selectRequestsByTripId } from '@admin/features/requests/store';
+import { loadRequests, approveRequest, rejectRequest, deleteRequest, selectRequestsByTripId } from '@admin/features/requests/store';
 import { LoadingSpinnerComponent } from '@ui/lib/loading-spinner/loading-spinner.component';
-import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
 import { Trip } from '@models/lib/trip.model';
 import { Dog } from '@models/lib/dog.model';
 import { TripRequest } from '@models/lib/trip-request.model';
@@ -33,7 +32,6 @@ import { ExportService } from '../../../services/export.service';
     CommonModule,
     CardModule, ButtonModule, ConfirmDialogModule, ToastModule,
     LoadingSpinnerComponent,
-    PageHeaderComponent,
     TripCalendarViewComponent,
     AllTripsTabComponent,
     TripDetailDialogComponent,
@@ -46,7 +44,6 @@ export class TripsListComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly router = inject(Router);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly messageService = inject(MessageService);
   private readonly exportService = inject(ExportService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -115,10 +112,6 @@ export class TripsListComponent implements OnInit {
     this.router.navigate(['/admin/trips/new'], { queryParams });
   }
 
-  navigateNewTrip(): void {
-    this.router.navigate(['/admin/trips/new']);
-  }
-
   onEditTrip(trip: Trip): void {
     this.router.navigate(['/admin/trips', trip.id, 'edit']);
   }
@@ -132,7 +125,6 @@ export class TripsListComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.store.dispatch(deleteTrip({ id: trip.id }));
-        this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Trip deleted.' });
       },
     });
   }
@@ -169,7 +161,6 @@ export class TripsListComponent implements OnInit {
   onSaveDog(dog: Dog): void {
     if (!this.dogEditTripId) return;
     this.store.dispatch(updateDog({ tripId: this.dogEditTripId, dog }));
-    this.messageService.add({ severity: 'success', summary: 'Dog Updated', detail: `${dog.name} saved.` });
     this.dogEditVisible = false;
   }
 
@@ -187,7 +178,6 @@ export class TripsListComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-success',
       accept: () => {
         this.store.dispatch(approveRequest({ requestId: req.id, tripId: req.tripId! }));
-        this.messageService.add({ severity: 'success', summary: 'Approved', detail: 'Request approved. Dogs added to trip.' });
       },
     });
   }
@@ -200,8 +190,7 @@ export class TripsListComponent implements OnInit {
       rejectLabel: 'Back',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.store.dispatch(updateRequestStatus({ id: req.id, status: 'rejected' }));
-        this.messageService.add({ severity: 'info', summary: 'Rejected', detail: 'Request rejected.' });
+        this.store.dispatch(rejectRequest({ id: req.id }));
       },
     });
   }
@@ -215,7 +204,6 @@ export class TripsListComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.store.dispatch(deleteRequest({ requestId: req.id }));
-        this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Request deleted.' });
       },
     });
   }

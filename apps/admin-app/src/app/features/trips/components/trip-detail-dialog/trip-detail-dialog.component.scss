@@ -1,4 +1,8 @@
-.tab-content { margin-top: 1rem; }
+.tab-content {
+  margin-top: 1rem;
+  overflow-x: auto;
+  min-width: 0;
+}
 
 .req-header {
   align-items: center;

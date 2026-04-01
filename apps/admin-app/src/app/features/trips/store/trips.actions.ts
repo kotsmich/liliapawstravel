@@ -78,6 +78,21 @@ export const loadTripByIdFailure = createAction(
   props<{ error: string }>()
 );
 
+export const addDog = createAction(
+  '[Trips] Add Dog',
+  props<{ tripId: string; dog: Omit<Dog, 'id'> }>()
+);
+
+export const addDogSuccess = createAction(
+  '[Trips] Add Dog Success',
+  props<{ tripId: string; dog: Dog }>()
+);
+
+export const addDogFailure = createAction(
+  '[Trips] Add Dog Failure',
+  props<{ error: string }>()
+);
+
 export const updateDog = createAction(
   '[Trips] Update Dog',
   props<{ tripId: string; dog: Dog }>()
