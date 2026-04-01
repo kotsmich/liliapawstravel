@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ButtonModule } from 'primeng/button';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.interface';
 import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
@@ -10,18 +11,22 @@ type RequestRow = TripRequest & { dogsCount: number };
   selector: 'app-requests-table',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, GenericTableComponent],
+  imports: [CommonModule, ButtonModule, GenericTableComponent],
   templateUrl: './requests-table.component.html',
   styles: [`.table-scroll { overflow-x: auto; }`],
 })
-export class RequestsTableComponent implements OnInit {
+export class RequestsTableComponent implements OnInit, OnChanges {
   @Input() requests: RequestRow[] = [];
   @Input() loading = false;
+  @Input() selection: TripRequest[] = [];
 
   @Output() rowClicked = new EventEmitter<TripRequest>();
   @Output() approve = new EventEmitter<TripRequest>();
   @Output() reject = new EventEmitter<TripRequest>();
   @Output() deleteRequest = new EventEmitter<TripRequest>();
+  @Output() selectionChange = new EventEmitter<TripRequest[]>();
+  @Output() bulkApprove = new EventEmitter<TripRequest[]>();
+  @Output() bulkReject = new EventEmitter<TripRequest[]>();
 
   columns: TableColumn<RequestRow>[] = [
     { field: 'requesterName', header: 'Requester', sortable: true },
@@ -49,7 +54,19 @@ export class RequestsTableComponent implements OnInit {
     paginator: false,
     emptyMessage: 'No requests found.',
     trackByField: 'id',
+    selectable: true,
   };
+
+  get pendingSelected(): number {
+    return this.selection.filter((r) => r.status === 'pending').length;
+  }
+
+  ngOnChanges(): void {
+    // Clear selection when the request list reloads (e.g. after bulk action)
+    if (this.selection.length > 0 && this.requests.length === 0) {
+      this.selectionChange.emit([]);
+    }
+  }
 
   ngOnInit(): void {
     this.actions = [
@@ -73,5 +90,13 @@ export class RequestsTableComponent implements OnInit {
         action: (req) => this.deleteRequest.emit(req),
       },
     ];
+  }
+
+  onBulkApprove(): void {
+    this.bulkApprove.emit(this.selection.filter((r) => r.status === 'pending' && r.tripId));
+  }
+
+  onBulkReject(): void {
+    this.bulkReject.emit(this.selection.filter((r) => r.status === 'pending'));
   }
 }

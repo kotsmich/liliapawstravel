@@ -7,8 +7,11 @@ import {
   approveRequest, approveRequestSuccess, approveRequestFailure,
   updateRequestStatus, updateRequestStatusSuccess, updateRequestStatusFailure,
   deleteRequest, deleteRequestSuccess, deleteRequestFailure,
+  bulkApproveRequests, bulkApproveRequestsSuccess, bulkApproveRequestsFailure,
+  bulkRejectRequests, bulkRejectRequestsSuccess, bulkRejectRequestsFailure,
+  updateRequestNote, updateRequestNoteSuccess, updateRequestNoteFailure,
 } from './requests.actions';
-import { loadTripByIdSuccess } from '@admin/features/trips/store';
+import { deleteTripSuccess, loadTripByIdSuccess, loadTrips } from '@admin/features/trips/store';
 
 @Injectable()
 export class RequestsEffects {
@@ -75,6 +78,63 @@ export class RequestsEffects {
         this.requestsService.deleteRequest(requestId).pipe(
           map(() => deleteRequestSuccess({ requestId })),
           catchError((error) => of(deleteRequestFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+        )
+      )
+    )
+  );
+
+  bulkApproveRequests$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(bulkApproveRequests),
+      switchMap(({ ids }) =>
+        this.requestsService.bulkApproveRequests(ids).pipe(
+          map((result) => bulkApproveRequestsSuccess(result)),
+          catchError((error) => of(bulkApproveRequestsFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+        )
+      )
+    )
+  );
+
+  reloadAfterBulkApprove$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(bulkApproveRequestsSuccess),
+      mergeMap(() => [loadRequests(), loadTrips()])
+    )
+  );
+
+  bulkRejectRequests$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(bulkRejectRequests),
+      switchMap(({ ids }) =>
+        this.requestsService.bulkRejectRequests(ids).pipe(
+          map((result) => bulkRejectRequestsSuccess(result)),
+          catchError((error) => of(bulkRejectRequestsFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+        )
+      )
+    )
+  );
+
+  reloadAfterBulkReject$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(bulkRejectRequestsSuccess),
+      map(() => loadRequests())
+    )
+  );
+
+  reloadAfterDeleteTrip$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteTripSuccess),
+      map(() => loadRequests())
+    )
+  );
+
+  updateRequestNote$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateRequestNote),
+      switchMap(({ id, note }) =>
+        this.requestsService.updateRequestNote(id, note).pipe(
+          map((request) => updateRequestNoteSuccess({ request })),
+          catchError((error) => of(updateRequestNoteFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )

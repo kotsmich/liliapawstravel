@@ -7,11 +7,11 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { Store } from '@ngrx/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, take } from 'rxjs';
+import { BehaviorSubject, filter, of, switchMap, take } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { loadTrips, loadTripById, deleteTrip, updateDog, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents } from '@admin/features/trips/store';
+import { loadTrips, loadTripById, deleteTrip, updateDog, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents, selectTripsForSelectedDate, selectTripById } from '@admin/features/trips/store';
 import { selectDate, selectCalendarSelectedDate } from '@admin/core/store/calendar';
-import { loadRequests, approveRequest, updateRequestStatus, deleteRequest, selectAllRequests } from '@admin/features/requests/store';
+import { loadRequests, approveRequest, updateRequestStatus, deleteRequest, selectRequestsByTripId } from '@admin/features/requests/store';
 import { LoadingSpinnerComponent } from '@ui/lib/loading-spinner/loading-spinner.component';
 import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
 import { Trip } from '@models/lib/trip.model';
@@ -55,10 +55,7 @@ export class TripsListComponent implements OnInit {
   selectedDate$ = this.store.select(selectCalendarSelectedDate);
   calendarEvents$ = this.store.select(selectTripsAsCalendarEvents);
 
-  tripsForDate$ = combineLatest([
-    this.store.select(selectAllTrips),
-    this.store.select(selectCalendarSelectedDate),
-  ]).pipe(map(([trips, date]) => (date ? trips.filter((t: Trip) => t.date === date) : [])));
+  tripsForDate$ = this.store.select(selectTripsForSelectedDate);
 
   // Sync properties for strict-template bindings to typed dumb components
   trips: Trip[] = [];
@@ -76,24 +73,12 @@ export class TripsListComponent implements OnInit {
   detailActiveTab = 'dogs';
   detailTripId$ = new BehaviorSubject<string | null>(null);
 
-  detailTrip$ = combineLatest([
-    this.store.select(selectAllTrips),
-    this.detailTripId$,
-  ]).pipe(
-    map(([trips, id]) => id ? trips.find((t) => t.id === id) ?? null : null)
+  detailTrip$ = this.detailTripId$.pipe(
+    switchMap((id) => id ? this.store.select(selectTripById(id)) : of(null))
   );
 
-  detailRequests$ = combineLatest([
-    this.store.select(selectAllRequests),
-    this.detailTripId$,
-  ]).pipe(
-    map(([requests, id]) =>
-      id
-        ? [...requests]
-            .filter((r) => r.tripId === id)
-            .sort((a, b) => b.submittedAt.localeCompare(a.submittedAt))
-        : []
-    )
+  detailRequests$ = this.detailTripId$.pipe(
+    switchMap((id) => id ? this.store.select(selectRequestsByTripId(id)) : of([]))
   );
 
   // Dog edit dialog (within trip detail)
@@ -166,15 +151,8 @@ export class TripsListComponent implements OnInit {
     this.detailDialogVisible = true;
   }
 
-  async onExportPdfFromCard(trip: Trip): Promise<void> {
-    this.store.dispatch(loadTripById({ id: trip.id }));
-    const loaded = await firstValueFrom(
-      this.store.select(selectAllTrips).pipe(
-        map(trips => trips.find(t => t.id === trip.id)),
-        filter((t): t is Trip => t?.dogs !== undefined),
-      )
-    );
-    this.exportService.exportTripManifestPdf(loaded);
+  onExportPdfFromCard(trip: Trip): void {
+    this.exportService.exportTripById(trip.id);
   }
 
   closeDetail(): void {

@@ -26,10 +26,14 @@
     <app-requests-table
       [requests]="vm.requests ?? []"
       [loading]="!!vm.loading"
+      [selection]="selectedRequests()"
+      (selectionChange)="selectedRequests.set($event)"
       (rowClicked)="openDetail($event)"
       (approve)="onApproveFromTable($event)"
       (reject)="onRejectFromTable($event)"
       (deleteRequest)="deleteRequest($event)"
+      (bulkApprove)="onBulkApprove($event)"
+      (bulkReject)="onBulkReject($event)"
       />
   }
 
@@ -42,5 +46,6 @@
     (reject)="reject()"
     (deleteRequest)="deleteRequest($event)"
     (cancel)="cancel()"
+    (saveNote)="onSaveNote($event)"
     />
 </div>

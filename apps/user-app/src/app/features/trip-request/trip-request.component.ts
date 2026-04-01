@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { CommonModule, ViewportScroller } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -43,7 +43,7 @@ export class TripRequestComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly doc = inject(DOCUMENT);
+  private readonly viewportScroller = inject(ViewportScroller);
 
   form!: FormGroup;
   showSummary = false;
@@ -74,14 +74,14 @@ export class TripRequestComponent implements OnInit {
         life: 5000,
       });
       this.onReset();
-      this.doc.documentElement.scrollTop = 0;
+      this.viewportScroller.scrollToPosition([0, 0]);
     });
   }
 
   ngOnInit(): void {
     this.form = this.fb.group({
       requesterName: ['joanna', Validators.required],
-      requesterEmail: ['Brobisla', [Validators.required, Validators.email]],
+      requesterEmail: ['konstantinos.mich91@gmail.com', [Validators.required, Validators.email]],
       requesterPhone: ['09065656565', Validators.required],
       dogs: this.fb.array([this.dogGroup()]),
     });
@@ -93,7 +93,7 @@ export class TripRequestComponent implements OnInit {
     return this.fb.group({
       name: ['tztzifiogos', Validators.required],
       size: ['medium', Validators.required],
-      age: [null, [Validators.required, Validators.min(0)]],
+      age: [4, [Validators.required, Validators.min(0)]],
       chipId: ['123456789123456', [Validators.required, Validators.pattern(/^\d{15}$/)]],
       pickupLocation: ['katerini', Validators.required],
       dropLocation: ['germany', Validators.required],

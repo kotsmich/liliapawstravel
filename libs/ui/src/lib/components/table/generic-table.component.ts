@@ -26,8 +26,9 @@ export class GenericTableComponent<T extends object> {
   @Input() actions: TableAction<T>[] = [];
   @Input() config: TableConfig = {};
   @Input() loading = false;
+  @Input() selection: T[] = [];
   @Output() rowClicked = new EventEmitter<T>();
-  @Output() selectionChanged = new EventEmitter<T[]>();
+  @Output() selectionChange = new EventEmitter<T[]>();
 
   trackByFn = (index: number, item: T): unknown => {
     const field = this.config.trackByField ?? 'id';

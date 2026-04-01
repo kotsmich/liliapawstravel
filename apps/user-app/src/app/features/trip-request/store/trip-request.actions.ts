@@ -12,6 +12,15 @@ export const submitRequest = createAction(
     requesterPhone: string;
   }>()
 );
-export const submitRequestSuccess = createAction('[TripRequest] Submit Request Success', props<{ request: TripRequest }>());
-export const submitRequestFailure = createAction('[TripRequest] Submit Request Failure', props<{ error: string }>());
+
+export const submitRequestSuccess = createAction(
+  '[TripRequest] Submit Request Success',
+  props<{ request: TripRequest }>()
+);
+
+export const submitRequestFailure = createAction(
+  '[TripRequest] Submit Request Failure',
+  props<{ error: string }>()
+);
+
 export const resetRequest = createAction('[TripRequest] Reset Request');

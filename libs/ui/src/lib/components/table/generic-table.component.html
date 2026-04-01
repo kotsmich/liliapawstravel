@@ -6,10 +6,17 @@
   [sortField]="config.sortField"
   [sortOrder]="config.sortOrder ?? -1"
   [rowHover]="true"
-  [stripedRows]="config.striped ?? false">
+  [stripedRows]="config.striped ?? false"
+  [selectionMode]="config.selectable ? 'multiple' : undefined"
+  [selection]="selection"
+  (selectionChange)="selectionChange.emit($any($event))"
+  [metaKeySelection]="false">
 
   <ng-template pTemplate="header">
     <tr>
+      @if (config.selectable) {
+        <th style="width: 3rem"><p-tableHeaderCheckbox /></th>
+      }
       @for (col of columns; track col.field) {
         <th
           [pSortableColumn]="col.sortable ? col.field : ''"
@@ -30,6 +37,9 @@
     <tr
       (click)="rowClicked.emit(row)"
       [class.cursor-pointer]="isRowClickable()">
+      @if (config.selectable) {
+        <td (click)="$event.stopPropagation()"><p-tableCheckbox [value]="row" /></td>
+      }
       @for (col of columns; track col.field) {
         <td>
           @switch (col.type) {
@@ -85,7 +95,7 @@
 
   <ng-template pTemplate="emptymessage">
     <tr>
-      <td [attr.colspan]="columns.length + (actions.length ? 1 : 0)" style="text-align:center;padding:2rem">
+      <td [attr.colspan]="columns.length + (actions.length ? 1 : 0) + (config.selectable ? 1 : 0)" style="text-align:center;padding:2rem">
         {{ config.emptyMessage ?? 'No records found' }}
       </td>
     </tr>

@@ -1,3 +1,30 @@
+@if (selection.length > 0) {
+  <div class="bulk-bar flex align-items-center gap-2 p-3 mb-2 border-round surface-100">
+    <span class="text-sm font-medium mr-2">{{ selection.length }} selected</span>
+    @if (pendingSelected > 0) {
+      <p-button
+        label="Approve {{ pendingSelected }}"
+        icon="pi pi-check"
+        severity="success"
+        size="small"
+        (onClick)="onBulkApprove()" />
+      <p-button
+        label="Reject {{ pendingSelected }}"
+        icon="pi pi-times"
+        severity="danger"
+        [outlined]="true"
+        size="small"
+        (onClick)="onBulkReject()" />
+    }
+    <p-button
+      label="Clear"
+      icon="pi pi-times-circle"
+      severity="secondary"
+      [text]="true"
+      size="small"
+      (onClick)="selectionChange.emit([])" />
+  </div>
+}
 <div class="table-scroll">
   <app-generic-table
     [data]="requests"
@@ -5,6 +32,8 @@
     [actions]="actions"
     [config]="tableConfig"
     [loading]="loading"
+    [selection]="$any(selection)"
+    (selectionChange)="selectionChange.emit($any($event))"
     (rowClicked)="rowClicked.emit($event)">
   </app-generic-table>
 </div>

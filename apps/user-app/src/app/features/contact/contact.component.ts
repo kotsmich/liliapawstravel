@@ -23,29 +23,29 @@ export class ContactComponent implements OnInit {
     private store: Store,
   ) {}
 
-  form!: FormGroup;
+  contactForm!: FormGroup;
 
   loading$ = this.store.select(selectContactIsLoading);
   success$ = this.store.select(selectContactIsSuccess);
   error$ = this.store.select(selectContactError);
 
   ngOnInit(): void {
-    this.form = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.pattern(/^\+?[\d\s\-().]{7,20}$/)]],
-      subject: ['', [Validators.required, Validators.minLength(5)]],
-      message: ['', [Validators.required, Validators.minLength(20)]],
+    this.contactForm = this.fb.group({
+      name: ['Kots', [Validators.required, Validators.minLength(2)]],
+      email: ['konstantinos.mich91@gmail.com', [Validators.required, Validators.email]],
+      phone: ['6948226016', [Validators.pattern(/^\+?[\d\s\-().]{7,20}$/)]],
+      subject: ['Transportation pick up italy', [Validators.required, Validators.minLength(2)]],
+      message: ['Lorem ipson is a way to be a winner and not a loser', [Validators.required, Validators.minLength(20)]],
     });
   }
 
   onSubmit(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    this.store.dispatch(submitContact({ form: this.form.value }));
+    if (this.contactForm.invalid) { this.contactForm.markAllAsTouched(); return; }
+    this.store.dispatch(submitContact({ form: this.contactForm.value }));
   }
 
   onReset(): void {
-    this.form.reset();
+    this.contactForm.reset();
     this.store.dispatch(resetContact());
   }
 }

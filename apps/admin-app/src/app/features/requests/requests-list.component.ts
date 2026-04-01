@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal 
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { Actions, ofType } from '@ngrx/effects';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { filter, map, shareReplay, take } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -11,7 +12,13 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { loadTrips, selectAllTrips } from '@admin/features/trips/store';
 import { sanitizeHtml } from '@admin/shared/utils/sanitize';
-import { loadRequests, approveRequest, updateRequestStatus, deleteRequest, selectAllRequests, selectRequestsIsLoading } from '@admin/features/requests/store';
+import {
+  loadRequests, approveRequest, updateRequestStatus, deleteRequest,
+  selectAllRequests, selectRequestsIsLoading,
+  bulkApproveRequests, bulkApproveRequestsSuccess, bulkApproveRequestsFailure,
+  bulkRejectRequests, bulkRejectRequestsSuccess, bulkRejectRequestsFailure,
+  updateRequestNote, updateRequestNoteSuccess, updateRequestNoteFailure,
+} from '@admin/features/requests/store';
 import { resetRequests } from '@admin/core/store/notifications';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { Trip } from '@models/lib/trip.model';
@@ -37,6 +44,7 @@ import { RequestDetailDialogComponent } from './components/request-detail-dialog
 })
 export class RequestsListComponent implements OnInit {
   private readonly store = inject(Store);
+  private readonly actions$ = inject(Actions);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly router = inject(Router);
@@ -46,8 +54,10 @@ export class RequestsListComponent implements OnInit {
 
   selectedTripId$ = new BehaviorSubject<string | null>(null);
   activeTab$ = new BehaviorSubject<string>('all');
+  selectedRequestId$ = new BehaviorSubject<string | null>(null);
 
   selectedRequest = signal<TripRequest | null>(null);
+  selectedRequests = signal<TripRequest[]>([]);
   dialogVisible = signal(false);
   trips: Trip[] = [];
   tripOptions: Array<{ label: string; value: string | null }> = [{ label: 'All Trips', value: null }];
@@ -77,11 +87,63 @@ export class RequestsListComponent implements OnInit {
 
   constructor() {
     // Must be in constructor — takeUntilDestroyed() requires the injection context
-    this.store.select(selectAllTrips).pipe(
+    combineLatest([
+      this.store.select(selectAllTrips),
+      this.store.select(selectAllRequests),
+    ]).pipe(
       takeUntilDestroyed(),
-    ).subscribe((trips: Trip[]) => {
+    ).subscribe(([trips, requests]: [Trip[], TripRequest[]]) => {
       this.trips = trips;
-      this.buildTripOptions(trips);
+      this.buildTripOptions(trips, requests);
+    });
+
+    // Keep selectedRequest in sync with store so note saves reflect immediately
+    combineLatest([
+      this.store.select(selectAllRequests),
+      this.selectedRequestId$,
+    ]).pipe(
+      takeUntilDestroyed(),
+    ).subscribe(([requests, id]) => {
+      if (id) {
+        const updated = requests.find((r) => r.id === id);
+        if (updated) this.selectedRequest.set(updated);
+      }
+    });
+
+    // Toast + selection clear after bulk actions
+    this.actions$.pipe(
+      ofType(bulkApproveRequestsSuccess, bulkRejectRequestsSuccess),
+      takeUntilDestroyed(),
+    ).subscribe((action) => {
+      this.selectedRequests.set([]);
+      const { succeeded, failed } = action;
+      const verb = action.type.includes('Approve') ? 'approved' : 'rejected';
+      if (failed.length === 0) {
+        this.messageService.add({ severity: 'success', summary: 'Done', detail: `${succeeded.length} request(s) ${verb}.` });
+      } else {
+        this.messageService.add({ severity: 'warn', summary: 'Partial success', detail: `${succeeded.length} ${verb}, ${failed.length} failed.` });
+      }
+    });
+
+    this.actions$.pipe(
+      ofType(bulkApproveRequestsFailure, bulkRejectRequestsFailure),
+      takeUntilDestroyed(),
+    ).subscribe(({ error }) => {
+      this.messageService.add({ severity: 'error', summary: 'Bulk action failed', detail: error });
+    });
+
+    this.actions$.pipe(
+      ofType(updateRequestNoteSuccess),
+      takeUntilDestroyed(),
+    ).subscribe(() => {
+      this.messageService.add({ severity: 'success', summary: 'Note saved', detail: 'Admin note has been saved.' });
+    });
+
+    this.actions$.pipe(
+      ofType(updateRequestNoteFailure),
+      takeUntilDestroyed(),
+    ).subscribe(({ error }) => {
+      this.messageService.add({ severity: 'error', summary: 'Failed to save note', detail: error });
     });
   }
 
@@ -103,16 +165,20 @@ export class RequestsListComponent implements OnInit {
     });
   }
 
-  private buildTripOptions(trips: Trip[]): void {
+  private buildTripOptions(trips: Trip[], requests: TripRequest[] = []): void {
     const upcoming = [...trips]
       .filter((t) => t.status === 'upcoming')
       .sort((a, b) => a.date.localeCompare(b.date));
     this.tripOptions = [
       { label: 'All Trips', value: null },
-      ...upcoming.map((t) => ({
-        label: `${this.fmtDate(t.date)} - ${t.departureCity} → ${t.arrivalCity}`,
-        value: t.id,
-      })),
+      ...upcoming.map((t) => {
+        const pending = requests.filter((r) => r.tripId === t.id && r.status === 'pending').length;
+        const pendingLabel = pending > 0 ? ` · ${pending} pending` : '';
+        return {
+          label: `${this.fmtDate(t.date)} - ${t.departureCity} → ${t.arrivalCity}${pendingLabel}`,
+          value: t.id,
+        };
+      }),
     ];
   }
 
@@ -129,6 +195,7 @@ export class RequestsListComponent implements OnInit {
   }
 
   openDetail(request: TripRequest): void {
+    this.selectedRequestId$.next(request.id);
     this.selectedRequest.set(request);
     this.dialogVisible.set(true);
   }
@@ -194,5 +261,41 @@ export class RequestsListComponent implements OnInit {
   onRejectFromTable(req: TripRequest): void {
     this.selectedRequest.set(req);
     this.reject();
+  }
+
+  onBulkApprove(requests: TripRequest[]): void {
+    if (!requests.length) {
+      this.messageService.add({ severity: 'warn', summary: 'Nothing to approve', detail: 'Select pending requests assigned to a trip.' });
+      return;
+    }
+    this.confirmationService.confirm({
+      header: 'Bulk Approve',
+      message: `Approve <strong>${sanitizeHtml(String(requests.length))}</strong> pending request(s)?`,
+      acceptLabel: 'Approve All',
+      rejectLabel: 'Cancel',
+      acceptButtonStyleClass: 'p-button-success',
+      accept: () => this.store.dispatch(bulkApproveRequests({ ids: requests.map((r) => r.id) })),
+    });
+  }
+
+  onBulkReject(requests: TripRequest[]): void {
+    if (!requests.length) {
+      this.messageService.add({ severity: 'warn', summary: 'Nothing to reject', detail: 'Select pending requests to reject.' });
+      return;
+    }
+    this.confirmationService.confirm({
+      header: 'Bulk Reject',
+      message: `Reject <strong>${sanitizeHtml(String(requests.length))}</strong> pending request(s)? This cannot be undone.`,
+      acceptLabel: 'Reject All',
+      rejectLabel: 'Cancel',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => this.store.dispatch(bulkRejectRequests({ ids: requests.map((r) => r.id) })),
+    });
+  }
+
+  onSaveNote(note: string): void {
+    const id = this.selectedRequestId$.value;
+    if (!id) return;
+    this.store.dispatch(updateRequestNote({ id, note }));
   }
 }

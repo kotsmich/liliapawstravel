@@ -6,6 +6,7 @@ export interface CalendarEvent {
   color: string;
   dogsCount?: number;
   totalCapacity?: number;
+  spotsAvailable?: number;
   isFull?: boolean;
   acceptingRequests?: boolean;
 }

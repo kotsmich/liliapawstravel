@@ -1,8 +1,9 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnChanges } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
+import { TextareaModule } from 'primeng/textarea';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { Trip } from '@models/lib/trip.model';
 import { TableColumn, TableConfig } from '@models/lib/table-column.interface';
@@ -14,11 +15,11 @@ type RequestDog = TripRequest['dogs'][number];
   selector: 'app-request-detail-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DatePipe, DialogModule, ButtonModule, TagModule, GenericTableComponent],
+  imports: [CommonModule, DatePipe, DialogModule, ButtonModule, TagModule, TextareaModule, GenericTableComponent],
   templateUrl: './request-detail-dialog.component.html',
   styles: [],
 })
-export class RequestDetailDialogComponent {
+export class RequestDetailDialogComponent implements OnChanges {
   @Input() visible = false;
   @Input() request: TripRequest | null = null;
   @Input() trips: Trip[] = [];
@@ -28,6 +29,15 @@ export class RequestDetailDialogComponent {
   @Output() reject = new EventEmitter<void>();
   @Output() deleteRequest = new EventEmitter<TripRequest>();
   @Output() cancel = new EventEmitter<void>();
+  @Output() saveNote = new EventEmitter<string>();
+
+  noteText = '';
+
+  ngOnChanges(): void {
+    if (this.request) {
+      this.noteText = this.request.adminNote ?? '';
+    }
+  }
 
   dogColumns: TableColumn<RequestDog>[] = [
     { field: 'name', header: 'Name' },

@@ -55,9 +55,9 @@
           }
         </div>
       </div>
-      <div class="field fw">
+      <div class="field fw message-field">
         <p-ifta-label>
-          <textarea pTextarea id="message" formControlName="message" rows="6" autoResize></textarea>
+          <textarea pTextarea id="message" formControlName="message" rows="3"></textarea>
           <label for="message">Message</label>
         </p-ifta-label>
         @if (form.get('message')?.touched && err('message')) {

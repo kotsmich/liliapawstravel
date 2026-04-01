@@ -56,7 +56,11 @@ export class TripCalendarComponent implements OnChanges {
     } else if (event.acceptingRequests === false) {
       lines.push('Requests: Closed');
     } else {
-      lines.push('Requests: Open');
+      if (event.spotsAvailable !== undefined && event.spotsAvailable <= 2) {
+        lines.push(`⚠ Only ${event.spotsAvailable} spot${event.spotsAvailable === 1 ? '' : 's'} remaining!`);
+      } else {
+        lines.push('Requests: Open');
+      }
     }
     return lines.join('\n');
   }

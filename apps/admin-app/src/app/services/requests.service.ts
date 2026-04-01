@@ -33,4 +33,16 @@ export class RequestsService {
   deleteRequest(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+  updateRequestNote(id: string, note: string): Observable<TripRequest> {
+    return this.http.patch<TripRequest>(`${this.baseUrl}/${id}/note`, { note });
+  }
+
+  bulkApproveRequests(ids: string[]): Observable<{ succeeded: string[]; failed: Array<{ id: string; reason: string }> }> {
+    return this.http.post<{ succeeded: string[]; failed: Array<{ id: string; reason: string }> }>(`${this.baseUrl}/bulk-approve`, { ids });
+  }
+
+  bulkRejectRequests(ids: string[]): Observable<{ succeeded: string[]; failed: Array<{ id: string; reason: string }> }> {
+    return this.http.post<{ succeeded: string[]; failed: Array<{ id: string; reason: string }> }>(`${this.baseUrl}/bulk-reject`, { ids });
+  }
 }

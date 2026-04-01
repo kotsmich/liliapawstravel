@@ -6,6 +6,9 @@ import {
   updateRequestStatus, updateRequestStatusSuccess, updateRequestStatusFailure,
   deleteRequest, deleteRequestSuccess, deleteRequestFailure,
   addRequestFromSocket,
+  bulkApproveRequests, bulkApproveRequestsSuccess, bulkApproveRequestsFailure,
+  bulkRejectRequests, bulkRejectRequestsSuccess, bulkRejectRequestsFailure,
+  updateRequestNote, updateRequestNoteSuccess, updateRequestNoteFailure,
 } from './requests.actions';
 
 export interface RequestsState {
@@ -51,7 +54,16 @@ export const requestsFeature = createFeature({
     on(addRequestFromSocket, (s, { request }) => ({
       ...s,
       requests: [request, ...s.requests],
-    }))
+    })),
+    on(bulkApproveRequests, bulkRejectRequests, (s) => ({ ...s, loading: true, error: null })),
+    on(bulkApproveRequestsSuccess, bulkRejectRequestsSuccess, (s) => ({ ...s, loading: false })),
+    on(bulkApproveRequestsFailure, bulkRejectRequestsFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(updateRequestNote, (s) => ({ ...s })),
+    on(updateRequestNoteSuccess, (s, { request }) => ({
+      ...s,
+      requests: s.requests.map((r) => (r.id === request.id ? request : r)),
+    })),
+    on(updateRequestNoteFailure, (s, { error }) => ({ ...s, error })),
   ),
 });
 

@@ -33,6 +33,25 @@
         </app-generic-table>
       </div>
     </div>
+    <div class="detail-section">
+      <h3>Internal Note</h3>
+      <p class="text-sm text-color-secondary mb-2">Private admin note — not visible to the requester unless included in status emails.</p>
+      <textarea
+        pTextarea
+        [value]="noteText"
+        (input)="noteText = $any($event.target).value"
+        rows="3"
+        style="width:100%"
+        placeholder="Add a private note…"></textarea>
+      <p-button
+        label="Save Note"
+        icon="pi pi-save"
+        severity="secondary"
+        [outlined]="true"
+        size="small"
+        class="mt-2"
+        (onClick)="saveNote.emit(noteText)" />
+    </div>
   }
 
   <ng-template pTemplate="footer">

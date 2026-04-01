@@ -9,4 +9,5 @@ export interface TripRequest {
   requesterName: string;
   requesterEmail: string;
   requesterPhone: string;
+  adminNote?: string | null;
 }

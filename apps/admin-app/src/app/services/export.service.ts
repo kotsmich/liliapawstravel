@@ -1,10 +1,25 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { Store } from '@ngrx/store';
+import { filter, firstValueFrom, map } from 'rxjs';
 import { Trip } from '@models/lib/trip.model';
+import { loadTripById, selectAllTrips } from '@admin/features/trips/store';
 
 @Injectable({ providedIn: 'root' })
 export class ExportService {
+  private readonly store = inject(Store);
+
+  async exportTripById(tripId: string): Promise<void> {
+    this.store.dispatch(loadTripById({ id: tripId }));
+    const trip = await firstValueFrom(
+      this.store.select(selectAllTrips).pipe(
+        map((trips) => trips.find((t) => t.id === tripId)),
+        filter((t): t is Trip => t?.dogs !== undefined),
+      )
+    );
+    this.exportTripManifestPdf(trip);
+  }
 
   exportTripManifestPdf(trip: Trip): void {
     const doc = new jsPDF({

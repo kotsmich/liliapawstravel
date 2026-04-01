@@ -2,29 +2,67 @@
 
 .form-wrapper {
   background: #fff;
-  border-radius: 16px;
+  border-radius: 12px;
   border: 1px solid #f0dfc0;
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.field.fw.message-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  ::ng-deep p-ifta-label,
+  ::ng-deep .p-iftalabel { flex: 1; display: flex; flex-direction: column; }
+
+  ::ng-deep textarea.p-inputtextarea {
+    flex: 1;
+    resize: none;
+    height: 100%;
+  }
 }
 
 @media (max-width: 480px) {
-  .form-wrapper { padding: 1.5rem 1.25rem; }
+  .form-wrapper { padding: 1rem 1.125rem; }
 }
 
 .fields-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0 1rem;
+  gap: 0 0.75rem;
 }
 
 @media (max-width: 600px) {
   .fields-row { grid-template-columns: 1fr; }
 }
 
-.fw { width: 100%; margin-bottom: 0.5rem; }
+.fw {
+  width: 100%;
+  margin-bottom: 0.375rem;
+
+  p-ifta-label,
+  ::ng-deep p-ifta-label,
+  ::ng-deep .p-iftalabel { display: block; width: 100%; }
+
+  ::ng-deep input.p-inputtext,
+  ::ng-deep textarea.p-inputtextarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding-top: 1.25rem;
+    padding-bottom: 0.35rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+}
 
 .submit-row {
   display: flex;
