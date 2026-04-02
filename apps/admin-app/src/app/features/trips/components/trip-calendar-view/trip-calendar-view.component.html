@@ -6,7 +6,8 @@
     <ui-trip-calendar
       [events]="calendarEvents"
       [selectedDate]="selectedDate"
-      (dateSelected)="dateSelected.emit($event)">
+      (dateSelected)="dateSelected.emit($event)"
+      (dateDblClicked)="onDateDblClicked($event)">
     </ui-trip-calendar>
   </p-card>
 

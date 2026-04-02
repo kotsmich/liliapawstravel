@@ -68,13 +68,6 @@
       [outlined]="true"
       [disabled]="request?.status !== 'pending'"
       (onClick)="reject.emit()" />
-    @if (request?.status !== 'pending') {
-      <p-button
-        label="Delete"
-        icon="pi pi-trash"
-        severity="danger"
-        (onClick)="deleteRequest.emit(request!)" />
-    }
     <p-button
       label="Cancel"
       icon="pi pi-arrow-left"

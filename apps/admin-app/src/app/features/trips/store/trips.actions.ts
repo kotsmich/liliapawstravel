@@ -20,7 +20,7 @@ export const clearSelectedTrip = createAction('[Trips] Clear Selected Trip');
 
 export const addTrip = createAction(
   '[Trips] Add Trip',
-  props<{ trip: Omit<Trip, 'id'> }>()
+  props<{ trip: Omit<Trip, 'id'>; dogs?: Omit<Dog, 'id'>[] }>()
 );
 
 export const addTripSuccess = createAction(
@@ -90,6 +90,51 @@ export const addDogSuccess = createAction(
 
 export const addDogFailure = createAction(
   '[Trips] Add Dog Failure',
+  props<{ error: string }>()
+);
+
+export const addDogs = createAction(
+  '[Trips] Add Dogs',
+  props<{ tripId: string; dogs: Omit<Dog, 'id'>[] }>()
+);
+
+export const addDogsSuccess = createAction(
+  '[Trips] Add Dogs Success',
+  props<{ tripId: string; dogs: Dog[] }>()
+);
+
+export const addDogsFailure = createAction(
+  '[Trips] Add Dogs Failure',
+  props<{ error: string }>()
+);
+
+export const deleteDog = createAction(
+  '[Trips] Delete Dog',
+  props<{ tripId: string; dogId: string }>()
+);
+
+export const deleteDogSuccess = createAction(
+  '[Trips] Delete Dog Success',
+  props<{ tripId: string; dogId: string }>()
+);
+
+export const deleteDogFailure = createAction(
+  '[Trips] Delete Dog Failure',
+  props<{ error: string }>()
+);
+
+export const deleteDogs = createAction(
+  '[Trips] Delete Dogs',
+  props<{ tripId: string; dogIds: string[] }>()
+);
+
+export const deleteDogsSuccess = createAction(
+  '[Trips] Delete Dogs Success',
+  props<{ tripId: string; dogIds: string[] }>()
+);
+
+export const deleteDogsFailure = createAction(
+  '[Trips] Delete Dogs Failure',
   props<{ error: string }>()
 );
 

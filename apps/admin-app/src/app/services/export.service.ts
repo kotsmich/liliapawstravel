@@ -23,31 +23,29 @@ export class ExportService {
 
   exportTripManifestPdf(trip: Trip): void {
     const doc = new jsPDF({
-      orientation: 'landscape',
+      orientation: 'portrait',
       unit: 'mm',
       format: 'a4'
     });
 
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    // Branded header bar
+    // Branded header bar — compact (≈50px / ~18mm)
     doc.setFillColor(224, 123, 84);
-    doc.rect(0, 0, pageWidth, 28, 'F');
+    doc.rect(0, 0, pageWidth, 12, 'F');
 
-    // Company name
+    // Company name + title on same line
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Lilia Paws Travel', 14, 12);
-
-    // Document title
     doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Lilia Paws Travel', 14, 8);
+    doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
-    doc.text('Trip Dog Manifest', 14, 21);
+    doc.text('Trip Dog Manifest', 14 + 44, 8);
 
-    // Trip info block
+    // Trip info block — single line, small font
     doc.setTextColor(60, 60, 60);
-    doc.setFontSize(9);
+    doc.setFontSize(7.5);
 
     const tripDate = new Date(trip.date).toLocaleDateString('el-GR');
     const route =
@@ -55,28 +53,20 @@ export class ExportService {
       ` → ` +
       `${trip.arrivalCity}, ${trip.arrivalCountry}`;
 
-    doc.text(`Date: ${tripDate}`, 14, 36);
-    doc.text(`Route: ${route}`, 14, 42);
+    doc.text(`Date: ${tripDate}   Route: ${route}`, 14, 17);
     doc.text(
-      `Total Dogs: ${trip.dogs?.length ?? 0} / ${trip.totalCapacity}`,
-      14, 48
-    );
-    doc.text(`Status: ${trip.status.toUpperCase()}`, 14, 54);
-    doc.text(
-      `Generated: ${new Date().toLocaleDateString('el-GR')}`,
-      pageWidth - 14,
-      54,
-      { align: 'right' }
+      `Dogs: ${trip.dogs?.length ?? 0}/${trip.totalCapacity}   Status: ${trip.status.toUpperCase()}   Generated: ${new Date().toLocaleDateString('el-GR')}`,
+      14, 22
     );
 
     // Divider line
     doc.setDrawColor(224, 123, 84);
     doc.setLineWidth(0.5);
-    doc.line(14, 58, pageWidth - 14, 58);
+    doc.line(14, 25, pageWidth - 14, 25);
 
     // Dogs table
     autoTable(doc, {
-      startY: 63,
+      startY: 28,
       head: [[
         '#',
         'Dog Name',
@@ -115,14 +105,14 @@ export class ExportService {
         fillColor: [255, 248, 240]
       },
       columnStyles: {
-        0: { cellWidth: 8, halign: 'center' },
-        1: { cellWidth: 28 },
-        2: { cellWidth: 18 },
-        3: { cellWidth: 12 },
-        4: { cellWidth: 30 },
-        5: { cellWidth: 40 },
-        6: { cellWidth: 40 },
-        7: { cellWidth: 'auto' }
+        0: { cellWidth: 6, halign: 'center' },
+        1: { cellWidth: 24 },
+        2: { cellWidth: 14 },
+        3: { cellWidth: 10 },
+        4: { cellWidth: 28 },
+        5: { cellWidth: 30 },
+        6: { cellWidth: 30 },
+        7: { cellWidth: 40 }
       },
       margin: { left: 14, right: 14 },
       didDrawPage: (d) => {

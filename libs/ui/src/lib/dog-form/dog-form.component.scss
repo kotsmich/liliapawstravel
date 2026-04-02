@@ -40,23 +40,13 @@
       @media (max-width: 480px) { font-size: 0.62rem; letter-spacing: 0.02em; }
     }
 
-    input.p-inputtext,
-    ::ng-deep .p-inputtext,
-    ::ng-deep .p-select {
+    input.p-inputtext {
       height: 34px;
       font-size: 0.875rem;
       padding: 0 0.6rem;
       width: 100%;
 
       @media (max-width: 480px) { height: 32px; font-size: 0.8rem; padding: 0 0.45rem; }
-    }
-
-    ::ng-deep .p-inputnumber-input {
-      height: 34px;
-      font-size: 0.875rem;
-      padding: 0 0.6rem;
-
-      @media (max-width: 480px) { height: 32px; font-size: 0.8rem; }
     }
   }
 }

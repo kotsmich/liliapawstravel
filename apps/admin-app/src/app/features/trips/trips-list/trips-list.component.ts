@@ -9,7 +9,7 @@ import { Store } from '@ngrx/store';
 import { ConfirmationService } from 'primeng/api';
 import { BehaviorSubject, filter, of, switchMap, take } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { loadTrips, loadTripById, deleteTrip, updateDog, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents, selectTripsForSelectedDate, selectTripById } from '@admin/features/trips/store';
+import { loadTrips, loadTripById, deleteTrip, updateDog, deleteDog, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents, selectTripsForSelectedDate, selectTripById } from '@admin/features/trips/store';
 import { selectDate, selectCalendarSelectedDate } from '@admin/core/store/calendar';
 import { loadRequests, approveRequest, rejectRequest, deleteRequest, selectRequestsByTripId } from '@admin/features/requests/store';
 import { LoadingSpinnerComponent } from '@ui/lib/loading-spinner/loading-spinner.component';
@@ -158,15 +158,28 @@ export class TripsListComponent implements OnInit {
     this.dogEditVisible = true;
   }
 
-  onSaveDog(dog: Dog): void {
-    if (!this.dogEditTripId) return;
-    this.store.dispatch(updateDog({ tripId: this.dogEditTripId, dog }));
+  onSaveDog(dogs: Dog[]): void {
+    if (!this.dogEditTripId || !dogs.length) return;
+    this.store.dispatch(updateDog({ tripId: this.dogEditTripId, dog: dogs[0] }));
     this.dogEditVisible = false;
   }
 
   onCancelDog(): void {
     this.dogEditVisible = false;
     this.dogEditValues = null;
+  }
+
+  onDeleteDog(event: { dog: Dog; tripId: string }): void {
+    this.confirmationService.confirm({
+      header: 'Delete Dog',
+      message: `Remove <strong>${sanitizeHtml(event.dog.name)}</strong> from this trip? This cannot be undone.`,
+      acceptLabel: 'Delete',
+      rejectLabel: 'Cancel',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.store.dispatch(deleteDog({ tripId: event.tripId, dogId: event.dog.id }));
+      },
+    });
   }
 
   approveRequestInDetail(req: TripRequest): void {

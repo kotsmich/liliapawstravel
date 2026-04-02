@@ -27,7 +27,6 @@ export class RequestDetailDialogComponent implements OnChanges {
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() approve = new EventEmitter<void>();
   @Output() reject = new EventEmitter<void>();
-  @Output() deleteRequest = new EventEmitter<TripRequest>();
   @Output() cancel = new EventEmitter<void>();
   @Output() saveNote = new EventEmitter<string>();
 

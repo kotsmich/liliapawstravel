@@ -11,10 +11,12 @@ import { BadgeModule } from 'primeng/badge';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, SelectModule, TabsModule, BadgeModule],
   templateUrl: './requests-filter.component.html',
-  styles: [],
+  styles: [`
+    .trip-option { display: flex; align-items: center; gap: 0.5rem; }
+  `],
 })
 export class RequestsFilterComponent {
-  @Input() tripOptions: Array<{ label: string; value: string | null }> = [];
+  @Input() tripOptions: Array<{ label: string; value: string | null; pending: number }> = [];
   @Input() selectedTripId: string | null = null;
   @Input() activeTab: string = 'all';
   @Input() pendingCount: number = 0;

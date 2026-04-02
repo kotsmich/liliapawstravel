@@ -23,7 +23,6 @@ export class RequestsTableComponent implements OnInit, OnChanges {
   @Output() rowClicked = new EventEmitter<TripRequest>();
   @Output() approve = new EventEmitter<TripRequest>();
   @Output() reject = new EventEmitter<TripRequest>();
-  @Output() deleteRequest = new EventEmitter<TripRequest>();
   @Output() selectionChange = new EventEmitter<TripRequest[]>();
   @Output() bulkApprove = new EventEmitter<TripRequest[]>();
   @Output() bulkReject = new EventEmitter<TripRequest[]>();
@@ -43,7 +42,6 @@ export class RequestsTableComponent implements OnInit, OnChanges {
         label: (_, row) => (row as RequestRow).status,
       },
     },
-    { field: 'submittedAt', header: 'Submitted', sortable: true, type: 'date', dateFormat: 'dd/MM/yyyy HH:mm' },
   ];
 
   actions: TableAction<RequestRow>[] = [];
@@ -56,6 +54,8 @@ export class RequestsTableComponent implements OnInit, OnChanges {
     trackByField: 'id',
     selectable: true,
   };
+
+  rowSelectable = (req: RequestRow): boolean => req.status === 'pending';
 
   get pendingSelected(): number {
     return this.selection.filter((r) => r.status === 'pending').length;
@@ -83,11 +83,6 @@ export class RequestsTableComponent implements OnInit, OnChanges {
         icon: 'pi pi-times', label: 'Reject', tooltip: 'Reject', severity: 'danger',
         visible: (req) => req.status === 'pending',
         action: (req) => this.reject.emit(req),
-      },
-      {
-        icon: 'pi pi-trash', label: 'Delete', tooltip: 'Delete', severity: 'danger',
-        visible: (req) => req.status !== 'pending',
-        action: (req) => this.deleteRequest.emit(req),
       },
     ];
   }

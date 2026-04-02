@@ -1,5 +1,6 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { Trip } from '@models/lib/trip.model';
+import { Dog } from '@models/lib/dog.model';
 import {
   loadTrips, loadTripsSuccess, loadTripsFailure,
   selectTrip, clearSelectedTrip,
@@ -8,6 +9,9 @@ import {
   deleteTrip, deleteTripSuccess, deleteTripFailure,
   loadTripById, loadTripByIdSuccess, loadTripByIdFailure,
   addDog, addDogSuccess, addDogFailure,
+  addDogs, addDogsSuccess, addDogsFailure,
+  deleteDog, deleteDogSuccess, deleteDogFailure,
+  deleteDogs, deleteDogsSuccess, deleteDogsFailure,
   updateDog, updateDogSuccess, updateDogFailure,
 } from './trips.actions';
 
@@ -70,15 +74,37 @@ export const tripsFeature = createFeature({
     on(addDog, (s) => ({ ...s, mutating: true, error: null })),
     on(addDogSuccess, (s, { tripId, dog }) => ({
       ...s,
-      trips: s.trips.map((t) =>
-        t.id === tripId ? { ...t, dogs: [...(t.dogs ?? []), dog] } : t
-      ),
+      trips: s.trips.map((t) => {
+        if (t.id !== tripId) return t;
+        const newSpotsAvailable = Math.max(0, t.spotsAvailable - 1);
+        return { ...t, dogs: [...(t.dogs ?? []), dog], spotsAvailable: newSpotsAvailable, isFull: newSpotsAvailable <= 0 };
+      }),
       selectedTrip: s.selectedTrip?.id === tripId
-        ? { ...s.selectedTrip, dogs: [...(s.selectedTrip.dogs ?? []), dog] }
+        ? (() => {
+            const newSpotsAvailable = Math.max(0, s.selectedTrip!.spotsAvailable - 1);
+            return { ...s.selectedTrip!, dogs: [...(s.selectedTrip!.dogs ?? []), dog], spotsAvailable: newSpotsAvailable, isFull: newSpotsAvailable <= 0 };
+          })()
         : s.selectedTrip,
       mutating: false,
     })),
     on(addDogFailure, (s, { error }) => ({ ...s, mutating: false, error })),
+    on(addDogs, (s) => ({ ...s, mutating: true, error: null })),
+    on(addDogsSuccess, (s, { tripId, dogs }) => ({
+      ...s,
+      trips: s.trips.map((t) => {
+        if (t.id !== tripId) return t;
+        const newSpotsAvailable = Math.max(0, t.spotsAvailable - dogs.length);
+        return { ...t, dogs: [...(t.dogs ?? []), ...dogs], spotsAvailable: newSpotsAvailable, isFull: newSpotsAvailable <= 0 };
+      }),
+      selectedTrip: s.selectedTrip?.id === tripId
+        ? (() => {
+            const newSpotsAvailable = Math.max(0, s.selectedTrip!.spotsAvailable - dogs.length);
+            return { ...s.selectedTrip!, dogs: [...(s.selectedTrip!.dogs ?? []), ...dogs], spotsAvailable: newSpotsAvailable, isFull: newSpotsAvailable <= 0 };
+          })()
+        : s.selectedTrip,
+      mutating: false,
+    })),
+    on(addDogsFailure, (s, { error }) => ({ ...s, mutating: false, error })),
     on(updateDog, (s) => ({ ...s, mutating: true, error: null })),
     on(updateDogSuccess, (s, { tripId, dog }) => ({
       ...s,
@@ -90,7 +116,39 @@ export const tripsFeature = createFeature({
         : s.selectedTrip,
       mutating: false,
     })),
-    on(updateDogFailure, (s, { error }) => ({ ...s, mutating: false, error }))
+    on(updateDogFailure, (s, { error }) => ({ ...s, mutating: false, error })),
+    on(deleteDog, (s) => ({ ...s, mutating: true, error: null })),
+    on(deleteDogSuccess, (s, { tripId, dogId }) => ({
+      ...s,
+      trips: s.trips.map((t) => {
+        if (t.id !== tripId) return t;
+        const newSpotsAvailable = t.spotsAvailable + 1;
+        return { ...t, dogs: t.dogs?.filter((d) => d.id !== dogId), spotsAvailable: newSpotsAvailable, isFull: newSpotsAvailable <= 0 };
+      }),
+      selectedTrip: s.selectedTrip?.id === tripId
+        ? (() => {
+            const newSpotsAvailable = s.selectedTrip!.spotsAvailable + 1;
+            return { ...s.selectedTrip!, dogs: s.selectedTrip!.dogs?.filter((d) => d.id !== dogId), spotsAvailable: newSpotsAvailable, isFull: newSpotsAvailable <= 0 };
+          })()
+        : s.selectedTrip,
+      mutating: false,
+    })),
+    on(deleteDogFailure, (s, { error }) => ({ ...s, mutating: false, error })),
+    on(deleteDogs, (s) => ({ ...s, mutating: true, error: null })),
+    on(deleteDogsSuccess, (s, { tripId, dogIds }) => {
+      const filterDogs = (dogs: Dog[] | undefined) => dogs?.filter((d) => !dogIds.includes(d.id));
+      const updateTrip = (t: Trip) => {
+        const newSpots = Math.min(t.totalCapacity, t.spotsAvailable + dogIds.length);
+        return { ...t, dogs: filterDogs(t.dogs), spotsAvailable: newSpots, isFull: newSpots <= 0 };
+      };
+      return {
+        ...s,
+        trips: s.trips.map((t) => (t.id === tripId ? updateTrip(t) : t)),
+        selectedTrip: s.selectedTrip?.id === tripId ? updateTrip(s.selectedTrip) : s.selectedTrip,
+        mutating: false,
+      };
+    }),
+    on(deleteDogsFailure, (s, { error }) => ({ ...s, mutating: false, error }))
   ),
 });
 

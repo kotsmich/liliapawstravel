@@ -38,7 +38,7 @@
       (click)="rowClicked.emit(row)"
       [class.cursor-pointer]="isRowClickable()">
       @if (config.selectable) {
-        <td (click)="$event.stopPropagation()"><p-tableCheckbox [value]="row" /></td>
+        <td (click)="$event.stopPropagation()"><p-tableCheckbox [value]="row" [disabled]="rowSelectable ? !rowSelectable(row) : false" /></td>
       }
       @for (col of columns; track col.field) {
         <td>

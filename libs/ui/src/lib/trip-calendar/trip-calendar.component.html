@@ -13,6 +13,7 @@
       class="date-cell flex flex-column align-items-center justify-content-center"
       [pTooltip]="getEventTooltip(date)"
       tooltipPosition="top"
+      (dblclick)="hasEvent(date) && onDblClick(date)"
       >
       {{ date.day }}
       @if (hasEvent(date)) {

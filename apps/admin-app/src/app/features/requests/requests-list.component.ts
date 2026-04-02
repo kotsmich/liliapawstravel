@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
 import { BehaviorSubject, combineLatest } from 'rxjs';
@@ -13,7 +12,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { loadTrips, selectAllTrips } from '@admin/features/trips/store';
 import { sanitizeHtml } from '@admin/shared/utils/sanitize';
 import {
-  loadRequests, approveRequest, rejectRequest, deleteRequest,
+  loadRequests, approveRequest, rejectRequest,
   selectAllRequests, selectRequestsIsLoading,
   bulkApproveRequests, bulkApproveRequestsSuccess,
   bulkRejectRequests, bulkRejectRequestsSuccess,
@@ -47,7 +46,6 @@ export class RequestsListComponent implements OnInit {
   private readonly actions$ = inject(Actions);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   loading$ = this.store.select(selectRequestsIsLoading);
@@ -60,7 +58,7 @@ export class RequestsListComponent implements OnInit {
   selectedRequests = signal<TripRequest[]>([]);
   dialogVisible = signal(false);
   trips: Trip[] = [];
-  tripOptions: Array<{ label: string; value: string | null }> = [{ label: 'All Trips', value: null }];
+  tripOptions: Array<{ label: string; value: string | null; pending: number }> = [{ label: 'All Trips', value: null, pending: 0 }];
 
   // Filter requests by selected trip only (no tab filter) — used for badge counts
   private filteredByTrip$ = combineLatest([
@@ -141,17 +139,10 @@ export class RequestsListComponent implements OnInit {
     const upcoming = [...trips]
       .filter((t) => t.status === 'upcoming')
       .sort((a, b) => a.date.localeCompare(b.date));
-    this.tripOptions = [
-      { label: 'All Trips', value: null },
-      ...upcoming.map((t) => {
-        const pending = requests.filter((r) => r.tripId === t.id && r.status === 'pending').length;
-        const pendingLabel = pending > 0 ? ` · ${pending} pending` : '';
-        return {
-          label: `${this.fmtDate(t.date)} - ${t.departureCity} → ${t.arrivalCity}${pendingLabel}`,
-          value: t.id,
-        };
-      }),
-    ];
+    this.tripOptions = upcoming.map((t) => {
+      const pending = requests.filter((r) => r.tripId === t.id && r.status === 'pending').length;
+      return { label: this.fmtDate(t.date), value: t.id, pending };
+    });
   }
 
   fmtDate(date: string): string {
@@ -199,20 +190,6 @@ export class RequestsListComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.store.dispatch(rejectRequest({ id: req.id }));
-        this.dialogVisible.set(false);
-      },
-    });
-  }
-
-  deleteRequest(req: TripRequest): void {
-    this.confirmationService.confirm({
-      header: 'Delete Request',
-      message: `Delete the request from <strong>${sanitizeHtml(req.requesterName)}</strong>?${req.status === 'approved' ? ' The dogs added to the trip will remain.' : ''}`,
-      acceptLabel: 'Delete',
-      rejectLabel: 'Cancel',
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => {
-        this.store.dispatch(deleteRequest({ requestId: req.id }));
         this.dialogVisible.set(false);
       },
     });

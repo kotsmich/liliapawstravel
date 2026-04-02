@@ -1,99 +1,62 @@
 <p-dialog
   [(visible)]="visible"
   [modal]="true"
-  [style]="{ width: '620px', maxWidth: '95vw' }"
-  [contentStyle]="{ overflow: 'visible', padding: '1.25rem 1.5rem' }"
+  [style]="{ width: '660px', maxWidth: '96vw' }"
+  [contentStyle]="{ 'overflow-y': 'auto', 'max-height': '70vh', padding: '1.25rem 1.5rem' }"
   [draggable]="false"
   [resizable]="false"
   [closable]="false"
-  [header]="isNewDog ? 'Add Dog' : 'Edit Dog'">
+  [header]="isNewDog ? 'Add Dogs' : 'Edit Dog'">
 
-  @if (errorMessage) {
-    <p-message severity="error" [text]="errorMessage" styleClass="w-full mb-3" />
+  <!-- ── ADD MODE: accordion of dog panels ── -->
+  @if (isNewDog) {
+    <p-accordion [multiple]="true" [(value)]="activeAccordionPanels">
+      @for (panel of panelForms; track $index) {
+        <p-accordion-panel [value]="$index.toString()">
+          <p-accordion-header>
+            <span class="panel-label">{{ panelLabel($index) }}</span>
+            @if (panelForms.length > 1) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                size="small"
+                class="remove-btn"
+                (onClick)="$event.stopPropagation(); removePanel($index)" />
+            }
+          </p-accordion-header>
+          <p-accordion-content>
+            <app-dog-fields [form]="panel" [idx]="$index" />
+          </p-accordion-content>
+        </p-accordion-panel>
+      }
+    </p-accordion>
+
+    <div class="add-panel-row">
+      <p-button
+        label="Add Another Dog"
+        icon="pi pi-plus"
+        severity="secondary"
+        [outlined]="true"
+        size="small"
+        type="button"
+        (onClick)="addPanel()" />
+    </div>
   }
 
-  <div [formGroup]="form" class="dlg-form">
-    <div class="row">
-      <div class="field fw">
-        <p-ifta-label>
-          <input pInputText id="dlg-name" formControlName="name" class="w-full" />
-          <label for="dlg-name">Dog Name</label>
-        </p-ifta-label>
-        @if (form.get('name')?.touched && form.get('name')?.invalid) {
-          <small class="p-error">Required.</small>
-        }
-      </div>
-      <div class="field fw">
-        <p-ifta-label>
-          <p-select inputId="dlg-size" formControlName="size" [options]="sizes"
-            optionLabel="label" optionValue="value" styleClass="w-full" />
-          <label for="dlg-size">Size</label>
-        </p-ifta-label>
-        @if (form.get('size')?.touched && form.get('size')?.invalid) {
-          <small class="p-error">Required.</small>
-        }
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="field fw">
-        <p-ifta-label>
-          <p-inputnumber inputId="dlg-age" formControlName="age" [min]="0"
-            [showButtons]="false" styleClass="w-full" />
-          <label for="dlg-age">Age (years)</label>
-        </p-ifta-label>
-        @if (form.get('age')?.touched && form.get('age')?.invalid) {
-          <small class="p-error">Must be 0 or greater.</small>
-        }
-      </div>
-      <div class="field fw">
-        <p-ifta-label>
-          <input pInputText id="dlg-chip" formControlName="chipId" class="w-full" maxlength="15" />
-          <label for="dlg-chip">Microchip ID</label>
-        </p-ifta-label>
-        @if (form.get('chipId')?.touched && form.get('chipId')?.invalid) {
-          <small class="p-error">15-digit chip ID required.</small>
-        }
-      </div>
-    </div>
-
-    <div class="field fw">
-      <p-ifta-label>
-        <input pInputText id="dlg-pickup" formControlName="pickupLocation" class="w-full" />
-        <label for="dlg-pickup">Pickup Location</label>
-      </p-ifta-label>
-      @if (form.get('pickupLocation')?.touched && form.get('pickupLocation')?.invalid) {
-        <small class="p-error">Required.</small>
-      }
-    </div>
-
-    <div class="field fw">
-      <p-ifta-label>
-        <input pInputText id="dlg-drop" formControlName="dropLocation" class="w-full" />
-        <label for="dlg-drop">Drop Location</label>
-      </p-ifta-label>
-      @if (form.get('dropLocation')?.touched && form.get('dropLocation')?.invalid) {
-        <small class="p-error">Required.</small>
-      }
-    </div>
-
-    <div class="field fw">
-      <p-ifta-label>
-        <textarea pTextarea id="dlg-notes" formControlName="notes" rows="3"
-          class="w-full" autoResize></textarea>
-        <label for="dlg-notes">Special Notes (optional)</label>
-      </p-ifta-label>
-    </div>
-  </div>
+  <!-- ── EDIT MODE: single form ── -->
+  @if (!isNewDog) {
+    <app-dog-fields [form]="editForm" idx="edit" />
+  }
 
   <ng-template pTemplate="footer">
     <p-button label="Cancel" [outlined]="true" type="button" (onClick)="onCancel()" />
     <p-button
-      [label]="(mutating$ | async) ? 'Saving...' : (isNewDog ? 'Add Dog' : 'Update')"
+      [label]="saving ? 'Saving...' : (isNewDog ? 'Add Dog(s)' : 'Update')"
       icon="pi pi-check"
       type="button"
-      [loading]="!!(mutating$ | async)"
-      [disabled]="!!(mutating$ | async)"
+      [loading]="saving"
+      [disabled]="saving"
       (onClick)="onSave()" />
   </ng-template>
 </p-dialog>

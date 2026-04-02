@@ -6,7 +6,7 @@
     <ui-loading-spinner message="Loading trips..." />
   }
 
-  @if (!(loading$ | async)) {
+  <!-- @if (!(loading$ | async)) { -->
     @if ({
       trips: trips$ | async,
       calendarEvents: calendarEvents$ | async,
@@ -46,7 +46,7 @@
           />
       }
     }
-  }
+  <!-- } -->
 </div>
 
 <!-- Trip Detail Dialog -->
@@ -63,6 +63,7 @@
     (visibleChange)="detailDialogVisible = $event"
     (tabChanged)="detailActiveTab = $event"
     (editDog)="onEditDog($event)"
+    (deleteDog)="onDeleteDog($event)"
     (approveRequest)="approveRequestInDetail($event)"
     (rejectRequest)="rejectRequestInDetail($event)"
     (deleteRequest)="deleteRequestInDetail($event)"

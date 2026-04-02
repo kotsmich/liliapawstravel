@@ -20,15 +20,6 @@ form {
   flex: 1;
   display: flex;
   flex-direction: column;
-
-  ::ng-deep p-ifta-label,
-  ::ng-deep .p-iftalabel { flex: 1; display: flex; flex-direction: column; }
-
-  ::ng-deep textarea.p-inputtextarea {
-    flex: 1;
-    resize: none;
-    height: 100%;
-  }
 }
 
 @media (max-width: 480px) {
@@ -49,19 +40,7 @@ form {
   width: 100%;
   margin-bottom: 0.375rem;
 
-  p-ifta-label,
-  ::ng-deep p-ifta-label,
-  ::ng-deep .p-iftalabel { display: block; width: 100%; }
-
-  ::ng-deep input.p-inputtext,
-  ::ng-deep textarea.p-inputtextarea {
-    width: 100%;
-    box-sizing: border-box;
-    padding-top: 1.25rem;
-    padding-bottom: 0.35rem;
-    font-size: 0.875rem;
-    line-height: 1.4;
-  }
+  p-ifta-label { display: block; width: 100%; }
 }
 
 .submit-row {

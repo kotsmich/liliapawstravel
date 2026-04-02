@@ -1,98 +1,113 @@
-<div class="form-page flex flex-column gap-4">
+<div class="form-page flex flex-column">
   <div class="page-header flex align-items-center">
     <p-button icon="pi pi-arrow-left" [text]="true" [rounded]="true" (onClick)="navigateToTrips()" />
     <h1>{{ isEdit ? 'Edit Trip' : 'New Trip' }}</h1>
+    <div class="header-actions">
+      <p-button type="button" label="Cancel" [outlined]="true" (onClick)="navigateToTrips()" />
+      <p-button
+        type="button"
+        [label]="(mutating$ | async) ? 'Saving...' : (isEdit ? 'Update Trip' : 'Create Trip')"
+        icon="pi pi-save"
+        [loading]="!!(mutating$ | async)"
+        [disabled]="!!(mutating$ | async)"
+        (onClick)="onSubmit()"
+        />
+    </div>
   </div>
 
   <p-toast />
+  <p-confirmdialog />
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-    <p-card styleClass="form-card">
+  <form id="tripForm" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <p-card styleClass="form-card" [style]="{'--p-card-body-padding': '0.75rem 1rem', '--p-inputtext-padding-y': '0.375rem', '--p-select-padding-y': '0.375rem', '--p-datepicker-input-padding': '0.375rem 0.75rem'}">
       <ng-template pTemplate="title">Trip Details</ng-template>
 
-      <div class="row">
-        <div class="field fw">
-          <p-ifta-label>
-            <p-datepicker inputId="date" formControlName="date" [minDate]="today"
-              dateFormat="dd/mm/yy" [showTime]="false" [showIcon]="true" styleClass="w-full" />
-            <label for="date">Date</label>
-          </p-ifta-label>
-          @if (form.get('date')?.touched && form.get('date')?.invalid) {
-            <small class="p-error">Please select a valid future date.</small>
-          }
+      <div class="details-grid">
+        <!-- Left column: Date + route -->
+        <div class="details-col">
+          <div class="field fw">
+            <p-ifta-label>
+              <p-datepicker inputId="date" formControlName="date" [minDate]="isEdit ? null : today"
+                dateFormat="dd/mm/yy" [showTime]="false" [showIcon]="true" styleClass="w-full" />
+              <label for="date">Date</label>
+            </p-ifta-label>
+            @if (form.get('date')?.touched && form.get('date')?.invalid) {
+              <small class="p-error">Please select a valid future date.</small>
+            }
+          </div>
+          <div class="row">
+            <div class="field fw">
+              <p-ifta-label>
+                <input pInputText id="depCountry" formControlName="departureCountry" placeholder="Romania" />
+                <label for="depCountry">Departure Country</label>
+              </p-ifta-label>
+              @if (form.get('departureCountry')?.touched && form.get('departureCountry')?.invalid) {
+                <small class="p-error">Required.</small>
+              }
+            </div>
+            <div class="field fw">
+              <p-ifta-label>
+                <input pInputText id="depCity" formControlName="departureCity" placeholder="Bucharest" />
+                <label for="depCity">Departure City</label>
+              </p-ifta-label>
+              @if (form.get('departureCity')?.touched && form.get('departureCity')?.invalid) {
+                <small class="p-error">Required.</small>
+              }
+            </div>
+          </div>
+          <div class="row">
+            <div class="field fw">
+              <p-ifta-label>
+                <input pInputText id="arrCountry" formControlName="arrivalCountry" placeholder="Netherlands" />
+                <label for="arrCountry">Arrival Country</label>
+              </p-ifta-label>
+              @if (form.get('arrivalCountry')?.touched && form.get('arrivalCountry')?.invalid) {
+                <small class="p-error">Required.</small>
+              }
+            </div>
+            <div class="field fw">
+              <p-ifta-label>
+                <input pInputText id="arrCity" formControlName="arrivalCity" placeholder="Amsterdam" />
+                <label for="arrCity">Arrival City</label>
+              </p-ifta-label>
+              @if (form.get('arrivalCity')?.touched && form.get('arrivalCity')?.invalid) {
+                <small class="p-error">Required.</small>
+              }
+            </div>
+          </div>
         </div>
-        <div class="field fw">
-          <p-ifta-label>
-            <p-select inputId="status" formControlName="status" [options]="statuses"
-              optionLabel="label" optionValue="value" styleClass="w-full" />
-            <label for="status">Status</label>
-          </p-ifta-label>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="field fw">
-          <p-ifta-label>
-            <p-inputnumber inputId="totalCapacity" formControlName="totalCapacity"
-              [min]="1" [showButtons]="true" styleClass="w-full" />
-            <label for="totalCapacity">Total Capacity (spots)</label>
-          </p-ifta-label>
-          @if (capacityWarning) {
-            <small class="p-warn">{{ capacityWarning }}</small>
-          }
-          @if (!capacityWarning && form.get('totalCapacity')?.touched && form.get('totalCapacity')?.invalid) {
-            <small class="p-error">Must be at least 1.</small>
-          }
+        <!-- Right column: Status + Capacity + Notes -->
+        <div class="details-col">
+          <div class="row">
+            <div class="field fw">
+              <p-ifta-label>
+                <p-select inputId="status" formControlName="status" [options]="statuses"
+                  optionLabel="label" optionValue="value" styleClass="w-full" />
+                <label for="status">Status</label>
+              </p-ifta-label>
+            </div>
+            <div class="field fw">
+              <p-ifta-label>
+                <p-inputnumber inputId="totalCapacity" formControlName="totalCapacity"
+                  [min]="1" [showButtons]="true" styleClass="w-full" />
+                <label for="totalCapacity">Total Capacity (spots)</label>
+              </p-ifta-label>
+              @if (capacityWarning) {
+                <small class="p-warn">{{ capacityWarning }}</small>
+              }
+              @if (!capacityWarning && form.get('totalCapacity')?.touched && form.get('totalCapacity')?.invalid) {
+                <small class="p-error">Must be at least 1.</small>
+              }
+            </div>
+          </div>
+          <div class="field fw notes-field">
+            <p-ifta-label>
+              <textarea pTextarea id="notes" formControlName="notes"></textarea>
+              <label for="notes">Notes (optional)</label>
+            </p-ifta-label>
+          </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="field fw">
-          <p-ifta-label>
-            <input pInputText id="depCountry" formControlName="departureCountry" placeholder="Romania" />
-            <label for="depCountry">Departure Country</label>
-          </p-ifta-label>
-          @if (form.get('departureCountry')?.touched && form.get('departureCountry')?.invalid) {
-            <small class="p-error">Required.</small>
-          }
-        </div>
-        <div class="field fw">
-          <p-ifta-label>
-            <input pInputText id="depCity" formControlName="departureCity" placeholder="Bucharest" />
-            <label for="depCity">Departure City</label>
-          </p-ifta-label>
-          @if (form.get('departureCity')?.touched && form.get('departureCity')?.invalid) {
-            <small class="p-error">Required.</small>
-          }
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field fw">
-          <p-ifta-label>
-            <input pInputText id="arrCountry" formControlName="arrivalCountry" placeholder="Netherlands" />
-            <label for="arrCountry">Arrival Country</label>
-          </p-ifta-label>
-          @if (form.get('arrivalCountry')?.touched && form.get('arrivalCountry')?.invalid) {
-            <small class="p-error">Required.</small>
-          }
-        </div>
-        <div class="field fw">
-          <p-ifta-label>
-            <input pInputText id="arrCity" formControlName="arrivalCity" placeholder="Amsterdam" />
-            <label for="arrCity">Arrival City</label>
-          </p-ifta-label>
-          @if (form.get('arrivalCity')?.touched && form.get('arrivalCity')?.invalid) {
-            <small class="p-error">Required.</small>
-          }
-        </div>
-      </div>
-
-      <div class="field fw">
-        <p-ifta-label>
-          <textarea pTextarea id="notes" formControlName="notes" rows="2" autoResize></textarea>
-          <label for="notes">Notes (optional)</label>
-        </p-ifta-label>
       </div>
 
       <div class="row">
@@ -158,51 +173,34 @@
     </p-card>
 
     <!-- Dogs section -->
-    <p-card styleClass="form-card dogs-section">
-      <ng-template pTemplate="title">
-        <div class="dogs-header flex align-items-center justify-content-between">
-          <span>🐶 Dogs</span>
+    <div class="dogs-card">
+      <div class="dogs-card__header">
+        <span>🐶 Dogs</span>
+        <div class="flex gap-2 align-items-center">
+          @if (selectedDogs.length) {
+            <p-button
+              type="button"
+              [label]="'Delete Selected (' + selectedDogs.length + ')'"
+              icon="pi pi-trash"
+              severity="danger"
+              [outlined]="true"
+              size="small"
+              (onClick)="removeSelectedDogs()" />
+          }
           <p-button type="button" label="Add Dog" icon="pi pi-plus" [outlined]="true" size="small" (onClick)="openAddDogDialog()" />
         </div>
-      </ng-template>
-
-      <div class="dogs-list flex flex-column gap-2" formArrayName="dogs">
-        @for (dog of dogs.controls; track $index; let i = $index) {
-          <div class="dog-row flex align-items-center justify-content-between">
-            <div class="dog-row__info flex align-items-center flex-wrap">
-              <span class="dog-name">🐶 {{ dog.get('name')?.value || 'Unnamed' }}</span>
-              <span class="dog-badge">{{ dog.get('size')?.value }}</span>
-              @if (dog.get('age')?.value !== null) {
-                <span class="dog-age">{{ dog.get('age')?.value }} yr</span>
-              }
-              <span class="dog-route">{{ dog.get('pickupLocation')?.value }} → {{ dog.get('dropLocation')?.value }}</span>
-              <span class="dog-chip">{{ dog.get('chipId')?.value }}</span>
-            </div>
-            <div class="dog-row__actions flex flex-shrink-0 gap-1">
-              <p-button icon="pi pi-pencil" [outlined]="true" size="small" type="button"
-                pTooltip="Edit dog" (onClick)="openEditDogDialog(i)" />
-              <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" type="button"
-                pTooltip="Remove dog" (onClick)="removeDog(i)" />
-            </div>
-          </div>
-        }
-        @if (dogs.length === 0) {
-          <p class="no-dogs">No dogs added yet. Use the button above.</p>
-        }
       </div>
-    </p-card>
-
-    <!-- Actions -->
-    <div class="form-actions flex justify-content-end">
-      <p-button type="button" label="Cancel" [outlined]="true" (onClick)="navigateToTrips()" />
-      <p-button
-        type="submit"
-        [label]="(mutating$ | async) ? 'Saving...' : (isEdit ? 'Update Trip' : 'Create Trip')"
-        icon="pi pi-save"
-        [loading]="!!(mutating$ | async)"
-        [disabled]="!!(mutating$ | async)"
-        />
+      <div class="dogs-table-wrapper">
+        <app-generic-table
+          [data]="dogsData"
+          [columns]="dogColumns"
+          [actions]="dogActions"
+          [config]="dogTableConfig"
+          [selection]="selectedDogs"
+          (selectionChange)="selectedDogs = $any($event)" />
+      </div>
     </div>
+
   </form>
 </div>
 

@@ -16,6 +16,7 @@ export class TripCalendarComponent implements OnChanges {
   @Input() events: CalendarEvent[] = [];
   @Input() selectedDate: string | null = null;
   @Output() dateSelected = new EventEmitter<string>();
+  @Output() dateDblClicked = new EventEmitter<string>();
 
   selectedDateObj: Date | null = null;
   minDate = new Date();
@@ -32,6 +33,10 @@ export class TripCalendarComponent implements OnChanges {
 
   onSelect(date: Date): void {
     this.dateSelected.emit(this.toDateStr(date));
+  }
+
+  onDblClick(date: { year: number; month: number; day: number }): void {
+    this.dateDblClicked.emit(this.partsToDateStr(date));
   }
 
   // p-calendar date template passes { year, month (0-based), day }

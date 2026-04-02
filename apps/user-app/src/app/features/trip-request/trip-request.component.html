@@ -1,4 +1,4 @@
-<div class="page">
+<div class="page trip-request-page">
   <div class="page-header">
     <div class="container">
       <span class="tag">Transport Request</span>
@@ -79,7 +79,7 @@
             <div class="requester-fields">
               <div class="field">
                 <p-ifta-label>
-                  <input pInputText id="reqName" formControlName="requesterName" />
+                  <input pInputText id="reqName" formControlName="requesterName" size="small" />
                   <label for="reqName">Full Name</label>
                 </p-ifta-label>
                 @if (form.get('requesterName')?.touched && form.get('requesterName')?.invalid) {
@@ -88,7 +88,7 @@
               </div>
               <div class="field">
                 <p-ifta-label>
-                  <input pInputText id="reqEmail" formControlName="requesterEmail" type="email" />
+                  <input pInputText id="reqEmail" formControlName="requesterEmail" type="email" size="small" />
                   <label for="reqEmail">Email</label>
                 </p-ifta-label>
                 @if (form.get('requesterEmail')?.touched && form.get('requesterEmail')?.invalid) {
@@ -97,7 +97,7 @@
               </div>
               <div class="field">
                 <p-ifta-label>
-                  <input pInputText id="reqPhone" formControlName="requesterPhone" />
+                  <input pInputText id="reqPhone" formControlName="requesterPhone" size="small" />
                   <label for="reqPhone">Phone</label>
                 </p-ifta-label>
                 @if (form.get('requesterPhone')?.touched && form.get('requesterPhone')?.invalid) {

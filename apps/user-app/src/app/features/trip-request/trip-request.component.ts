@@ -18,7 +18,7 @@ import { DogFormComponent } from '@ui/lib/dog-form/dog-form.component';
 import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
 import { ToastNotificationComponent } from '@ui/lib/toast-notification/toast-notification.component';
 import { CalendarEvent } from '@models/lib/calendar-event.model';
-import { generateId } from '@models/lib/utils';
+import { generateId, RandomUtil, RandomProperty } from '@models/lib/utils';
 import { Trip } from '@models/lib/trip.model';
 import { Dog } from '@models/lib/dog.model';
 import { clearSelectedTrip, selectTripsAsCalendarEvents, selectTripsIsLoading } from '@user/core/store/trips';
@@ -74,9 +74,9 @@ export class TripRequestComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      requesterName: ['joanna', Validators.required],
-      requesterEmail: ['konstantinos.mich91@gmail.com', [Validators.required, Validators.email]],
-      requesterPhone: ['09065656565', Validators.required],
+      requesterName:  [RandomUtil.pick(RandomProperty.requesterNames),  Validators.required],
+      requesterEmail: [RandomUtil.pick(RandomProperty.requesterEmails), [Validators.required, Validators.email]],
+      requesterPhone: [RandomUtil.pick(RandomProperty.requesterPhones), Validators.required],
       dogs: this.fb.array([this.dogGroup()]),
     });
   }
@@ -85,13 +85,13 @@ export class TripRequestComponent implements OnInit {
 
   dogGroup(): FormGroup {
     return this.fb.group({
-      name: ['tztzifiogos', Validators.required],
-      size: ['medium', Validators.required],
-      age: [4, [Validators.required, Validators.min(0)]],
-      chipId: ['123456789123456', [Validators.required, Validators.pattern(/^\d{15}$/)]],
-      pickupLocation: ['katerini', Validators.required],
-      dropLocation: ['germany', Validators.required],
-      notes: ['Not something special'],
+      name:           [RandomUtil.pick(RandomProperty.dogNames),        Validators.required],
+      size:           [RandomUtil.pick(RandomProperty.sizes),           Validators.required],
+      age:            [RandomUtil.pick(RandomProperty.ages),            [Validators.required, Validators.min(0)]],
+      chipId:         [RandomUtil.pick(RandomProperty.chipIds),         [Validators.required, Validators.pattern(/^\d{15}$/)]],
+      pickupLocation: [RandomUtil.pick(RandomProperty.pickupLocations), Validators.required],
+      dropLocation:   [RandomUtil.pick(RandomProperty.dropLocations),   Validators.required],
+      notes:          [RandomUtil.pick(RandomProperty.notes)],
     });
   }
 

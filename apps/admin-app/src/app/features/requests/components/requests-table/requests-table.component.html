@@ -33,6 +33,7 @@
     [config]="tableConfig"
     [loading]="loading"
     [selection]="$any(selection)"
+    [rowSelectable]="$any(rowSelectable)"
     (selectionChange)="selectionChange.emit($any($event))"
     (rowClicked)="rowClicked.emit($event)">
   </app-generic-table>

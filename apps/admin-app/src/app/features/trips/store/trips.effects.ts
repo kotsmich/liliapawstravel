@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, of, switchMap, tap } from 'rxjs';
+import { catchError, map, mergeMap, of, switchMap, tap } from 'rxjs';
+import { Dog } from '@models/lib/dog.model';
 import { TripsService } from '@admin/services/trips.service';
 import { DogsService } from '@admin/services/dogs.service';
 import {
@@ -10,8 +11,11 @@ import {
   updateTrip, updateTripSuccess, updateTripFailure,
   deleteTrip, deleteTripSuccess, deleteTripFailure,
   addDog, addDogSuccess, addDogFailure,
+  addDogs, addDogsSuccess, addDogsFailure,
+  deleteDog, deleteDogSuccess, deleteDogFailure,
   updateDog, updateDogSuccess, updateDogFailure,
   loadTripById, loadTripByIdSuccess, loadTripByIdFailure,
+  deleteDogs, deleteDogsSuccess, deleteDogsFailure,
 } from './trips.actions';
 
 @Injectable()
@@ -36,9 +40,17 @@ export class TripsEffects {
   addTrip$ = createEffect(() =>
     this.actions$.pipe(
       ofType(addTrip),
-      switchMap(({ trip }) =>
+      switchMap(({ trip, dogs }) =>
         this.tripsService.createTrip(trip).pipe(
-          map((saved) => addTripSuccess({ trip: saved })),
+          switchMap((saved) => {
+            if (dogs && dogs.length > 0) {
+              return this.dogsService.createDogs(saved.id, dogs as Dog[]).pipe(
+                map((savedDogs) => addTripSuccess({ trip: { ...saved, dogs: savedDogs } })),
+                catchError((error) => of(addTripFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+              );
+            }
+            return of(addTripSuccess({ trip: saved }));
+          }),
           catchError((error) => of(addTripFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
@@ -92,8 +104,32 @@ export class TripsEffects {
       ofType(addDog),
       switchMap(({ tripId, dog }) =>
         this.dogsService.createDog(tripId, dog).pipe(
-          map((saved) => addDogSuccess({ tripId, dog: saved })),
+          mergeMap((saved) => [addDogSuccess({ tripId, dog: saved }), loadTripById({ id: tripId })]),
           catchError((error) => of(addDogFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+        )
+      )
+    )
+  );
+
+  addDogs$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(addDogs),
+      switchMap(({ tripId, dogs }) =>
+        this.dogsService.createDogs(tripId, dogs).pipe(
+          mergeMap((saved) => [addDogsSuccess({ tripId, dogs: saved }), loadTripById({ id: tripId })]),
+          catchError((error) => of(addDogsFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+        )
+      )
+    )
+  );
+
+  deleteDog$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteDog),
+      mergeMap(({ tripId, dogId }) =>
+        this.dogsService.deleteDog(dogId).pipe(
+          mergeMap(() => [deleteDogSuccess({ tripId, dogId }), loadTripById({ id: tripId })]),
+          catchError((error) => of(deleteDogFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )
@@ -106,6 +142,18 @@ export class TripsEffects {
         this.dogsService.updateDog(dog.id, dog).pipe(
           map((updated) => updateDogSuccess({ tripId, dog: updated })),
           catchError((error) => of(updateDogFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+        )
+      )
+    )
+  );
+
+  deleteDogs$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteDogs),
+      switchMap(({ tripId, dogIds }) =>
+        this.dogsService.deleteDogs(dogIds).pipe(
+          mergeMap(() => [deleteDogsSuccess({ tripId, dogIds }), loadTripById({ id: tripId })]),
+          catchError((error) => of(deleteDogsFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )
     )

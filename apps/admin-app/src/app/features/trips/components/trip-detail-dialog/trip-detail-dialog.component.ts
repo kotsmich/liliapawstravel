@@ -33,6 +33,7 @@ export class TripDetailDialogComponent implements OnInit {
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() tabChanged = new EventEmitter<string>();
   @Output() editDog = new EventEmitter<{ dog: Dog; tripId: string }>();
+  @Output() deleteDog = new EventEmitter<{ dog: Dog; tripId: string }>();
   @Output() approveRequest = new EventEmitter<TripRequest>();
   @Output() rejectRequest = new EventEmitter<TripRequest>();
   @Output() deleteRequest = new EventEmitter<TripRequest>();
@@ -43,6 +44,7 @@ export class TripDetailDialogComponent implements OnInit {
     { field: 'size', header: 'Size' },
     { field: 'age', header: 'Age', formatter: (val) => `${val} yr` },
     { field: 'chipId', header: 'Chip ID' },
+    { field: 'requesterName', header: 'Requester' },
     { field: 'pickupLocation', header: 'Pickup' },
     { field: 'dropLocation', header: 'Drop' },
     { field: 'notes', header: 'Notes' },
@@ -67,6 +69,10 @@ export class TripDetailDialogComponent implements OnInit {
       {
         icon: 'pi pi-pencil', tooltip: 'Edit dog',
         action: (dog) => this.editDog.emit({ dog, tripId: this.trip!.id }),
+      },
+      {
+        icon: 'pi pi-trash', tooltip: 'Delete dog', severity: 'danger',
+        action: (dog) => this.deleteDog.emit({ dog, tripId: this.trip!.id }),
       },
     ];
   }

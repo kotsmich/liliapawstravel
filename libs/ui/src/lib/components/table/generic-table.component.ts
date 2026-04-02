@@ -27,6 +27,7 @@ export class GenericTableComponent<T extends object> {
   @Input() config: TableConfig = {};
   @Input() loading = false;
   @Input() selection: T[] = [];
+  @Input() rowSelectable?: (row: T) => boolean;
   @Output() rowClicked = new EventEmitter<T>();
   @Output() selectionChange = new EventEmitter<T[]>();
 

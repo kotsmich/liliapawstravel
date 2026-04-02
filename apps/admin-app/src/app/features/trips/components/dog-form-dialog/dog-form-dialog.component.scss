@@ -6,3 +6,9 @@
 .field { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.75rem; }
 .fw { width: 100%; }
 .p-error { font-size: 0.75rem; color: var(--color-error-alt); }
+
+.panel-label { flex: 1; font-weight: 500; }
+
+.remove-btn { margin-left: auto; margin-right: 0.5rem; }
+
+.add-panel-row { display: flex; justify-content: flex-start; margin-top: 0.75rem; }

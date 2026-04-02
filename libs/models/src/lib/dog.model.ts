@@ -10,4 +10,5 @@ export interface Dog {
   requesterName?: string | null;
   requesterEmail?: string | null;
   requesterPhone?: string | null;
+  requestId?: string | null;
 }

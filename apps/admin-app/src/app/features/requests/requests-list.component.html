@@ -31,7 +31,6 @@
       (rowClicked)="openDetail($event)"
       (approve)="onApproveFromTable($event)"
       (reject)="onRejectFromTable($event)"
-      (deleteRequest)="deleteRequest($event)"
       (bulkApprove)="onBulkApprove($event)"
       (bulkReject)="onBulkReject($event)"
       />
@@ -44,7 +43,6 @@
     (visibleChange)="dialogVisible.set($event)"
     (approve)="approve()"
     (reject)="reject()"
-    (deleteRequest)="deleteRequest($event)"
     (cancel)="cancel()"
     (saveNote)="onSaveNote($event)"
     />

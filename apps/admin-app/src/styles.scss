@@ -50,3 +50,77 @@ body { font-family: 'Inter', sans-serif; background: var(--color-bg-light); colo
 @media (max-width: 600px) { .row { grid-template-columns: 1fr; } }
 
 /* Toast success/error coloring happens via PrimeNG severity */
+
+/* trip-calendar: brand theming for p-datepicker (scoped to styleClass="trip-cal") */
+.trip-cal {
+  width: 100%;
+  box-sizing: border-box;
+
+  &.p-datepicker { display: block; }
+
+  .p-datepicker-panel {
+    border: 1px solid #f0dfc0 !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+    user-select: none;
+    box-sizing: border-box;
+  }
+
+  .p-datepicker-header {
+    background: #e07b54;
+    color: #fff;
+    border-bottom: none;
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+
+    .p-datepicker-title { font-weight: 600; font-size: 1rem; }
+
+    .p-datepicker-prev-button,
+    .p-datepicker-next-button {
+      color: #fff;
+      opacity: 0.85;
+      &:hover { opacity: 1; background: rgba(255, 255, 255, 0.15); }
+    }
+  }
+
+  .p-datepicker-weekday-cell,
+  .p-datepicker-weekday {
+    background: #c96340;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 0.4rem 0;
+  }
+
+  .p-datepicker-day-view,
+  .p-datepicker-calendar {
+    background: #fdf6ee;
+    width: 100%;
+  }
+
+  .p-datepicker-day {
+    color: #4a3728;
+    border-radius: 6px;
+    transition: background 0.15s;
+
+    &:hover:not(.p-disabled) { background: #f5e6d0; }
+  }
+
+  .p-datepicker-day.p-disabled { opacity: 0.35; }
+
+  .p-datepicker-day.p-datepicker-day-selected {
+    background: #e07b54;
+    color: #fff;
+    font-weight: 700;
+
+    .dot { background: #fff; }
+  }
+
+  @media (max-width: 767px) {
+    .p-datepicker-header .p-datepicker-title { font-size: 0.875rem; }
+    .p-datepicker-weekday { font-size: 0.65rem; }
+    .p-datepicker-day { padding: 0.2rem; }
+  }
+}

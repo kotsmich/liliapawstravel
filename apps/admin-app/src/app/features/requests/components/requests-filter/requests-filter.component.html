@@ -7,8 +7,16 @@
     optionLabel="label"
     optionValue="value"
     placeholder="All Trips"
-    styleClass="trip-select"
-    />
+    styleClass="trip-select">
+    <ng-template pTemplate="item" let-opt>
+      <div class="trip-option">
+        <span>{{ opt.label }}</span>
+        @if (opt.pending > 0) {
+          <p-badge [value]="opt.pending.toString()" severity="danger" />
+        }
+      </div>
+    </ng-template>
+  </p-select>
 </div>
 
 <!-- Status tabs -->
