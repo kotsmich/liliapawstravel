@@ -1,3 +1,4 @@
+// Minor cleanup
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { Title } from '@angular/platform-browser';
