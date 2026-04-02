@@ -165,14 +165,14 @@ export class TripFormComponent implements OnInit {
   dogGroup(dog?: Partial<Dog>): FormGroup {
     return this.fb.group({
       id:             [dog?.id             ?? ''],
-      name:           [dog?.name           ?? 'promaxonas'],
-      size:           [dog?.size           ?? 'small'],
-      age:            [dog?.age            ?? 1],
-      chipId:         [dog?.chipId         ?? '111111111111222'],
-      pickupLocation: [dog?.pickupLocation ?? 'thessaloniki'],
-      dropLocation:   [dog?.dropLocation   ?? 'austria'],
-      notes:          [dog?.notes          ?? 'Needs somethign else'],
-      requesterName:  [dog?.requesterName  ?? 'dimitra'],
+      name:           [dog?.name           ?? ''],
+      size:           [dog?.size           ?? ''],
+      age:            [dog?.age            ??  1],
+      chipId:         [dog?.chipId         ?? ''],
+      pickupLocation: [dog?.pickupLocation ?? ''],
+      dropLocation:   [dog?.dropLocation   ?? ''],
+      notes:          [dog?.notes          ?? ''],
+      requesterName:  [dog?.requesterName  ?? ''],
     });
   }
 

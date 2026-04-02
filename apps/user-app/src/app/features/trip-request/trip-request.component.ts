@@ -18,9 +18,8 @@ import { DogFormComponent } from '@ui/lib/dog-form/dog-form.component';
 import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
 import { ToastNotificationComponent } from '@ui/lib/toast-notification/toast-notification.component';
 import { CalendarEvent } from '@models/lib/calendar-event.model';
-import { generateId, RandomUtil, RandomProperty } from '@models/lib/utils';
+import { RandomUtil, RandomProperty } from '@models/lib/utils';
 import { Trip } from '@models/lib/trip.model';
-import { Dog } from '@models/lib/dog.model';
 import { clearSelectedTrip, selectTripsAsCalendarEvents, selectTripsIsLoading } from '@user/core/store/trips';
 import { selectDate, clearDate, selectCalendarSelectedDate, selectTripForSelectedDate } from '@user/core/store/calendar';
 import { submitRequest, resetRequest, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError } from '@user/features/trip-request/store';
@@ -132,11 +131,8 @@ export class TripRequestComponent implements OnInit {
   onSubmit(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const { requesterName, requesterEmail, requesterPhone } = this.form.value;
-    const dogs: Dog[] = this.form.value.dogs.map((d: Partial<Dog>) => ({
-      ...d, id: generateId(),
-    }));
     this.store.dispatch(submitRequest({
-      dogs,
+      dogs: this.form.value.dogs,
       tripId: this.selectedTrip()!.id,
       requesterName,
       requesterEmail,

@@ -10,7 +10,7 @@ export class TripRequestService {
 
   constructor(private http: HttpClient) {}
 
-  submitRequest(request: Partial<TripRequest>): Observable<TripRequest> {
+  submitRequest(request: Record<string, unknown>): Observable<TripRequest> {
     return this.http.post<TripRequest>(this.baseUrl, request);
   }
 }
