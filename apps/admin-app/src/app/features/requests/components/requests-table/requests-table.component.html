@@ -1,15 +1,15 @@
 @if (selection.length > 0) {
   <div class="bulk-bar flex align-items-center gap-2 p-3 mb-2 border-round surface-100">
-    <span class="text-sm font-medium mr-2">{{ selection.length }} selected</span>
+    <span class="text-sm font-medium mr-2">{{ 'requests.selected' | transloco: { count: selection.length } }}</span>
     @if (pendingSelected > 0) {
       <p-button
-        label="Approve {{ pendingSelected }}"
+        [label]="'requests.approveSelected' | transloco: { count: pendingSelected }"
         icon="pi pi-check"
         severity="success"
         size="small"
         (onClick)="onBulkApprove()" />
       <p-button
-        label="Reject {{ pendingSelected }}"
+        [label]="'requests.rejectSelected' | transloco: { count: pendingSelected }"
         icon="pi pi-times"
         severity="danger"
         [outlined]="true"
@@ -17,7 +17,7 @@
         (onClick)="onBulkReject()" />
     }
     <p-button
-      label="Clear"
+      [label]="'requests.clearSelection' | transloco"
       icon="pi pi-times-circle"
       severity="secondary"
       [text]="true"

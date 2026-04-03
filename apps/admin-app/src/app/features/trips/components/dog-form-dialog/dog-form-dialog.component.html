@@ -6,7 +6,7 @@
   [draggable]="false"
   [resizable]="false"
   [closable]="false"
-  [header]="isNewDog ? 'Add Dogs' : 'Edit Dog'">
+  [header]="isNewDog ? ('dogs.addDogs' | transloco) : ('dogs.editDog' | transloco)">
 
   <!-- ── ADD MODE: accordion of dog panels ── -->
   @if (isNewDog) {
@@ -34,7 +34,7 @@
 
     <div class="add-panel-row">
       <p-button
-        label="Add Another Dog"
+        [label]="'dogs.addAnotherDog' | transloco"
         icon="pi pi-plus"
         severity="secondary"
         [outlined]="true"
@@ -50,9 +50,9 @@
   }
 
   <ng-template pTemplate="footer">
-    <p-button label="Cancel" [outlined]="true" type="button" (onClick)="onCancel()" />
+    <p-button [label]="'dogs.cancel' | transloco" [outlined]="true" type="button" (onClick)="onCancel()" />
     <p-button
-      [label]="saving ? 'Saving...' : (isNewDog ? 'Add Dog(s)' : 'Update')"
+      [label]="saving ? ('dogs.saving' | transloco) : (isNewDog ? ('dogs.addDogsAction' | transloco) : ('dogs.update' | transloco))"
       icon="pi pi-check"
       type="button"
       [loading]="saving"

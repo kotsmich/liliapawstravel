@@ -3,10 +3,9 @@
   <p-confirmdialog />
 
   @if (loading$ | async) {
-    <ui-loading-spinner message="Loading trips..." />
+    <ui-loading-spinner [message]="'trips.loadingTrips' | transloco" />
   }
 
-  <!-- @if (!(loading$ | async)) { -->
     @if ({
       trips: trips$ | async,
       calendarEvents: calendarEvents$ | async,
@@ -15,10 +14,10 @@
       <!-- Tab bar -->
       <div class="tab-bar flex">
         <button class="tab-btn inline-flex align-items-center" [class.active]="activeTab === 'calendar'" (click)="activeTab = 'calendar'">
-          <i class="pi pi-calendar"></i> Calendar View
+          <i class="pi pi-calendar"></i> {{ 'trips.calendarView' | transloco }}
         </button>
         <button class="tab-btn inline-flex align-items-center" [class.active]="activeTab === 'all'" (click)="activeTab = 'all'">
-          <i class="pi pi-list"></i> All Trips
+          <i class="pi pi-list"></i> {{ 'trips.allTrips' | transloco }}
         </button>
       </div>
       <!-- Calendar Tab -->
@@ -46,7 +45,6 @@
           />
       }
     }
-  <!-- } -->
 </div>
 
 <!-- Trip Detail Dialog -->

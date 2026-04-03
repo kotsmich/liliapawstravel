@@ -8,6 +8,7 @@ import { CardModule } from 'primeng/card';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { MessageModule } from 'primeng/message';
 import { Store } from '@ngrx/store';
+import { TranslocoModule } from '@jsverse/transloco';
 import { login, selectAuthIsLoading, selectAuthError } from '@admin/core/store/auth';
 
 @Component({
@@ -17,7 +18,7 @@ import { login, selectAuthIsLoading, selectAuthError } from '@admin/core/store/a
   imports: [
     CommonModule, ReactiveFormsModule,
     InputTextModule, PasswordModule, ButtonModule, CardModule,
-    IftaLabelModule, MessageModule,
+    IftaLabelModule, MessageModule, TranslocoModule,
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],

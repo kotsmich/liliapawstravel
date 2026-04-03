@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslocoModule } from '@jsverse/transloco';
 import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -36,6 +37,7 @@ import { ExportService } from '../../../services/export.service';
     AllTripsTabComponent,
     TripDetailDialogComponent,
     DogFormDialogComponent,
+    TranslocoModule,
   ],
   templateUrl: './trips-list.component.html',
   styleUrls: ['./trips-list.component.scss'],

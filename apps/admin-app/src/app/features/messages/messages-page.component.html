@@ -1,8 +1,8 @@
 <p-toast />
 <div class="messages-page">
-  <app-page-header title="Messages">
+  <app-page-header [title]="'messages.title' | transloco">
     @if ((unreadCount$ | async); as unread) {
-      <span actions class="unread-label">{{ unread }} unread</span>
+      <span actions class="unread-label">{{ 'messages.unreadCount' | transloco: { count: unread } }}</span>
     }
   </app-page-header>
 

@@ -6,7 +6,7 @@
     (ngModelChange)="tripSelected.emit($event)"
     optionLabel="label"
     optionValue="value"
-    placeholder="All Trips"
+    [placeholder]="'requests.allTrips' | transloco"
     styleClass="trip-select">
     <ng-template pTemplate="item" let-opt>
       <div class="trip-option">
@@ -22,9 +22,9 @@
 <!-- Status tabs -->
 <p-tabs [value]="activeTab" (valueChange)="tabChanged.emit($event?.toString() ?? activeTab)">
   <p-tablist>
-    <p-tab value="all">All</p-tab>
+    <p-tab value="all">{{ 'requests.all' | transloco }}</p-tab>
     <p-tab value="pending">
-      Pending
+      {{ 'requests.pending' | transloco }}
       @if (pendingCount > 0) {
         <p-badge
           [value]="pendingCount.toString()"
@@ -34,7 +34,7 @@
       }
     </p-tab>
     <p-tab value="approved">
-      Approved
+      {{ 'requests.approved' | transloco }}
       @if (approvedCount > 0) {
         <p-badge
           [value]="approvedCount.toString()"
@@ -44,7 +44,7 @@
       }
     </p-tab>
     <p-tab value="rejected">
-      Rejected
+      {{ 'requests.rejected' | transloco }}
       @if (rejectedCount > 0) {
         <p-badge
           [value]="rejectedCount.toString()"

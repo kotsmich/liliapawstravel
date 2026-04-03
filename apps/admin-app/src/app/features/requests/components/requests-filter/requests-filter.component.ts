@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-
+import { TranslocoModule } from '@jsverse/transloco';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
@@ -9,7 +9,7 @@ import { BadgeModule } from 'primeng/badge';
   selector: 'app-requests-filter',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, SelectModule, TabsModule, BadgeModule],
+  imports: [FormsModule, SelectModule, TabsModule, BadgeModule, TranslocoModule],
   templateUrl: './requests-filter.component.html',
   styles: [`
     .trip-option { display: flex; align-items: center; gap: 0.5rem; }

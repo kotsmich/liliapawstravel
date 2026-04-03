@@ -10,17 +10,17 @@
   @if (trip; as t) {
     <p-tabs [value]="activeTab" (valueChange)="tabChanged.emit($event?.toString() ?? activeTab)">
       <p-tablist>
-        <p-tab value="dogs">Dogs ({{ t.dogs?.length ?? 0 }})</p-tab>
-        <p-tab value="requests">Requesters ({{ requests.length }})</p-tab>
+        <p-tab value="dogs">{{ 'trips.detail.dogsTab' | transloco: { count: t.dogs?.length ?? 0 } }}</p-tab>
+        <p-tab value="requests">{{ 'trips.detail.requestersTab' | transloco: { count: requests.length } }}</p-tab>
       </p-tablist>
     </p-tabs>
 
     @if (activeTab === 'dogs') {
       <div class="tab-content">
         <div class="flex justify-content-between align-items-center mb-3">
-          <span class="font-semibold">Dogs ({{ t.dogs?.length ?? 0 }})</span>
+          <span class="font-semibold">{{ 'trips.detail.dogsTab' | transloco: { count: t.dogs?.length ?? 0 } }}</span>
           <p-button
-            label="Export PDF"
+            [label]="'trips.detail.exportPdf' | transloco"
             icon="pi pi-file-pdf"
             severity="secondary"
             [outlined]="true"
@@ -59,13 +59,13 @@
                   </app-generic-table>
                   <div class="req-actions flex align-items-center gap-2">
                     @if (req.status === 'pending') {
-                      <p-button label="Approve" icon="pi pi-check" severity="success" size="small"
+                      <p-button [label]="'trips.detail.approve' | transloco" icon="pi pi-check" severity="success" size="small"
                         (onClick)="approveRequest.emit(req)" />
-                      <p-button label="Reject" icon="pi pi-times" severity="danger" size="small"
+                      <p-button [label]="'trips.detail.reject' | transloco" icon="pi pi-times" severity="danger" size="small"
                         (onClick)="rejectRequest.emit(req)" />
                     } @else {
                       <p-tag [value]="req.status" [severity]="requestStatusSeverity(req.status)" />
-                      <p-button label="Delete" icon="pi pi-trash" severity="danger" [text]="true" size="small"
+                      <p-button [label]="'trips.detail.delete' | transloco" icon="pi pi-trash" severity="danger" [text]="true" size="small"
                         (onClick)="deleteRequest.emit(req)" />
                     }
                   </div>
@@ -75,7 +75,7 @@
           </p-accordion>
         }
         @if (requests.length === 0) {
-          <app-empty-state icon="pi pi-inbox" title="No requests for this trip."></app-empty-state>
+          <app-empty-state icon="pi pi-inbox" [title]="'trips.detail.noRequests' | transloco"></app-empty-state>
         }
       </div>
     }

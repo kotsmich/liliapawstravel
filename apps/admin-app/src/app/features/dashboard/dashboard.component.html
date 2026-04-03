@@ -1,10 +1,10 @@
 <div class="dashboard flex flex-column gap-4">
-  <app-page-header title="Dashboard">
-    <p-button actions label="New Trip" icon="pi pi-plus" (onClick)="navigateToNewTrip()" />
+  <app-page-header [title]="'dashboard.title' | transloco">
+    <p-button actions [label]="'dashboard.newTrip' | transloco" icon="pi pi-plus" (onClick)="navigateToNewTrip()" />
   </app-page-header>
 
   @if (loading$ | async) {
-    <ui-loading-spinner message="Loading trips..." />
+    <ui-loading-spinner [message]="'dashboard.loading' | transloco" />
   }
 
   @if (!(loading$ | async)) {

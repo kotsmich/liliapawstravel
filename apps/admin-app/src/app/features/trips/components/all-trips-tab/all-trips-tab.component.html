@@ -14,21 +14,21 @@
 
 <ng-template #acceptingTpl let-row>
   @if (row.isFull || row.spotsAvailable <= 0) {
-    <p-tag severity="danger" value="Full" />
+    <p-tag severity="danger" [value]="'trips.tags.full' | transloco" />
   } @else if (!row.acceptingRequests) {
-    <p-tag severity="warn" value="Freezed" />
+    <p-tag severity="warn" [value]="'trips.tags.freezed' | transloco" />
   } @else {
-    <p-tag severity="success" value="Open" />
+    <p-tag severity="success" [value]="'trips.tags.open' | transloco" />
   }
 </ng-template>
 
 <ng-template #statusTpl let-row>
   @if (row.status === 'upcoming') {
-    <p-tag severity="info" [value]="row.status" />
+    <p-tag severity="info" [value]="'trips.tags.upcoming' | transloco" />
   } @else if (row.status === 'completed') {
-    <p-tag severity="success" [value]="row.status" />
+    <p-tag severity="success" [value]="'trips.tags.completed' | transloco" />
   } @else {
-    <p-tag severity="secondary" [value]="row.status" />
+    <p-tag severity="secondary" [value]="'trips.tags.inProgress' | transloco" />
   }
 </ng-template>
 

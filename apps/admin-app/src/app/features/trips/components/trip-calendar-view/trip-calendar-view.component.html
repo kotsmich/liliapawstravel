@@ -2,7 +2,7 @@
 
   <!-- Calendar card -->
   <p-card styleClass="cal-card">
-    <ng-template pTemplate="title">Schedule</ng-template>
+    <ng-template pTemplate="title">{{ 'trips.schedule' | transloco }}</ng-template>
     <ui-trip-calendar
       [events]="calendarEvents"
       [selectedDate]="selectedDate"
@@ -28,17 +28,17 @@
               </div>
               <div class="flex align-items-center gap-2 flex-wrap">
                 @if (trip.isFull || trip.spotsAvailable <= 0) {
-                  <p-tag severity="danger" value="Full" />
+                  <p-tag severity="danger" [value]="'trips.tags.full' | transloco" />
                 }
                 @if (!trip.isFull && trip.spotsAvailable > 0 && !trip.acceptingRequests) {
-                  <p-tag severity="warn" value="Freezed" />
+                  <p-tag severity="warn" [value]="'trips.tags.freezed' | transloco" />
                 }
                 <p-tag [value]="trip.status" [severity]="statusSeverity(trip.status)" />
               </div>
             </div>
           </ng-template>
           <div class="trip-body">
-            <span class="dogs-count">🐶 {{ trip.totalCapacity - trip.spotsAvailable }} / {{ trip.totalCapacity }} dog{{ trip.totalCapacity !== 1 ? 's' : '' }}</span>
+            <span class="dogs-count">🐶 {{ trip.totalCapacity - trip.spotsAvailable }} / {{ trip.totalCapacity }} {{ 'trips.dogs' | transloco }}</span>
             <span class="spots-count" [class.low]="trip.spotsAvailable <= 2">
               🐾 {{ trip.spotsAvailable }} spot{{ trip.spotsAvailable !== 1 ? 's' : '' }} remaining
             </span>
@@ -48,14 +48,14 @@
           </div>
           <ng-template pTemplate="footer">
             <div class="trip-actions">
-              <p-button label="Details" icon="pi pi-eye" [text]="true" size="small"
+              <p-button [label]="'requests.details' | transloco" icon="pi pi-eye" [text]="true" size="small"
                 (onClick)="viewDetails.emit(trip)" />
-              <p-button label="Edit" icon="pi pi-pencil" [outlined]="true" size="small"
+              <p-button [label]="'common.edit' | transloco" icon="pi pi-pencil" [outlined]="true" size="small"
                 (onClick)="editTrip.emit(trip)" />
-              <p-button label="Export PDF" icon="pi pi-file-pdf" severity="secondary" [outlined]="true" size="small"
+              <p-button [label]="'trips.detail.exportPdf' | transloco" icon="pi pi-file-pdf" severity="secondary" [outlined]="true" size="small"
                 [disabled]="trip.spotsAvailable === trip.totalCapacity"
                 (onClick)="exportPdf.emit(trip)" />
-              <p-button label="Delete" icon="pi pi-trash" severity="danger" [text]="true" size="small"
+              <p-button [label]="'common.delete' | transloco" icon="pi pi-trash" severity="danger" [text]="true" size="small"
                 (onClick)="deleteTrip.emit(trip)" />
             </div>
           </ng-template>
@@ -66,8 +66,8 @@
     @if (selectedDate && tripsForDate.length === 0) {
       <div class="empty">
         <i class="pi pi-calendar-times"></i>
-        <p>No trip scheduled for <strong>{{ fmtDate(selectedDate) }}</strong>.</p>
-        <p-button label="Add Trip for this Date" icon="pi pi-plus" size="small"
+        <p>{{ 'trips.noTripScheduled' | transloco: { date: fmtDate(selectedDate) } }}</p>
+        <p-button [label]="'trips.addTripForDate' | transloco" icon="pi pi-plus" size="small"
           [outlined]="true" (onClick)="addTripClicked.emit()" />
       </div>
     }
@@ -75,7 +75,7 @@
     @if (!selectedDate) {
       <div class="empty">
         <i class="pi pi-calendar"></i>
-        <p>Select a date on the calendar to see trip details.</p>
+        <p>{{ 'trips.selectDateHint' | transloco }}</p>
       </div>
     }
   </div>

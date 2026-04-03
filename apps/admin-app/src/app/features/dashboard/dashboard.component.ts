@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslocoModule } from '@jsverse/transloco';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { Store } from '@ngrx/store';
@@ -15,7 +16,7 @@ import { RecentTripsComponent } from './components/recent-trips/recent-trips.com
   selector: 'app-dashboard',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, LoadingSpinnerComponent, PageHeaderComponent, DashboardStatsComponent, RecentTripsComponent],
+  imports: [CommonModule, ButtonModule, LoadingSpinnerComponent, PageHeaderComponent, DashboardStatsComponent, RecentTripsComponent, TranslocoModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })

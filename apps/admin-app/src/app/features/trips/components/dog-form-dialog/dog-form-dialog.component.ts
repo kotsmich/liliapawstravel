@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { AccordionModule } from 'primeng/accordion';
+import { TranslocoModule } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
 import { TripRequester } from '@models/lib/trip.model';
 import { RandomUtil, RandomProperty } from '@models/lib/utils';
@@ -15,7 +16,7 @@ import { DogFieldsComponent } from './dog-fields.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DialogModule, ButtonModule, AccordionModule,
-    DogFieldsComponent,
+    DogFieldsComponent, TranslocoModule,
   ],
   templateUrl: './dog-form-dialog.component.html',
   styleUrls: ['./dog-form-dialog.component.scss'],

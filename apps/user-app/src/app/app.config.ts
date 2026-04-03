@@ -1,4 +1,6 @@
 import { ApplicationConfig, isDevMode } from '@angular/core';
+import { provideTransloco } from '@jsverse/transloco';
+import { TranslocoHttpLoader } from '@user/core/transloco-loader';
 import { provideRouter, withRouterConfig } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -58,5 +60,14 @@ export const appConfig: ApplicationConfig = {
     }),
     MessageService,
     ConfirmationService,
+    provideTransloco({
+      config: {
+        availableLangs: ['en', 'el', 'de'],
+        defaultLang: 'el',
+        reRenderOnLangChange: true,
+        prodMode: !isDevMode(),
+      },
+      loader: TranslocoHttpLoader,
+    }),
   ],
 };

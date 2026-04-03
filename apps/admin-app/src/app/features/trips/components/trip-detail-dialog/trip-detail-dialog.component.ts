@@ -1,10 +1,12 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TabsModule } from 'primeng/tabs';
 import { AccordionModule } from 'primeng/accordion';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Trip } from '@models/lib/trip.model';
 import { Dog } from '@models/lib/dog.model';
 import { TripRequest } from '@models/lib/trip-request.model';
@@ -19,14 +21,18 @@ type RequestDog = TripRequest['dogs'][number];
   selector: 'app-trip-detail-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DialogModule, ButtonModule, TagModule, TabsModule, AccordionModule, GenericTableComponent, EmptyStateComponent],
+  imports: [CommonModule, DialogModule, ButtonModule, TagModule, TabsModule, AccordionModule, GenericTableComponent, EmptyStateComponent, TranslocoModule],
   templateUrl: './trip-detail-dialog.component.html',
   styleUrls: ['./trip-detail-dialog.component.scss'],
 })
 export class TripDetailDialogComponent implements OnInit {
-  constructor(private exportService: ExportService) {}
+  private exportService = inject(ExportService);
+  private transloco = inject(TranslocoService);
+  private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
+
   @Input() visible = false;
-  @Input() header = 'Trip Details';
+  @Input() header = '';
   @Input() trip: Trip | null = null;
   @Input() requests: TripRequest[] = [];
   @Input() activeTab = 'dogs';
@@ -39,42 +45,52 @@ export class TripDetailDialogComponent implements OnInit {
   @Output() deleteRequest = new EventEmitter<TripRequest>();
   @Output() closed = new EventEmitter<void>();
 
-  dogColumns: TableColumn<Dog>[] = [
-    { field: 'name', header: 'Name' },
-    { field: 'size', header: 'Size' },
-    { field: 'age', header: 'Age', formatter: (val) => `${val} yr` },
-    { field: 'chipId', header: 'Chip ID' },
-    { field: 'requesterName', header: 'Requester' },
-    { field: 'pickupLocation', header: 'Pickup' },
-    { field: 'dropLocation', header: 'Drop' },
-    { field: 'notes', header: 'Notes' },
-  ];
-
+  dogColumns: TableColumn<Dog>[] = [];
   dogActions: TableAction<Dog>[] = [];
-
-  requestDogColumns: TableColumn<RequestDog>[] = [
-    { field: 'name', header: 'Name' },
-    { field: 'size', header: 'Size' },
-    { field: 'age', header: 'Age', formatter: (val) => `${val} yr` },
-    { field: 'chipId', header: 'Chip ID' },
-    { field: 'pickupLocation', header: 'Pickup' },
-    { field: 'dropLocation', header: 'Drop' },
-  ];
-
-  tableConfig: TableConfig = { paginator: false, emptyMessage: 'No dogs on this trip yet.', trackByField: 'id' };
+  requestDogColumns: TableColumn<RequestDog>[] = [];
+  tableConfig: TableConfig = { paginator: false, trackByField: 'id' };
   requestDogConfig: TableConfig = { paginator: false, striped: true, trackByField: 'id' };
 
   ngOnInit(): void {
-    this.dogActions = [
-      {
-        icon: 'pi pi-pencil', tooltip: 'Edit dog',
-        action: (dog) => this.editDog.emit({ dog, tripId: this.trip!.id }),
-      },
-      {
-        icon: 'pi pi-trash', tooltip: 'Delete dog', severity: 'danger',
-        action: (dog) => this.deleteDog.emit({ dog, tripId: this.trip!.id }),
-      },
-    ];
+    this.transloco.selectTranslation().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.tableConfig = {
+        paginator: false,
+        emptyMessage: this.transloco.translate('trips.detail.noDogsYet'),
+        trackByField: 'id',
+      };
+      this.dogColumns = [
+        { field: 'name', header: this.transloco.translate('trips.table.name') },
+        { field: 'size', header: this.transloco.translate('trips.table.size') },
+        { field: 'age', header: this.transloco.translate('trips.table.age'), formatter: (val) => `${val} yr` },
+        { field: 'chipId', header: this.transloco.translate('trips.table.chipId') },
+        { field: 'requesterName', header: this.transloco.translate('trips.table.requester') },
+        { field: 'pickupLocation', header: this.transloco.translate('trips.table.pickup') },
+        { field: 'dropLocation', header: this.transloco.translate('trips.table.drop') },
+        { field: 'notes', header: this.transloco.translate('trips.table.notes') },
+      ];
+      this.dogActions = [
+        {
+          icon: 'pi pi-pencil',
+          tooltip: this.transloco.translate('trips.detail.editDogTooltip'),
+          action: (dog) => this.editDog.emit({ dog, tripId: this.trip!.id }),
+        },
+        {
+          icon: 'pi pi-trash',
+          tooltip: this.transloco.translate('trips.detail.deleteDogTooltip'),
+          severity: 'danger',
+          action: (dog) => this.deleteDog.emit({ dog, tripId: this.trip!.id }),
+        },
+      ];
+      this.requestDogColumns = [
+        { field: 'name', header: this.transloco.translate('trips.table.name') },
+        { field: 'size', header: this.transloco.translate('trips.table.size') },
+        { field: 'age', header: this.transloco.translate('trips.table.age'), formatter: (val) => `${val} yr` },
+        { field: 'chipId', header: this.transloco.translate('trips.table.chipId') },
+        { field: 'pickupLocation', header: this.transloco.translate('trips.table.pickup') },
+        { field: 'dropLocation', header: this.transloco.translate('trips.table.drop') },
+      ];
+      this.cdr.markForCheck();
+    });
   }
 
   onExportPdf(): void {

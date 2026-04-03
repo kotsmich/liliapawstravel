@@ -1,9 +1,11 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnChanges, OnInit, inject, ChangeDetectorRef, DestroyRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TextareaModule } from 'primeng/textarea';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { Trip } from '@models/lib/trip.model';
 import { TableColumn, TableConfig } from '@models/lib/table-column.interface';
@@ -15,11 +17,11 @@ type RequestDog = TripRequest['dogs'][number];
   selector: 'app-request-detail-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DatePipe, DialogModule, ButtonModule, TagModule, TextareaModule, GenericTableComponent],
+  imports: [CommonModule, DatePipe, DialogModule, ButtonModule, TagModule, TextareaModule, GenericTableComponent, TranslocoModule],
   templateUrl: './request-detail-dialog.component.html',
   styleUrl: './request-detail-dialog.component.scss',
 })
-export class RequestDetailDialogComponent implements OnChanges {
+export class RequestDetailDialogComponent implements OnChanges, OnInit {
   @Input() visible = false;
   @Input() request: TripRequest | null = null;
   @Input() trips: Trip[] = [];
@@ -32,22 +34,37 @@ export class RequestDetailDialogComponent implements OnChanges {
 
   noteText = '';
 
+  private transloco = inject(TranslocoService);
+  private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
+
+  dogColumns: TableColumn<RequestDog>[] = [];
+  dogConfig: TableConfig = { paginator: false, trackByField: 'id' };
+
   ngOnChanges(): void {
     if (this.request) {
       this.noteText = this.request.adminNote ?? '';
     }
   }
 
-  dogColumns: TableColumn<RequestDog>[] = [
-    { field: 'name', header: 'Name' },
-    { field: 'size', header: 'Size' },
-    { field: 'age', header: 'Age', formatter: (val) => `${val} yr` },
-    { field: 'chipId', header: 'Chip ID' },
-    { field: 'pickupLocation', header: 'Pickup' },
-    { field: 'dropLocation', header: 'Drop' },
-  ];
-
-  dogConfig: TableConfig = { paginator: false, emptyMessage: 'No dogs.', trackByField: 'id' };
+  ngOnInit(): void {
+    this.transloco.selectTranslation().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.dogConfig = {
+        paginator: false,
+        emptyMessage: this.transloco.translate('requests.detail.noDogs'),
+        trackByField: 'id',
+      };
+      this.dogColumns = [
+        { field: 'name', header: this.transloco.translate('trips.table.name') },
+        { field: 'size', header: this.transloco.translate('trips.table.size') },
+        { field: 'age', header: this.transloco.translate('trips.table.age'), formatter: (val) => `${val} yr` },
+        { field: 'chipId', header: this.transloco.translate('trips.table.chipId') },
+        { field: 'pickupLocation', header: this.transloco.translate('trips.table.pickup') },
+        { field: 'dropLocation', header: this.transloco.translate('trips.table.drop') },
+      ];
+      this.cdr.markForCheck();
+    });
+  }
 
   statusSeverity(status: TripRequest['status']): 'warn' | 'success' | 'danger' | 'secondary' {
     if (status === 'pending') return 'warn';

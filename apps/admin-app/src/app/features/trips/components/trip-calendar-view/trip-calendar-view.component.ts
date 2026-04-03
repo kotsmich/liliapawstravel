@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-
+import { TranslocoModule } from '@jsverse/transloco';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
@@ -11,7 +11,7 @@ import { CalendarEvent } from '@models/lib/calendar-event.model';
   selector: 'app-trip-calendar-view',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardModule, ButtonModule, TagModule, TripCalendarComponent],
+  imports: [CardModule, ButtonModule, TagModule, TripCalendarComponent, TranslocoModule],
   templateUrl: './trip-calendar-view.component.html',
   styleUrls: ['./trip-calendar-view.component.scss'],
 })

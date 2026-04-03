@@ -1,8 +1,8 @@
 <p-card styleClass="recent-card">
   <ng-template pTemplate="header">
     <div class="card-header flex align-items-center justify-content-between">
-      <span class="card-title">Recent Trips</span>
-      <p-button label="View All" [text]="true" (onClick)="navigateToAllTrips.emit()" />
+      <span class="card-title">{{ 'dashboard.recentTrips' | transloco }}</span>
+      <p-button [label]="'dashboard.viewAll' | transloco" [text]="true" (onClick)="navigateToAllTrips.emit()" />
     </div>
   </ng-template>
 

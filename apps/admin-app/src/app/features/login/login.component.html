@@ -2,7 +2,7 @@
   <div class="login-card">
     <div class="login-card__brand">
       <span>🐾</span>
-      <h1>Lilia Paws Admin</h1>
+      <h1>{{ 'login.title' | transloco }}</h1>
     </div>
 
     @if (error$ | async; as error) {
@@ -13,11 +13,11 @@
       <div class="field">
         <p-ifta-label>
           <input pInputText id="email" formControlName="email" type="email" class="w-full" />
-          <label for="email">Email</label>
+          <label for="email">{{ 'login.email' | transloco }}</label>
         </p-ifta-label>
         @if (form.get('email')?.touched && form.get('email')?.invalid) {
           <small class="p-error">
-            Valid email required.
+            {{ 'login.emailRequired' | transloco }}
           </small>
         }
       </div>
@@ -32,11 +32,11 @@
             styleClass="w-full"
             inputStyleClass="w-full"
             />
-          <label for="password">Password</label>
+          <label for="password">{{ 'login.password' | transloco }}</label>
         </p-ifta-label>
         @if (form.get('password')?.touched && form.get('password')?.invalid) {
           <small class="p-error">
-            Min 6 characters.
+            {{ 'login.passwordMinLength' | transloco }}
           </small>
         }
       </div>
@@ -44,7 +44,7 @@
       <p-button
         type="submit"
         styleClass="w-full submit-btn"
-        [label]="(loading$ | async) ? 'Signing in...' : 'Sign In'"
+        [label]="(loading$ | async) ? ('login.signingIn' | transloco) : ('login.signIn' | transloco)"
         icon="pi pi-sign-in"
         [loading]="!!(loading$ | async)"
         [disabled]="!!(loading$ | async)"

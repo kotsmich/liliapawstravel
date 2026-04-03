@@ -5,16 +5,18 @@ import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { TranslocoModule } from '@jsverse/transloco';
 import { logout, selectCurrentUser } from '@admin/core/store/auth';
 import { loadRequests, selectPendingRequestsCount } from '@admin/features/requests/store';
 import { loadMessages, selectUnreadCount } from '@admin/features/messages/store';
 import { AdminUser } from '@models/lib/admin-user.model';
+import { LanguageSwitcherComponent } from '@admin/shared/components/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-shell',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterOutlet, ButtonModule, TooltipModule],
+  imports: [CommonModule, RouterOutlet, ButtonModule, TooltipModule, TranslocoModule, LanguageSwitcherComponent],
   templateUrl: './shell.component.html',
   styleUrls: ['./shell.component.scss'],
 })
@@ -24,6 +26,7 @@ export class ShellComponent implements OnInit {
   user$: Observable<AdminUser | null> = this.store.select(selectCurrentUser);
   pendingCount$ = this.store.select(selectPendingRequestsCount);
   unreadMessagesCount$ = this.store.select(selectUnreadCount);
+
   ngOnInit(): void {
     this.store.dispatch(loadRequests());
     this.store.dispatch(loadMessages());
@@ -42,9 +45,9 @@ export class ShellComponent implements OnInit {
   }
 
   navItems = [
-    { icon: 'pi pi-th-large', label: 'Dashboard', link: '/admin/dashboard' },
-    { icon: 'pi pi-car', label: 'Trips', link: '/admin/trips' },
-    { icon: 'pi pi-inbox', label: 'Requests', link: '/admin/requests' },
-    { icon: 'pi pi-envelope', label: 'Messages', link: '/admin/messages' },
+    { icon: 'pi pi-th-large', labelKey: 'nav.dashboard', link: '/admin/dashboard' },
+    { icon: 'pi pi-car', labelKey: 'nav.trips', link: '/admin/trips' },
+    { icon: 'pi pi-inbox', labelKey: 'nav.requests', link: '/admin/requests' },
+    { icon: 'pi pi-envelope', labelKey: 'nav.messages', link: '/admin/messages' },
   ];
 }

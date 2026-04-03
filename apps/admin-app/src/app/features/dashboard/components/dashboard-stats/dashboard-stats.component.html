@@ -4,7 +4,7 @@
       <i class="pi pi-car stat-icon"></i>
       <div>
         <span class="stat-value">{{ totalTrips }}</span>
-        <span class="stat-label">Total Trips</span>
+        <span class="stat-label">{{ 'dashboard.totalTrips' | transloco }}</span>
       </div>
     </div>
   </p-card>
@@ -13,7 +13,7 @@
       <i class="pi pi-calendar stat-icon"></i>
       <div>
         <span class="stat-value">{{ upcomingTrips }}</span>
-        <span class="stat-label">Upcoming</span>
+        <span class="stat-label">{{ 'dashboard.upcoming' | transloco }}</span>
       </div>
     </div>
   </p-card>
@@ -22,7 +22,7 @@
       <i class="pi pi-check-circle stat-icon"></i>
       <div>
         <span class="stat-value">{{ completedTrips }}</span>
-        <span class="stat-label">Completed</span>
+        <span class="stat-label">{{ 'dashboard.completed' | transloco }}</span>
       </div>
     </div>
   </p-card>

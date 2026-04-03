@@ -1,17 +1,19 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef, DestroyRef } from '@angular/core';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { TextareaModule } from 'primeng/textarea';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TripRequester } from '@models/lib/trip.model';
 
 @Component({
   selector: 'app-dog-fields',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, InputTextModule, InputNumberModule, SelectModule, IftaLabelModule, TextareaModule],
+  imports: [ReactiveFormsModule, InputTextModule, InputNumberModule, SelectModule, IftaLabelModule, TextareaModule, TranslocoModule],
   templateUrl: './dog-fields.component.html',
   styles: [`
     :host { display: block; }
@@ -23,18 +25,27 @@ import { TripRequester } from '@models/lib/trip.model';
     .p-error { font-size: 0.75rem; color: var(--color-error-alt); }
   `],
 })
-export class DogFieldsComponent {
+export class DogFieldsComponent implements OnInit {
   @Input() form!: FormGroup;
-  /** Used to generate unique field IDs when multiple instances are on the page. */
   @Input() idx: string | number = 0;
-  /** When provided, shows a requestor dropdown instead of a free-text requester field. */
   @Input() requestors: TripRequester[] = [];
 
-  readonly sizes = [
-    { value: 'small',  label: 'Small (< 10 kg)' },
-    { value: 'medium', label: 'Medium (10–25 kg)' },
-    { value: 'large',  label: 'Large (> 25 kg)' },
-  ];
+  private transloco = inject(TranslocoService);
+  private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
+
+  sizes: { value: string; label: string }[] = [];
+
+  ngOnInit(): void {
+    this.transloco.selectTranslation().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.sizes = [
+        { value: 'small',  label: this.transloco.translate('dogs.fields.sizeSmall') },
+        { value: 'medium', label: this.transloco.translate('dogs.fields.sizeMedium') },
+        { value: 'large',  label: this.transloco.translate('dogs.fields.sizeLarge') },
+      ];
+      this.cdr.markForCheck();
+    });
+  }
 
   onRequestorChange(requestId: string | null): void {
     const req = this.requestors.find((r) => r.requestId === requestId) ?? null;

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { TranslocoModule } from '@jsverse/transloco';
 import { Store } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
 import { BehaviorSubject, combineLatest } from 'rxjs';
@@ -36,6 +37,7 @@ import { RequestDetailDialogComponent } from './components/request-detail-dialog
     ToastModule, ConfirmDialogModule,
     PageHeaderComponent,
     RequestsFilterComponent, RequestsTableComponent, RequestDetailDialogComponent,
+    TranslocoModule,
   ],
   templateUrl: './requests-list.component.html',
   styleUrls: ['./requests-list.component.scss'],

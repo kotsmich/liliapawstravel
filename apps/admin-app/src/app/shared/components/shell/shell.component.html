@@ -24,12 +24,13 @@
               <span class="nav-badge flex align-items-center justify-content-center">{{ count }}</span>
             }
           </span>
-          <span class="nav-item__label">{{ item.label }}</span>
+          <span class="nav-item__label">{{ item.labelKey | transloco }}</span>
         </button>
       }
     </nav>
 
     <div class="topbar__end flex align-items-center gap-2">
+      <!-- <app-language-switcher /> -->
       @if ((user$ | async); as user) {
         <span class="topbar__user">{{ user.email }}</span>
       }
@@ -39,7 +40,7 @@
         [rounded]="true"
         severity="secondary"
         styleClass="logout-btn"
-        pTooltip="Logout"
+        [pTooltip]="'shell.logout' | transloco"
         tooltipPosition="bottom"
         (onClick)="logout()"
         />

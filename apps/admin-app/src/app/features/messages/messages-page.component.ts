@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslocoModule } from '@jsverse/transloco';
 import { Store } from '@ngrx/store';
 import { ToastModule } from 'primeng/toast';
 import { CardModule } from 'primeng/card';
@@ -23,6 +24,7 @@ import { MessageDetailDialogComponent } from './components/message-detail-dialog
     ToastModule, CardModule, SkeletonModule,
     PageHeaderComponent, LoadingOverlayComponent,
     MessagesListComponent, MessageDetailDialogComponent,
+    TranslocoModule,
   ],
   templateUrl: './messages-page.component.html',
   styleUrls: ['./messages-page.component.scss'],

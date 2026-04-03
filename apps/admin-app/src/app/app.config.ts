@@ -1,4 +1,6 @@
 import { ApplicationConfig, APP_INITIALIZER, isDevMode } from '@angular/core';
+import { provideTransloco } from '@jsverse/transloco';
+import { TranslocoHttpLoader } from '@admin/core/transloco-loader';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -81,5 +83,14 @@ export const appConfig: ApplicationConfig = {
       deps: [Store, AuthService],
       multi: true,
     },
+    provideTransloco({
+      config: {
+        availableLangs: ['en', 'el', 'de'],
+        defaultLang: 'el',
+        reRenderOnLangChange: true,
+        prodMode: !isDevMode(),
+      },
+      loader: TranslocoHttpLoader,
+    }),
   ],
 };

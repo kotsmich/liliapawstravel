@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -17,21 +18,20 @@ import { TooltipModule } from 'primeng/tooltip';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TabsModule } from 'primeng/tabs';
-import { ConfirmationService } from 'primeng/api';
-import { TripRequester } from '@models/lib/trip.model';
 import { Store } from '@ngrx/store';
 import { filter } from 'rxjs';
-import { clearSelectedTrip, loadTripById, updateTrip, addTrip, addDog, addDogs, updateDog, deleteDog, deleteDogs, selectSelectedTrip, selectTripsMutating, selectTripsError } from '@admin/features/trips/store';
+import { clearSelectedTrip, loadTripById, updateTrip, addTrip, selectSelectedTrip, selectTripsMutating, selectTripsError } from '@admin/features/trips/store';
 import { Dog } from '@models/lib/dog.model';
 import { DogFormDialogComponent } from '@admin/features/trips/components/dog-form-dialog/dog-form-dialog.component';
-import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.interface';
 import { DogsTableComponent } from './components/dogs-table.component';
 import { AccordionModule } from 'primeng/accordion';
+import { DogManagerService } from './dog-manager.service';
 
 @Component({
   selector: 'app-trip-form',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [DogManagerService],
   imports: [
     CommonModule, RouterModule, ReactiveFormsModule,
     InputTextModule, InputNumberModule, SelectModule, ButtonModule, CardModule,
@@ -41,6 +41,7 @@ import { AccordionModule } from 'primeng/accordion';
     DogFormDialogComponent,
     DogsTableComponent,
     AccordionModule,
+    TranslocoModule,
   ],
   templateUrl: './trip-form.component.html',
   styleUrls: ['./trip-form.component.scss'],
@@ -54,72 +55,19 @@ export class TripFormComponent implements OnInit {
   mutating$ = this.store.select(selectTripsMutating);
   error$ = this.store.select(selectTripsError);
 
-  statuses = [
-    { label: 'Upcoming', value: 'upcoming' },
-    { label: 'In Progress', value: 'in-progress' },
-    { label: 'Completed', value: 'completed' },
-  ];
+  statuses: { label: string; value: string }[] = [];
 
   activeDogsTab = 'all';
-  tripRequestors: TripRequester[] = [];
-
-  dogDialogVisible = false;
-  editingDogIndex: number | null = null;
-  selectedDog: Dog | null = null;
-  selectedDogs: (Dog & { _idx: number })[] = [];
-
-  dogColumns: TableColumn<Dog & { _idx: number }>[] = [
-    { field: 'name', header: 'Name', sortable: true },
-    {
-      field: 'size', header: 'Size', type: 'badge',
-      badgeConfig: {
-        severity: (v) => v === 'small' ? 'success' : v === 'medium' ? 'warn' : 'danger',
-        label: (v) => String(v ?? ''),
-      },
-    },
-    { field: 'age', header: 'Age', formatter: (v) => v != null ? `${v} yr` : '—' },
-    { field: 'pickupLocation', header: 'Pickup' },
-    { field: 'dropLocation', header: 'Drop' },
-    { field: 'chipId', header: 'Chip ID' },
-    { field: 'requesterName', header: 'Requester', formatter: (v) => String(v ?? '—') },
-  ];
-
-  dogTableConfig: TableConfig = {
-    selectable: true,
-    striped: true,
-    trackByField: '_idx',
-    emptyMessage: 'No dogs added yet. Use the "Add Dog" button above.',
-  };
-
-  dogActions: TableAction<Dog & { _idx: number }>[] = [
-    { icon: 'pi pi-pencil', tooltip: 'Edit dog', severity: 'secondary', action: (row) => this.openEditDogDialog(row._idx) },
-  ];
-
-  dogsData: (Dog & { _idx: number })[] = [];
-  dogsPerRequestor: Map<string, (Dog & { _idx: number })[]> = new Map();
-
-  private refreshDogsData(): void {
-    this.dogsData = this.dogs.controls.map((ctrl, i) => ({ ...ctrl.value, _idx: i }));
-    const map = new Map<string, (Dog & { _idx: number })[]>();
-    this.tripRequestors.forEach(req => {
-      map.set(req.requestId ?? req.name, this.dogsData.filter(d => req.dogs.some(rd => rd.id === d.id)));
-    });
-    this.dogsPerRequestor = map;
-  }
-
-  onTabChange(): void {
-    this.selectedDogs = [];
-    this.cdr.markForCheck();
-  }
 
   constructor(
     private fb: FormBuilder,
     private store: Store,
     private route: ActivatedRoute,
     private router: Router,
-    private confirmationService: ConfirmationService,
     private cdr: ChangeDetectorRef,
     private destroyRef: DestroyRef,
+    private transloco: TranslocoService,
+    readonly dogManager: DogManagerService,
   ) {}
 
   ngOnInit(): void {
@@ -134,11 +82,12 @@ export class TripFormComponent implements OnInit {
       notes: [''],
       isFull: [false],
       acceptingRequests: [true],
-      dogs: this.fb.array([]),
+      dogs: this.dogManager.dogsArray,
     });
 
     this.editId = this.route.snapshot.paramMap.get('id');
     this.isEdit = !!this.editId;
+    this.dogManager.init(this.isEdit, this.editId);
 
     if (!this.isEdit) {
       const pick = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
@@ -159,6 +108,15 @@ export class TripFormComponent implements OnInit {
       this.form.patchValue({ date: new Date(prefilledDate + 'T00:00:00') });
     }
 
+    this.transloco.selectTranslation().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.statuses = [
+        { label: this.transloco.translate('trips.form.statusUpcoming'), value: 'upcoming' },
+        { label: this.transloco.translate('trips.form.statusInProgress'), value: 'in-progress' },
+        { label: this.transloco.translate('trips.form.statusCompleted'), value: 'completed' },
+      ];
+      this.cdr.markForCheck();
+    });
+
     this.store.dispatch(clearSelectedTrip());
 
     if (this.isEdit && this.editId) {
@@ -172,135 +130,17 @@ export class TripFormComponent implements OnInit {
           initialPatched = true;
           this.form.patchValue({ ...trip, date: trip.date ? new Date(trip.date + 'T00:00:00') : null });
         }
-        this.dogs.clear();
-        trip.dogs?.forEach((d) => this.dogs.push(this.dogGroup(d)));
-        this.tripRequestors = trip.requesters ?? [];
-        this.refreshDogsData();
-        this.selectedDogs = [];
-
+        this.dogManager.setDogs(trip.dogs ?? [], trip.requesters ?? []);
         this.cdr.markForCheck();
       });
     }
   }
 
-  get dogs(): FormArray { return this.form.get('dogs') as FormArray; }
+  /** Convenience getter so template expressions like `dogs.length` remain unchanged. */
+  get dogs(): FormArray { return this.dogManager.dogsArray; }
 
   get isAtCapacity(): boolean {
     return this.dogs.length >= (this.form.get('totalCapacity')?.value ?? 0);
-  }
-
-  dogGroup(dog?: Partial<Dog>): FormGroup {
-    return this.fb.group({
-      id:             [dog?.id             ?? ''],
-      name:           [dog?.name           ?? ''],
-      size:           [dog?.size           ?? ''],
-      age:            [dog?.age            ??  1],
-      chipId:         [dog?.chipId         ?? ''],
-      pickupLocation: [dog?.pickupLocation ?? ''],
-      dropLocation:   [dog?.dropLocation   ?? ''],
-      notes:          [dog?.notes          ?? ''],
-      requesterName:  [dog?.requesterName  ?? ''],
-      requestId:      [dog?.requestId      ?? null],
-    });
-  }
-
-  openAddDogDialog(): void {
-    this.selectedDog = null;
-    this.editingDogIndex = null;
-    this.dogDialogVisible = true;
-  }
-
-  openEditDogDialog(index: number): void {
-    this.selectedDog = { ...this.dogs.at(index).value } as Dog;
-    this.editingDogIndex = index;
-    this.dogDialogVisible = true;
-  }
-
-  onDogSaved(dogs: Dog[]): void {
-    if (this.editingDogIndex !== null) {
-      const dog = dogs[0];
-      if (this.isEdit && this.editId && dog.id) {
-        this.store.dispatch(updateDog({ tripId: this.editId, dog }));
-      }
-      (this.dogs.at(this.editingDogIndex) as FormGroup).patchValue(dog);
-      this.refreshDogsData();
-    } else {
-      if (this.editId) {
-        // Strip the local id field; keep requestId and newRequesterName for the backend
-        const payload = dogs.map(({ id: _id, ...rest }) => rest);
-        if (payload.length === 1) {
-          this.store.dispatch(addDog({ tripId: this.editId, dog: payload[0] }));
-        } else {
-          this.store.dispatch(addDogs({ tripId: this.editId, dogs: payload }));
-        }
-      } else {
-        dogs.forEach((dog) => this.dogs.push(this.dogGroup(dog)));
-        this.refreshDogsData();
-      }
-    }
-    this.dogDialogVisible = false;
-    this.selectedDog = null;
-    this.editingDogIndex = null;
-  }
-
-  onDogDialogCancelled(): void {
-    this.dogDialogVisible = false;
-    this.selectedDog = null;
-    this.editingDogIndex = null;
-  }
-
-  removeDog(i: number): void {
-    const dog = this.dogs.at(i).value as Dog;
-    const doRemove = () => {
-      this.dogs.removeAt(i);
-      const capacity = this.form.get('totalCapacity')?.value ?? 0;
-      if (this.dogs.length < capacity) {
-        this.form.patchValue({ isFull: false }, { emitEvent: false });
-      }
-      this.refreshDogsData();
-    };
-    if (this.isEdit && this.editId && dog.id) {
-      this.confirmationService.confirm({
-        header: 'Remove Dog',
-        message: `Remove <strong>${dog.name}</strong> from this trip? This cannot be undone.`,
-        acceptLabel: 'Remove',
-        rejectLabel: 'Cancel',
-        acceptButtonStyleClass: 'p-button-danger',
-        accept: () => {
-          this.store.dispatch(deleteDog({ tripId: this.editId!, dogId: dog.id }));
-          doRemove();
-        },
-      });
-    } else {
-      doRemove();
-    }
-  }
-
-  onDogsSelectionChange(dogs: (Dog & { _idx: number })[]): void {
-    this.selectedDogs = dogs;
-    this.dogActions = [...this.dogActions];
-    this.cdr.markForCheck();
-  }
-
-  removeSelectedDogs(): void {
-    const toRemove = [...this.selectedDogs];
-    if (!toRemove.length) return;
-
-    const dogIdsToDelete = toRemove.map((d) => d.id).filter((id): id is string => !!id);
-    if (!this.isEdit || !this.editId || !dogIdsToDelete.length) return;
-
-    this.confirmationService.confirm({
-      header: 'Remove Dogs',
-      message: `Remove <strong>${toRemove.length}</strong> dog(s) from this trip? This cannot be undone.`,
-      acceptLabel: 'Remove',
-      rejectLabel: 'Cancel',
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => {
-        this.store.dispatch(deleteDogs({ tripId: this.editId!, dogIds: dogIdsToDelete }));
-        this.selectedDogs = [];
-        this.dogActions = [];
-      },
-    });
   }
 
   get capacityWarning(): string | null {
@@ -309,6 +149,11 @@ export class TripFormComponent implements OnInit {
       return `Capacity (${capacity}) is below current dogs (${this.dogs.length}) — trip will be auto-marked Full.`;
     }
     return null;
+  }
+
+  onTabChange(): void {
+    this.dogManager.selectedDogs = [];
+    this.cdr.markForCheck();
   }
 
   navigateToTrips(): void {
@@ -329,7 +174,7 @@ export class TripFormComponent implements OnInit {
     if (this.isEdit && this.editId) {
       this.store.dispatch(updateTrip({ id: this.editId, trip: payload }));
     } else {
-      const dogs = (this.dogs.value as Dog[]).map(({ id: _id, ...rest }) => rest);
+      const dogs = (this.dogManager.dogsArray.value as Dog[]).map(({ id: _id, ...rest }) => rest);
       this.store.dispatch(addTrip({ trip: payload, dogs: dogs.length ? dogs : undefined }));
     }
   }

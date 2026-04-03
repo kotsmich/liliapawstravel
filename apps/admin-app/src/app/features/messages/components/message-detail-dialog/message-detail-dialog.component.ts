@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { TranslocoModule } from '@jsverse/transloco';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
@@ -10,7 +11,7 @@ import { ContactSubmission } from '@models/lib/contact-form.model';
   selector: 'app-message-detail-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DatePipe, DialogModule, ButtonModule, TagModule, CardModule],
+  imports: [CommonModule, DatePipe, DialogModule, ButtonModule, TagModule, CardModule, TranslocoModule],
   templateUrl: './message-detail-dialog.component.html',
   styleUrls: ['./message-detail-dialog.component.scss'],
 })
