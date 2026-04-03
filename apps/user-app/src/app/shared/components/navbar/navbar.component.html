@@ -8,9 +8,10 @@
       <i class="pi" [ngClass]="menuOpen ? 'pi-times' : 'pi-bars'"></i>
     </button>
     <ul class="navbar__links flex align-items-center" [class.open]="menuOpen" role="menubar">
-      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/')" (click)="navigateTo('/')">Home</button></li>
-      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/request')" (click)="navigateTo('/request')">Request Transport</button></li>
-      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/contact')" (click)="navigateTo('/contact')">Contact</button></li>
+      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/')" (click)="navigateTo('/')">{{ 'nav.home' | transloco }}</button></li>
+      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/request')" (click)="navigateTo('/request')">{{ 'nav.requestTransport' | transloco }}</button></li>
+      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/contact')" (click)="navigateTo('/contact')">{{ 'nav.contact' | transloco }}</button></li>
+      <li role="none"><app-language-switcher /></li>
     </ul>
   </div>
 </nav>

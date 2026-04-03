@@ -1,16 +1,16 @@
 <div class="page">
   <div class="page-header">
     <div class="container">
-      <span class="tag">Get In Touch</span>
-      <h1>We'd love to hear from you</h1>
+      <span class="tag">{{ 'contact.tag' | transloco }}</span>
+      <h1>{{ 'contact.title' | transloco }}</h1>
     </div>
   </div>
 
   <div class="container body">
     <div class="info-cards flex flex-column gap-3">
-      <div class="info-card"><span aria-hidden="true">📧</span><h3>Email</h3><p>liliapawstravel&#64;gmail.com</p></div>
-      <div class="info-card"><span aria-hidden="true">📞</span><h3>Phone</h3><p>+30 6907288150</p><p>+30 6948225016</p></div>
-      <div class="info-card"><span aria-hidden="true">⏰</span><h3>Response</h3><p>Within 24 hours</p></div>
+      <div class="info-card"><span aria-hidden="true">📧</span><h3>{{ 'contact.emailLabel' | transloco }}</h3><p>liliapawstravel&#64;gmail.com</p></div>
+      <div class="info-card"><span aria-hidden="true">📞</span><h3>{{ 'contact.phoneLabel' | transloco }}</h3><p>+30 6907288150</p><p>+30 6948225016</p></div>
+      <div class="info-card"><span aria-hidden="true">⏰</span><h3>{{ 'contact.responseLabel' | transloco }}</h3><p>{{ 'contact.responseTime' | transloco }}</p></div>
     </div>
 
     <app-contact-form

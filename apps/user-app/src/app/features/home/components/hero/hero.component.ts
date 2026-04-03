@@ -2,12 +2,13 @@ import { Component, Output, EventEmitter, ChangeDetectionStrategy, signal, injec
 import { interval, Subject, merge, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
+  imports: [TranslocoModule],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.scss'],
 })
@@ -21,22 +22,22 @@ export class HeroComponent implements OnInit {
   current = signal(0);
 
   slides = [
-    { bg: '#f5dfc0', emoji: '🐕', label: 'Golden heading home' },
-    { bg: '#d4e8c2', emoji: '🐶', label: 'Rescue ready' },
-    { bg: '#c8dff0', emoji: '🐩', label: 'Safe in transit' },
-    { bg: '#f0d0c8', emoji: '🦮', label: 'Adopted with love' },
-    { bg: '#e8d4f0', emoji: '🐾', label: 'Every paw matters' },
-    { bg: '#d0eee8', emoji: '🐕‍🦺', label: 'Service dog delivered' },
-    { bg: '#fce4d4', emoji: '🐈', label: 'Small passengers welcome' },
-    { bg: '#e4f0d0', emoji: '❤️', label: 'Reunited with family' },
-      { bg: '#f5dfc0', emoji: '🐕', label: 'Golden heading home' },
-    { bg: '#d4e8c2', emoji: '🐶', label: 'Rescue ready' },
-    { bg: '#c8dff0', emoji: '🐩', label: 'Safe in transit' },
-    { bg: '#f0d0c8', emoji: '🦮', label: 'Adopted with love' },
-    { bg: '#e8d4f0', emoji: '🐾', label: 'Every paw matters' },
-    { bg: '#d0eee8', emoji: '🐕‍🦺', label: 'Service dog delivered' },
-    { bg: '#fce4d4', emoji: '🐈', label: 'Small passengers welcome' },
-    { bg: '#e4f0d0', emoji: '❤️', label: 'Reunited with family' },
+    { bg: '#f5dfc0', emoji: '🐕', label: 'hero.slides.goldenHeading' },
+    { bg: '#d4e8c2', emoji: '🐶', label: 'hero.slides.rescueReady' },
+    { bg: '#c8dff0', emoji: '🐩', label: 'hero.slides.safeInTransit' },
+    { bg: '#f0d0c8', emoji: '🦮', label: 'hero.slides.adoptedWithLove' },
+    { bg: '#e8d4f0', emoji: '🐾', label: 'hero.slides.everyPawMatters' },
+    { bg: '#d0eee8', emoji: '🐕‍🦺', label: 'hero.slides.serviceDogDelivered' },
+    { bg: '#fce4d4', emoji: '🐈', label: 'hero.slides.smallPassengers' },
+    { bg: '#e4f0d0', emoji: '❤️', label: 'hero.slides.reunitedWithFamily' },
+    { bg: '#f5dfc0', emoji: '🐕', label: 'hero.slides.goldenHeading' },
+    { bg: '#d4e8c2', emoji: '🐶', label: 'hero.slides.rescueReady' },
+    { bg: '#c8dff0', emoji: '🐩', label: 'hero.slides.safeInTransit' },
+    { bg: '#f0d0c8', emoji: '🦮', label: 'hero.slides.adoptedWithLove' },
+    { bg: '#e8d4f0', emoji: '🐾', label: 'hero.slides.everyPawMatters' },
+    { bg: '#d0eee8', emoji: '🐕‍🦺', label: 'hero.slides.serviceDogDelivered' },
+    { bg: '#fce4d4', emoji: '🐈', label: 'hero.slides.smallPassengers' },
+    { bg: '#e4f0d0', emoji: '❤️', label: 'hero.slides.reunitedWithFamily' },
   ];
 
   ngOnInit(): void {

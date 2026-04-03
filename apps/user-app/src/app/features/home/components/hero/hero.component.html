@@ -1,11 +1,11 @@
 <section class="hero">
   <div class="hero__content">
-    <span class="badge">🐾 Europe's trusted dog transport</span>
-    <h1>Every dog deserves a <span class="accent">loving journey home.</span></h1>
-    <p>Safely transporting adopted dogs across Europe — connecting shelters with loving families, one paw at a time.</p>
+    <span class="badge">🐾 {{ 'hero.badge' | transloco }}</span>
+    <h1>{{ 'hero.title' | transloco }} <span class="accent">{{ 'hero.titleAccent' | transloco }}</span></h1>
+    <p>{{ 'hero.subtitle' | transloco }}</p>
     <div class="hero__actions">
-      <button class="btn-primary" type="button" (click)="requestClicked.emit()">Request Transport</button>
-      <button class="btn-outline" type="button" (click)="contactClicked.emit()">Get in Touch</button>
+      <button class="btn-primary" type="button" (click)="requestClicked.emit()">{{ 'hero.requestTransport' | transloco }}</button>
+      <button class="btn-outline" type="button" (click)="contactClicked.emit()">{{ 'hero.getInTouch' | transloco }}</button>
     </div>
   </div>
 
@@ -15,7 +15,7 @@
         @for (slide of slides; track $index) {
           <div class="carousel__slide" [style.background]="slide.bg">
             <span class="slide__emoji">{{ slide.emoji }}</span>
-            <span class="slide__label">{{ slide.label }}</span>
+            <span class="slide__label">{{ slide.label | transloco }}</span>
           </div>
         }
       </div>
@@ -25,7 +25,7 @@
 
       <div class="carousel__dots">
         @for (slide of slides; track $index; let i = $index) {
-          <button class="dot" [class.active]="i === current()" (click)="goTo(i)" [attr.aria-label]="slide.label"></button>
+          <button class="dot" [class.active]="i === current()" (click)="goTo(i)" [attr.aria-label]="slide.label | transloco"></button>
         }
       </div>
     </div>

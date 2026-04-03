@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { Store } from '@ngrx/store';
+import { TranslocoModule } from '@jsverse/transloco';
 import { submitContact, resetContact, selectContactIsLoading, selectContactIsSuccess, selectContactError } from '@user/features/contact/store';
 import { ContactFormComponent } from './components/contact-form/contact-form.component';
 
@@ -12,7 +13,7 @@ import { ContactFormComponent } from './components/contact-form/contact-form.com
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule, ReactiveFormsModule,
-    CardModule, ContactFormComponent,
+    CardModule, ContactFormComponent, TranslocoModule,
   ],
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss'],

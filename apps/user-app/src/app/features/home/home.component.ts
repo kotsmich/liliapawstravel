@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-
 import { Router } from '@angular/router';
 import { HeroComponent } from './components/hero/hero.component';
 import { StatsSectionComponent } from './components/stats-section/stats-section.component';
@@ -18,22 +17,24 @@ export class HomeComponent {
   constructor(private router: Router) {}
 
   stats = [
-    { value: '1,200+', label: 'Dogs Transported' },
-    { value: '18', label: 'Countries' },
-    { value: '6', label: 'Years Active' },
-    { value: '99%', label: 'Safe Arrivals' },
+    { value: '1,200+', label: 'stats.dogsTransported' },
+    { value: '18',     label: 'stats.countries' },
+    { value: '6',      label: 'stats.yearsActive' },
+    { value: '99%',    label: 'stats.safeArrivals' },
   ];
+
   values = [
-    { icon: '🛡️', title: 'Safety First', desc: 'Vet-approved health certificates and constant monitoring.' },
-    { icon: '❤️', title: 'We Care Deeply', desc: 'Dogs are not cargo. Comfort stops and cuddles on every trip.' },
-    { icon: '📋', title: 'Fully Legal', desc: 'EU pet travel compliance — microchips, passports, documents handled.' },
-    { icon: '🤝', title: 'Shelter Partners', desc: 'We work with 200+ certified shelters and verified adopters.' },
+    { icon: '🛡️', title: 'about.safetyFirst.title', desc: 'about.safetyFirst.desc' },
+    { icon: '❤️', title: 'about.weCare.title',      desc: 'about.weCare.desc' },
+    { icon: '📋', title: 'about.fullyLegal.title',  desc: 'about.fullyLegal.desc' },
+    { icon: '🤝', title: 'about.shelterPartners.title', desc: 'about.shelterPartners.desc' },
   ];
+
   steps = [
-    { step: 1, title: 'Adopter Approved', desc: 'Shelter confirms the adoption.' },
-    { step: 2, title: 'Book a Trip', desc: 'Submit the transport request.' },
-    { step: 3, title: 'We Prepare', desc: 'Route planned, documents checked.' },
-    { step: 4, title: 'Safe Delivery', desc: 'Your dog arrives happy and healthy.' },
+    { step: 1, title: 'about.step1.title', desc: 'about.step1.desc' },
+    { step: 2, title: 'about.step2.title', desc: 'about.step2.desc' },
+    { step: 3, title: 'about.step3.title', desc: 'about.step3.desc' },
+    { step: 4, title: 'about.step4.title', desc: 'about.step4.desc' },
   ];
 
   goToRequest(): void { this.router.navigate(['/request']); }

@@ -1,0 +1,123 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "requestTransport": "Transport anfragen",
+    "contact": "Kontakt"
+  },
+  "footer": {
+    "tagline": "Sicherer Transport adoptierter Hunde durch Europa.",
+    "navigation": "Navigation",
+    "contact": "Kontakt",
+    "copyright": "Lilia Paws Travel. Mit ❤️ für Hunde gemacht."
+  },
+  "hero": {
+    "badge": "Europas vertrauenswürdiger Hundetransport",
+    "title": "Jeder Hund verdient eine",
+    "titleAccent": "liebevolle Reise nach Hause.",
+    "subtitle": "Sicherer Transport adoptierter Hunde durch Europa — Tierheime mit liebevollen Familien verbinden.",
+    "requestTransport": "Transport anfragen",
+    "getInTouch": "Kontakt aufnehmen",
+    "slides": {
+      "goldenHeading": "Golden auf dem Weg nach Hause",
+      "rescueReady": "Rettungshund bereit",
+      "safeInTransit": "Sicher unterwegs",
+      "adoptedWithLove": "Mit Liebe adoptiert",
+      "everyPawMatters": "Jede Pfote zählt",
+      "serviceDogDelivered": "Servicehund geliefert",
+      "smallPassengers": "Kleine Passagiere willkommen",
+      "reunitedWithFamily": "Mit der Familie vereint"
+    }
+  },
+  "about": {
+    "whoWeAreTag": "Wer Wir Sind",
+    "title": "Entstanden aus Liebe zu Rettungshunden",
+    "p1": "Lilia Paws Travel wurde 2018 von Lilia Kovacs gegründet, einer leidenschaftlichen Tierschutzaktivistin, die eine kritische Lücke erkannte — Tausende Hunde wurden grenzüberschreitend adoptiert, ohne sicheren und zuverlässigen Transport.",
+    "p2": "Von einem Ein-Van-Betrieb zu einem Netzwerk in 18 Ländern und 200+ Tierheimen haben wir bereits über 1.200 Hunde sicher transportiert.",
+    "safetyFirst": { "title": "Sicherheit Zuerst", "desc": "Tierärztlich genehmigte Gesundheitszertifikate und ständige Überwachung." },
+    "weCare": { "title": "Wir Kümmern Uns", "desc": "Hunde sind kein Fracht. Komfortstopps und Streicheleinheiten auf jeder Reise." },
+    "fullyLegal": { "title": "Vollständig Legal", "desc": "EU-Haustierreise-Konformität — Mikrochips, Pässe, Dokumente erledigt." },
+    "shelterPartners": { "title": "Tierheim-Partner", "desc": "Wir arbeiten mit 200+ zertifizierten Tierheimen und verifizierten Adoptern." },
+    "processTag": "Der Ablauf",
+    "processTitle": "Wie Adoptionsstransport funktioniert",
+    "step1": { "title": "Adopter Genehmigt", "desc": "Tierheim bestätigt die Adoption." },
+    "step2": { "title": "Reise Buchen", "desc": "Transportanfrage einreichen." },
+    "step3": { "title": "Wir Bereiten Vor", "desc": "Route geplant, Dokumente geprüft." },
+    "step4": { "title": "Sichere Lieferung", "desc": "Ihr Hund kommt glücklich und gesund an." }
+  },
+  "stats": {
+    "dogsTransported": "Hunde Transportiert",
+    "countries": "Länder",
+    "yearsActive": "Jahre Aktiv",
+    "safeArrivals": "Sichere Ankünfte"
+  },
+  "cta": {
+    "title": "Bereit, Ihren Hund nach Hause zu bringen?",
+    "subtitle": "Transportanfrage einreichen und wir antworten innerhalb von 24 Stunden.",
+    "bookTransport": "Transport buchen",
+    "askQuestion": "Eine Frage stellen"
+  },
+  "contact": {
+    "tag": "Kontakt aufnehmen",
+    "title": "Wir freuen uns von Ihnen zu hören",
+    "emailLabel": "E-Mail",
+    "phoneLabel": "Telefon",
+    "responseLabel": "Antwort",
+    "responseTime": "Innerhalb von 24 Stunden",
+    "form": {
+      "fullName": "Vollständiger Name",
+      "email": "E-Mail",
+      "phone": "Telefon (optional)",
+      "subject": "Betreff",
+      "message": "Nachricht",
+      "send": "Nachricht senden",
+      "sending": "Senden...",
+      "successTitle": "Nachricht gesendet!",
+      "successMsg": "Wir antworten innerhalb von 24 Stunden.",
+      "sendAnother": "Weitere senden",
+      "replyTo": "Wir antworten an {{ email }}",
+      "errors": {
+        "required": "Pflichtfeld.",
+        "email": "Gültige E-Mail erforderlich.",
+        "minLength": "Mindestens {{ length }} Zeichen.",
+        "invalidPhone": "Ungültige Telefonnummer."
+      }
+    }
+  },
+  "tripRequest": {
+    "tag": "Transportanfrage",
+    "title": "Transport buchen",
+    "subtitle": "Wählen Sie ein Reisedatum, füllen Sie Ihre Daten aus, fügen Sie Ihre Hunde hinzu und senden Sie ab.",
+    "selectDate": "Reisedatum auswählen",
+    "clickHint": "Klicken Sie auf ein hervorgehobenes Datum, um eine Reise auszuwählen.",
+    "selectedTrip": "Ausgewählte Reise",
+    "booked": "{{ percent }}% gebucht",
+    "lessThan10": "Weniger als 10 Plätze übrig",
+    "lessThan5": "Weniger als 5 Plätze übrig",
+    "spotsLeft": "{{ count }} Platz/Plätze übrig",
+    "tripFull": "Ausgebucht",
+    "tripFullMsg": "Diese Reise ist vollständig ausgebucht. Bitte wählen Sie ein anderes Datum.",
+    "requestsClosed": "Anfragen Geschlossen",
+    "requestsClosedMsg": "Anfragen für diese Reise sind derzeit geschlossen.",
+    "yourDetails": "Ihre Angaben",
+    "fullName": "Vollständiger Name",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "required": "Pflichtfeld.",
+    "validEmail": "Gültige E-Mail erforderlich.",
+    "addDogs": "Hunde für diese Reise hinzufügen",
+    "dogNum": "Hund #{{ num }}",
+    "unnamed": "Unbenannt",
+    "chip": "Chip: {{ id }}",
+    "edit": "Bearbeiten",
+    "remove": "Entfernen",
+    "collapse": "Einklappen",
+    "removeDog": "Hund entfernen",
+    "addAnotherDog": "Weiteren Hund hinzufügen",
+    "submissionFailed": "Einreichung fehlgeschlagen: {{ error }}",
+    "summary": "Zusammenfassung",
+    "preview": "Vorschau",
+    "submit": "Anfrage einreichen",
+    "submitting": "Wird eingereicht...",
+    "noTripHint": "Wählen Sie ein hervorgehobenes Datum im Kalender oben, um Ihre Buchung zu starten."
+  }
+}

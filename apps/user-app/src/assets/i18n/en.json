@@ -1,0 +1,123 @@
+{
+  "nav": {
+    "home": "Home",
+    "requestTransport": "Request Transport",
+    "contact": "Contact"
+  },
+  "footer": {
+    "tagline": "Safely transporting adopted dogs across Europe.",
+    "navigation": "Navigation",
+    "contact": "Contact",
+    "copyright": "Lilia Paws Travel. Made with ❤️ for dogs."
+  },
+  "hero": {
+    "badge": "Europe's trusted dog transport",
+    "title": "Every dog deserves a",
+    "titleAccent": "loving journey home.",
+    "subtitle": "Safely transporting adopted dogs across Europe — connecting shelters with loving families, one paw at a time.",
+    "requestTransport": "Request Transport",
+    "getInTouch": "Get in Touch",
+    "slides": {
+      "goldenHeading": "Golden heading home",
+      "rescueReady": "Rescue ready",
+      "safeInTransit": "Safe in transit",
+      "adoptedWithLove": "Adopted with love",
+      "everyPawMatters": "Every paw matters",
+      "serviceDogDelivered": "Service dog delivered",
+      "smallPassengers": "Small passengers welcome",
+      "reunitedWithFamily": "Reunited with family"
+    }
+  },
+  "about": {
+    "whoWeAreTag": "Who We Are",
+    "title": "Born from a love for rescue dogs",
+    "p1": "Lilia Paws Travel was founded in 2018 by Lilia Kovacs, a passionate animal welfare advocate who recognized a critical gap — thousands of dogs were being adopted across borders with no safe, reliable transport.",
+    "p2": "From a one-van operation to a network spanning 18 countries and 200+ shelters, we've safely transported over 1,200 dogs and counting.",
+    "safetyFirst": { "title": "Safety First", "desc": "Vet-approved health certificates and constant monitoring." },
+    "weCare": { "title": "We Care Deeply", "desc": "Dogs are not cargo. Comfort stops and cuddles on every trip." },
+    "fullyLegal": { "title": "Fully Legal", "desc": "EU pet travel compliance — microchips, passports, documents handled." },
+    "shelterPartners": { "title": "Shelter Partners", "desc": "We work with 200+ certified shelters and verified adopters." },
+    "processTag": "The Process",
+    "processTitle": "How adoption transport works",
+    "step1": { "title": "Adopter Approved", "desc": "Shelter confirms the adoption." },
+    "step2": { "title": "Book a Trip", "desc": "Submit the transport request." },
+    "step3": { "title": "We Prepare", "desc": "Route planned, documents checked." },
+    "step4": { "title": "Safe Delivery", "desc": "Your dog arrives happy and healthy." }
+  },
+  "stats": {
+    "dogsTransported": "Dogs Transported",
+    "countries": "Countries",
+    "yearsActive": "Years Active",
+    "safeArrivals": "Safe Arrivals"
+  },
+  "cta": {
+    "title": "Ready to bring your dog home?",
+    "subtitle": "Submit a transport request and we'll respond within 24 hours.",
+    "bookTransport": "Book a Transport",
+    "askQuestion": "Ask a Question"
+  },
+  "contact": {
+    "tag": "Get In Touch",
+    "title": "We'd love to hear from you",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone",
+    "responseLabel": "Response",
+    "responseTime": "Within 24 hours",
+    "form": {
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone (optional)",
+      "subject": "Subject",
+      "message": "Message",
+      "send": "Send Message",
+      "sending": "Sending...",
+      "successTitle": "Message sent!",
+      "successMsg": "We'll respond within 24 hours.",
+      "sendAnother": "Send Another",
+      "replyTo": "We'll reply to {{ email }}",
+      "errors": {
+        "required": "Required.",
+        "email": "Valid email required.",
+        "minLength": "Min {{ length }} chars.",
+        "invalidPhone": "Invalid phone number."
+      }
+    }
+  },
+  "tripRequest": {
+    "tag": "Transport Request",
+    "title": "Book a Transport",
+    "subtitle": "Select a travel date, fill in your details, add your dogs, and submit.",
+    "selectDate": "Select a Travel Date",
+    "clickHint": "Click a highlighted date to select a trip.",
+    "selectedTrip": "Selected Trip",
+    "booked": "{{ percent }}% booked",
+    "lessThan10": "Less than 10 spots left",
+    "lessThan5": "Less than 5 spots left",
+    "spotsLeft": "{{ count }} spot(s) left",
+    "tripFull": "Full",
+    "tripFullMsg": "This trip is fully booked. Please select another date.",
+    "requestsClosed": "Requests Closed",
+    "requestsClosedMsg": "Requests for this trip are currently closed.",
+    "yourDetails": "Your Details",
+    "fullName": "Full Name",
+    "email": "Email",
+    "phone": "Phone",
+    "required": "Required.",
+    "validEmail": "Valid email required.",
+    "addDogs": "Add Dogs for this Trip",
+    "dogNum": "Dog #{{ num }}",
+    "unnamed": "Unnamed",
+    "chip": "Chip: {{ id }}",
+    "edit": "Edit",
+    "remove": "Remove",
+    "collapse": "Collapse",
+    "removeDog": "Remove Dog",
+    "addAnotherDog": "Add Another Dog",
+    "submissionFailed": "Submission failed: {{ error }}",
+    "summary": "Summary",
+    "preview": "Preview",
+    "submit": "Submit Request",
+    "submitting": "Submitting...",
+    "noTripHint": "Select a highlighted date on the calendar above to start your booking."
+  }
+}

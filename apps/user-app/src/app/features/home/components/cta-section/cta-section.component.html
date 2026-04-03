@@ -2,11 +2,11 @@
   <div class="container">
     <div class="cta__box">
       <span aria-hidden="true">🐶</span>
-      <h2>Ready to bring your dog home?</h2>
-      <p>Submit a transport request and we'll respond within 24 hours.</p>
+      <h2>{{ 'cta.title' | transloco }}</h2>
+      <p>{{ 'cta.subtitle' | transloco }}</p>
       <div class="cta__actions flex justify-content-center flex-wrap">
-        <button class="btn-primary" type="button" (click)="requestClicked.emit()">Book a Transport</button>
-        <button class="btn-outline-light" type="button" (click)="contactClicked.emit()">Ask a Question</button>
+        <button class="btn-primary" type="button" (click)="requestClicked.emit()">{{ 'cta.bookTransport' | transloco }}</button>
+        <button class="btn-outline-light" type="button" (click)="contactClicked.emit()">{{ 'cta.askQuestion' | transloco }}</button>
       </div>
     </div>
   </div>

@@ -10,8 +10,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 import { Store } from '@ngrx/store';
 import { ConfirmationService } from 'primeng/api';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { filter } from 'rxjs/operators';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DogFormComponent } from '@ui/lib/dog-form/dog-form.component';
@@ -32,7 +34,7 @@ import { submitRequest, resetRequest, selectTripRequestIsLoading, selectTripRequ
     CommonModule, ReactiveFormsModule,
     ButtonModule, CardModule, DividerModule, MessageModule, ConfirmDialogModule,
     InputTextModule, IftaLabelModule, SkeletonModule, TagModule,
-    DogFormComponent, TripCalendarComponent, ToastNotificationComponent,
+    DogFormComponent, TripCalendarComponent, ToastNotificationComponent, TranslocoModule, TooltipModule,
   ],
   templateUrl: './trip-request.component.html',
   styleUrls: ['./trip-request.component.scss'],
@@ -42,6 +44,7 @@ export class TripRequestComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly viewportScroller = inject(ViewportScroller);
+  private readonly transloco = inject(TranslocoService);
 
   form!: FormGroup;
   showSummary = false;
@@ -102,10 +105,10 @@ export class TripRequestComponent implements OnInit {
 
   removeDog(index: number): void {
     this.confirmationService.confirm({
-      header: 'Remove Dog',
-      message: `Remove Dog ${index + 1} from this request?`,
-      acceptLabel: 'Remove',
-      rejectLabel: 'Cancel',
+      header: this.transloco.translate('tripRequest.removeDog'),
+      message: this.transloco.translate('tripRequest.dogNum', { num: index + 1 }),
+      acceptLabel: this.transloco.translate('tripRequest.remove'),
+      rejectLabel: this.transloco.translate('tripRequest.collapse'),
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.dogs.removeAt(index);

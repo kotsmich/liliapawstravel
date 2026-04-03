@@ -4,7 +4,7 @@
       @for (s of stats; track s.label) {
         <div class="stat flex flex-column gap-2">
           <span class="stat__value">{{ s.value }}</span>
-          <span class="stat__label">{{ s.label }}</span>
+          <span class="stat__label">{{ s.label | transloco }}</span>
         </div>
       }
     </div>

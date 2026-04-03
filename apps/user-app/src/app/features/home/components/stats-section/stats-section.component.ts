@@ -1,11 +1,11 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-stats-section',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
+  imports: [TranslocoModule],
   templateUrl: './stats-section.component.html',
   styleUrls: ['./stats-section.component.scss'],
 })

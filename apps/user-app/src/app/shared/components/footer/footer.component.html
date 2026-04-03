@@ -2,21 +2,21 @@
   <div class="footer__grid">
     <div>
       <div class="footer__brand"><span aria-hidden="true">🐾</span> Lilia Paws Travel</div>
-      <p>Safely transporting adopted dogs across Europe.</p>
+      <p>{{ 'footer.tagline' | transloco }}</p>
     </div>
     <div>
-      <h4>Navigation</h4>
+      <h4>{{ 'footer.navigation' | transloco }}</h4>
       <ul>
-        <li><button type="button" class="footer-link" (click)="navigateTo('/')">Home</button></li>
-        <li><button type="button" class="footer-link" (click)="navigateTo('/request')">Request Transport</button></li>
-        <li><button type="button" class="footer-link" (click)="navigateTo('/contact')">Contact</button></li>
+        <li><button type="button" class="footer-link" (click)="navigateTo('/')">{{ 'nav.home' | transloco }}</button></li>
+        <li><button type="button" class="footer-link" (click)="navigateTo('/request')">{{ 'nav.requestTransport' | transloco }}</button></li>
+        <li><button type="button" class="footer-link" (click)="navigateTo('/contact')">{{ 'nav.contact' | transloco }}</button></li>
       </ul>
     </div>
     <div>
-      <h4>Contact</h4>
+      <h4>{{ 'footer.contact' | transloco }}</h4>
       <p><span aria-hidden="true">📧</span> hello&#64;liliapawstravel.com</p>
       <p><span aria-hidden="true">📞</span> +31 6 12 34 56 78</p>
     </div>
   </div>
-  <div class="footer__bottom">&copy; {{ year }} Lilia Paws Travel. Made with <span aria-hidden="true">❤️</span><span class="sr-only">love</span> for dogs.</div>
+  <div class="footer__bottom">&copy; {{ year }} {{ 'footer.copyright' | transloco }}</div>
 </footer>

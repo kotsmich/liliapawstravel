@@ -4,12 +4,14 @@ import { Router, NavigationEnd } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
+import { TranslocoModule } from '@jsverse/transloco';
+import { LanguageSwitcherComponent } from '@user/shared/components/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule],
+  imports: [CommonModule, ButtonModule, TranslocoModule, LanguageSwitcherComponent],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })

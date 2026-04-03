@@ -1,17 +1,17 @@
 <section class="about">
   <div class="container about__grid">
     <div class="about__story">
-      <span class="tag">Who We Are</span>
-      <h2>Born from a love for rescue dogs</h2>
-      <p>Lilia Paws Travel was founded in 2018 by Lilia Kovacs, a passionate animal welfare advocate who recognized a critical gap — thousands of dogs were being adopted across borders with no safe, reliable transport.</p>
-      <p>From a one-van operation to a network spanning 18 countries and 200+ shelters, we've safely transported over 1,200 dogs and counting.</p>
+      <span class="tag">{{ 'about.whoWeAreTag' | transloco }}</span>
+      <h2>{{ 'about.title' | transloco }}</h2>
+      <p>{{ 'about.p1' | transloco }}</p>
+      <p>{{ 'about.p2' | transloco }}</p>
     </div>
     <div class="values">
       @for (v of values; track v.title) {
         <div class="value-card">
           <span aria-hidden="true">{{ v.icon }}</span>
-          <h3>{{ v.title }}</h3>
-          <p>{{ v.desc }}</p>
+          <h3>{{ v.title | transloco }}</h3>
+          <p>{{ v.desc | transloco }}</p>
         </div>
       }
     </div>
@@ -21,15 +21,15 @@
 <section class="how">
   <div class="container">
     <div class="section-header">
-      <span class="tag">The Process</span>
-      <h2>How adoption transport works</h2>
+      <span class="tag">{{ 'about.processTag' | transloco }}</span>
+      <h2>{{ 'about.processTitle' | transloco }}</h2>
     </div>
     <div class="steps">
       @for (s of steps; track s.step) {
         <div class="step">
           <div class="step__num flex align-items-center justify-content-center">{{ s.step }}</div>
-          <h3>{{ s.title }}</h3>
-          <p>{{ s.desc }}</p>
+          <h3>{{ s.title | transloco }}</h3>
+          <p>{{ s.desc | transloco }}</p>
         </div>
       }
     </div>
