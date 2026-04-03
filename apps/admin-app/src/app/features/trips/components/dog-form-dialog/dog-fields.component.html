@@ -64,17 +64,39 @@
     </div>
   </div>
 
-  <div class="field fw">
-    <p-ifta-label>
-      <input pInputText [id]="'requester-' + idx" formControlName="requesterName" class="w-full" />
-      <label [for]="'requester-' + idx">Requester Name (optional)</label>
-    </p-ifta-label>
-  </div>
+  <div class="row">
+      @if (requestors.length > 0) {
+      <div class="field fw">
+        <p-ifta-label>
+          <p-select
+            [inputId]="'requestor-' + idx"
+            formControlName="requestId"
+            [options]="requestors"
+            optionLabel="name"
+            optionValue="requestId"
+            [showClear]="true"
+            placeholder="Select existing requestor"
+            styleClass="w-full"
+            appendTo="body"
+            (onChange)="onRequestorChange($event.value)" />
+          <label [for]="'requestor-' + idx">Existing Requestor</label>
+        </p-ifta-label>
+      </div>
+       }
+      <div class="field fw">
+        <p-ifta-label>
+          <input pInputText [id]="'new-requester-' + idx" formControlName="newRequesterName"
+            class="w-full" placeholder="Or type a new name"
+            (input)="onNewRequesterNameInput()" />
+          <label [for]="'new-requester-' + idx">New Requester Name</label>
+        </p-ifta-label>
+      </div>
+    </div>
 
   <div class="field fw">
     <p-ifta-label>
       <textarea pTextarea [id]="'notes-' + idx" formControlName="notes" rows="2"
-        class="w-full" autoResize></textarea>
+        class="w-full" [autoResize]="false"></textarea>
       <label [for]="'notes-' + idx">Special Notes (optional)</label>
     </p-ifta-label>
   </div>

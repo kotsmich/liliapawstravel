@@ -17,7 +17,7 @@ type RequestDog = TripRequest['dogs'][number];
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, DatePipe, DialogModule, ButtonModule, TagModule, TextareaModule, GenericTableComponent],
   templateUrl: './request-detail-dialog.component.html',
-  styles: [],
+  styleUrl: './request-detail-dialog.component.scss',
 })
 export class RequestDetailDialogComponent implements OnChanges {
   @Input() visible = false;

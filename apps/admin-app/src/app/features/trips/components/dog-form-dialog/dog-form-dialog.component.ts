@@ -4,6 +4,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { AccordionModule } from 'primeng/accordion';
 import { Dog } from '@models/lib/dog.model';
+import { TripRequester } from '@models/lib/trip.model';
 import { RandomUtil, RandomProperty } from '@models/lib/utils';
 import { DogFieldsComponent } from './dog-fields.component';
 
@@ -26,6 +27,8 @@ export class DogFormDialogComponent implements OnChanges {
   @Input() visible = false;
   /** Set by parent while dispatching so the save button shows a spinner. */
   @Input() saving = false;
+  /** Requestors from trip.requesters — used to populate the requestor dropdown. */
+  @Input() requestors: TripRequester[] = [];
 
   @Output() visibleChange = new EventEmitter<boolean>();
   /** Edit mode emits a single-element array; add mode emits all dogs. */
@@ -68,7 +71,9 @@ export class DogFormDialogComponent implements OnChanges {
       pickupLocation: [d?.pickupLocation ?? RandomUtil.pick(RandomProperty.pickupLocations), Validators.required],
       dropLocation:   [d?.dropLocation   ?? RandomUtil.pick(RandomProperty.dropLocations),   Validators.required],
       notes:          [d?.notes          ?? RandomUtil.pick(RandomProperty.notes)],
-      requesterName:  [d?.requesterName  ?? RandomUtil.pick(RandomProperty.requesterNames)],
+      requesterName:    [d?.requesterName  ?? RandomUtil.pick(RandomProperty.requesterNames)],
+      requestId:        [d?.requestId      ?? null],
+      newRequesterName: [null],
     });
   }
 
@@ -97,7 +102,8 @@ export class DogFormDialogComponent implements OnChanges {
       this.editForm.markAllAsTouched();
       if (this.editForm.invalid) return;
 
-      this.dogSaved.emit([{ id: this.dog!.id, ...this.editForm.value } as Dog]);
+      const { newRequesterName: _nr, ...editValues } = this.editForm.value;
+      this.dogSaved.emit([{ id: this.dog!.id, ...editValues } as Dog]);
       this.visibleChange.emit(false);
     }
   }

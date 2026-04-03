@@ -61,7 +61,7 @@ export class TripsEffects {
     () =>
       this.actions$.pipe(
         ofType(addTripSuccess),
-        tap(() => this.router.navigate(['/admin/trips']))
+        tap(({ trip }) => this.router.navigate(['/admin/trips', trip.id, 'edit']))
       ),
     { dispatch: false }
   );
@@ -82,7 +82,7 @@ export class TripsEffects {
     () =>
       this.actions$.pipe(
         ofType(updateTripSuccess),
-        tap(() => this.router.navigate(['/admin/trips']))
+        // tap(() => this.router.navigate(['/admin/trips']))
       ),
     { dispatch: false }
   );
@@ -140,7 +140,7 @@ export class TripsEffects {
       ofType(updateDog),
       switchMap(({ tripId, dog }) =>
         this.dogsService.updateDog(dog.id, dog).pipe(
-          map((updated) => updateDogSuccess({ tripId, dog: updated })),
+           mergeMap((updated) => [ updateDogSuccess({ tripId, dog: updated }), loadTripById({ id: tripId })]),
           catchError((error) => of(updateDogFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
         )
       )

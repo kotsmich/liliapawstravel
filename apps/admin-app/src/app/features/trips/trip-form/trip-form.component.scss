@@ -69,7 +69,48 @@ form { display: flex; flex-direction: column; gap: 1.5rem; flex: 1; min-height: 
   }
 }
 
-.dogs-table-wrapper { flex: 1; min-height: 0; overflow-y: auto; }
+
+.dogs-tab-accordion {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0.5rem 0;
+}
+
+.no-requestors {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--color-slate-mid);
+  font-size: 0.875rem;
+}
+
+.req-header {
+  gap: 0.5rem;
+  .req-name { font-weight: 600; font-size: 0.9rem; }
+  .req-meta { font-size: 0.8rem; color: var(--color-slate-mid); }
+  .req-dogs-count {
+    margin-left: auto;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--color-slate-mid);
+    background: var(--color-border-light);
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+  }
+}
+
+.dogs-counter {
+  margin-left: 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-slate-mid);
+  background: var(--color-border-light);
+  padding: 0.15rem 0.6rem;
+  border-radius: 10px;
+  vertical-align: middle;
+}
 
 
 /* ── Capacity status display (read-only) ── */

@@ -3,7 +3,7 @@
   [visible]="visible"
   (visibleChange)="visibleChange.emit($event)"
   [modal]="true"
-  [style]="{ width: '90vw', maxWidth: '600px' }"
+  [style]="{ width: 'min(92vw, 860px)' }"
   [draggable]="false">
 
   @if (request; as req) {
@@ -11,21 +11,29 @@
       Request for trip <strong>{{ tripDate(req.tripId) }}</strong>
       under requester <strong>{{ req.requesterName }}</strong>
     </p>
-    <div class="detail-section">
-      <h3>Requester</h3>
-      <p class="flex align-items-center gap-2"><i class="pi pi-user"></i> {{ req.requesterName }}</p>
-      <p class="flex align-items-center gap-2"><i class="pi pi-envelope"></i> {{ req.requesterEmail }}</p>
-      <p class="flex align-items-center gap-2"><i class="pi pi-phone"></i> {{ req.requesterPhone }}</p>
+
+    <div class="detail-grid">
+      <div class="detail-section">
+        <h3>Requester</h3>
+        <p class="info-row"><i class="pi pi-user"></i> {{ req.requesterName }}</p>
+        <p class="info-row"><i class="pi pi-envelope"></i> {{ req.requesterEmail }}</p>
+        <p class="info-row"><i class="pi pi-phone"></i> {{ req.requesterPhone }}</p>
+      </div>
+
+      <div class="detail-section">
+        <h3>Trip</h3>
+        <p class="info-row"><i class="pi pi-calendar"></i> <strong>{{ tripDate(req.tripId) }}</strong></p>
+        <p class="info-row"><i class="pi pi-clock"></i> Submitted: {{ req.submittedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p class="status-row">
+          <span style="color: var(--text-color-secondary); font-size: 0.9rem;">Status:</span>
+          <p-tag [value]="req.status" [severity]="statusSeverity(req.status)" />
+        </p>
+      </div>
     </div>
-    <div class="detail-section">
-      <h3>Trip</h3>
-      <p class="flex align-items-center gap-2"><i class="pi pi-calendar"></i> <strong>{{ tripDate(req.tripId) }}</strong></p>
-      <p>Submitted: {{ req.submittedAt | date:'dd/MM/yyyy HH:mm' }}</p>
-      <p>Status: <p-tag [value]="req.status" [severity]="statusSeverity(req.status)" /></p>
-    </div>
-    <div class="detail-section">
+
+    <div class="dogs-section">
       <h3>Dogs ({{ req.dogs.length }})</h3>
-      <div style="overflow-x:auto">
+      <div class="table-wrapper">
         <app-generic-table
           [data]="req.dogs"
           [columns]="dogColumns"
@@ -33,24 +41,25 @@
         </app-generic-table>
       </div>
     </div>
-    <div class="detail-section">
+
+    <div class="note-section">
       <h3>Internal Note</h3>
-      <p class="text-sm text-color-secondary mb-2">Private admin note — not visible to the requester unless included in status emails.</p>
+      <p class="note-hint">Private admin note — not visible to the requester unless included in status emails.</p>
       <textarea
         pTextarea
         [value]="noteText"
         (input)="noteText = $any($event.target).value"
         rows="3"
-        style="width:100%"
         placeholder="Add a private note…"></textarea>
-      <p-button
-        label="Save Note"
-        icon="pi pi-save"
-        severity="secondary"
-        [outlined]="true"
-        size="small"
-        class="mt-2"
-        (onClick)="saveNote.emit(noteText)" />
+      <div class="save-btn">
+        <p-button
+          label="Save Note"
+          icon="pi pi-save"
+          severity="secondary"
+          [outlined]="true"
+          size="small"
+          (onClick)="saveNote.emit(noteText)" />
+      </div>
     </div>
   }
 

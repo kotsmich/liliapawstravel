@@ -5,6 +5,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { TextareaModule } from 'primeng/textarea';
+import { TripRequester } from '@models/lib/trip.model';
 
 @Component({
   selector: 'app-dog-fields',
@@ -26,10 +27,24 @@ export class DogFieldsComponent {
   @Input() form!: FormGroup;
   /** Used to generate unique field IDs when multiple instances are on the page. */
   @Input() idx: string | number = 0;
+  /** When provided, shows a requestor dropdown instead of a free-text requester field. */
+  @Input() requestors: TripRequester[] = [];
 
   readonly sizes = [
     { value: 'small',  label: 'Small (< 10 kg)' },
     { value: 'medium', label: 'Medium (10–25 kg)' },
     { value: 'large',  label: 'Large (> 25 kg)' },
   ];
+
+  onRequestorChange(requestId: string | null): void {
+    const req = this.requestors.find((r) => r.requestId === requestId) ?? null;
+    this.form.patchValue({ requesterName: req?.name ?? '', newRequesterName: null });
+  }
+
+  onNewRequesterNameInput(): void {
+    const val = this.form.get('newRequesterName')?.value;
+    if (val) {
+      this.form.patchValue({ requestId: null, requesterName: null });
+    }
+  }
 }

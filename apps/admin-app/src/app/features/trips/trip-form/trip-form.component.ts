@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
@@ -15,14 +16,17 @@ import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TabsModule } from 'primeng/tabs';
 import { ConfirmationService } from 'primeng/api';
+import { TripRequester } from '@models/lib/trip.model';
 import { Store } from '@ngrx/store';
-import { filter, take } from 'rxjs';
-import { clearSelectedTrip, loadTripById, updateTrip, addTrip, addDogs, updateDog, deleteDog, deleteDogs, selectSelectedTrip, selectTripsMutating, selectTripsError } from '@admin/features/trips/store';
+import { filter } from 'rxjs';
+import { clearSelectedTrip, loadTripById, updateTrip, addTrip, addDog, addDogs, updateDog, deleteDog, deleteDogs, selectSelectedTrip, selectTripsMutating, selectTripsError } from '@admin/features/trips/store';
 import { Dog } from '@models/lib/dog.model';
 import { DogFormDialogComponent } from '@admin/features/trips/components/dog-form-dialog/dog-form-dialog.component';
-import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
 import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.interface';
+import { DogsTableComponent } from './components/dogs-table.component';
+import { AccordionModule } from 'primeng/accordion';
 
 @Component({
   selector: 'app-trip-form',
@@ -33,8 +37,10 @@ import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.
     InputTextModule, InputNumberModule, SelectModule, ButtonModule, CardModule,
     IftaLabelModule, TextareaModule, DatePickerModule,
     MessageModule, ToastModule, TooltipModule, CheckboxModule, ConfirmDialogModule,
+    TabsModule,
     DogFormDialogComponent,
-    GenericTableComponent,
+    DogsTableComponent,
+    AccordionModule,
   ],
   templateUrl: './trip-form.component.html',
   styleUrls: ['./trip-form.component.scss'],
@@ -53,6 +59,9 @@ export class TripFormComponent implements OnInit {
     { label: 'In Progress', value: 'in-progress' },
     { label: 'Completed', value: 'completed' },
   ];
+
+  activeDogsTab = 'all';
+  tripRequestors: TripRequester[] = [];
 
   dogDialogVisible = false;
   editingDogIndex: number | null = null;
@@ -84,13 +93,23 @@ export class TripFormComponent implements OnInit {
 
   dogActions: TableAction<Dog & { _idx: number }>[] = [
     { icon: 'pi pi-pencil', tooltip: 'Edit dog', severity: 'secondary', action: (row) => this.openEditDogDialog(row._idx) },
-    { icon: 'pi pi-trash', tooltip: 'Remove dog', severity: 'danger', action: (row) => this.removeDog(row._idx) },
   ];
 
   dogsData: (Dog & { _idx: number })[] = [];
+  dogsPerRequestor: Map<string, (Dog & { _idx: number })[]> = new Map();
 
   private refreshDogsData(): void {
     this.dogsData = this.dogs.controls.map((ctrl, i) => ({ ...ctrl.value, _idx: i }));
+    const map = new Map<string, (Dog & { _idx: number })[]>();
+    this.tripRequestors.forEach(req => {
+      map.set(req.requestId ?? req.name, this.dogsData.filter(d => req.dogs.some(rd => rd.id === d.id)));
+    });
+    this.dogsPerRequestor = map;
+  }
+
+  onTabChange(): void {
+    this.selectedDogs = [];
+    this.cdr.markForCheck();
   }
 
   constructor(
@@ -100,6 +119,7 @@ export class TripFormComponent implements OnInit {
     private router: Router,
     private confirmationService: ConfirmationService,
     private cdr: ChangeDetectorRef,
+    private destroyRef: DestroyRef,
   ) {}
 
   ngOnInit(): void {
@@ -143,14 +163,21 @@ export class TripFormComponent implements OnInit {
 
     if (this.isEdit && this.editId) {
       this.store.dispatch(loadTripById({ id: this.editId }));
+      let initialPatched = false;
       this.store.select(selectSelectedTrip).pipe(
         filter(Boolean),
-        take(1)
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe((trip) => {
-        this.form.patchValue({ ...trip, date: trip.date ? new Date(trip.date + 'T00:00:00') : null });
+        if (!initialPatched) {
+          initialPatched = true;
+          this.form.patchValue({ ...trip, date: trip.date ? new Date(trip.date + 'T00:00:00') : null });
+        }
         this.dogs.clear();
         trip.dogs?.forEach((d) => this.dogs.push(this.dogGroup(d)));
+        this.tripRequestors = trip.requesters ?? [];
         this.refreshDogsData();
+        this.selectedDogs = [];
+
         this.cdr.markForCheck();
       });
     }
@@ -173,6 +200,7 @@ export class TripFormComponent implements OnInit {
       dropLocation:   [dog?.dropLocation   ?? ''],
       notes:          [dog?.notes          ?? ''],
       requesterName:  [dog?.requesterName  ?? ''],
+      requestId:      [dog?.requestId      ?? null],
     });
   }
 
@@ -195,14 +223,21 @@ export class TripFormComponent implements OnInit {
         this.store.dispatch(updateDog({ tripId: this.editId, dog }));
       }
       (this.dogs.at(this.editingDogIndex) as FormGroup).patchValue(dog);
+      this.refreshDogsData();
     } else {
       if (this.editId) {
+        // Strip the local id field; keep requestId and newRequesterName for the backend
         const payload = dogs.map(({ id: _id, ...rest }) => rest);
-        this.store.dispatch(addDogs({ tripId: this.editId, dogs: payload }));
+        if (payload.length === 1) {
+          this.store.dispatch(addDog({ tripId: this.editId, dog: payload[0] }));
+        } else {
+          this.store.dispatch(addDogs({ tripId: this.editId, dogs: payload }));
+        }
+      } else {
+        dogs.forEach((dog) => this.dogs.push(this.dogGroup(dog)));
+        this.refreshDogsData();
       }
-      dogs.forEach((dog) => this.dogs.push(this.dogGroup(dog)));
     }
-    this.refreshDogsData();
     this.dogDialogVisible = false;
     this.selectedDog = null;
     this.editingDogIndex = null;
@@ -241,37 +276,31 @@ export class TripFormComponent implements OnInit {
     }
   }
 
+  onDogsSelectionChange(dogs: (Dog & { _idx: number })[]): void {
+    this.selectedDogs = dogs;
+    this.dogActions = [...this.dogActions];
+    this.cdr.markForCheck();
+  }
+
   removeSelectedDogs(): void {
     const toRemove = [...this.selectedDogs];
     if (!toRemove.length) return;
 
-    const doRemove = () => {
-      const dogIdsToDelete = toRemove.map((d) => d.id).filter((id): id is string => !!id);
-      if (this.isEdit && this.editId && dogIdsToDelete.length) {
-        this.store.dispatch(deleteDogs({ tripId: this.editId, dogIds: dogIdsToDelete }));
-      }
-      const indices = toRemove.map((d) => d._idx).sort((a, b) => b - a);
-      indices.forEach((i) => this.dogs.removeAt(i));
-      const capacity = this.form.get('totalCapacity')?.value ?? 0;
-      if (this.dogs.length < capacity) {
-        this.form.patchValue({ isFull: false }, { emitEvent: false });
-      }
-      this.refreshDogsData();
-      this.selectedDogs = [];
-    };
+    const dogIdsToDelete = toRemove.map((d) => d.id).filter((id): id is string => !!id);
+    if (!this.isEdit || !this.editId || !dogIdsToDelete.length) return;
 
-    if (this.isEdit && toRemove.some((d) => d.id)) {
-      this.confirmationService.confirm({
-        header: 'Remove Dogs',
-        message: `Remove <strong>${toRemove.length}</strong> dog(s) from this trip? This cannot be undone.`,
-        acceptLabel: 'Remove',
-        rejectLabel: 'Cancel',
-        acceptButtonStyleClass: 'p-button-danger',
-        accept: doRemove,
-      });
-    } else {
-      doRemove();
-    }
+    this.confirmationService.confirm({
+      header: 'Remove Dogs',
+      message: `Remove <strong>${toRemove.length}</strong> dog(s) from this trip? This cannot be undone.`,
+      acceptLabel: 'Remove',
+      rejectLabel: 'Cancel',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.store.dispatch(deleteDogs({ tripId: this.editId!, dogIds: dogIdsToDelete }));
+        this.selectedDogs = [];
+        this.dogActions = [];
+      },
+    });
   }
 
   get capacityWarning(): string | null {

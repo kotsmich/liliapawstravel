@@ -1,7 +1,12 @@
 import { Dog } from './dog.model';
-import { TripRequest } from './trip-request.model';
 
 export type TripStatus = 'upcoming' | 'in-progress' | 'completed';
+
+export interface TripRequester {
+  requestId: string | null;
+  name: string;
+  dogs: Dog[];
+}
 
 export interface Trip {
   id: string;
@@ -15,7 +20,7 @@ export interface Trip {
   spotsAvailable: number;
   notes: string;
   dogs: Dog[] | undefined;
-  requests?: TripRequest[];
+  requesters?: TripRequester[];
   isFull: boolean;
   acceptingRequests: boolean;
 }
