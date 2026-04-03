@@ -10,8 +10,10 @@
   padding: 0 1rem;
   gap: 1.5rem;
   flex-shrink: 0;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
 
   &__brand {
@@ -108,8 +110,9 @@
 .content {
   flex: 1;
   padding: 1.5rem 2rem;
+  padding-top: calc(52px + 1.5rem);
   overflow: auto;
   background: #f8fafc;
 
-  @media (max-width: 767px) { padding: 0.75rem; }
+  @media (max-width: 767px) { padding: 0.75rem; padding-top: calc(52px + 0.75rem); }
 }

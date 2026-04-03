@@ -105,7 +105,7 @@ export class ExportService {
         fillColor: [255, 248, 240]
       },
       columnStyles: {
-        0: { cellWidth: 6, halign: 'center' },
+        0: { cellWidth: 10, halign: 'center' },
         1: { cellWidth: 24 },
         2: { cellWidth: 14 },
         3: { cellWidth: 10 },
