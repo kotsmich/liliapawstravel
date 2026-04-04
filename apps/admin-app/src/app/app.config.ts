@@ -23,6 +23,7 @@ import { requestsReducer, RequestsEffects } from '@admin/features/requests/store
 import { messagesReducer, MessagesEffects } from '@admin/features/messages/store';
 import { notificationsReducer } from '@admin/core/store/notifications';
 import { NotificationEffects } from '@admin/core/toast/notification.effects';
+import { SocketEffects } from '@admin/services/socket.effects';
 import { AuthService } from '@admin/services/auth.service';
 
 const LiliaPreset = definePreset(Aura, {
@@ -66,7 +67,7 @@ export const appConfig: ApplicationConfig = {
       messages: messagesReducer,
       notifications: notificationsReducer,
     }),
-    provideEffects([AuthEffects, TripsEffects, RequestsEffects, MessagesEffects, NotificationEffects]),
+    provideEffects([AuthEffects, TripsEffects, RequestsEffects, MessagesEffects, NotificationEffects, SocketEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     providePrimeNG({
       theme: {

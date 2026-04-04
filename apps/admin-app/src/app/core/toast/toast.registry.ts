@@ -11,8 +11,9 @@ import {
   bulkApproveRequestsSuccess, bulkApproveRequestsFailure,
   bulkRejectRequestsSuccess, bulkRejectRequestsFailure,
   updateRequestNoteSuccess, updateRequestNoteFailure,
+  addRequestFromSocket,
 } from '@admin/features/requests/store';
-import { deleteMessageSuccess } from '@admin/features/messages/store';
+import { deleteMessageSuccess, addMessageFromSocket } from '@admin/features/messages/store';
 
 export interface ToastPayload {
   severity: 'success' | 'info' | 'warn' | 'error';
@@ -76,4 +77,10 @@ export const TOAST_REGISTRY: Record<string, (action: any) => ToastPayload> = {
   // Messages
   ...register(deleteMessageSuccess,
     () => ({ severity: 'success', summary: 'Deleted', detail: 'Message deleted.' })),
+
+  // Socket events
+  ...register(addRequestFromSocket,
+    ({ request }) => ({ severity: 'info', summary: 'New Request', detail: `New request from ${request.requesterName}`, life: 5000 })),
+  ...register(addMessageFromSocket,
+    ({ message }) => ({ severity: 'info', summary: 'New Message', detail: `Message from ${message.name}`, life: 5000 })),
 };

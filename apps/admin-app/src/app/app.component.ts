@@ -7,7 +7,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastModule } from 'primeng/toast';
 
 import { selectTotalCount } from '@admin/core/store/notifications';
-import { AdminSocketService } from '@admin/services/admin-socket.service';
 
 @Component({
   selector: 'app-root',
@@ -19,11 +18,9 @@ import { AdminSocketService } from '@admin/services/admin-socket.service';
 export class AppComponent {
   private readonly store = inject(Store);
   private readonly titleService = inject(Title);
-  private readonly socketService = inject(AdminSocketService);
   private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
-    this.socketService.init();
     this.initTitleCounter();
   }
 
