@@ -1,10 +1,10 @@
-import { Component, HostListener, ChangeDetectionStrategy, ChangeDetectorRef, inject, PLATFORM_ID } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs/operators';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map, startWith } from 'rxjs/operators';
 import { TranslocoModule } from '@jsverse/transloco';
 import { LanguageSwitcherComponent } from '@user/shared/components/language-switcher/language-switcher.component';
 
@@ -17,15 +17,17 @@ import { LanguageSwitcherComponent } from '@user/shared/components/language-swit
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent {
+  private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef) {
-    // Re-run change detection on navigation so isActive() reflects the current URL
+  private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((e) => e instanceof NavigationEnd),
-      takeUntilDestroyed(),
-    ).subscribe(() => this.cdr.markForCheck());
-  }
+      map((e) => (e as NavigationEnd).urlAfterRedirects || (e as NavigationEnd).url),
+      startWith(this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
 
   menuOpen = false;
   scrolled = false;
@@ -44,6 +46,7 @@ export class NavbarComponent {
   }
 
   isActive(path: string): boolean {
-    return this.router.url === path || (path !== '/' && this.router.url.startsWith(path));
+    const url = this.currentUrl();
+    return url === path || (path !== '/' && url.startsWith(path));
   }
 }

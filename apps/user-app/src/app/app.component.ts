@@ -3,8 +3,8 @@ import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, EMPTY } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { catchError, combineLatest, EMPTY } from 'rxjs';
+import { filter, map, startWith } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { TranslocoService } from '@jsverse/transloco';
@@ -93,8 +93,6 @@ export class AppComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly document = inject(DOCUMENT);
 
-  private currentUrl = '/';
-
   constructor(
     private readonly wsService: AppWebSocketService,
     private readonly messageService: MessageService,
@@ -134,21 +132,18 @@ export class AppComponent implements OnInit {
   }
 
   private initDynamicTitles(): void {
-    this.router.events
-      .pipe(
+    combineLatest([
+      this.router.events.pipe(
         filter((e) => e instanceof NavigationEnd),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((e) => {
-        this.currentUrl = (e as NavigationEnd).urlAfterRedirects || (e as NavigationEnd).url;
-        this.updateMeta(this.currentUrl, this.translocoService.getActiveLang());
-      });
-
-    this.translocoService.langChanges$
+        map((e) => (e as NavigationEnd).urlAfterRedirects || (e as NavigationEnd).url),
+        startWith(this.router.url),
+      ),
+      this.translocoService.langChanges$.pipe(startWith(this.translocoService.getActiveLang())),
+    ])
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((lang) => {
+      .subscribe(([url, lang]) => {
         this.document.documentElement.setAttribute('lang', lang);
-        this.updateMeta(this.currentUrl, lang);
+        this.updateMeta(url, lang);
       });
   }
 
