@@ -6,6 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { TranslocoService } from '@jsverse/transloco';
 
 import { NavbarComponent } from '@user/shared/components/navbar/navbar.component';
 import { FooterComponent } from '@user/shared/components/footer/footer.component';
@@ -21,21 +22,57 @@ interface RouteMeta {
   canonical: string;
 }
 
-const ROUTE_META: Record<string, RouteMeta> = {
-  '/': {
-    title: 'Lilia Paws Travel — Safe Dog Transport Across Europe',
-    description: 'Lilia Paws Travel safely transports adopted dogs across Europe, connecting shelters with loving families. Request transport for your rescue dog today.',
-    canonical: `${BASE_URL}/`,
+const ROUTE_META: Record<string, Record<string, RouteMeta>> = {
+  en: {
+    '/': {
+      title: 'Lilia Paws Travel — Safe Dog Transport Across Europe',
+      description: 'Lilia Paws Travel safely transports adopted dogs across Europe, connecting shelters with loving families. Request transport for your rescue dog today.',
+      canonical: `${BASE_URL}/`,
+    },
+    '/contact': {
+      title: 'Contact Us — Lilia Paws Travel',
+      description: 'Get in touch with Lilia Paws Travel. We answer questions about dog transport across Europe and help you schedule your rescue dog\'s journey.',
+      canonical: `${BASE_URL}/contact`,
+    },
+    '/request': {
+      title: 'Request Dog Transport — Lilia Paws Travel',
+      description: 'Submit a transport request for your rescue dog. Lilia Paws Travel connects adoptive families with safe, reliable cross-Europe dog transport.',
+      canonical: `${BASE_URL}/request`,
+    },
   },
-  '/contact': {
-    title: 'Contact Us — Lilia Paws Travel',
-    description: 'Get in touch with Lilia Paws Travel. We answer questions about dog transport across Europe and help you schedule your rescue dog\'s journey.',
-    canonical: `${BASE_URL}/contact`,
+  el: {
+    '/': {
+      title: 'Lilia Paws Travel — Ασφαλής Μεταφορά Σκύλων στην Ευρώπη',
+      description: 'Η Lilia Paws Travel μεταφέρει με ασφάλεια υιοθετημένους σκύλους σε όλη την Ευρώπη, συνδέοντας καταφύγια με αγαπημένες οικογένειες. Ζητήστε μεταφορά για τον σκύλο σας σήμερα.',
+      canonical: `${BASE_URL}/`,
+    },
+    '/contact': {
+      title: 'Επικοινωνία — Lilia Paws Travel',
+      description: 'Επικοινωνήστε με την Lilia Paws Travel. Απαντάμε σε ερωτήσεις για τη μεταφορά σκύλων στην Ευρώπη και σας βοηθάμε να προγραμματίσετε το ταξίδι του σκύλου σας.',
+      canonical: `${BASE_URL}/contact`,
+    },
+    '/request': {
+      title: 'Αίτηση Μεταφοράς Σκύλου — Lilia Paws Travel',
+      description: 'Υποβάλετε αίτημα μεταφοράς για τον υιοθετημένο σκύλο σας. Η Lilia Paws Travel συνδέει οικογένειες με ασφαλή και αξιόπιστη μεταφορά σε όλη την Ευρώπη.',
+      canonical: `${BASE_URL}/request`,
+    },
   },
-  '/request': {
-    title: 'Request Dog Transport — Lilia Paws Travel',
-    description: 'Submit a transport request for your rescue dog. Lilia Paws Travel connects adoptive families with safe, reliable cross-Europe dog transport.',
-    canonical: `${BASE_URL}/request`,
+  de: {
+    '/': {
+      title: 'Lilia Paws Travel — Sicherer Hundetransport durch Europa',
+      description: 'Lilia Paws Travel transportiert adoptierte Hunde sicher durch Europa und verbindet Tierheime mit liebevollen Familien. Beantragen Sie noch heute den Transport für Ihren Rettungshund.',
+      canonical: `${BASE_URL}/`,
+    },
+    '/contact': {
+      title: 'Kontakt — Lilia Paws Travel',
+      description: 'Nehmen Sie Kontakt mit Lilia Paws Travel auf. Wir beantworten Fragen zum Hundetransport durch Europa und helfen Ihnen, die Reise Ihres Rettungshundes zu planen.',
+      canonical: `${BASE_URL}/contact`,
+    },
+    '/request': {
+      title: 'Hundetransport anfragen — Lilia Paws Travel',
+      description: 'Stellen Sie einen Transportantrag für Ihren Rettungshund. Lilia Paws Travel verbindet Adoptiveltern mit sicherem und zuverlässigem Hundetransport durch ganz Europa.',
+      canonical: `${BASE_URL}/request`,
+    },
   },
 };
 
@@ -55,12 +92,15 @@ export class AppComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly document = inject(DOCUMENT);
 
+  private currentUrl = '/';
+
   constructor(
     private readonly wsService: AppWebSocketService,
     private readonly messageService: MessageService,
     private readonly router: Router,
     private readonly titleService: Title,
     private readonly metaService: Meta,
+    private readonly translocoService: TranslocoService,
   ) {}
 
   ngOnInit(): void {
@@ -96,13 +136,21 @@ export class AppComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((e) => {
-        const url = (e as NavigationEnd).urlAfterRedirects || (e as NavigationEnd).url;
-        this.updateMeta(url);
+        this.currentUrl = (e as NavigationEnd).urlAfterRedirects || (e as NavigationEnd).url;
+        this.updateMeta(this.currentUrl, this.translocoService.getActiveLang());
+      });
+
+    this.translocoService.langChanges$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((lang) => {
+        this.document.documentElement.setAttribute('lang', lang);
+        this.updateMeta(this.currentUrl, lang);
       });
   }
 
-  private updateMeta(url: string): void {
-    const meta = ROUTE_META[url] ?? ROUTE_META['/'];
+  private updateMeta(url: string, lang: string): void {
+    const langMeta = ROUTE_META[lang] ?? ROUTE_META['en'];
+    const meta = langMeta[url] ?? langMeta['/'];
 
     this.titleService.setTitle(meta.title);
 
