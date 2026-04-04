@@ -11,7 +11,7 @@
     </div>
     <div class="field fw">
       <p-ifta-label>
-        <p-select [inputId]="'size-' + idx" formControlName="size" [options]="sizes"
+        <p-select [inputId]="'size-' + idx" formControlName="size" [options]="sizes()"
           optionLabel="label" optionValue="value" styleClass="w-full" />
         <label [for]="'size-' + idx">{{ 'dogs.fields.size' | transloco }}</label>
       </p-ifta-label>

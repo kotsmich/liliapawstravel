@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Store } from '@ngrx/store';
-import { Actions, ofType } from '@ngrx/effects';
 import { BehaviorSubject, combineLatest } from 'rxjs';
-import { filter, map, shareReplay, take } from 'rxjs/operators';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { map, shareReplay } from 'rxjs/operators';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -15,9 +14,10 @@ import { sanitizeHtml } from '@admin/shared/utils/sanitize';
 import {
   loadRequests, approveRequest, rejectRequest,
   selectAllRequests, selectRequestsIsLoading,
-  bulkApproveRequests, bulkApproveRequestsSuccess,
-  bulkRejectRequests, bulkRejectRequestsSuccess,
+  bulkApproveRequests, bulkRejectRequests,
   updateRequestNote,
+  setSelectedRequests, setSelectedTripId,
+  selectSelectedRequests, selectSelectedTripId,
 } from '@admin/features/requests/store';
 import { resetRequests } from '@admin/core/store/notifications';
 import { TripRequest } from '@models/lib/trip-request.model';
@@ -45,17 +45,15 @@ import { RequestDetailDialogComponent } from './components/request-detail-dialog
 })
 export class RequestsListComponent implements OnInit {
   private readonly store = inject(Store);
-  private readonly actions$ = inject(Actions);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly destroyRef = inject(DestroyRef);
 
   loading$ = this.store.select(selectRequestsIsLoading);
 
-  selectedTripId$ = new BehaviorSubject<string | null>(null);
+  selectedTripId$ = this.store.select(selectSelectedTripId);
   activeTab$ = new BehaviorSubject<string>('all');
   selectedRequestId = signal<string | null>(null);
-  selectedRequests = signal<TripRequest[]>([]);
+  readonly selectedRequests = toSignal(this.store.select(selectSelectedRequests), { initialValue: [] as TripRequest[] });
   dialogVisible = signal(false);
 
   readonly trips = toSignal(this.store.select(selectAllTrips), { initialValue: [] as Trip[] });
@@ -89,32 +87,18 @@ export class RequestsListComponent implements OnInit {
     })
   );
 
-  constructor() {
-    // Clear selection after bulk actions — toasts handled by NotificationEffects
-    this.actions$.pipe(
-      ofType(bulkApproveRequestsSuccess, bulkRejectRequestsSuccess),
-      takeUntilDestroyed(),
-    ).subscribe(() => {
-      this.selectedRequests.set([]);
-    });
-  }
-
   ngOnInit(): void {
     this.store.dispatch(resetRequests());
     this.store.dispatch(loadRequests());
     this.store.dispatch(loadTrips());
+  }
 
-    // Pre-select nearest upcoming trip once trips load
-    this.store.select(selectAllTrips).pipe(
-      filter((trips: Trip[]) => trips.length > 0),
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((trips: Trip[]) => {
-      const nearest = [...trips]
-        .filter((t) => t.status === 'upcoming')
-        .sort((a, b) => a.date.localeCompare(b.date))[0];
-      if (nearest) this.selectedTripId$.next(nearest.id);
-    });
+  onSelectionChange(requests: TripRequest[]): void {
+    this.store.dispatch(setSelectedRequests({ requests }));
+  }
+
+  onTripSelected(tripId: string | null): void {
+    this.store.dispatch(setSelectedTripId({ tripId }));
   }
 
   private buildTripOptionsFrom(trips: Trip[], requests: TripRequest[] = []): Array<{ label: string; value: string; pending: number }> {

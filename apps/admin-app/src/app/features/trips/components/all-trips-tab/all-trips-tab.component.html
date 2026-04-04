@@ -35,9 +35,9 @@
 <div class="table-scroll">
   <app-generic-table
     [data]="trips"
-    [columns]="columns"
-    [actions]="actions"
-    [config]="tableConfig"
+    [columns]="columns()"
+    [actions]="actions()"
+    [config]="tableConfig()"
     (rowClicked)="viewDetails.emit($event)">
   </app-generic-table>
 </div>

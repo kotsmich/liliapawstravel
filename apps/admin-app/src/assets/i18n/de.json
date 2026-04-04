@@ -113,7 +113,8 @@
       "full": "Belegt",
       "open": "Offen",
       "freezed": "Eingefroren",
-      "status": "Status"
+      "status": "Status",
+      "capacityWarning": "Kapazität ({{ capacity }}) liegt unter aktuellen Hunden ({{ dogs }}) — Reise wird automatisch als belegt markiert."
     },
     "table": {
       "date": "Datum",

@@ -9,9 +9,9 @@
   <div class="table-scroll">
     <app-generic-table
       [data]="trips"
-      [columns]="columns"
-      [actions]="actions"
-      [config]="tableConfig">
+      [columns]="columns()"
+      [actions]="actions()"
+      [config]="tableConfig()">
     </app-generic-table>
   </div>
 </p-card>

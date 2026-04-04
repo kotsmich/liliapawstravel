@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy, OnInit, inject, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -6,7 +6,7 @@ import { SelectModule } from 'primeng/select';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { TextareaModule } from 'primeng/textarea';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TripRequester } from '@models/lib/trip.model';
 
 @Component({
@@ -25,27 +25,22 @@ import { TripRequester } from '@models/lib/trip.model';
     .p-error { font-size: 0.75rem; color: var(--color-error-alt); }
   `],
 })
-export class DogFieldsComponent implements OnInit {
+export class DogFieldsComponent {
   @Input() form!: FormGroup;
   @Input() idx: string | number = 0;
   @Input() requestors: TripRequester[] = [];
 
-  private transloco = inject(TranslocoService);
-  private destroyRef = inject(DestroyRef);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly transloco = inject(TranslocoService);
+  private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
-  sizes: { value: string; label: string }[] = [];
-
-  ngOnInit(): void {
-    this.transloco.selectTranslation().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.sizes = [
-        { value: 'small',  label: this.transloco.translate('dogs.fields.sizeSmall') },
-        { value: 'medium', label: this.transloco.translate('dogs.fields.sizeMedium') },
-        { value: 'large',  label: this.transloco.translate('dogs.fields.sizeLarge') },
-      ];
-      this.cdr.markForCheck();
-    });
-  }
+  readonly sizes = computed((): { value: string; label: string }[] => {
+    this._t();
+    return [
+      { value: 'small',  label: this.transloco.translate('dogs.fields.sizeSmall') },
+      { value: 'medium', label: this.transloco.translate('dogs.fields.sizeMedium') },
+      { value: 'large',  label: this.transloco.translate('dogs.fields.sizeLarge') },
+    ];
+  });
 
   onRequestorChange(requestId: string | null): void {
     const req = this.requestors.find((r) => r.requestId === requestId) ?? null;

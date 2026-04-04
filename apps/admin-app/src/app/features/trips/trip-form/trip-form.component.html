@@ -6,10 +6,10 @@
       <p-button type="button" [label]="'trips.form.cancel' | transloco" [outlined]="true" (onClick)="navigateToTrips()" />
       <p-button
         type="button"
-        [label]="(mutating$ | async) ? ('trips.form.saving' | transloco) : (isEdit ? ('trips.form.updateTrip' | transloco) : ('trips.form.createTrip' | transloco))"
+        [label]="mutating() ? ('trips.form.saving' | transloco) : (isEdit ? ('trips.form.updateTrip' | transloco) : ('trips.form.createTrip' | transloco))"
         icon="pi pi-save"
-        [loading]="!!(mutating$ | async)"
-        [disabled]="!!(mutating$ | async)"
+        [loading]="mutating()"
+        [disabled]="mutating()"
         (onClick)="onSubmit()"
         />
     </div>
@@ -178,10 +178,10 @@
       <div class="dogs-card__header">
         <span>🐶 {{ 'trips.dogs' | transloco }}</span>
         <div class="flex gap-2 align-items-center">
-          @if (dogManager.selectedDogs.length) {
+          @if (dogManager.selectedDogs().length) {
             <p-button
               type="button"
-              [label]="'trips.deleteSelected' | transloco: { count: dogManager.selectedDogs.length }"
+              [label]="'trips.deleteSelected' | transloco: { count: dogManager.selectedDogs().length }"
               icon="pi pi-trash"
               severity="danger"
               [outlined]="true"
@@ -195,37 +195,37 @@
       <p-tabs [(value)]="activeDogsTab" (valueChange)="onTabChange()" styleClass="dogs-tabs">
         <p-tablist>
           <p-tab value="all">{{ 'trips.allDogsTab' | transloco: { count: dogs.length } }}</p-tab>
-          <p-tab value="byRequestor">{{ 'trips.byRequestorTab' | transloco: { count: dogManager.tripRequestors.length } }}</p-tab>
+          <p-tab value="byRequestor">{{ 'trips.byRequestorTab' | transloco: { count: dogManager.tripRequestors().length } }}</p-tab>
         </p-tablist>
       </p-tabs>
 
       @if (activeDogsTab === 'all') {
         <app-dogs-table
-          [dogs]="dogManager.dogsData"
+          [dogs]="dogManager.dogsData()"
           [columns]="dogManager.dogColumns"
-          [actions]="dogManager.dogActions"
+          [actions]="dogManager.dogActions()"
           [config]="dogManager.dogTableConfig"
           (selectionChange)="dogManager.onSelectionChange($event)" />
       }
 
       @if (activeDogsTab === 'byRequestor') {
-        @if (dogManager.tripRequestors.length === 0) {
+        @if (dogManager.tripRequestors().length === 0) {
           <div class="no-requestors">{{ 'trips.noRequestorsLinked' | transloco }}</div>
         } @else {
           <p-accordion class="dogs-tab-accordion" [multiple]="true" [value]="[]">
-            @for (req of dogManager.tripRequestors; track (req.requestId ?? req.name); let i = $index) {
+            @for (req of dogManager.tripRequestors(); track (req.requestId ?? req.name); let i = $index) {
               <p-accordion-panel [value]="req.requestId ?? ('admin:' + i)">
                 <p-accordion-header>
                   <div class="req-header flex align-items-center flex-wrap flex-1">
                     <span class="req-name">{{ req.name }}</span>
-                    <span class="req-dogs-count">{{ (dogManager.dogsPerRequestor.get(req.requestId ?? req.name) ?? []).length }} {{ 'trips.dogs' | transloco }}</span>
+                    <span class="req-dogs-count">{{ (dogManager.dogsPerRequestor().get(req.requestId ?? req.name) ?? []).length }} {{ 'trips.dogs' | transloco }}</span>
                   </div>
                 </p-accordion-header>
                 <p-accordion-content>
                   <app-dogs-table
-                    [dogs]="dogManager.dogsPerRequestor.get(req.requestId ?? req.name) ?? []"
+                    [dogs]="dogManager.dogsPerRequestor().get(req.requestId ?? req.name) ?? []"
                     [columns]="dogManager.dogColumns"
-                    [actions]="dogManager.dogActions"
+                    [actions]="dogManager.dogActions()"
                     [config]="dogManager.dogTableConfig"
                     (selectionChange)="dogManager.onSelectionChange($event, req.requestId ?? req.name)" />
                 </p-accordion-content>
@@ -241,9 +241,10 @@
 </div>
 
 <app-dog-form-dialog
-  [(visible)]="dogManager.dialogVisible"
+  [visible]="dogManager.dialogVisible()"
+  (visibleChange)="dogManager.dialogVisible.set($event)"
   [tripId]="editId"
-  [dog]="dogManager.selectedDog"
-  [requestors]="dogManager.tripRequestors"
+  [dog]="dogManager.selectedDog()"
+  [requestors]="dogManager.tripRequestors()"
   (dogSaved)="dogManager.onDogSaved($event)"
   (cancelled)="dogManager.onDogDialogCancelled()" />

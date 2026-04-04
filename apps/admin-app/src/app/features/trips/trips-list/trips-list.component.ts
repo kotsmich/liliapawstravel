@@ -17,7 +17,6 @@ import { LoadingSpinnerComponent } from '@ui/lib/loading-spinner/loading-spinner
 import { Trip } from '@models/lib/trip.model';
 import { Dog } from '@models/lib/dog.model';
 import { TripRequest } from '@models/lib/trip-request.model';
-import { CalendarEvent } from '@models/lib/calendar-event.model';
 import { sanitizeHtml } from '@admin/shared/utils/sanitize';
 import { TripCalendarViewComponent } from '../components/trip-calendar-view/trip-calendar-view.component';
 import { AllTripsTabComponent } from '../components/all-trips-tab/all-trips-tab.component';
@@ -54,14 +53,7 @@ export class TripsListComponent implements OnInit {
 
   tripsForDate$ = this.store.select(selectTripsForSelectedDate);
 
-  // Sync properties for strict-template bindings to typed dumb components
-  trips: Trip[] = [];
-  calendarEvents: CalendarEvent[] = [];
-  tripsForDate: Trip[] = [];
-  detailTrip: Trip | null = null;
-  detailRequests: TripRequest[] = [];
-
-  readonly selectedDate = toSignal(this.store.select(selectCalendarSelectedDate), { initialValue: null });
+readonly selectedDate = toSignal(this.store.select(selectCalendarSelectedDate), { initialValue: null });
   activeTab: 'calendar' | 'all' = 'calendar';
 
   // Trip detail dialog

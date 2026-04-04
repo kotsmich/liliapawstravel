@@ -112,7 +112,8 @@
       "statusCompleted": "Completed",
       "full": "Full",
       "open": "Open",
-      "freezed": "Freezed"
+      "freezed": "Freezed",
+      "capacityWarning": "Capacity ({{ capacity }}) is below current dogs ({{ dogs }}) — trip will be auto-marked Full."
     },
     "table": {
       "date": "Date",

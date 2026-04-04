@@ -20,14 +20,14 @@
       [pendingCount]="vm.pending ?? 0"
       [approvedCount]="vm.approved ?? 0"
       [rejectedCount]="vm.rejected ?? 0"
-      (tripSelected)="selectedTripId$.next($event)"
+      (tripSelected)="onTripSelected($event)"
       (tabChanged)="activeTab$.next($event)"
       />
     <app-requests-table
       [requests]="vm.requests ?? []"
       [loading]="!!vm.loading"
       [selection]="selectedRequests()"
-      (selectionChange)="selectedRequests.set($event)"
+      (selectionChange)="onSelectionChange($event)"
       (rowClicked)="openDetail($event)"
       (approve)="onApproveFromTable($event)"
       (reject)="onRejectFromTable($event)"

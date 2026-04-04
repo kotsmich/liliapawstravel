@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { FormBuilder, FormArray, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { ConfirmationService } from 'primeng/api';
@@ -11,16 +11,14 @@ import { addDog, addDogs, updateDog, deleteDog, deleteDogs } from '@admin/featur
 export class DogManagerService {
   readonly dogsArray: FormArray;
 
-  // Dialog state
-  dialogVisible = false;
-  selectedDog: Dog | null = null;
-  editingIndex: number | null = null;
+  readonly dialogVisible = signal(false);
+  readonly selectedDog = signal<Dog | null>(null);
+  readonly dogsData = signal<(Dog & { _idx: number })[]>([]);
+  readonly dogsPerRequestor = signal<Map<string, (Dog & { _idx: number })[]>>(new Map());
+  readonly selectedDogs = signal<(Dog & { _idx: number })[]>([]);
+  readonly tripRequestors = signal<TripRequester[]>([]);
 
-  // Table data (refreshed on every dogs change)
-  dogsData: (Dog & { _idx: number })[] = [];
-  dogsPerRequestor: Map<string, (Dog & { _idx: number })[]> = new Map();
-  selectedDogs: (Dog & { _idx: number })[] = [];
-  tripRequestors: TripRequester[] = [];
+  private editingIndex: number | null = null;
 
   readonly dogColumns: TableColumn<Dog & { _idx: number }>[] = [
     { field: 'name', header: 'Name', sortable: true },
@@ -45,9 +43,9 @@ export class DogManagerService {
     emptyMessage: 'No dogs added yet. Use the "Add Dog" button above.',
   };
 
-  dogActions: TableAction<Dog & { _idx: number }>[] = [
+  readonly dogActions = signal<TableAction<Dog & { _idx: number }>[]>([
     { icon: 'pi pi-pencil', tooltip: 'Edit dog', severity: 'secondary', action: (row) => this.openEditDialog(row._idx) },
-  ];
+  ]);
 
   private isEdit = false;
   private editId: string | null = null;
@@ -70,7 +68,7 @@ export class DogManagerService {
   setDogs(dogs: Dog[], requestors: TripRequester[]): void {
     this.dogsArray.clear();
     dogs.forEach(d => this.dogsArray.push(this.dogGroup(d)));
-    this.tripRequestors = requestors;
+    this.tripRequestors.set(requestors);
     this.refreshDogsData();
   }
 
@@ -90,24 +88,25 @@ export class DogManagerService {
   }
 
   refreshDogsData(): void {
-    this.dogsData = this.dogsArray.controls.map((ctrl, i) => ({ ...ctrl.value, _idx: i }));
+    const data = this.dogsArray.controls.map((ctrl, i) => ({ ...ctrl.value, _idx: i }));
+    this.dogsData.set(data);
     const map = new Map<string, (Dog & { _idx: number })[]>();
-    this.tripRequestors.forEach(req => {
-      map.set(req.requestId ?? req.name, this.dogsData.filter(d => req.dogs.some(rd => rd.id === d.id)));
+    this.tripRequestors().forEach(req => {
+      map.set(req.requestId ?? req.name, data.filter(d => req.dogs.some(rd => rd.id === d.id)));
     });
-    this.dogsPerRequestor = map;
+    this.dogsPerRequestor.set(map);
   }
 
   openAddDialog(): void {
-    this.selectedDog = null;
+    this.selectedDog.set(null);
     this.editingIndex = null;
-    this.dialogVisible = true;
+    this.dialogVisible.set(true);
   }
 
   openEditDialog(index: number): void {
-    this.selectedDog = { ...this.dogsArray.at(index).value } as Dog;
+    this.selectedDog.set({ ...this.dogsArray.at(index).value } as Dog);
     this.editingIndex = index;
-    this.dialogVisible = true;
+    this.dialogVisible.set(true);
   }
 
   onDogSaved(dogs: Dog[]): void {
@@ -131,14 +130,14 @@ export class DogManagerService {
         this.refreshDogsData();
       }
     }
-    this.dialogVisible = false;
-    this.selectedDog = null;
+    this.dialogVisible.set(false);
+    this.selectedDog.set(null);
     this.editingIndex = null;
   }
 
   onDogDialogCancelled(): void {
-    this.dialogVisible = false;
-    this.selectedDog = null;
+    this.dialogVisible.set(false);
+    this.selectedDog.set(null);
     this.editingIndex = null;
   }
 
@@ -173,21 +172,20 @@ export class DogManagerService {
   onSelectionChange(dogs: (Dog & { _idx: number })[], groupKey?: string): void {
     if (groupKey !== undefined) {
       this.selectionsByGroup.set(groupKey, dogs);
-      this.selectedDogs = Array.from(this.selectionsByGroup.values()).flat();
+      this.selectedDogs.set(Array.from(this.selectionsByGroup.values()).flat());
     } else {
-      this.selectedDogs = dogs;
+      this.selectedDogs.set(dogs);
       this.selectionsByGroup.clear();
     }
-    this.dogActions = [...this.dogActions];
   }
 
   clearGroupSelections(): void {
     this.selectionsByGroup.clear();
-    this.selectedDogs = [];
+    this.selectedDogs.set([]);
   }
 
   removeSelectedDogs(): void {
-    const toRemove = [...this.selectedDogs];
+    const toRemove = [...this.selectedDogs()];
     if (!toRemove.length) return;
 
     const dogIdsToDelete = toRemove.map(d => d.id).filter((id): id is string => !!id);
@@ -201,8 +199,8 @@ export class DogManagerService {
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.store.dispatch(deleteDogs({ tripId: this.editId!, dogIds: dogIdsToDelete }));
-        this.selectedDogs = [];
-        this.dogActions = [];
+        this.selectedDogs.set([]);
+        this.dogActions.set([]);
       },
     });
   }

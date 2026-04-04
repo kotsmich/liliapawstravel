@@ -30,9 +30,9 @@
         </div>
         <app-generic-table
           [data]="t.dogs ?? []"
-          [columns]="dogColumns"
-          [actions]="dogActions"
-          [config]="tableConfig">
+          [columns]="dogColumns()"
+          [actions]="dogActions()"
+          [config]="tableConfig()">
         </app-generic-table>
       </div>
     }
@@ -54,7 +54,7 @@
                 <p-accordion-content>
                   <app-generic-table
                     [data]="req.dogs"
-                    [columns]="requestDogColumns"
+                    [columns]="requestDogColumns()"
                     [config]="requestDogConfig">
                   </app-generic-table>
                   <div class="req-actions flex align-items-center gap-2">

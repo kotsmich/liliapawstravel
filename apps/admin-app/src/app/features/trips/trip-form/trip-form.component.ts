@@ -20,7 +20,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TabsModule } from 'primeng/tabs';
 import { Store } from '@ngrx/store';
 import { filter, map, take } from 'rxjs';
-import { clearSelectedTrip, loadTripById, updateTrip, addTrip, selectSelectedTrip, selectTripsMutating, selectTripsError } from '@admin/features/trips/store';
+import { clearSelectedTrip, loadTripById, updateTrip, addTrip, selectSelectedTrip, selectTripsMutating } from '@admin/features/trips/store';
 import { Dog } from '@models/lib/dog.model';
 import { DogFormDialogComponent } from '@admin/features/trips/components/dog-form-dialog/dog-form-dialog.component';
 import { DogsTableComponent } from './components/dogs-table.component';
@@ -52,8 +52,7 @@ export class TripFormComponent implements OnInit {
   editId: string | null = null;
 
   today = new Date();
-  mutating$ = this.store.select(selectTripsMutating);
-  error$ = this.store.select(selectTripsError);
+  readonly mutating = toSignal(this.store.select(selectTripsMutating), { initialValue: false });
 
   readonly statuses = toSignal(
     this.transloco.selectTranslation().pipe(
@@ -80,6 +79,21 @@ export class TripFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.editId = this.route.snapshot.paramMap.get('id');
+    this.isEdit = !!this.editId;
+
+    this.buildForm();
+    this.dogManager.init(this.isEdit, this.editId);
+    this.store.dispatch(clearSelectedTrip());
+
+    if (this.isEdit && this.editId) {
+      this.loadTripForEdit();
+    } else {
+      this.prefillNewTrip();
+    }
+  }
+
+  private buildForm(): void {
     this.form = this.fb.group({
       date: [null as Date | null, Validators.required],
       departureCountry: ['', Validators.required],
@@ -93,51 +107,38 @@ export class TripFormComponent implements OnInit {
       acceptingRequests: [true],
       dogs: this.dogManager.dogsArray,
     });
+  }
 
-    this.editId = this.route.snapshot.paramMap.get('id');
-    this.isEdit = !!this.editId;
-    this.dogManager.init(this.isEdit, this.editId);
-
-    if (!this.isEdit) {
-      const pick = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
-      const date = new Date();
-      date.setDate(date.getDate() + pick([7, 10, 14, 21, 30]));
-      this.form.patchValue({
-        date,
-        departureCountry: pick(['Greece', 'Romania', 'Bulgaria']),
-        departureCity:    pick(['Thessaloniki', 'Athens', 'Bucharest', 'Sofia']),
-        arrivalCountry:   pick(['Austria', 'Netherlands', 'Germany']),
-        arrivalCity:      pick(['Vienna', 'Amsterdam', 'Berlin', 'Munich']),
-        totalCapacity:    pick([25, 35, 45, 55]),
-      });
-    }
+  private prefillNewTrip(): void {
+    const pick = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
+    this.form.patchValue({
+      departureCountry: pick(['Greece', 'Romania', 'Bulgaria']),
+      departureCity:    pick(['Thessaloniki', 'Athens', 'Bucharest', 'Sofia']),
+      arrivalCountry:   pick(['Austria', 'Netherlands', 'Germany']),
+      arrivalCity:      pick(['Vienna', 'Amsterdam', 'Berlin', 'Munich']),
+      totalCapacity:    pick([25, 35, 45, 55]),
+    });
 
     const prefilledDate = this.route.snapshot.queryParamMap.get('date');
-    if (prefilledDate && !this.isEdit) {
+    if (prefilledDate) {
       this.form.patchValue({ date: new Date(prefilledDate + 'T00:00:00') });
     }
+  }
 
-    this.store.dispatch(clearSelectedTrip());
+  private loadTripForEdit(): void {
+    this.store.dispatch(loadTripById({ id: this.editId! }));
 
-    if (this.isEdit && this.editId) {
-      this.store.dispatch(loadTripById({ id: this.editId }));
+    const trip$ = this.store.select(selectSelectedTrip).pipe(filter(Boolean));
 
-      this.store.select(selectSelectedTrip).pipe(
-        filter(Boolean),
-        take(1),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe((trip) => {
-        this.form.patchValue({ ...trip, date: trip.date ? new Date(trip.date + 'T00:00:00') : null });
-      });
+    trip$.pipe(take(1)).subscribe((trip) => {
+      this.form.patchValue({ ...trip, date: trip.date ? new Date(trip.date + 'T00:00:00') : null });
+      this.cdr.markForCheck();
+    });
 
-      this.store.select(selectSelectedTrip).pipe(
-        filter(Boolean),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe((trip) => {
-        this.dogManager.setDogs(trip.dogs ?? [], trip.requester ?? []);
-        this.cdr.markForCheck();
-      });
-    }
+    trip$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((trip) => {
+      this.dogManager.setDogs(trip.dogs ?? [], trip.requester ?? []);
+      this.cdr.markForCheck();
+    });
   }
 
   /** Convenience getter so template expressions like `dogs.length` remain unchanged. */
@@ -150,7 +151,7 @@ export class TripFormComponent implements OnInit {
   get capacityWarning(): string | null {
     const capacity = this.form.get('totalCapacity')?.value ?? 0;
     if (capacity < this.dogs.length) {
-      return `Capacity (${capacity}) is below current dogs (${this.dogs.length}) — trip will be auto-marked Full.`;
+      return this.transloco.translate('trips.form.capacityWarning', { capacity, dogs: this.dogs.length });
     }
     return null;
   }
