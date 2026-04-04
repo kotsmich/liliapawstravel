@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -50,7 +50,6 @@ export class TripFormComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly transloco = inject(TranslocoService);
   readonly dogManager = inject(DogManagerService);
@@ -129,12 +128,10 @@ export class TripFormComponent implements OnInit {
 
     trip$.pipe(take(1)).subscribe((trip) => {
       this.form.patchValue({ ...trip, date: trip.date ? new Date(trip.date + 'T00:00:00') : null });
-      this.cdr.markForCheck();
     });
 
     trip$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((trip) => {
       this.dogManager.setDogs(trip.dogs ?? [], trip.requester ?? []);
-      this.cdr.markForCheck();
     });
   }
 
@@ -155,7 +152,6 @@ export class TripFormComponent implements OnInit {
 
   onTabChange(): void {
     this.dogManager.clearGroupSelections();
-    this.cdr.markForCheck();
   }
 
   navigateToTrips(): void {

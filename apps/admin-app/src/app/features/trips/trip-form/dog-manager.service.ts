@@ -65,6 +65,7 @@ export class DogManagerService {
     this.dogsArray.clear();
     dogs.forEach(d => this.dogsArray.push(this.dogGroup(d)));
     this.tripRequestors.set(requestors);
+    this.clearGroupSelections();
     this.refreshDogsData();
   }
 
@@ -196,7 +197,6 @@ export class DogManagerService {
       accept: () => {
         this.store.dispatch(deleteDogs({ tripId: this.editId!, dogIds: dogIdsToDelete }));
         this.selectedDogs.set([]);
-        this.dogActions.set([]);
       },
     });
   }
