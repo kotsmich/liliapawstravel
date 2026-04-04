@@ -35,6 +35,11 @@
                 "glob": "favicon.ico",
                 "input": "apps/user-app/src",
                 "output": ""
+              },
+              {
+                "glob": "google248798c7f4b6974e.html",
+                "input": "apps/user-app/src",
+                "output": ""
               }
             ],
             "styles": [
