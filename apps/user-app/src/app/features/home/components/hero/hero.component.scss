@@ -4,9 +4,8 @@
   position: relative;
   min-height: 90vh;
   background-image: url('/assets/images/van.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center top;
+  background-size: cover;
+  background-position: center 40%;
   display: flex;
   align-items: flex-start;
   padding-bottom: 0;
