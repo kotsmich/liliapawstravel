@@ -1,13 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Store } from '@ngrx/store';
 import { ToastModule } from 'primeng/toast';
 import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs';
-import { loadMessages, loadMessageById, deleteMessage, selectAllMessages, selectMessagesIsLoading, selectSelectedMessage, selectUnreadCount } from '@admin/features/messages/store';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { loadMessages, loadMessageById, deleteMessage, selectAllMessages, selectMessagesIsLoading, selectUnreadCount } from '@admin/features/messages/store';
 import { resetMessages } from '@admin/core/store/notifications';
 import { ContactSubmission } from '@models/lib/contact-form.model';
 import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
@@ -36,17 +35,10 @@ export class MessagesPageComponent implements OnInit {
   loading$ = this.store.select(selectMessagesIsLoading);
   unreadCount$ = this.store.select(selectUnreadCount);
 
-  selectedMessage = signal<ContactSubmission | null>(null);
+  private readonly selectedMessageId = signal<string | null>(null);
+  private readonly allMessages = toSignal(this.store.select(selectAllMessages), { initialValue: [] as ContactSubmission[] });
+  readonly selectedMessage = computed(() => this.allMessages().find((m) => m.id === this.selectedMessageId()) ?? null);
   dialogVisible = signal(false);
-
-  constructor() {
-    this.store.select(selectSelectedMessage).pipe(
-      filter(Boolean),
-      takeUntilDestroyed(),
-    ).subscribe((msg) => {
-      this.selectedMessage.set(msg);
-    });
-  }
 
   ngOnInit(): void {
     this.store.dispatch(resetMessages());
@@ -54,7 +46,7 @@ export class MessagesPageComponent implements OnInit {
   }
 
   openMessage(msg: ContactSubmission): void {
-    this.selectedMessage.set(msg);
+    this.selectedMessageId.set(msg.id);
     this.dialogVisible.set(true);
     if (!msg.isRead) {
       this.store.dispatch(loadMessageById({ id: msg.id }));
@@ -63,12 +55,12 @@ export class MessagesPageComponent implements OnInit {
 
   onDialogVisibleChange(visible: boolean): void {
     this.dialogVisible.set(visible);
-    if (!visible) this.selectedMessage.set(null);
+    if (!visible) this.selectedMessageId.set(null);
   }
 
   deleteMessage(msg: ContactSubmission): void {
     this.store.dispatch(deleteMessage({ id: msg.id }));
     this.dialogVisible.set(false);
-    this.selectedMessage.set(null);
+    this.selectedMessageId.set(null);
   }
 }

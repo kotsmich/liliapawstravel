@@ -14,7 +14,7 @@
     activeTab: activeTab$ | async
     }; as vm) {
     <app-requests-filter
-      [tripOptions]="tripOptions"
+      [tripOptions]="tripOptions()"
       [selectedTripId]="vm.selectedTripId"
       [activeTab]="vm.activeTab ?? 'all'"
       [pendingCount]="vm.pending ?? 0"
@@ -39,7 +39,7 @@
   <app-request-detail-dialog
     [visible]="dialogVisible()"
     [request]="selectedRequest()"
-    [trips]="trips"
+    [trips]="trips()"
     (visibleChange)="dialogVisible.set($event)"
     (approve)="approve()"
     (reject)="reject()"

@@ -1,7 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, of, switchMap, tap } from 'rxjs';
+import { catchError, filter, map, mergeMap, of, switchMap, tap, withLatestFrom } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { selectCalendarSelectedDate, selectDate } from '@admin/core/store/calendar';
 import { Dog } from '@models/lib/dog.model';
 import { TripsService } from '@admin/services/trips.service';
 import { DogsService } from '@admin/services/dogs.service';
@@ -21,9 +23,24 @@ import {
 @Injectable()
 export class TripsEffects {
   private readonly actions$ = inject(Actions);
+  private readonly store = inject(Store);
   private readonly tripsService = inject(TripsService);
   private readonly dogsService = inject(DogsService);
   private readonly router = inject(Router);
+
+  autoSelectNearestDate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(loadTripsSuccess),
+      withLatestFrom(this.store.select(selectCalendarSelectedDate)),
+      filter(([, date]) => date === null),
+      map(([{ trips }]) => {
+        const today = new Date().toISOString().slice(0, 10);
+        const sorted = trips.map((t) => t.date).filter((d) => d >= today).sort();
+        const date = sorted[0] ?? [...trips.map((t) => t.date)].sort().reverse()[0];
+        return selectDate({ date: date ?? today });
+      })
+    )
+  );
 
   loadTrips$ = createEffect(() =>
     this.actions$.pipe(

@@ -24,7 +24,7 @@
       @if (activeTab === 'calendar') {
         <app-trip-calendar-view
           [trips]="vm.trips || []"
-          [selectedDate]="selectedDate"
+          [selectedDate]="selectedDate()"
           [calendarEvents]="vm.calendarEvents || []"
           [tripsForDate]="vm.tripsForDate || []"
           (dateSelected)="onDateSelected($event)"

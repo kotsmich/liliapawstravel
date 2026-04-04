@@ -4,6 +4,8 @@ import { TripRequest } from '@models/lib/trip-request.model';
 
 export const selectAllRequests = createSelector(selectRequestsState, (s) => s.requests);
 export const selectRequestsIsLoading = createSelector(selectRequestsState, (s) => s.loading);
+export const selectSelectedRequests = createSelector(selectRequestsState, (s) => s.selectedRequests);
+export const selectSelectedTripId = createSelector(selectRequestsState, (s) => s.selectedTripId);
 export const selectPendingRequestsCount = createSelector(
   selectAllRequests,
   (requests) => requests.filter((r) => r.status === 'pending').length

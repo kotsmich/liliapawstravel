@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, of, switchMap } from 'rxjs';
+import { catchError, filter, map, mergeMap, of, switchMap, withLatestFrom } from 'rxjs';
+import { Store } from '@ngrx/store';
 import { RequestsService } from '@admin/services/requests.service';
 import {
   loadRequests, loadRequestsSuccess, loadRequestsFailure,
@@ -10,12 +11,15 @@ import {
   bulkApproveRequests, bulkApproveRequestsSuccess, bulkApproveRequestsFailure,
   bulkRejectRequests, bulkRejectRequestsSuccess, bulkRejectRequestsFailure,
   updateRequestNote, updateRequestNoteSuccess, updateRequestNoteFailure,
+  setSelectedTripId,
 } from './requests.actions';
-import { deleteTripSuccess, loadTripByIdSuccess, loadTrips } from '@admin/features/trips/store';
+import { selectSelectedTripId } from './requests.selectors';
+import { deleteTripSuccess, loadTripByIdSuccess, loadTrips, loadTripsSuccess } from '@admin/features/trips/store';
 
 @Injectable()
 export class RequestsEffects {
   private readonly actions$ = inject(Actions);
+  private readonly store = inject(Store);
   private readonly requestsService = inject(RequestsService);
 
   loadRequests$ = createEffect(() =>
@@ -125,6 +129,20 @@ export class RequestsEffects {
     this.actions$.pipe(
       ofType(deleteTripSuccess),
       map(() => loadRequests())
+    )
+  );
+
+  autoSelectTripId$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(loadTripsSuccess),
+      withLatestFrom(this.store.select(selectSelectedTripId)),
+      filter(([, current]) => current === null),
+      map(([{ trips }]) => {
+        const nearest = [...trips]
+          .filter((t) => t.status === 'upcoming')
+          .sort((a, b) => a.date.localeCompare(b.date))[0];
+        return setSelectedTripId({ tripId: nearest?.id ?? null });
+      })
     )
   );
 

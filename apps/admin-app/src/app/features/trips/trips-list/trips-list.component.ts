@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Router } from '@angular/router';
@@ -8,8 +8,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { Store } from '@ngrx/store';
 import { ConfirmationService } from 'primeng/api';
-import { BehaviorSubject, filter, of, switchMap, take } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, of, switchMap } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { loadTrips, loadTripById, deleteTrip, updateDog, deleteDog, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents, selectTripsForSelectedDate, selectTripById } from '@admin/features/trips/store';
 import { selectDate, selectCalendarSelectedDate } from '@admin/core/store/calendar';
 import { loadRequests, approveRequest, rejectRequest, deleteRequest, selectRequestsByTripId } from '@admin/features/requests/store';
@@ -47,11 +47,9 @@ export class TripsListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly exportService = inject(ExportService);
-  private readonly destroyRef = inject(DestroyRef);
 
   trips$ = this.store.select(selectAllTrips);
   loading$ = this.store.select(selectTripsIsLoading);
-  selectedDate$ = this.store.select(selectCalendarSelectedDate);
   calendarEvents$ = this.store.select(selectTripsAsCalendarEvents);
 
   tripsForDate$ = this.store.select(selectTripsForSelectedDate);
@@ -63,7 +61,7 @@ export class TripsListComponent implements OnInit {
   detailTrip: Trip | null = null;
   detailRequests: TripRequest[] = [];
 
-  selectedDate: string | null = null;
+  readonly selectedDate = toSignal(this.store.select(selectCalendarSelectedDate), { initialValue: null });
   activeTab: 'calendar' | 'all' = 'calendar';
 
   // Trip detail dialog
@@ -85,24 +83,8 @@ export class TripsListComponent implements OnInit {
   dogEditValues: Dog | null = null;
   dogEditTripId: string | null = null;
 
-  constructor() {
-    this.selectedDate$.pipe(takeUntilDestroyed()).subscribe((d) => { this.selectedDate = d; });
-  }
-
   ngOnInit(): void {
     this.store.dispatch(loadTrips());
-
-    // Auto-select the closest upcoming trip date once trips are loaded
-    this.trips$.pipe(
-      filter(trips => trips.length > 0),
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((trips: Trip[]) => {
-      const today = new Date().toISOString().slice(0, 10);
-      const sorted = trips.map((t: Trip) => t.date).filter((d: string) => d >= today).sort();
-      const date = sorted[0] ?? [...trips.map((t: Trip) => t.date)].sort().reverse()[0];
-      if (date) this.store.dispatch(selectDate({ date }));
-    });
   }
 
   onDateSelected(date: string): void {
@@ -110,7 +92,8 @@ export class TripsListComponent implements OnInit {
   }
 
   addTripForDate(): void {
-    const queryParams = this.selectedDate ? { date: this.selectedDate } : {};
+    const date = this.selectedDate();
+    const queryParams = date ? { date } : {};
     this.router.navigate(['/admin/trips/new'], { queryParams });
   }
 

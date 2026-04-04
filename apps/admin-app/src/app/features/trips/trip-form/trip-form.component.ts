@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -19,7 +19,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TabsModule } from 'primeng/tabs';
 import { Store } from '@ngrx/store';
-import { filter } from 'rxjs';
+import { filter, map, take } from 'rxjs';
 import { clearSelectedTrip, loadTripById, updateTrip, addTrip, selectSelectedTrip, selectTripsMutating, selectTripsError } from '@admin/features/trips/store';
 import { Dog } from '@models/lib/dog.model';
 import { DogFormDialogComponent } from '@admin/features/trips/components/dog-form-dialog/dog-form-dialog.component';
@@ -55,7 +55,16 @@ export class TripFormComponent implements OnInit {
   mutating$ = this.store.select(selectTripsMutating);
   error$ = this.store.select(selectTripsError);
 
-  statuses: { label: string; value: string }[] = [];
+  readonly statuses = toSignal(
+    this.transloco.selectTranslation().pipe(
+      map(() => [
+        { label: this.transloco.translate('trips.form.statusUpcoming'), value: 'upcoming' },
+        { label: this.transloco.translate('trips.form.statusInProgress'), value: 'in-progress' },
+        { label: this.transloco.translate('trips.form.statusCompleted'), value: 'completed' },
+      ]),
+    ),
+    { initialValue: [] as { label: string; value: string }[] },
+  );
 
   activeDogsTab = 'all';
 
@@ -108,29 +117,24 @@ export class TripFormComponent implements OnInit {
       this.form.patchValue({ date: new Date(prefilledDate + 'T00:00:00') });
     }
 
-    this.transloco.selectTranslation().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.statuses = [
-        { label: this.transloco.translate('trips.form.statusUpcoming'), value: 'upcoming' },
-        { label: this.transloco.translate('trips.form.statusInProgress'), value: 'in-progress' },
-        { label: this.transloco.translate('trips.form.statusCompleted'), value: 'completed' },
-      ];
-      this.cdr.markForCheck();
-    });
-
     this.store.dispatch(clearSelectedTrip());
 
     if (this.isEdit && this.editId) {
       this.store.dispatch(loadTripById({ id: this.editId }));
-      let initialPatched = false;
+
+      this.store.select(selectSelectedTrip).pipe(
+        filter(Boolean),
+        take(1),
+        takeUntilDestroyed(this.destroyRef),
+      ).subscribe((trip) => {
+        this.form.patchValue({ ...trip, date: trip.date ? new Date(trip.date + 'T00:00:00') : null });
+      });
+
       this.store.select(selectSelectedTrip).pipe(
         filter(Boolean),
         takeUntilDestroyed(this.destroyRef),
       ).subscribe((trip) => {
-        if (!initialPatched) {
-          initialPatched = true;
-          this.form.patchValue({ ...trip, date: trip.date ? new Date(trip.date + 'T00:00:00') : null });
-        }
-        this.dogManager.setDogs(trip.dogs ?? [], trip.requesters ?? []);
+        this.dogManager.setDogs(trip.dogs ?? [], trip.requester ?? []);
         this.cdr.markForCheck();
       });
     }

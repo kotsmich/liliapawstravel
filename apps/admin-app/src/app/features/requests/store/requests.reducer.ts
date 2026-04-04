@@ -9,16 +9,21 @@ import {
   bulkApproveRequests, bulkApproveRequestsSuccess, bulkApproveRequestsFailure,
   bulkRejectRequests, bulkRejectRequestsSuccess, bulkRejectRequestsFailure,
   updateRequestNote, updateRequestNoteSuccess, updateRequestNoteFailure,
+  setSelectedRequests, setSelectedTripId,
 } from './requests.actions';
 
 export interface RequestsState {
   requests: TripRequest[];
+  selectedRequests: TripRequest[];
+  selectedTripId: string | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: RequestsState = {
   requests: [],
+  selectedRequests: [],
+  selectedTripId: null,
   loading: false,
   error: null,
 };
@@ -60,8 +65,10 @@ export const requestsFeature = createFeature({
       requests: s.requests.map((r) => (r.id === request.id ? request : r)),
     })),
     on(bulkApproveRequests, bulkRejectRequests, (s) => ({ ...s, loading: true, error: null })),
-    on(bulkApproveRequestsSuccess, bulkRejectRequestsSuccess, (s) => ({ ...s, loading: false })),
+    on(bulkApproveRequestsSuccess, bulkRejectRequestsSuccess, (s) => ({ ...s, loading: false, selectedRequests: [] })),
     on(bulkApproveRequestsFailure, bulkRejectRequestsFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(setSelectedRequests, (s, { requests }) => ({ ...s, selectedRequests: requests })),
+    on(setSelectedTripId, (s, { tripId }) => ({ ...s, selectedTripId: tripId })),
     on(updateRequestNote, (s) => ({ ...s })),
     on(updateRequestNoteSuccess, (s, { request }) => ({
       ...s,

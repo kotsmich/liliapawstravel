@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Store } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { filter, map, shareReplay, take } from 'rxjs/operators';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -54,13 +54,17 @@ export class RequestsListComponent implements OnInit {
 
   selectedTripId$ = new BehaviorSubject<string | null>(null);
   activeTab$ = new BehaviorSubject<string>('all');
-  selectedRequestId$ = new BehaviorSubject<string | null>(null);
-
-  selectedRequest = signal<TripRequest | null>(null);
+  selectedRequestId = signal<string | null>(null);
   selectedRequests = signal<TripRequest[]>([]);
   dialogVisible = signal(false);
-  trips: Trip[] = [];
-  tripOptions: Array<{ label: string; value: string | null; pending: number }> = [{ label: 'All Trips', value: null, pending: 0 }];
+
+  readonly trips = toSignal(this.store.select(selectAllTrips), { initialValue: [] as Trip[] });
+  private readonly allRequests = toSignal(this.store.select(selectAllRequests), { initialValue: [] as TripRequest[] });
+  readonly tripOptions = computed(() => this.buildTripOptionsFrom(this.trips(), this.allRequests()));
+  readonly selectedRequest = computed(() => {
+    const id = this.selectedRequestId();
+    return this.allRequests().find((r) => r.id === id) ?? null;
+  });
 
   // Filter requests by selected trip only (no tab filter) — used for badge counts
   private filteredByTrip$ = combineLatest([
@@ -86,30 +90,6 @@ export class RequestsListComponent implements OnInit {
   );
 
   constructor() {
-    // Must be in constructor — takeUntilDestroyed() requires the injection context
-    combineLatest([
-      this.store.select(selectAllTrips),
-      this.store.select(selectAllRequests),
-    ]).pipe(
-      takeUntilDestroyed(),
-    ).subscribe(([trips, requests]: [Trip[], TripRequest[]]) => {
-      this.trips = trips;
-      this.buildTripOptions(trips, requests);
-    });
-
-    // Keep selectedRequest in sync with store so note saves reflect immediately
-    combineLatest([
-      this.store.select(selectAllRequests),
-      this.selectedRequestId$,
-    ]).pipe(
-      takeUntilDestroyed(),
-    ).subscribe(([requests, id]) => {
-      if (id) {
-        const updated = requests.find((r) => r.id === id);
-        if (updated) this.selectedRequest.set(updated);
-      }
-    });
-
     // Clear selection after bulk actions — toasts handled by NotificationEffects
     this.actions$.pipe(
       ofType(bulkApproveRequestsSuccess, bulkRejectRequestsSuccess),
@@ -137,14 +117,15 @@ export class RequestsListComponent implements OnInit {
     });
   }
 
-  private buildTripOptions(trips: Trip[], requests: TripRequest[] = []): void {
-    const upcoming = [...trips]
+  private buildTripOptionsFrom(trips: Trip[], requests: TripRequest[] = []): Array<{ label: string; value: string; pending: number }> {
+    return [...trips]
       .filter((t) => t.status === 'upcoming')
-      .sort((a, b) => a.date.localeCompare(b.date));
-    this.tripOptions = upcoming.map((t) => {
-      const pending = requests.filter((r) => r.tripId === t.id && r.status === 'pending').length;
-      return { label: this.fmtDate(t.date), value: t.id, pending };
-    });
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .map((t) => ({
+        label: this.fmtDate(t.date),
+        value: t.id,
+        pending: requests.filter((r) => r.tripId === t.id && r.status === 'pending').length,
+      }));
   }
 
   fmtDate(date: string): string {
@@ -155,13 +136,12 @@ export class RequestsListComponent implements OnInit {
 
   tripDate(tripId: string | undefined): string {
     if (!tripId) return '—';
-    const trip = this.trips.find((t) => t.id === tripId);
+    const trip = this.trips().find((t) => t.id === tripId);
     return trip ? this.fmtDate(trip.date) : tripId;
   }
 
   openDetail(request: TripRequest): void {
-    this.selectedRequestId$.next(request.id);
-    this.selectedRequest.set(request);
+    this.selectedRequestId.set(request.id);
     this.dialogVisible.set(true);
   }
 
@@ -202,12 +182,12 @@ export class RequestsListComponent implements OnInit {
   }
 
   onApproveFromTable(req: TripRequest): void {
-    this.selectedRequest.set(req);
+    this.selectedRequestId.set(req.id);
     this.approve();
   }
 
   onRejectFromTable(req: TripRequest): void {
-    this.selectedRequest.set(req);
+    this.selectedRequestId.set(req.id);
     this.reject();
   }
 
@@ -242,7 +222,7 @@ export class RequestsListComponent implements OnInit {
   }
 
   onSaveNote(note: string): void {
-    const id = this.selectedRequestId$.value;
+    const id = this.selectedRequestId();
     if (!id) return;
     this.store.dispatch(updateRequestNote({ id, note }));
   }

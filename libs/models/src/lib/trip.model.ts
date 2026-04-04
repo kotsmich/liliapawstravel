@@ -20,7 +20,7 @@ export interface Trip {
   spotsAvailable: number;
   notes: string;
   dogs: Dog[] | undefined;
-  requesters?: TripRequester[];
+  requester?: TripRequester[];
   isFull: boolean;
   acceptingRequests: boolean;
 }

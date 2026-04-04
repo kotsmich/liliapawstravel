@@ -85,7 +85,7 @@
           <div class="row">
             <div class="field fw">
               <p-ifta-label>
-                <p-select inputId="status" formControlName="status" [options]="statuses"
+                <p-select inputId="status" formControlName="status" [options]="statuses()"
                   optionLabel="label" optionValue="value" styleClass="w-full" />
                 <label for="status">{{ 'trips.form.status' | transloco }}</label>
               </p-ifta-label>

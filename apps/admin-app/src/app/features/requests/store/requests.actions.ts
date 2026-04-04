@@ -98,3 +98,13 @@ export const updateRequestNoteFailure = createAction(
   '[TripRequest] Update Request Note Failure',
   props<{ error: string }>()
 );
+
+export const setSelectedRequests = createAction(
+  '[TripRequest] Set Selected Requests',
+  props<{ requests: TripRequest[] }>()
+);
+
+export const setSelectedTripId = createAction(
+  '[TripRequest] Set Selected Trip Id',
+  props<{ tripId: string | null }>()
+);
