@@ -8,6 +8,7 @@ RUN npx nx build user-app --configuration=production --skip-nx-cache
 FROM node:20-alpine AS runner
 WORKDIR /app
 COPY --from=builder /app/dist/apps/user-app ./dist/apps/user-app
+RUN npm install express http-proxy-middleware --no-save
 ENV PORT=4000
 EXPOSE 4000
 CMD ["node", "dist/apps/user-app/server/server.mjs"]
