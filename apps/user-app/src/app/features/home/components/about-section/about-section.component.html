@@ -6,14 +6,30 @@
       <p>{{ 'about.p1' | transloco }}</p>
       <p>{{ 'about.p2' | transloco }}</p>
     </div>
-    <div class="values">
-      @for (v of values; track v.title) {
-        <div class="value-card">
-          <span aria-hidden="true">{{ v.icon }}</span>
-          <h3>{{ v.title | transloco }}</h3>
-          <p>{{ v.desc | transloco }}</p>
-        </div>
-      }
+    <div class="slider">
+      <div class="slider__viewport">
+        @for (photo of photos; track $index; let i = $index) {
+          <img
+            class="slider__img"
+            [class.active]="i === currentIndex"
+            [src]="photo"
+            [alt]="'Photo ' + (i + 1)"
+          />
+        }
+      </div>
+      <button class="slider__btn slider__btn--prev" type="button" (click)="prev()" aria-label="Previous">&#8249;</button>
+      <button class="slider__btn slider__btn--next" type="button" (click)="next()" aria-label="Next">&#8250;</button>
+      <div class="slider__dots">
+        @for (photo of photos; track $index; let i = $index) {
+          <button
+            class="slider__dot"
+            type="button"
+            [class.active]="i === currentIndex"
+            (click)="goTo(i)"
+            [attr.aria-label]="'Go to slide ' + (i + 1)"
+          ></button>
+        }
+      </div>
     </div>
   </div>
 </section>

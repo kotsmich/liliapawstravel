@@ -1,8 +1,8 @@
 :host { display: block; }
 .container { max-width:1200px; margin:0 auto; }
-.stats { background:#2d2016; padding:3rem 1.5rem; }
+.stats { background:#3b352e; padding:3rem 1.5rem; }
 .stats__grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2rem; text-align:center; }
 @media(max-width:768px){ .stats__grid{grid-template-columns:repeat(2,1fr);} }
 .stat { flex-direction:column; gap:.5rem; }
-.stat__value { font-size:2.5rem; font-weight:800; color:#c47c3e; }
-.stat__label { font-size:.8rem; color:#d4b896; text-transform:uppercase; letter-spacing:.08em; }
+.stat__value { font-size:2.5rem; font-weight:800; color:#c3b8a9; }
+.stat__label { font-size:.8rem; color:#aba092; text-transform:uppercase; letter-spacing:.08em; }

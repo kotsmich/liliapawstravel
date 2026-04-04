@@ -24,17 +24,17 @@ import { NotificationEffects } from '@user/core/toast/notification.effects';
 const LiliaPreset = definePreset(Aura, {
   semantic: {
     primary: {
-      50:  '#fdf4ef',
-      100: '#fbe4d4',
-      200: '#f5c5a3',
-      300: '#eda07a',
-      400: '#e68a62',
-      500: '#e07b54',
-      600: '#c9623b',
-      700: '#a34d2f',
-      800: '#7d3a23',
-      900: '#5c2a19',
-      950: '#3d1a0e',
+      50:  '#f5f1ec',
+      100: '#e8e0d8',
+      200: '#c6b29e',
+      300: '#c3b8a9',
+      400: '#aba092',
+      500: '#998c7c',
+      600: '#837a6f',
+      700: '#6b6259',
+      800: '#524b43',
+      900: '#3b352e',
+      950: '#28221c',
     },
   },
 });

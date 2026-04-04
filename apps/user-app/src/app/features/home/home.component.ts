@@ -23,13 +23,6 @@ export class HomeComponent {
     { value: '99%',    label: 'stats.safeArrivals' },
   ];
 
-  values = [
-    { icon: '🛡️', title: 'about.safetyFirst.title', desc: 'about.safetyFirst.desc' },
-    { icon: '❤️', title: 'about.weCare.title',      desc: 'about.weCare.desc' },
-    { icon: '📋', title: 'about.fullyLegal.title',  desc: 'about.fullyLegal.desc' },
-    { icon: '🤝', title: 'about.shelterPartners.title', desc: 'about.shelterPartners.desc' },
-  ];
-
   steps = [
     { step: 1, title: 'about.step1.title', desc: 'about.step1.desc' },
     { step: 2, title: 'about.step2.title', desc: 'about.step2.desc' },

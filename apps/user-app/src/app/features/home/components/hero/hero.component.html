@@ -1,32 +1,14 @@
 <section class="hero">
-  <div class="hero__content">
-    <span class="badge">🐾 {{ 'hero.badge' | transloco }}</span>
-    <h1>{{ 'hero.title' | transloco }} <span class="accent">{{ 'hero.titleAccent' | transloco }}</span></h1>
-    <p>{{ 'hero.subtitle' | transloco }}</p>
-    <div class="hero__actions">
-      <button class="btn-primary" type="button" (click)="requestClicked.emit()">{{ 'hero.requestTransport' | transloco }}</button>
-      <button class="btn-outline" type="button" (click)="contactClicked.emit()">{{ 'hero.getInTouch' | transloco }}</button>
-    </div>
-  </div>
-
-  <div class="hero__carousel">
-    <div class="carousel">
-      <div class="carousel__track" [style.transform]="'translateX(-' + current() * 100 + '%)'">
-        @for (slide of slides; track $index) {
-          <div class="carousel__slide" [style.background]="slide.bg">
-            <span class="slide__emoji">{{ slide.emoji }}</span>
-            <span class="slide__label">{{ slide.label | transloco }}</span>
-          </div>
-        }
-      </div>
-
-      <button class="carousel__arrow carousel__arrow--prev" type="button" aria-label="Previous" (click)="prev()">&#8249;</button>
-      <button class="carousel__arrow carousel__arrow--next" type="button" aria-label="Next" (click)="next()">&#8250;</button>
-
-      <div class="carousel__dots">
-        @for (slide of slides; track $index; let i = $index) {
-          <button class="dot" [class.active]="i === current()" (click)="goTo(i)" [attr.aria-label]="slide.label | transloco"></button>
-        }
+  <div class="hero__overlay"></div>
+  <img class="hero__van-img" src="/assets/images/van.png" alt="Lilia Paws Travel van">
+  <div class="hero__inner">
+    <div class="hero__content">
+      <span class="badge">🐾 {{ 'hero.badge' | transloco }}</span>
+      <h1>{{ 'hero.title' | transloco }} <span class="accent">{{ 'hero.titleAccent' | transloco }}</span></h1>
+      <p>{{ 'hero.subtitle' | transloco }}</p>
+      <div class="hero__actions">
+        <button class="btn-primary" type="button" (click)="requestClicked.emit()">{{ 'hero.requestTransport' | transloco }}</button>
+        <button class="btn-outline" type="button" (click)="contactClicked.emit()">{{ 'hero.getInTouch' | transloco }}</button>
       </div>
     </div>
   </div>
