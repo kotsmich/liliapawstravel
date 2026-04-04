@@ -33,13 +33,13 @@ export function app(): express.Express {
   }));
 
   // Serve static assets (JS, CSS, images) from browser build
-  server.get('**', express.static(browserDistFolder, {
+  server.use(express.static(browserDistFolder, {
     maxAge: '1y',
     index: false,
     redirect: false,
   }));
 
-  server.get('**', (req, res, next) => {
+  server.use((req, res, next) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
 
     commonEngine
