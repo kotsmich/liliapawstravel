@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Router } from '@angular/router';
@@ -8,8 +8,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { Store } from '@ngrx/store';
 import { ConfirmationService } from 'primeng/api';
-import { BehaviorSubject, of, switchMap } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { of, switchMap } from 'rxjs';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { loadTrips, loadTripById, deleteTrip, updateDog, deleteDog, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents, selectTripsForSelectedDate, selectTripById } from '@admin/features/trips/store';
 import { selectDate, selectCalendarSelectedDate } from '@admin/core/store/calendar';
 import { loadRequests, approveRequest, rejectRequest, deleteRequest, selectRequestsByTripId } from '@admin/features/requests/store';
@@ -60,15 +60,15 @@ readonly selectedDate = toSignal(this.store.select(selectCalendarSelectedDate), 
   detailDialogVisible = false;
   detailHeader = 'Trip Details';
   detailActiveTab = 'dogs';
-  detailTripId$ = new BehaviorSubject<string | null>(null);
+  detailTripId = signal<string | null>(null);
 
-  detailTrip$ = this.detailTripId$.pipe(
+  readonly detailTrip = toSignal(toObservable(this.detailTripId).pipe(
     switchMap((id) => id ? this.store.select(selectTripById(id)) : of(null))
-  );
+  ), { initialValue: null as Trip | null });
 
-  detailRequests$ = this.detailTripId$.pipe(
+  readonly detailRequests = toSignal(toObservable(this.detailTripId).pipe(
     switchMap((id) => id ? this.store.select(selectRequestsByTripId(id)) : of([]))
-  );
+  ), { initialValue: [] as TripRequest[] });
 
   // Dog edit dialog (within trip detail)
   dogEditVisible = false;
@@ -114,7 +114,7 @@ readonly selectedDate = toSignal(this.store.select(selectCalendarSelectedDate), 
     };
     this.detailHeader = `${trip.departureCity} → ${trip.arrivalCity}  ·  ${fmtDate(trip.date)}`;
     this.detailActiveTab = 'dogs';
-    this.detailTripId$.next(trip.id);
+    this.detailTripId.set(trip.id);
     this.store.dispatch(loadTripById({ id: trip.id }));
     this.store.dispatch(loadRequests());
     this.detailDialogVisible = true;
@@ -125,7 +125,7 @@ readonly selectedDate = toSignal(this.store.select(selectCalendarSelectedDate), 
   }
 
   closeDetail(): void {
-    this.detailTripId$.next(null);
+    this.detailTripId.set(null);
     this.dogEditVisible = false;
   }
 

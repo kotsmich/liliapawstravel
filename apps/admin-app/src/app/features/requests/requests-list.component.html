@@ -4,37 +4,27 @@
   <p-toast />
   <p-confirmdialog />
 
-  @if ({
-    pending: pendingCount$ | async,
-    approved: approvedCount$ | async,
-    rejected: rejectedCount$ | async,
-    requests: finalRequests$ | async,
-    loading: loading$ | async,
-    selectedTripId: selectedTripId$ | async,
-    activeTab: activeTab$ | async
-    }; as vm) {
-    <app-requests-filter
-      [tripOptions]="tripOptions()"
-      [selectedTripId]="vm.selectedTripId"
-      [activeTab]="vm.activeTab ?? 'all'"
-      [pendingCount]="vm.pending ?? 0"
-      [approvedCount]="vm.approved ?? 0"
-      [rejectedCount]="vm.rejected ?? 0"
-      (tripSelected)="onTripSelected($event)"
-      (tabChanged)="activeTab$.next($event)"
-      />
-    <app-requests-table
-      [requests]="vm.requests ?? []"
-      [loading]="!!vm.loading"
-      [selection]="selectedRequests()"
-      (selectionChange)="onSelectionChange($event)"
-      (rowClicked)="openDetail($event)"
-      (approve)="onApproveFromTable($event)"
-      (reject)="onRejectFromTable($event)"
-      (bulkApprove)="onBulkApprove($event)"
-      (bulkReject)="onBulkReject($event)"
-      />
-  }
+  <app-requests-filter
+    [tripOptions]="tripOptions()"
+    [selectedTripId]="selectedTripId()"
+    [activeTab]="activeTab()"
+    [pendingCount]="pendingCount()"
+    [approvedCount]="approvedCount()"
+    [rejectedCount]="rejectedCount()"
+    (tripSelected)="onTripSelected($event)"
+    (tabChanged)="activeTab.set($event)"
+    />
+  <app-requests-table
+    [requests]="finalRequests()"
+    [loading]="!!(loading$ | async)"
+    [selection]="selectedRequests()"
+    (selectionChange)="onSelectionChange($event)"
+    (rowClicked)="openDetail($event)"
+    (approve)="onApproveFromTable($event)"
+    (reject)="onRejectFromTable($event)"
+    (bulkApprove)="onBulkApprove($event)"
+    (bulkReject)="onBulkReject($event)"
+    />
 
   <app-request-detail-dialog
     [visible]="dialogVisible()"

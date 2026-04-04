@@ -2,8 +2,6 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 import { CommonModule, DatePipe } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
@@ -50,8 +48,8 @@ export class RequestsListComponent implements OnInit {
 
   loading$ = this.store.select(selectRequestsIsLoading);
 
-  selectedTripId$ = this.store.select(selectSelectedTripId);
-  activeTab$ = new BehaviorSubject<string>('all');
+  readonly selectedTripId = toSignal(this.store.select(selectSelectedTripId), { initialValue: null as string | null });
+  activeTab = signal('all');
   selectedRequestId = signal<string | null>(null);
   readonly selectedRequests = toSignal(this.store.select(selectSelectedRequests), { initialValue: [] as TripRequest[] });
   dialogVisible = signal(false);
@@ -65,27 +63,22 @@ export class RequestsListComponent implements OnInit {
   });
 
   // Filter requests by selected trip only (no tab filter) — used for badge counts
-  private filteredByTrip$ = combineLatest([
-    this.store.select(selectAllRequests),
-    this.selectedTripId$,
-  ]).pipe(
-    map(([requests, tripId]: [TripRequest[], string | null]) =>
-      tripId ? requests.filter((r) => r.tripId === tripId) : requests
-    ),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
+  private readonly filteredByTrip = computed(() => {
+    const requests = this.allRequests();
+    const tripId = this.selectedTripId();
+    return tripId ? requests.filter((r) => r.tripId === tripId) : requests;
+  });
 
-  // Badge counts reflect the current trip selection so they always match the table
-  pendingCount$ = this.filteredByTrip$.pipe(map((r) => r.filter((x) => x.status === 'pending').length));
-  approvedCount$ = this.filteredByTrip$.pipe(map((r) => r.filter((x) => x.status === 'approved').length));
-  rejectedCount$ = this.filteredByTrip$.pipe(map((r) => r.filter((x) => x.status === 'rejected').length));
+  readonly pendingCount  = computed(() => this.filteredByTrip().filter((x) => x.status === 'pending').length);
+  readonly approvedCount = computed(() => this.filteredByTrip().filter((x) => x.status === 'approved').length);
+  readonly rejectedCount = computed(() => this.filteredByTrip().filter((x) => x.status === 'rejected').length);
 
-  finalRequests$ = combineLatest([this.filteredByTrip$, this.activeTab$]).pipe(
-    map(([requests, tab]) => {
-      const filtered = tab !== 'all' ? requests.filter((r) => r.status === tab) : requests;
-      return filtered.map((r) => ({ ...r, dogsCount: r.dogs.length }));
-    })
-  );
+  readonly finalRequests = computed(() => {
+    const requests = this.filteredByTrip();
+    const tab = this.activeTab();
+    const filtered = tab !== 'all' ? requests.filter((r) => r.status === tab) : requests;
+    return filtered.map((r) => ({ ...r, dogsCount: r.dogs.length }));
+  });
 
   ngOnInit(): void {
     this.store.dispatch(resetRequests());

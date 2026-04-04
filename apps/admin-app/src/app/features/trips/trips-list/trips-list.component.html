@@ -48,26 +48,21 @@
 </div>
 
 <!-- Trip Detail Dialog -->
-@if ({
-  trip: detailTrip$ | async,
-  requests: detailRequests$ | async
-  }; as detail) {
-  <app-trip-detail-dialog
-    [visible]="detailDialogVisible"
-    [header]="detailHeader"
-    [trip]="detail.trip"
-    [requests]="detail.requests || []"
-    [activeTab]="detailActiveTab"
-    (visibleChange)="detailDialogVisible = $event"
-    (tabChanged)="detailActiveTab = $event"
-    (editDog)="onEditDog($event)"
-    (deleteDog)="onDeleteDog($event)"
-    (approveRequest)="approveRequestInDetail($event)"
-    (rejectRequest)="rejectRequestInDetail($event)"
-    (deleteRequest)="deleteRequestInDetail($event)"
-    (closed)="closeDetail()"
-    />
-}
+<app-trip-detail-dialog
+  [visible]="detailDialogVisible"
+  [header]="detailHeader"
+  [trip]="detailTrip()"
+  [requests]="detailRequests()"
+  [activeTab]="detailActiveTab"
+  (visibleChange)="detailDialogVisible = $event"
+  (tabChanged)="detailActiveTab = $event"
+  (editDog)="onEditDog($event)"
+  (deleteDog)="onDeleteDog($event)"
+  (approveRequest)="approveRequestInDetail($event)"
+  (rejectRequest)="rejectRequestInDetail($event)"
+  (deleteRequest)="deleteRequestInDetail($event)"
+  (closed)="closeDetail()"
+  />
 
 <!-- Dog Edit Dialog -->
 <app-dog-form-dialog
