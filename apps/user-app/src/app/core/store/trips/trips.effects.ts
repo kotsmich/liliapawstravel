@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, of, switchMap } from 'rxjs';
+import { catchError, map, of, retry, switchMap } from 'rxjs';
+
 import { TripsService } from '@user/services/trips.service';
 import { TripsWebSocketService } from '@user/services/trips-websocket.service';
 import { refreshTrips, loadTripsSuccess, loadTripsFailure, wsTripsReceived } from './trips.actions';
@@ -25,7 +26,8 @@ export class TripsEffects {
 
   wsTrips$ = createEffect(() =>
     this.wsService.connect().pipe(
-      map((trips) => wsTripsReceived({ trips }))
+      map((trips) => wsTripsReceived({ trips })),
+      retry({ delay: 3000 })
     )
   );
 }

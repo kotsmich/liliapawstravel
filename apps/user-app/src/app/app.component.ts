@@ -3,6 +3,7 @@ import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, EMPTY } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
@@ -109,7 +110,10 @@ export class AppComponent implements OnInit {
 
     this.wsService
       .listen<TripRequest>(SocketEvent.REQUEST_UPDATED)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => { console.error('WS REQUEST_UPDATED error', err); return EMPTY; }),
+      )
       .subscribe((request) => {
         if (request.status === 'approved') {
           this.messageService.add({

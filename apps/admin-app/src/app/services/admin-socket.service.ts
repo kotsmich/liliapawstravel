@@ -2,7 +2,7 @@ import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
-import { filter, take } from 'rxjs';
+import { catchError, EMPTY, filter, take } from 'rxjs';
 
 import { selectIsAuthenticated } from '@admin/core/store/auth';
 import { addRequestFromSocket, requestUpdatedFromSocket } from '@admin/features/requests/store';
@@ -38,7 +38,10 @@ export class AdminSocketService {
   private listenToEvents(): void {
     this.wsService
       .listen<TripRequest>(SocketEvent.REQUEST_NEW)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => { console.error('WS REQUEST_NEW error', err); return EMPTY; }),
+      )
       .subscribe((request) => {
         this.store.dispatch(addRequestFromSocket({ request }));
         this.store.dispatch(increment({ notificationType: 'requests' }));
@@ -52,14 +55,20 @@ export class AdminSocketService {
 
     this.wsService
       .listen<TripRequest>(SocketEvent.REQUEST_UPDATED)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => { console.error('WS REQUEST_UPDATED error', err); return EMPTY; }),
+      )
       .subscribe((request) => {
         this.store.dispatch(requestUpdatedFromSocket({ request }));
       });
 
     this.wsService
       .listen<ContactSubmission>(SocketEvent.MESSAGE_NEW)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => { console.error('WS MESSAGE_NEW error', err); return EMPTY; }),
+      )
       .subscribe((message) => {
         this.store.dispatch(addMessageFromSocket({ message }));
         this.store.dispatch(increment({ notificationType: 'messages' }));
