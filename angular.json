@@ -6,7 +6,9 @@
     "user-app": {
       "projectType": "application",
       "schematics": {
-        "@schematics/angular:component": { "style": "scss" }
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
       },
       "root": "apps/user-app",
       "sourceRoot": "apps/user-app/src",
@@ -18,25 +20,48 @@
             "outputPath": "dist/apps/user-app",
             "index": "apps/user-app/src/index.html",
             "browser": "apps/user-app/src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "apps/user-app/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              { "glob": "**/*", "input": "apps/user-app/src/assets", "output": "assets" },
-              { "glob": "favicon.ico", "input": "apps/user-app/src", "output": "" }
+              {
+                "glob": "**/*",
+                "input": "apps/user-app/src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "favicon.ico",
+                "input": "apps/user-app/src",
+                "output": ""
+              }
             ],
             "styles": [
               "node_modules/primeicons/primeicons.css",
               "node_modules/primeflex/primeflex.css",
               "apps/user-app/src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "server": "apps/user-app/src/main.server.ts",
+            "ssr": {
+              "entry": "apps/user-app/src/server.ts"
+            },
+            "prerender": true
           },
           "configurations": {
             "production": {
               "budgets": [
-                { "type": "initial", "maximumWarning": "1mb", "maximumError": "2mb" },
-                { "type": "anyComponentStyle", "maximumWarning": "10kb", "maximumError": "20kb" }
+                {
+                  "type": "initial",
+                  "maximumWarning": "1mb",
+                  "maximumError": "2mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "10kb",
+                  "maximumError": "20kb"
+                }
               ],
               "outputHashing": "all"
             },
@@ -59,21 +84,29 @@
             "proxyConfig": "apps/user-app/proxy.conf.json"
           },
           "configurations": {
-            "production": { "buildTarget": "user-app:build:production" },
-            "development": { "buildTarget": "user-app:build:development" }
+            "production": {
+              "buildTarget": "user-app:build:production"
+            },
+            "development": {
+              "buildTarget": "user-app:build:development"
+            }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": { "buildTarget": "user-app:build" }
+          "options": {
+            "buildTarget": "user-app:build"
+          }
         }
       }
     },
     "admin-app": {
       "projectType": "application",
       "schematics": {
-        "@schematics/angular:component": { "style": "scss" }
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
       },
       "root": "apps/admin-app",
       "sourceRoot": "apps/admin-app/src",
@@ -85,11 +118,17 @@
             "outputPath": "dist/apps/admin-app",
             "index": "apps/admin-app/src/index.html",
             "browser": "apps/admin-app/src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "apps/admin-app/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              { "glob": "**/*", "input": "apps/admin-app/src/assets", "output": "assets" }
+              {
+                "glob": "**/*",
+                "input": "apps/admin-app/src/assets",
+                "output": "assets"
+              }
             ],
             "styles": [
               "node_modules/primeicons/primeicons.css",
@@ -101,8 +140,16 @@
           "configurations": {
             "production": {
               "budgets": [
-                { "type": "initial", "maximumWarning": "1mb", "maximumError": "2mb" },
-                { "type": "anyComponentStyle", "maximumWarning": "10kb", "maximumError": "20kb" }
+                {
+                  "type": "initial",
+                  "maximumWarning": "1mb",
+                  "maximumError": "2mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "10kb",
+                  "maximumError": "20kb"
+                }
               ],
               "outputHashing": "all"
             },
@@ -125,14 +172,20 @@
             "proxyConfig": "apps/admin-app/proxy.conf.json"
           },
           "configurations": {
-            "production": { "buildTarget": "admin-app:build:production" },
-            "development": { "buildTarget": "admin-app:build:development" }
+            "production": {
+              "buildTarget": "admin-app:build:production"
+            },
+            "development": {
+              "buildTarget": "admin-app:build:development"
+            }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": { "buildTarget": "admin-app:build" }
+          "options": {
+            "buildTarget": "admin-app:build"
+          }
         }
       }
     }

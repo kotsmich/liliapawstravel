@@ -168,9 +168,22 @@ export class DogManagerService {
     }
   }
 
-  onSelectionChange(dogs: (Dog & { _idx: number })[]): void {
-    this.selectedDogs = dogs;
+  private selectionsByGroup = new Map<string, (Dog & { _idx: number })[]>();
+
+  onSelectionChange(dogs: (Dog & { _idx: number })[], groupKey?: string): void {
+    if (groupKey !== undefined) {
+      this.selectionsByGroup.set(groupKey, dogs);
+      this.selectedDogs = Array.from(this.selectionsByGroup.values()).flat();
+    } else {
+      this.selectedDogs = dogs;
+      this.selectionsByGroup.clear();
+    }
     this.dogActions = [...this.dogActions];
+  }
+
+  clearGroupSelections(): void {
+    this.selectionsByGroup.clear();
+    this.selectedDogs = [];
   }
 
   removeSelectedDogs(): void {

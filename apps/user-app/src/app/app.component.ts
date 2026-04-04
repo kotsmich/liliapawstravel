@@ -1,6 +1,7 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
-import { Title } from '@angular/platform-browser';
+import { Title, Meta } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
@@ -12,10 +13,30 @@ import { AppWebSocketService } from '@ui/lib/websocket/app-websocket.service';
 import { SocketEvent } from '@models/lib/socket-events.model';
 import { TripRequest } from '@models/lib/trip-request.model';
 
-const ROUTE_TITLES: Record<string, string> = {
-  '/': 'Lilia Paws Travel — Safe Dog Transport Across Europe',
-  '/contact': 'Contact Us — Lilia Paws Travel',
-  '/request': 'Request Transport — Lilia Paws Travel',
+const BASE_URL = 'https://liliapawstravel.com';
+
+interface RouteMeta {
+  title: string;
+  description: string;
+  canonical: string;
+}
+
+const ROUTE_META: Record<string, RouteMeta> = {
+  '/': {
+    title: 'Lilia Paws Travel — Safe Dog Transport Across Europe',
+    description: 'Lilia Paws Travel safely transports adopted dogs across Europe, connecting shelters with loving families. Request transport for your rescue dog today.',
+    canonical: `${BASE_URL}/`,
+  },
+  '/contact': {
+    title: 'Contact Us — Lilia Paws Travel',
+    description: 'Get in touch with Lilia Paws Travel. We answer questions about dog transport across Europe and help you schedule your rescue dog\'s journey.',
+    canonical: `${BASE_URL}/contact`,
+  },
+  '/request': {
+    title: 'Request Dog Transport — Lilia Paws Travel',
+    description: 'Submit a transport request for your rescue dog. Lilia Paws Travel connects adoptive families with safe, reliable cross-Europe dog transport.',
+    canonical: `${BASE_URL}/request`,
+  },
 };
 
 @Component({
@@ -32,12 +53,14 @@ const ROUTE_TITLES: Record<string, string> = {
 })
 export class AppComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly document = inject(DOCUMENT);
 
   constructor(
     private readonly wsService: AppWebSocketService,
     private readonly messageService: MessageService,
     private readonly router: Router,
     private readonly titleService: Title,
+    private readonly metaService: Meta,
   ) {}
 
   ngOnInit(): void {
@@ -74,8 +97,23 @@ export class AppComponent implements OnInit {
       )
       .subscribe((e) => {
         const url = (e as NavigationEnd).urlAfterRedirects || (e as NavigationEnd).url;
-        const title = ROUTE_TITLES[url] ?? 'Lilia Paws Travel';
-        this.titleService.setTitle(title);
+        this.updateMeta(url);
       });
+  }
+
+  private updateMeta(url: string): void {
+    const meta = ROUTE_META[url] ?? ROUTE_META['/'];
+
+    this.titleService.setTitle(meta.title);
+
+    this.metaService.updateTag({ name: 'description', content: meta.description });
+    this.metaService.updateTag({ property: 'og:title', content: meta.title });
+    this.metaService.updateTag({ property: 'og:description', content: meta.description });
+    this.metaService.updateTag({ property: 'og:url', content: meta.canonical });
+    this.metaService.updateTag({ name: 'twitter:title', content: meta.title });
+    this.metaService.updateTag({ name: 'twitter:description', content: meta.description });
+
+    const canonicalEl = this.document.querySelector('link[rel="canonical"]');
+    if (canonicalEl) canonicalEl.setAttribute('href', meta.canonical);
   }
 }

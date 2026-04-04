@@ -152,7 +152,7 @@ export class TripFormComponent implements OnInit {
   }
 
   onTabChange(): void {
-    this.dogManager.selectedDogs = [];
+    this.dogManager.clearGroupSelections();
     this.cdr.markForCheck();
   }
 

@@ -227,7 +227,7 @@
                     [columns]="dogManager.dogColumns"
                     [actions]="dogManager.dogActions"
                     [config]="dogManager.dogTableConfig"
-                    (selectionChange)="dogManager.onSelectionChange($event)" />
+                    (selectionChange)="dogManager.onSelectionChange($event, req.requestId ?? req.name)" />
                 </p-accordion-content>
               </p-accordion-panel>
             }
