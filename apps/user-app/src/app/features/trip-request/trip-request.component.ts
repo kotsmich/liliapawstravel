@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
-import { CommonModule, ViewportScroller } from '@angular/common';
+import { AsyncPipe, DecimalPipe, ViewportScroller } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -31,7 +31,7 @@ import { submitRequest, resetRequest, selectTripRequestIsLoading, selectTripRequ
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule, ReactiveFormsModule,
+    AsyncPipe, DecimalPipe, ReactiveFormsModule,
     ButtonModule, CardModule, DividerModule, MessageModule, ConfirmDialogModule,
     InputTextModule, IftaLabelModule, SkeletonModule, TagModule,
     DogFormComponent, TripCalendarComponent, ToastNotificationComponent, TranslocoModule, TooltipModule,

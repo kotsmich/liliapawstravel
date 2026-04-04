@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TripRequest } from '@models/lib/trip-request.model';
@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 export class TripRequestService {
   private readonly baseUrl = `${environment.apiUrl}/requests`;
 
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   submitRequest(request: Record<string, unknown>): Observable<TripRequest> {
     return this.http.post<TripRequest>(this.baseUrl, request);

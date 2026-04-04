@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnChanges, inject, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ButtonModule } from 'primeng/button';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -13,7 +13,7 @@ type RequestRow = TripRequest & { dogsCount: number };
   selector: 'app-requests-table',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, GenericTableComponent, TranslocoModule],
+  imports: [ButtonModule, GenericTableComponent, TranslocoModule],
   templateUrl: './requests-table.component.html',
   styles: [`.table-scroll { overflow-x: auto; }`],
 })

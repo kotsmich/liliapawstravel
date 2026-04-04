@@ -1,9 +1,10 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { TranslocoModule } from '@jsverse/transloco';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
+import { LocalDatePipe } from '@ui/lib/pipes/local-date.pipe';
 import { Trip } from '@models/lib/trip.model';
 import { CalendarEvent } from '@models/lib/calendar-event.model';
 
@@ -11,33 +12,27 @@ import { CalendarEvent } from '@models/lib/calendar-event.model';
   selector: 'app-trip-calendar-view',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardModule, ButtonModule, TagModule, TripCalendarComponent, TranslocoModule],
+  imports: [CardModule, ButtonModule, TagModule, TripCalendarComponent, LocalDatePipe, TranslocoModule],
   templateUrl: './trip-calendar-view.component.html',
   styleUrls: ['./trip-calendar-view.component.scss'],
 })
 export class TripCalendarViewComponent {
-  @Input() trips: Trip[] = [];
-  @Input() selectedDate: string | null = null;
-  @Input() calendarEvents: CalendarEvent[] = [];
-  @Input() tripsForDate: Trip[] = [];
-  @Output() dateSelected = new EventEmitter<string>();
-  @Output() addTripClicked = new EventEmitter<void>();
-  @Output() editTrip = new EventEmitter<Trip>();
-  @Output() deleteTrip = new EventEmitter<Trip>();
-  @Output() viewDetails = new EventEmitter<Trip>();
-  @Output() exportPdf = new EventEmitter<Trip>();
+  readonly trips = input<Trip[]>([]);
+  readonly selectedDate = input<string | null>(null);
+  readonly calendarEvents = input<CalendarEvent[]>([]);
+  readonly tripsForDate = input<Trip[]>([]);
+  readonly dateSelected = output<string>();
+  readonly addTripClicked = output<void>();
+  readonly editTrip = output<Trip>();
+  readonly deleteTrip = output<Trip>();
+  readonly viewDetails = output<Trip>();
+  readonly exportPdf = output<Trip>();
 
   trackByTripId(_: number, trip: Trip): string { return trip.id; }
 
   onDateDblClicked(dateStr: string): void {
-    const trip = this.trips.find((t) => t.date === dateStr);
+    const trip = this.trips().find((t) => t.date === dateStr);
     if (trip) this.editTrip.emit(trip);
-  }
-
-  fmtDate(date: string): string {
-    if (!date) return '—';
-    const [y, m, d] = date.split('-');
-    return `${d}/${m}/${y}`;
   }
 
   statusSeverity(status: Trip['status']): 'info' | 'success' | 'secondary' {

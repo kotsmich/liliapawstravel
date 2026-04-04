@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { HeroComponent } from './components/hero/hero.component';
 import { StatsSectionComponent } from './components/stats-section/stats-section.component';
@@ -14,7 +14,7 @@ import { CtaSectionComponent } from './components/cta-section/cta-section.compon
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
-  constructor(private router: Router) {}
+  private readonly router = inject(Router);
 
   stats = [
     { value: '1,200+', label: 'stats.dogsTransported' },

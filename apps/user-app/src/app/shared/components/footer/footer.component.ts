@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
 
@@ -11,7 +11,7 @@ import { TranslocoModule } from '@jsverse/transloco';
   styleUrls: ['./footer.component.scss'],
 })
 export class FooterComponent {
-  constructor(private router: Router) {}
+  private readonly router = inject(Router);
 
   year = new Date().getFullYear();
 

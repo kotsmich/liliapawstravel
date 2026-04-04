@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnChanges, inject, computed } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
@@ -17,7 +17,7 @@ type RequestDog = TripRequest['dogs'][number];
   selector: 'app-request-detail-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DatePipe, DialogModule, ButtonModule, TagModule, TextareaModule, GenericTableComponent, TranslocoModule],
+  imports: [DatePipe, DialogModule, ButtonModule, TagModule, TextareaModule, GenericTableComponent, TranslocoModule],
   templateUrl: './request-detail-dialog.component.html',
   styleUrl: './request-detail-dialog.component.scss',
 })

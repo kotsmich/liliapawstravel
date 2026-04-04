@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Store } from '@ngrx/store';
 import { ToastModule } from 'primeng/toast';
@@ -19,7 +19,7 @@ import { MessageDetailDialogComponent } from './components/message-detail-dialog
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    AsyncPipe,
     ToastModule, CardModule, SkeletonModule,
     PageHeaderComponent, LoadingOverlayComponent,
     MessagesListComponent, MessageDetailDialogComponent,

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input, output } from '@angular/core';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
@@ -24,18 +24,18 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
   styleUrls: ['./contact-form.component.scss'],
 })
 export class ContactFormComponent {
-  @Input() form!: FormGroup;
-  @Input() loading: boolean = false;
-  @Input() success: boolean = false;
-  @Input() error: string | null = null;
+  private readonly transloco = inject(TranslocoService);
 
-  @Output() formSubmit = new EventEmitter<void>();
-  @Output() reset = new EventEmitter<void>();
+  readonly form = input.required<FormGroup>();
+  readonly loading = input<boolean>(false);
+  readonly success = input<boolean>(false);
+  readonly error = input<string | null>(null);
 
-  constructor(private transloco: TranslocoService) {}
+  readonly formSubmit = output<void>();
+  readonly reset = output<void>();
 
   get emailHint(): string | null {
-    const ctrl = this.form?.get('email');
+    const ctrl = this.form()?.get('email');
     if (!ctrl) return null;
     const val = ctrl.value as string;
     return val && !ctrl.hasError('email')
@@ -44,7 +44,7 @@ export class ContactFormComponent {
   }
 
   err(field: string): string | null {
-    const c = this.form?.get(field);
+    const c = this.form()?.get(field);
     if (!c?.errors || !c.touched) return null;
     if (c.errors['required']) return this.transloco.translate('contact.form.errors.required');
     if (c.errors['email']) return this.transloco.translate('contact.form.errors.email');

@@ -1,5 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { Store } from '@ngrx/store';
@@ -12,17 +12,15 @@ import { ContactFormComponent } from './components/contact-form/contact-form.com
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule, ReactiveFormsModule,
+    AsyncPipe, ReactiveFormsModule,
     CardModule, ContactFormComponent, TranslocoModule,
   ],
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss'],
 })
 export class ContactComponent implements OnInit {
-  constructor(
-    private fb: FormBuilder,
-    private store: Store,
-  ) {}
+  private readonly fb = inject(FormBuilder);
+  private readonly store = inject(Store);
 
   contactForm!: FormGroup;
 

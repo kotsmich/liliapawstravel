@@ -4,8 +4,8 @@
   <p-card styleClass="cal-card">
     <ng-template pTemplate="title">{{ 'trips.schedule' | transloco }}</ng-template>
     <ui-trip-calendar
-      [events]="calendarEvents"
-      [selectedDate]="selectedDate"
+      [events]="calendarEvents()"
+      [selectedDate]="selectedDate()"
       (dateSelected)="dateSelected.emit($event)"
       (dateDblClicked)="onDateDblClicked($event)">
     </ui-trip-calendar>
@@ -13,13 +13,13 @@
 
   <!-- Right column: trips for selected date -->
   <div class="trips-list flex flex-column gap-3">
-    @if (selectedDate && tripsForDate.length > 0) {
-      @for (trip of tripsForDate; track trackByTripId($index, trip)) {
+    @if (selectedDate() && tripsForDate().length > 0) {
+      @for (trip of tripsForDate(); track trackByTripId($index, trip)) {
         <p-card [class]="'trip-card' + (trip.isFull || trip.spotsAvailable <= 0 || !trip.acceptingRequests ? ' event--locked' : '')">
           <ng-template pTemplate="header">
             <div class="trip-header">
               <div class="trip-header__main flex flex-column gap-1">
-                <span class="trip-date-title"><i class="pi pi-calendar"></i> {{ fmtDate(trip.date) }}</span>
+                <span class="trip-date-title"><i class="pi pi-calendar"></i> {{ trip.date | localDate }}</span>
                 <div class="trip-route">
                   <strong>{{ trip.departureCity }}, {{ trip.departureCountry }}</strong>
                   <i class="pi pi-arrow-right mx-2"></i>
@@ -63,16 +63,16 @@
       }
     }
 
-    @if (selectedDate && tripsForDate.length === 0) {
+    @if (selectedDate() && tripsForDate().length === 0) {
       <div class="empty">
         <i class="pi pi-calendar-times"></i>
-        <p>{{ 'trips.noTripScheduled' | transloco: { date: fmtDate(selectedDate) } }}</p>
+        <p>{{ 'trips.noTripScheduled' | transloco: { date: (selectedDate() | localDate) } }}</p>
         <p-button [label]="'trips.addTripForDate' | transloco" icon="pi pi-plus" size="small"
           [outlined]="true" (onClick)="addTripClicked.emit()" />
       </div>
     }
 
-    @if (!selectedDate) {
+    @if (!selectedDate()) {
       <div class="empty">
         <i class="pi pi-calendar"></i>
         <p>{{ 'trips.selectDateHint' | transloco }}</p>

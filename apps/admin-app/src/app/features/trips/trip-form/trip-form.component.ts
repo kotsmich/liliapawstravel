@@ -1,6 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
@@ -33,7 +32,7 @@ import { DogManagerService } from './dog-manager.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DogManagerService],
   imports: [
-    CommonModule, RouterModule, ReactiveFormsModule,
+    RouterModule, ReactiveFormsModule,
     InputTextModule, InputNumberModule, SelectModule, ButtonModule, CardModule,
     IftaLabelModule, TextareaModule, DatePickerModule,
     MessageModule, ToastModule, TooltipModule, CheckboxModule, ConfirmDialogModule,
@@ -47,6 +46,15 @@ import { DogManagerService } from './dog-manager.service';
   styleUrls: ['./trip-form.component.scss'],
 })
 export class TripFormComponent implements OnInit {
+  private readonly fb = inject(FormBuilder);
+  private readonly store = inject(Store);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
+  readonly dogManager = inject(DogManagerService);
+
   form!: FormGroup;
   isEdit = false;
   editId: string | null = null;
@@ -66,17 +74,6 @@ export class TripFormComponent implements OnInit {
   );
 
   activeDogsTab = 'all';
-
-  constructor(
-    private fb: FormBuilder,
-    private store: Store,
-    private route: ActivatedRoute,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-    private destroyRef: DestroyRef,
-    private transloco: TranslocoService,
-    readonly dogManager: DogManagerService,
-  ) {}
 
   ngOnInit(): void {
     this.editId = this.route.snapshot.paramMap.get('id');

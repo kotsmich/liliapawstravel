@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Dog } from '@models/lib/dog.model';
@@ -15,7 +15,7 @@ export interface DogDocument {
 export class DogsService {
   private readonly baseUrl = `${environment.apiUrl}/dogs`;
 
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   createDog(tripId: string, dog: Partial<Dog>): Observable<Dog> {
     return this.http.post<Dog>(`${environment.apiUrl}/trips/${tripId}/dogs`, dog);

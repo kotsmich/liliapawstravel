@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, inject, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
@@ -13,7 +13,7 @@ import { GenericTableComponent } from '@ui/lib/components/table/generic-table.co
   selector: 'app-messages-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, ConfirmDialogModule, GenericTableComponent, TranslocoModule],
+  imports: [ButtonModule, ConfirmDialogModule, GenericTableComponent, TranslocoModule],
   templateUrl: './messages-list.component.html',
   styles: [],
 })

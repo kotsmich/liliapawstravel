@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
+import { LocalDatePipe } from '@ui/lib/pipes/local-date.pipe';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Store } from '@ngrx/store';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -30,7 +31,7 @@ import { RequestDetailDialogComponent } from './components/request-detail-dialog
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    AsyncPipe,
     ButtonModule,
     ToastModule, ConfirmDialogModule,
     PageHeaderComponent,
@@ -39,12 +40,13 @@ import { RequestDetailDialogComponent } from './components/request-detail-dialog
   ],
   templateUrl: './requests-list.component.html',
   styleUrls: ['./requests-list.component.scss'],
-  providers: [DatePipe],
+  providers: [DatePipe, LocalDatePipe],
 })
 export class RequestsListComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly localDate = inject(LocalDatePipe);
 
   loading$ = this.store.select(selectRequestsIsLoading);
 
@@ -99,22 +101,16 @@ export class RequestsListComponent implements OnInit {
       .filter((t) => t.status === 'upcoming')
       .sort((a, b) => a.date.localeCompare(b.date))
       .map((t) => ({
-        label: this.fmtDate(t.date),
+        label: this.localDate.transform(t.date),
         value: t.id,
         pending: requests.filter((r) => r.tripId === t.id && r.status === 'pending').length,
       }));
   }
 
-  fmtDate(date: string): string {
-    if (!date) return '—';
-    const [y, m, d] = date.split('-');
-    return `${d}/${m}/${y}`;
-  }
-
   tripDate(tripId: string | undefined): string {
     if (!tripId) return '—';
     const trip = this.trips().find((t) => t.id === tripId);
-    return trip ? this.fmtDate(trip.date) : tripId;
+    return trip ? this.localDate.transform(trip.date) : tripId;
   }
 
   openDetail(request: TripRequest): void {

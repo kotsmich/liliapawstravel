@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, inject, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy, inject, computed, input, output } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
@@ -21,7 +21,7 @@ type RequestDog = TripRequest['dogs'][number];
   selector: 'app-trip-detail-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DialogModule, ButtonModule, TagModule, TabsModule, AccordionModule, GenericTableComponent, EmptyStateComponent, TranslocoModule],
+  imports: [DatePipe, DialogModule, ButtonModule, TagModule, TabsModule, AccordionModule, GenericTableComponent, EmptyStateComponent, TranslocoModule],
   templateUrl: './trip-detail-dialog.component.html',
   styleUrls: ['./trip-detail-dialog.component.scss'],
 })
@@ -30,19 +30,19 @@ export class TripDetailDialogComponent {
   private readonly transloco = inject(TranslocoService);
   private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
-  @Input() visible = false;
-  @Input() header = '';
-  @Input() trip: Trip | null = null;
-  @Input() requests: TripRequest[] = [];
-  @Input() activeTab = 'dogs';
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() tabChanged = new EventEmitter<string>();
-  @Output() editDog = new EventEmitter<{ dog: Dog; tripId: string }>();
-  @Output() deleteDog = new EventEmitter<{ dog: Dog; tripId: string }>();
-  @Output() approveRequest = new EventEmitter<TripRequest>();
-  @Output() rejectRequest = new EventEmitter<TripRequest>();
-  @Output() deleteRequest = new EventEmitter<TripRequest>();
-  @Output() closed = new EventEmitter<void>();
+  readonly visible = input(false);
+  readonly header = input('');
+  readonly trip = input<Trip | null>(null);
+  readonly requests = input<TripRequest[]>([]);
+  readonly activeTab = input('dogs');
+  readonly visibleChange = output<boolean>();
+  readonly tabChanged = output<string>();
+  readonly editDog = output<{ dog: Dog; tripId: string }>();
+  readonly deleteDog = output<{ dog: Dog; tripId: string }>();
+  readonly approveRequest = output<TripRequest>();
+  readonly rejectRequest = output<TripRequest>();
+  readonly deleteRequest = output<TripRequest>();
+  readonly closed = output<void>();
 
   readonly requestDogConfig: TableConfig = { paginator: false, striped: true, trackByField: 'id' };
 
@@ -75,13 +75,13 @@ export class TripDetailDialogComponent {
       {
         icon: 'pi pi-pencil',
         tooltip: this.transloco.translate('trips.detail.editDogTooltip'),
-        action: (dog) => this.editDog.emit({ dog, tripId: this.trip!.id }),
+        action: (dog) => this.editDog.emit({ dog, tripId: this.trip()!.id }),
       },
       {
         icon: 'pi pi-trash',
         tooltip: this.transloco.translate('trips.detail.deleteDogTooltip'),
         severity: 'danger',
-        action: (dog) => this.deleteDog.emit({ dog, tripId: this.trip!.id }),
+        action: (dog) => this.deleteDog.emit({ dog, tripId: this.trip()!.id }),
       },
     ];
   });
@@ -99,8 +99,9 @@ export class TripDetailDialogComponent {
   });
 
   onExportPdf(): void {
-    if (this.trip) {
-      this.exportService.exportTripManifestPdf(this.trip);
+    const trip = this.trip();
+    if (trip) {
+      this.exportService.exportTripManifestPdf(trip);
     }
   }
 

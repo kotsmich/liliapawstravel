@@ -1,5 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, TemplateRef, inject, computed, viewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy, TemplateRef, inject, computed, viewChild, input, output } from '@angular/core';
 import { TagModule } from 'primeng/tag';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -11,15 +10,15 @@ import { GenericTableComponent } from '@ui/lib/components/table/generic-table.co
   selector: 'app-all-trips-tab',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, GenericTableComponent, TranslocoModule],
+  imports: [TagModule, GenericTableComponent, TranslocoModule],
   templateUrl: './all-trips-tab.component.html',
   styleUrls: ['./all-trips-tab.component.scss'],
 })
 export class AllTripsTabComponent {
-  @Input() trips: Trip[] = [];
-  @Output() editTrip = new EventEmitter<Trip>();
-  @Output() deleteTrip = new EventEmitter<Trip>();
-  @Output() viewDetails = new EventEmitter<Trip>();
+  readonly trips = input<Trip[]>([]);
+  readonly editTrip = output<Trip>();
+  readonly deleteTrip = output<Trip>();
+  readonly viewDetails = output<Trip>();
 
   readonly routeTpl = viewChild.required<TemplateRef<unknown>>('routeTpl');
   readonly filledTpl = viewChild.required<TemplateRef<unknown>>('filledTpl');

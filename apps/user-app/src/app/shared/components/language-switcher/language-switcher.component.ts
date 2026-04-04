@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { FormsModule } from '@angular/forms';
@@ -24,17 +24,15 @@ interface LangOption {
   `,
 })
 export class LanguageSwitcherComponent {
+  private readonly transloco = inject(TranslocoService);
+
   langs: LangOption[] = [
     { label: 'EN', value: 'en' },
     { label: 'ΕΛ', value: 'el' },
     { label: 'DE', value: 'de' },
   ];
 
-  activeLang: string;
-
-  constructor(private transloco: TranslocoService) {
-    this.activeLang = this.transloco.getActiveLang() ?? 'en';
-  }
+  activeLang = this.transloco.getActiveLang() ?? 'en';
 
   changeLang(lang: string): void {
     this.transloco.setActiveLang(lang);

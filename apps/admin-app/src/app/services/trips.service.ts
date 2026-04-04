@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Trip } from '@models/lib/trip.model';
@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 export class TripsService {
   private readonly baseUrl = `${environment.apiUrl}/trips`;
 
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   getTrips(): Observable<Trip[]> {
     return this.http.get<Trip[]>(this.baseUrl);

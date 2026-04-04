@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ContactSubmission } from '@models/lib/contact-form.model';
@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 export class MessagesService {
   private readonly baseUrl = `${environment.apiUrl}/admin-portal/contact`;
 
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   getMessages(): Observable<ContactSubmission[]> {
     return this.http.get<ContactSubmission[]>(this.baseUrl);

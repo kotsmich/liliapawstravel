@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { FormBuilder, FormArray, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { ConfirmationService } from 'primeng/api';
@@ -9,7 +9,11 @@ import { addDog, addDogs, updateDog, deleteDog, deleteDogs } from '@admin/featur
 
 @Injectable()
 export class DogManagerService {
-  readonly dogsArray: FormArray;
+  private readonly fb = inject(FormBuilder);
+  private readonly store = inject(Store);
+  private readonly confirmationService = inject(ConfirmationService);
+
+  readonly dogsArray: FormArray = this.fb.array([]);
 
   readonly dialogVisible = signal(false);
   readonly selectedDog = signal<Dog | null>(null);
@@ -49,14 +53,6 @@ export class DogManagerService {
 
   private isEdit = false;
   private editId: string | null = null;
-
-  constructor(
-    private fb: FormBuilder,
-    private store: Store,
-    private confirmationService: ConfirmationService,
-  ) {
-    this.dogsArray = this.fb.array([]);
-  }
 
   /** Call once in ngOnInit after edit context is known. */
   init(isEdit: boolean, editId: string | null): void {

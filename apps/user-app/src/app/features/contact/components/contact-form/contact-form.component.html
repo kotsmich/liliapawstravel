@@ -1,5 +1,5 @@
 <div class="form-wrapper contact-form">
-  @if (success) {
+  @if (success()) {
     <div class="feedback success flex align-items-start flex-wrap gap-3">
       <i class="pi pi-check-circle"></i>
       <div>
@@ -9,19 +9,19 @@
       <p-button [label]="'contact.form.sendAnother' | transloco" [outlined]="true" severity="success" (onClick)="reset.emit()" />
     </div>
   }
-  @if (error) {
-    <p-message severity="error" [text]="'Error: ' + error" styleClass="mb-3" />
+  @if (error()) {
+    <p-message severity="error" [text]="'Error: ' + error()" styleClass="mb-3" />
   }
 
-  @if (!success) {
-    <form [formGroup]="form" (ngSubmit)="formSubmit.emit()" novalidate>
+  @if (!success()) {
+    <form [formGroup]="form()" (ngSubmit)="formSubmit.emit()" novalidate>
       <div class="fields-row">
         <div class="field fw">
           <p-ifta-label>
             <input pInputText id="name" formControlName="name" />
             <label for="name">{{ 'contact.form.fullName' | transloco }}</label>
           </p-ifta-label>
-          @if (form.get('name')?.touched && err('name')) {
+          @if (form().get('name')?.touched && err('name')) {
             <small class="p-error">{{ err('name') }}</small>
           }
         </div>
@@ -33,7 +33,7 @@
           @if (emailHint) {
             <small class="hint">{{ emailHint }}</small>
           }
-          @if (form.get('email')?.touched && err('email')) {
+          @if (form().get('email')?.touched && err('email')) {
             <small class="p-error">{{ err('email') }}</small>
           }
         </div>
@@ -44,7 +44,7 @@
             <input pInputText id="phone" formControlName="phone" type="tel" />
             <label for="phone">{{ 'contact.form.phone' | transloco }}</label>
           </p-ifta-label>
-          @if (form.get('phone')?.touched && err('phone')) {
+          @if (form().get('phone')?.touched && err('phone')) {
             <small class="p-error">{{ err('phone') }}</small>
           }
         </div>
@@ -53,7 +53,7 @@
             <input pInputText id="subject" formControlName="subject" />
             <label for="subject">{{ 'contact.form.subject' | transloco }}</label>
           </p-ifta-label>
-          @if (form.get('subject')?.touched && err('subject')) {
+          @if (form().get('subject')?.touched && err('subject')) {
             <small class="p-error">{{ err('subject') }}</small>
           }
         </div>
@@ -63,16 +63,16 @@
           <textarea pTextarea id="message" formControlName="message" rows="3"></textarea>
           <label for="message">{{ 'contact.form.message' | transloco }}</label>
         </p-ifta-label>
-        @if (form.get('message')?.touched && err('message')) {
+        @if (form().get('message')?.touched && err('message')) {
           <small class="p-error">{{ err('message') }}</small>
         }
       </div>
       <div class="submit-row">
         <p-button
           type="submit"
-          [label]="loading ? ('contact.form.sending' | transloco) : ('contact.form.send' | transloco)"
-          [loading]="loading"
-          [disabled]="loading"
+          [label]="loading() ? ('contact.form.sending' | transloco) : ('contact.form.send' | transloco)"
+          [loading]="loading()"
+          [disabled]="loading()"
           />
       </div>
     </form>

@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, inject, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
@@ -12,7 +12,7 @@ import { GenericTableComponent } from '@ui/lib/components/table/generic-table.co
   selector: 'app-recent-trips',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, ButtonModule, GenericTableComponent, TranslocoModule],
+  imports: [CardModule, ButtonModule, GenericTableComponent, TranslocoModule],
   templateUrl: './recent-trips.component.html',
   styles: [`:host ::ng-deep .table-scroll { overflow-x: auto; }`],
 })

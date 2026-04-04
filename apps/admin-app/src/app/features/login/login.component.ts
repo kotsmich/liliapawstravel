@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
@@ -16,7 +16,7 @@ import { login, selectAuthIsLoading, selectAuthError } from '@admin/core/store/a
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule, ReactiveFormsModule,
+    AsyncPipe, ReactiveFormsModule,
     InputTextModule, PasswordModule, ButtonModule, CardModule,
     IftaLabelModule, MessageModule, TranslocoModule,
   ],
@@ -24,10 +24,8 @@ import { login, selectAuthIsLoading, selectAuthError } from '@admin/core/store/a
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
-  constructor(
-    private fb: FormBuilder,
-    private store: Store,
-  ) {}
+  private readonly fb = inject(FormBuilder);
+  private readonly store = inject(Store);
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],

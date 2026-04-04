@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
+import { LocalDatePipe } from '@ui/lib/pipes/local-date.pipe';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -29,7 +30,7 @@ import { ExportService } from '../../../services/export.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    AsyncPipe,
     CardModule, ButtonModule, ConfirmDialogModule, ToastModule,
     LoadingSpinnerComponent,
     TripCalendarViewComponent,
@@ -38,6 +39,7 @@ import { ExportService } from '../../../services/export.service';
     DogFormDialogComponent,
     TranslocoModule,
   ],
+  providers: [LocalDatePipe],
   templateUrl: './trips-list.component.html',
   styleUrls: ['./trips-list.component.scss'],
 })
@@ -46,6 +48,7 @@ export class TripsListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly exportService = inject(ExportService);
+  private readonly localDate = inject(LocalDatePipe);
 
   trips$ = this.store.select(selectAllTrips);
   loading$ = this.store.select(selectTripsIsLoading);
@@ -107,12 +110,7 @@ readonly selectedDate = toSignal(this.store.select(selectCalendarSelectedDate), 
   }
 
   openDetail(trip: Trip): void {
-    const fmtDate = (d: string) => {
-      if (!d) return '—';
-      const [y, m, day] = d.split('-');
-      return `${day}/${m}/${y}`;
-    };
-    this.detailHeader = `${trip.departureCity} → ${trip.arrivalCity}  ·  ${fmtDate(trip.date)}`;
+    this.detailHeader = `${trip.departureCity} → ${trip.arrivalCity}  ·  ${this.localDate.transform(trip.date)}`;
     this.detailActiveTab = 'dogs';
     this.detailTripId.set(trip.id);
     this.store.dispatch(loadTripById({ id: trip.id }));

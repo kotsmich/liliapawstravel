@@ -1,6 +1,5 @@
-import { Component, HostListener, ChangeDetectionStrategy, inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { CommonModule } from '@angular/common';
+import { Component, HostListener, ChangeDetectionStrategy, inject, signal, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser, NgClass } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -12,7 +11,7 @@ import { LanguageSwitcherComponent } from '@user/shared/components/language-swit
   selector: 'app-navbar',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, TranslocoModule, LanguageSwitcherComponent],
+  imports: [NgClass, ButtonModule, TranslocoModule, LanguageSwitcherComponent],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
@@ -30,11 +29,11 @@ export class NavbarComponent {
   );
 
   menuOpen = false;
-  scrolled = false;
+  readonly scrolled = signal(false);
 
   @HostListener('window:scroll')
   onScroll(): void {
-    if (isPlatformBrowser(this.platformId)) this.scrolled = window.scrollY > 20;
+    if (isPlatformBrowser(this.platformId)) this.scrolled.set(window.scrollY > 20);
   }
 
   toggleMenu(): void { this.menuOpen = !this.menuOpen; }

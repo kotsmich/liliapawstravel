@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef, inject } from '@angular/core';
 import { Dog } from '@models/lib/dog.model';
 import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.interface';
 import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
@@ -35,8 +35,7 @@ export class DogsTableComponent {
 
   selectedDogs: (Dog & { _idx: number })[] = [];
   private _dogs: (Dog & { _idx: number })[] = [];
-
-  constructor(private cdr: ChangeDetectorRef) {}
+  private readonly cdr = inject(ChangeDetectorRef);
 
   onSelectionChange(dogs: (Dog & { _idx: number })[]): void {
     this.selectedDogs = dogs;

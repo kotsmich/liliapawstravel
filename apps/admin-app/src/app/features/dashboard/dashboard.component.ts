@@ -1,5 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -16,12 +16,13 @@ import { RecentTripsComponent } from './components/recent-trips/recent-trips.com
   selector: 'app-dashboard',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule, LoadingSpinnerComponent, PageHeaderComponent, DashboardStatsComponent, RecentTripsComponent, TranslocoModule],
+  imports: [AsyncPipe, ButtonModule, LoadingSpinnerComponent, PageHeaderComponent, DashboardStatsComponent, RecentTripsComponent, TranslocoModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
-  constructor(private store: Store, private router: Router) {}
+  private readonly store = inject(Store);
+  private readonly router = inject(Router);
 
   trips$ = this.store.select(selectAllTrips);
   loading$ = this.store.select(selectTripsIsLoading);
