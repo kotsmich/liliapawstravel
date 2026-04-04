@@ -20,6 +20,7 @@
       }
       @if (!(loading$ | async)) {
         <ui-trip-calendar
+          ngSkipHydration
           [events]="calendarEvents()"
           [selectedDate]="selectedDateLocal()"
           (dateSelected)="onDateSelected($event)">
