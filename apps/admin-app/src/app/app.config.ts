@@ -1,7 +1,7 @@
 import { ApplicationConfig, APP_INITIALIZER, isDevMode } from '@angular/core';
 import { provideTransloco } from '@jsverse/transloco';
 import { TranslocoHttpLoader } from '@admin/core/transloco-loader';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideStore, Store } from '@ngrx/store';
@@ -56,7 +56,7 @@ function initializeAuth(store: Store, authService: AuthService): () => Promise<v
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(APP_ROUTES),
+    provideRouter(APP_ROUTES, withPreloading(PreloadAllModules)),
     provideAnimationsAsync(),
     provideHttpClient(withInterceptors([adminApiInterceptor])),
     provideStore({
