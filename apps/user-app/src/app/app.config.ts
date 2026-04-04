@@ -1,5 +1,4 @@
 import { ApplicationConfig, isDevMode } from '@angular/core';
-import { provideClientHydration } from '@angular/platform-browser';
 import { provideTransloco } from '@jsverse/transloco';
 import { TranslocoHttpLoader } from '@user/core/transloco-loader';
 import { provideRouter, withRouterConfig } from '@angular/router';
@@ -42,7 +41,6 @@ const LiliaPreset = definePreset(Aura, {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(APP_ROUTES, withRouterConfig({ onSameUrlNavigation: 'reload' })),
-    provideClientHydration(),
     provideAnimationsAsync(),
     provideHttpClient(withFetch(), withInterceptors([userApiInterceptor])),
     provideStore({
