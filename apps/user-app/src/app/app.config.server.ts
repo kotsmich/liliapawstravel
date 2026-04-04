@@ -1,5 +1,6 @@
 import { mergeApplicationConfig, ApplicationConfig } from '@angular/core';
 import { provideServerRendering } from '@angular/ssr';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TRANSLOCO_LOADER } from '@jsverse/transloco';
 import { appConfig } from './app.config';
 import { TranslocoServerLoader } from './core/transloco-server.loader';
@@ -7,6 +8,7 @@ import { TranslocoServerLoader } from './core/transloco-server.loader';
 const serverConfig: ApplicationConfig = {
   providers: [
     provideServerRendering(),
+    provideHttpClient(withFetch()),
     { provide: TRANSLOCO_LOADER, useClass: TranslocoServerLoader },
   ],
 };
