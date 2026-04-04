@@ -45,13 +45,13 @@
             "scripts": [],
             "server": "apps/user-app/src/main.server.ts",
             "ssr": {
-              "entry": "apps/user-app/src/server.ts",
-              "externalDependencies": [
-                "express",
-                "http-proxy-middleware"
-              ]
+              "entry": "apps/user-app/src/server.ts"
             },
-            "prerender": false
+            "prerender": false,
+            "externalDependencies": [
+              "express",
+              "http-proxy-middleware"
+            ]
           },
           "configurations": {
             "production": {
