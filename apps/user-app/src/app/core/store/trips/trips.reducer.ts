@@ -22,7 +22,7 @@ export const tripsFeature = createFeature({
     on(loadTripsSuccess, (s, { trips }) => ({ ...s, trips, loading: false })),
     on(loadTripsFailure, (s, { error }) => ({ ...s, loading: false, error })),
     on(clearSelectedTrip, (s) => ({ ...s })),
-    on(wsTripsReceived, (s, { trips }) => ({ ...s, trips }))
+    on(wsTripsReceived, (s, { trips }) => ({ ...s, trips, loading: false }))
   ),
 });
 

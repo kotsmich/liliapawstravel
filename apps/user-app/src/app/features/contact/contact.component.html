@@ -15,9 +15,9 @@
 
     <app-contact-form
       [form]="contactForm"
-      [loading]="!!(loading$ | async)"
-      [success]="!!(success$ | async)"
-      [error]="(error$ | async)"
+      [loading]="loading()"
+      [success]="success()"
+      [error]="error()"
       (formSubmit)="onSubmit()"
       (reset)="onReset()"
     />

@@ -15,21 +15,16 @@
     <section class="card">
       <h2>🗓️ {{ 'tripRequest.selectDate' | transloco }}</h2>
       <p class="hint">{{ 'tripRequest.clickHint' | transloco }}</p>
-      @if (loading$ | async) {
-        <p-skeleton width="100%" height="320px" borderRadius="8px" />
-      }
-      @if (!(loading$ | async)) {
-        <ui-trip-calendar
-          ngSkipHydration
-          [events]="calendarEvents()"
-          [selectedDate]="selectedDateLocal()"
-          (dateSelected)="onDateSelected($event)">
-        </ui-trip-calendar>
-      }
+      <ui-trip-calendar
+      ngSkipHydration
+        [events]="calendarEvents()"
+        [selectedDate]="selectedDateLocal()"
+        (dateSelected)="onDateSelected($event)">
+      </ui-trip-calendar>
     </section>
 
     <!-- Trip Details Card -->
-    @if (selectedTrip$ | async; as trip) {
+    @if (selectedTrip(); as trip) {
       <section class="card trip-details">
         <div class="trip-details__label">{{ 'tripRequest.selectedTrip' | transloco }}</div>
         <div class="trip-details__route flex align-items-center flex-wrap">
@@ -72,7 +67,7 @@
         </section>
       }
       <!-- Form -->
-      @if (!(success$ | async) && !trip.isFull && trip.spotsAvailable > 0 && trip.acceptingRequests) {
+      @if (!success() && !trip.isFull && trip.spotsAvailable > 0 && trip.acceptingRequests) {
         <section class="card">
           <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
             <!-- Requester info -->
@@ -189,7 +184,7 @@
               (onClick)="addDog()"
               />
             <p-divider />
-            @if (error$ | async; as e) {
+            @if (error(); as e) {
               <p-message severity="error" [text]="'tripRequest.submissionFailed' | transloco: { error: e }" styleClass="mb-3" />
             }
             <!-- Summary preview -->
@@ -216,10 +211,10 @@
                 />
               <p-button
                 type="submit"
-                [label]="(submitting$ | async) ? ('tripRequest.submitting' | transloco) : ('tripRequest.submit' | transloco)"
-                [icon]="(submitting$ | async) ? '' : 'pi pi-send'"
-                [loading]="!!(submitting$ | async)"
-                [disabled]="!!(submitting$ | async)"
+                [label]="submitting() ? ('tripRequest.submitting' | transloco) : ('tripRequest.submit' | transloco)"
+                [icon]="submitting() ? '' : 'pi pi-send'"
+                [loading]="submitting()"
+                [disabled]="submitting()"
                 />
             </div>
           </form>
@@ -228,7 +223,7 @@
     }
 
     <!-- No trip selected hint -->
-    @if (!(selectedTrip$ | async) && !(loading$ | async)) {
+    @if (!selectedTrip() && !loading()) {
       <div class="no-trip-hint flex flex-column align-items-center">
         <i class="pi pi-calendar-plus"></i>
         <p>{{ 'tripRequest.noTripHint' | transloco }}</p>

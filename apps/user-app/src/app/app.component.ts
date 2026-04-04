@@ -1,5 +1,5 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { RouterOutlet, Router, NavigationEnd, NavigationStart, NavigationCancel, NavigationError } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -7,13 +7,16 @@ import { catchError, combineLatest, EMPTY } from 'rxjs';
 import { filter, map, startWith } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { ProgressBarModule } from 'primeng/progressbar';
 import { TranslocoService } from '@jsverse/transloco';
 
+import { Store } from '@ngrx/store';
 import { NavbarComponent } from '@user/shared/components/navbar/navbar.component';
 import { FooterComponent } from '@user/shared/components/footer/footer.component';
 import { AppWebSocketService } from '@ui/lib/websocket/app-websocket.service';
 import { SocketEvent } from '@models/lib/socket-events.model';
 import { TripRequest } from '@models/lib/trip-request.model';
+import { refreshTrips } from '@user/core/store/trips';
 
 const BASE_URL = 'https://liliapawstravel.com';
 
@@ -80,29 +83,44 @@ const ROUTE_META: Record<string, Record<string, RouteMeta>> = {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, FooterComponent, ToastModule],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent, ToastModule, ProgressBarModule],
   template: `
     <p-toast position="top-right"></p-toast>
+    @if (navigating()) {
+      <p-progressBar mode="indeterminate" styleClass="route-loader" [style]="{ height: '3px' }" />
+    }
     <app-navbar></app-navbar>
     <main id="main-content" aria-live="polite"><router-outlet></router-outlet></main>
     <app-footer></app-footer>
   `,
-  styles: [`main { min-height: calc(100vh - 70px); padding-top: 70px; }`],
+  styles: [`
+    main { min-height: calc(100vh - 70px); padding-top: 70px; }
+    :host ::ng-deep .route-loader { position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; border-radius: 0; }
+  `],
 })
 export class AppComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly document = inject(DOCUMENT);
 
+  readonly navigating = signal(false);
+
   constructor(
+    private readonly store: Store,
     private readonly wsService: AppWebSocketService,
     private readonly messageService: MessageService,
     private readonly router: Router,
     private readonly titleService: Title,
     private readonly metaService: Meta,
     private readonly translocoService: TranslocoService,
-  ) {}
+  ) {
+    this.router.events.pipe(takeUntilDestroyed()).subscribe((e) => {
+      if (e instanceof NavigationStart)                               this.navigating.set(true);
+      if (e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError) this.navigating.set(false);
+    });
+  }
 
   ngOnInit(): void {
+    this.store.dispatch(refreshTrips());
     this.wsService.connect();
     this.initDynamicTitles();
 
