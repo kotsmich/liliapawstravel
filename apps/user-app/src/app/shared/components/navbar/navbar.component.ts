@@ -1,4 +1,5 @@
-import { Component, HostListener, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy, ChangeDetectorRef, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -16,6 +17,8 @@ import { LanguageSwitcherComponent } from '@user/shared/components/language-swit
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent {
+  private readonly platformId = inject(PLATFORM_ID);
+
   constructor(private router: Router, private cdr: ChangeDetectorRef) {
     // Re-run change detection on navigation so isActive() reflects the current URL
     this.router.events.pipe(
@@ -28,7 +31,9 @@ export class NavbarComponent {
   scrolled = false;
 
   @HostListener('window:scroll')
-  onScroll(): void { this.scrolled = window.scrollY > 20; }
+  onScroll(): void {
+    if (isPlatformBrowser(this.platformId)) this.scrolled = window.scrollY > 20;
+  }
 
   toggleMenu(): void { this.menuOpen = !this.menuOpen; }
   closeMenu(): void { this.menuOpen = false; }

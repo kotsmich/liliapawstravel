@@ -1,4 +1,6 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { EMPTY } from 'rxjs';
 import { Observable, Subject } from 'rxjs';
 import { Trip } from '@models/lib/trip.model';
 
@@ -6,12 +8,14 @@ const RECONNECT_DELAY_MS = 3000;
 
 @Injectable({ providedIn: 'root' })
 export class TripsWebSocketService implements OnDestroy {
+  private readonly platformId = inject(PLATFORM_ID);
   private ws: WebSocket | null = null;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly trips$ = new Subject<Trip[]>();
   private destroyed = false;
 
   connect(): Observable<Trip[]> {
+    if (!isPlatformBrowser(this.platformId)) return EMPTY;
     if (!this.ws) this.open();
     return this.trips$.asObservable();
   }

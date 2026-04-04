@@ -1,5 +1,5 @@
 import { mergeApplicationConfig, ApplicationConfig } from '@angular/core';
-import { provideServerRendering } from '@angular/ssr';
+import { provideServerRendering } from '@angular/platform-server';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TRANSLOCO_LOADER } from '@jsverse/transloco';
 import { appConfig } from './app.config';

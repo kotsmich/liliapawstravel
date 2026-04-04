@@ -1,72 +1,62 @@
 import { APP_BASE_HREF } from '@angular/common';
 import { CommonEngine } from '@angular/ssr/node';
-import express from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import bootstrap from './main.server';
 
+const serverDistFolder = dirname(fileURLToPath(import.meta.url));
+const browserDistFolder = resolve(serverDistFolder, '../browser');
+const indexHtml = join(serverDistFolder, 'index.server.html');
+
 const API_TARGET = process.env['API_TARGET'] || 'http://api:3000';
 
-export function app(): express.Express {
-  const server = express();
-  const serverDistFolder = dirname(fileURLToPath(import.meta.url));
-  const browserDistFolder = resolve(serverDistFolder, '../browser');
-  const indexHtml = join(serverDistFolder, 'index.server.html');
+const allowedHosts = process.env['ALLOWED_HOSTS']
+  ? process.env['ALLOWED_HOSTS'].split(',')
+  : ['liliapawstravel.com', 'www.liliapawstravel.com', 'localhost'];
 
-  const allowedHosts = process.env['ALLOWED_HOSTS']
-    ? process.env['ALLOWED_HOSTS'].split(',')
-    : ['liliapawstravel.com', 'www.liliapawstravel.com', 'localhost'];
+const commonEngine = new CommonEngine({ allowedHosts });
 
-  const commonEngine = new CommonEngine({ allowedHosts });
+const app = express();
 
-  server.set('view engine', 'html');
-  server.set('views', browserDistFolder);
+// Proxy /ws/* → NestJS (WebSocket upgrade)
+app.use('/ws', createProxyMiddleware({
+  target: API_TARGET,
+  changeOrigin: true,
+  ws: true,
+}));
 
-  // Proxy /ws/* → NestJS (WebSocket upgrade)
-  server.use('/ws', createProxyMiddleware({
-    target: API_TARGET,
-    changeOrigin: true,
-    ws: true,
-  }));
+// Proxy /api/* → NestJS REST
+app.use('/api', createProxyMiddleware({
+  target: API_TARGET,
+  changeOrigin: true,
+}));
 
-  // Proxy /api/* → NestJS REST
-  server.use('/api', createProxyMiddleware({
-    target: API_TARGET,
-    changeOrigin: true,
-  }));
+// Serve static assets from browser build
+app.use(express.static(browserDistFolder, {
+  maxAge: '1y',
+  index: false,
+  redirect: false,
+}));
 
-  // Serve static assets (JS, CSS, images) from browser build
-  server.use(express.static(browserDistFolder, {
-    maxAge: '1y',
-    index: false,
-    redirect: false,
-  }));
+// All other routes → Angular SSR
+app.use((req, res, next) => {
+  const { protocol, originalUrl, baseUrl, headers } = req;
 
-  server.use((req, res, next) => {
-    const { protocol, originalUrl, baseUrl, headers } = req;
+  commonEngine
+    .render({
+      bootstrap,
+      documentFilePath: indexHtml,
+      url: `${protocol}://${headers.host}${originalUrl}`,
+      publicPath: browserDistFolder,
+      providers: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
+    })
+    .then((html) => res.send(html))
+    .catch((err) => next(err));
+});
 
-    commonEngine
-      .render({
-        bootstrap,
-        documentFilePath: indexHtml,
-        url: `${protocol}://${headers.host}${originalUrl}`,
-        publicPath: browserDistFolder,
-        providers: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
-      })
-      .then((html) => res.send(html))
-      .catch((err) => next(err));
-  });
-
-  return server;
-}
-
-function run(): void {
-  const port = process.env['PORT'] || 4000;
-  const server = app();
-  server.listen(port, () => {
-    console.log(`Node Express server listening on http://localhost:${port}`);
-  });
-}
-
-run();
+const port = process.env['PORT'] || 4000;
+app.listen(port, () => {
+  console.log(`Node Express server listening on http://localhost:${port}`);
+});
