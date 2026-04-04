@@ -32,6 +32,16 @@
                 "output": "assets"
               },
               {
+                "glob": "sitemap.xml",
+                "input": "apps/user-app/src/assets",
+                "output": ""
+              },
+              {
+                "glob": "robots.txt",
+                "input": "apps/user-app/src/assets",
+                "output": ""
+              },
+              {
                 "glob": "favicon.ico",
                 "input": "apps/user-app/src",
                 "output": ""
