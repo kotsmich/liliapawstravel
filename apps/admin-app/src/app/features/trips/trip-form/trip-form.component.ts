@@ -131,7 +131,7 @@ export class TripFormComponent implements OnInit {
     });
 
     trip$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((trip) => {
-      this.dogManager.setDogs(trip.dogs ?? [], trip.requester ?? []);
+      this.dogManager.setDogs(trip.dogs ?? [], trip.requesters ?? []);
     });
   }
 
