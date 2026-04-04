@@ -3,12 +3,14 @@ import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { AuthService } from '@admin/services/auth.service';
+import { AuthTokenService } from '@admin/services/auth-token.service';
 import { login, loginSuccess, loginFailure, logout } from './auth.actions';
 
 @Injectable()
 export class AuthEffects {
   private readonly actions$ = inject(Actions);
   private readonly authService = inject(AuthService);
+  private readonly authTokenService = inject(AuthTokenService);
   private readonly router = inject(Router);
 
   login$ = createEffect(() =>
@@ -31,7 +33,10 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(loginSuccess),
-        tap(() => this.router.navigate(['/admin/dashboard']))
+        tap(({ token }) => {
+          this.authTokenService.saveToken(token);
+          this.router.navigate(['/admin/dashboard']);
+        })
       ),
     { dispatch: false }
   );
@@ -40,6 +45,7 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(logout),
+        tap(() => this.authTokenService.clearToken()),
         switchMap(() =>
           this.authService.logout().pipe(
             catchError(() => of(null))

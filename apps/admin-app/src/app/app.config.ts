@@ -3,7 +3,7 @@ import { provideTransloco } from '@jsverse/transloco';
 import { TranslocoHttpLoader } from '@admin/core/transloco-loader';
 import { provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withXsrfConfiguration } from '@angular/common/http';
 import { provideStore, Store } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
@@ -58,7 +58,10 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(APP_ROUTES, withPreloading(PreloadAllModules)),
     provideAnimationsAsync(),
-    provideHttpClient(withInterceptors([adminApiInterceptor])),
+    provideHttpClient(
+      withInterceptors([adminApiInterceptor]),
+      withXsrfConfiguration({ cookieName: 'XSRF-TOKEN', headerName: 'X-XSRF-TOKEN' }),
+    ),
     provideStore({
       auth: authReducer,
       trips: tripsReducer,

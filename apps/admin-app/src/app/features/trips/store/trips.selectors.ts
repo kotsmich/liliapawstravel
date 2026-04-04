@@ -5,6 +5,11 @@ import { selectCalendarSelectedDate } from '@admin/core/store/calendar';
 import { selectTripsState } from './trips.reducer';
 
 export const selectAllTrips = createSelector(selectTripsState, (s) => s.trips);
+export const selectSelectedTripId = createSelector(selectTripsState, (s) => s.selectedTripId);
+export const selectSelectedTrip = createSelector(
+  selectAllTrips, selectSelectedTripId,
+  (trips, id) => trips.find((t) => t.id === id) ?? null
+);
 export const selectTripsIsLoading = createSelector(selectTripsState, (s) => s.loading);
 export const selectTripsIsMutating = createSelector(selectTripsState, (s) => s.mutating);
 
