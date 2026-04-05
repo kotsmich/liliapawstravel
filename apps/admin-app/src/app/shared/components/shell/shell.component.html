@@ -30,10 +30,38 @@
     </nav>
 
     <div class="topbar__end flex align-items-center gap-2">
+      <div class="fs-wrap">
+        <button
+          type="button"
+          class="fs-btn flex align-items-center justify-content-center"
+          [pTooltip]="fontPanelOpen() ? '' : ('shell.fontSize' | transloco)"
+          tooltipPosition="bottom"
+          (click)="toggleFontPanel()"
+        >
+          <i class="pi pi-sliders-h"></i>
+        </button>
+
+        @if (fontPanelOpen()) {
+          <div class="fs-backdrop" (click)="fontPanelOpen.set(false)"></div>
+          <div class="fs-panel">
+            <span class="fs-panel__label">{{ 'shell.fontSize' | transloco }}</span>
+            <div class="fs-panel__row flex align-items-center gap-2">
+              <i class="pi pi-search-minus fs-panel__icon"></i>
+              <input
+                type="range" min="90" max="200" step="5"
+                class="fs-panel__track"
+                [value]="fontSizeService.size()"
+                (input)="fontSizeService.size.set(+$any($event.target).value)"
+              />
+              <i class="pi pi-search-plus fs-panel__icon"></i>
+            </div>
+            <button type="button" class="fs-panel__reset" (click)="fontSizeService.size.set(100)">
+              Reset
+            </button>
+          </div>
+        }
+      </div>
       <!-- <app-language-switcher /> -->
-      @if ((user$ | async); as user) {
-        <span class="topbar__user">{{ user.email }}</span>
-      }
       <p-button
         icon="pi pi-sign-out"
         [text]="true"

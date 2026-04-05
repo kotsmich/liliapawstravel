@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { RouterOutlet, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -10,6 +10,7 @@ import { logout, selectCurrentUser } from '@admin/core/store/auth';
 import { loadRequests, selectPendingRequestsCount } from '@admin/features/requests/store';
 import { loadMessages, selectUnreadCount } from '@admin/features/messages/store';
 import { AdminUser } from '@models/lib/admin-user.model';
+import { FontSizeService } from '@admin/services/font-size.service';
 
 @Component({
   selector: 'app-shell',
@@ -22,6 +23,13 @@ import { AdminUser } from '@models/lib/admin-user.model';
 export class ShellComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly router = inject(Router);
+  readonly fontSizeService = inject(FontSizeService);
+
+  readonly fontPanelOpen = signal(false);
+
+  toggleFontPanel(): void {
+    this.fontPanelOpen.update(v => !v);
+  }
 
   user$: Observable<AdminUser | null> = this.store.select(selectCurrentUser);
   pendingCount$ = this.store.select(selectPendingRequestsCount);

@@ -6,7 +6,8 @@
     "messages": "Μηνύματα"
   },
   "shell": {
-    "logout": "Αποσύνδεση"
+    "logout": "Αποσύνδεση",
+    "fontSize": "Προσαρμογή μεγέθους γραμματοσειράς"
   },
   "login": {
     "title": "Lilia Paws Admin",

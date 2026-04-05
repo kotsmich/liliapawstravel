@@ -6,7 +6,8 @@
     "messages": "Messages"
   },
   "shell": {
-    "logout": "Logout"
+    "logout": "Logout",
+    "fontSize": "Adjust font size"
   },
   "login": {
     "title": "Lilia Paws Admin",
