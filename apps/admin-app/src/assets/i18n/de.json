@@ -126,6 +126,7 @@
       "status": "Status",
       "name": "Name",
       "size": "Größe",
+      "gender": "Geschlecht",
       "age": "Alter",
       "chipId": "Chip-ID",
       "requester": "Antragsteller",
@@ -179,7 +180,10 @@
       "selectExistingRequestor": "Vorhandenen Antragsteller auswählen",
       "sizeSmall": "Klein (< 10 kg)",
       "sizeMedium": "Mittel (10–25 kg)",
-      "sizeLarge": "Groß (> 25 kg)"
+      "sizeLarge": "Groß (> 25 kg)",
+      "gender": "Geschlecht",
+      "genderMale": "Männlich",
+      "genderFemale": "Weiblich"
     },
     "errors": {
       "required": "Pflichtfeld.",

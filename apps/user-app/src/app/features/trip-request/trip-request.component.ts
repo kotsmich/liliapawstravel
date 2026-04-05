@@ -80,6 +80,7 @@ export class TripRequestComponent {
     return this.fb.group({
       name:           [RandomUtil.pick(RandomProperty.dogNames),        Validators.required],
       size:           [RandomUtil.pick(RandomProperty.sizes),           Validators.required],
+      gender:         [RandomUtil.pick(RandomProperty.genders),         Validators.required],
       age:            [RandomUtil.pick(RandomProperty.ages),            [Validators.required, Validators.min(0)]],
       chipId:         [RandomUtil.pick(RandomProperty.chipIds),         [Validators.required, Validators.pattern(/^\d{15}$/)]],
       pickupLocation: [RandomUtil.pick(RandomProperty.pickupLocations), Validators.required],

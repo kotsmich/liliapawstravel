@@ -7,6 +7,24 @@
 
 .form-card { margin-bottom: 0; }
 
+.form-info-accordion {
+  ::ng-deep {
+    .p-accordionpanel { border: 1px solid var(--color-border-light); border-radius: 8px; overflow: hidden; }
+    .p-accordionheader {
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+      font-size: 1rem;
+      background: var(--p-card-background, #fff);
+      gap: 0.5rem;
+    }
+    .p-accordioncontent-content { padding: 0; }
+  }
+}
+
+.accordion-body {
+  padding: 0.75rem 1rem;
+}
+
 form { display: flex; flex-direction: column; gap: 1.5rem; flex: 1; min-height: 0; }
 
 .details-grid {

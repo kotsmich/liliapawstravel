@@ -125,6 +125,7 @@
       "status": "Status",
       "name": "Name",
       "size": "Size",
+      "gender": "Gender",
       "age": "Age",
       "chipId": "Chip ID",
       "requester": "Requester",
@@ -178,7 +179,10 @@
       "selectExistingRequestor": "Select existing requestor",
       "sizeSmall": "Small (< 10 kg)",
       "sizeMedium": "Medium (10–25 kg)",
-      "sizeLarge": "Large (> 25 kg)"
+      "sizeLarge": "Large (> 25 kg)",
+      "gender": "Gender",
+      "genderMale": "Male",
+      "genderFemale": "Female"
     },
     "errors": {
       "required": "Required.",

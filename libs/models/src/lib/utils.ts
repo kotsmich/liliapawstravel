@@ -11,6 +11,7 @@ export const RandomUtil = {
 export const RandomProperty = {
   dogNames:        ['Bella', 'Max', 'Luna', 'Rocky', 'Milo', 'Daisy', 'Buddy', 'Coco', 'Loki', 'Zeus', 'Charlie', 'Molly', 'Bear', 'Stella', 'Duke', 'Rosie', 'Rex', 'Penny', 'Archie', 'Nala', 'Finn', 'Maggie', 'Gus', 'Zoe', 'Bruno'],
   sizes:           ['small', 'medium', 'large'] as Array<'small' | 'medium' | 'large'>,
+  genders:         ['male', 'female'] as Array<'male' | 'female'>,
   ages:            [1, 2, 3, 4, 5, 6, 7],
   chipIds:         ['111111111111111', '222222222222222', '333333333333333', '444444444444444', '555555555555555'],
   pickupLocations: ['Thessaloniki', 'Athens', 'Bucharest', 'Sofia', 'Belgrade', 'Skopje'],

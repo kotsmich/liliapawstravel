@@ -42,6 +42,14 @@ export class DogFieldsComponent {
     ];
   });
 
+  readonly genders = computed((): { value: string; label: string }[] => {
+    this._t();
+    return [
+      { value: 'male',   label: this.transloco.translate('dogs.fields.genderMale') },
+      { value: 'female', label: this.transloco.translate('dogs.fields.genderFemale') },
+    ];
+  });
+
   onRequestorChange(requestId: string | null): void {
     const req = this.requestors.find((r) => r.requestId === requestId) ?? null;
     this.form.patchValue({ requesterName: req?.name ?? '', newRequesterName: null });

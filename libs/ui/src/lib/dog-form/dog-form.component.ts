@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, computed } from '@angular/core';
 
 import { ReactiveFormsModule, FormGroup, AbstractControl } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -6,6 +6,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'ui-dog-form',
@@ -16,8 +18,9 @@ import { TooltipModule } from 'primeng/tooltip';
     InputNumberModule,
     SelectModule,
     ButtonModule,
-    TooltipModule
-],
+    TooltipModule,
+    TranslocoModule,
+  ],
   templateUrl: './dog-form.component.html',
   styleUrls: ['./dog-form.component.scss'],
 })
@@ -27,11 +30,25 @@ export class DogFormComponent {
   @Input() canRemove = false;
   @Output() removeClicked = new EventEmitter<void>();
 
-  sizes = [
-    { value: 'small', label: 'Small (< 10kg)' },
-    { value: 'medium', label: 'Medium (10–25kg)' },
-    { value: 'large', label: 'Large (> 25kg)' },
-  ];
+  private readonly transloco = inject(TranslocoService);
+  private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
+
+  readonly sizes = computed((): { value: string; label: string }[] => {
+    this._t();
+    return [
+      { value: 'small',  label: this.transloco.translate('dogs.sizeSmall') },
+      { value: 'medium', label: this.transloco.translate('dogs.sizeMedium') },
+      { value: 'large',  label: this.transloco.translate('dogs.sizeLarge') },
+    ];
+  });
+
+  readonly genders = computed((): { value: string; label: string }[] => {
+    this._t();
+    return [
+      { value: 'male',   label: this.transloco.translate('dogs.genderMale') },
+      { value: 'female', label: this.transloco.translate('dogs.genderFemale') },
+    ];
+  });
 
   ctrl(field: string): AbstractControl {
     return this.formGroup.get(field)!;

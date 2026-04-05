@@ -7,7 +7,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { TextareaModule } from 'primeng/textarea';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -33,7 +32,7 @@ import { DogManagerService } from './dog-manager.service';
   providers: [DogManagerService],
   imports: [
     RouterModule, ReactiveFormsModule,
-    InputTextModule, InputNumberModule, SelectModule, ButtonModule, CardModule,
+    InputTextModule, InputNumberModule, SelectModule, ButtonModule,
     IftaLabelModule, TextareaModule, DatePickerModule,
     MessageModule, ToastModule, TooltipModule, CheckboxModule, ConfirmDialogModule,
     TabsModule,

@@ -119,5 +119,20 @@
     "submit": "Anfrage einreichen",
     "submitting": "Wird eingereicht...",
     "noTripHint": "Wählen Sie ein hervorgehobenes Datum im Kalender oben, um Ihre Buchung zu starten."
+  },
+  "dogs": {
+    "dogName": "Name",
+    "size": "Größe",
+    "gender": "Geschlecht",
+    "ageYears": "Alter (Jahre)",
+    "microchipId": "Mikrochip-ID",
+    "pickupLocation": "Abholung",
+    "dropLocation": "Abgabe",
+    "notes": "Notizen",
+    "sizeSmall": "Klein (< 10 kg)",
+    "sizeMedium": "Mittel (10–25 kg)",
+    "sizeLarge": "Groß (> 25 kg)",
+    "genderMale": "Männlich",
+    "genderFemale": "Weiblich"
   }
 }

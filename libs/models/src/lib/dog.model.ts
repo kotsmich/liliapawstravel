@@ -2,6 +2,7 @@ export interface Dog {
   id: string;
   name: string;
   size: 'small' | 'medium' | 'large';
+  gender: 'male' | 'female';
   age: number;
   chipId: string;
   pickupLocation: string;

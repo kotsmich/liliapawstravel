@@ -125,6 +125,7 @@
       "status": "Κατάσταση",
       "name": "Όνομα",
       "size": "Μέγεθος",
+      "gender": "Φύλο",
       "age": "Ηλικία",
       "chipId": "Αριθμός Τσιπ",
       "requester": "Αιτών",
@@ -178,7 +179,10 @@
       "selectExistingRequestor": "Επιλογή υπάρχοντος αιτούντα",
       "sizeSmall": "Μικρός (< 10 kg)",
       "sizeMedium": "Μεσαίος (10–25 kg)",
-      "sizeLarge": "Μεγάλος (> 25 kg)"
+      "sizeLarge": "Μεγάλος (> 25 kg)",
+      "gender": "Φύλο",
+      "genderMale": "Αρσενικό",
+      "genderFemale": "Θηλυκό"
     },
     "errors": {
       "required": "Υποχρεωτικό.",

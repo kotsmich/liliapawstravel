@@ -19,158 +19,163 @@
   <p-confirmdialog />
 
   <form id="tripForm" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-    <p-card styleClass="form-card" [style]="{'--p-card-body-padding': '0.75rem 1rem', '--p-inputtext-padding-y': '0.375rem', '--p-select-padding-y': '0.375rem', '--p-datepicker-input-padding': '0.375rem 0.75rem'}">
-      <ng-template pTemplate="title">
-      {{ 'trips.form.title' | transloco }}
-      <span class="dogs-counter">{{ dogs.length }} / {{ form.get('totalCapacity')?.value ?? 0 }} {{ 'trips.dogs' | transloco }}</span>
-    </ng-template>
-
-      <div class="details-grid">
-        <!-- Left column: Date + route -->
-        <div class="details-col">
-          <div class="field fw">
-            <p-ifta-label>
-              <p-datepicker inputId="date" formControlName="date" [minDate]="isEdit ? null : today"
-                dateFormat="dd/mm/yy" [showTime]="false" [showIcon]="true" styleClass="w-full" />
-              <label for="date">{{ 'trips.form.date' | transloco }}</label>
-            </p-ifta-label>
-            @if (form.get('date')?.touched && form.get('date')?.invalid) {
-              <small class="p-error">{{ 'trips.form.invalidDate' | transloco }}</small>
-            }
-          </div>
-          <div class="row">
-            <div class="field fw">
-              <p-ifta-label>
-                <input pInputText id="depCountry" formControlName="departureCountry" placeholder="Romania" />
-                <label for="depCountry">{{ 'trips.form.departureCountry' | transloco }}</label>
-              </p-ifta-label>
-              @if (form.get('departureCountry')?.touched && form.get('departureCountry')?.invalid) {
-                <small class="p-error">{{ 'trips.form.required' | transloco }}</small>
-              }
-            </div>
-            <div class="field fw">
-              <p-ifta-label>
-                <input pInputText id="depCity" formControlName="departureCity" placeholder="Bucharest" />
-                <label for="depCity">{{ 'trips.form.departureCity' | transloco }}</label>
-              </p-ifta-label>
-              @if (form.get('departureCity')?.touched && form.get('departureCity')?.invalid) {
-                <small class="p-error">{{ 'trips.form.required' | transloco }}</small>
-              }
-            </div>
-          </div>
-          <div class="row">
-            <div class="field fw">
-              <p-ifta-label>
-                <input pInputText id="arrCountry" formControlName="arrivalCountry" placeholder="Netherlands" />
-                <label for="arrCountry">{{ 'trips.form.arrivalCountry' | transloco }}</label>
-              </p-ifta-label>
-              @if (form.get('arrivalCountry')?.touched && form.get('arrivalCountry')?.invalid) {
-                <small class="p-error">{{ 'trips.form.required' | transloco }}</small>
-              }
-            </div>
-            <div class="field fw">
-              <p-ifta-label>
-                <input pInputText id="arrCity" formControlName="arrivalCity" placeholder="Amsterdam" />
-                <label for="arrCity">{{ 'trips.form.arrivalCity' | transloco }}</label>
-              </p-ifta-label>
-              @if (form.get('arrivalCity')?.touched && form.get('arrivalCity')?.invalid) {
-                <small class="p-error">{{ 'trips.form.required' | transloco }}</small>
-              }
-            </div>
-          </div>
-        </div>
-
-        <!-- Right column: Status + Capacity + Notes -->
-        <div class="details-col">
-          <div class="row">
-            <div class="field fw">
-              <p-ifta-label>
-                <p-select inputId="status" formControlName="status" [options]="statuses()"
-                  optionLabel="label" optionValue="value" styleClass="w-full" />
-                <label for="status">{{ 'trips.form.status' | transloco }}</label>
-              </p-ifta-label>
-            </div>
-            <div class="field fw">
-              <p-ifta-label>
-                <p-inputnumber inputId="totalCapacity" formControlName="totalCapacity"
-                  [min]="1" [showButtons]="true" styleClass="w-full" />
-                <label for="totalCapacity">{{ 'trips.form.totalCapacity' | transloco }}</label>
-              </p-ifta-label>
-              @if (capacityWarning) {
-                <small class="p-warn">{{ capacityWarning }}</small>
-              }
-              @if (!capacityWarning && form.get('totalCapacity')?.touched && form.get('totalCapacity')?.invalid) {
-                <small class="p-error">{{ 'trips.form.mustBeAtLeast1' | transloco }}</small>
-              }
-            </div>
-          </div>
-          <div class="field fw notes-field">
-            <p-ifta-label>
-              <textarea pTextarea id="notes" formControlName="notes"></textarea>
-              <label for="notes">{{ 'trips.form.notesOptional' | transloco }}</label>
-            </p-ifta-label>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field fw">
-          <label class="field-section-label">{{ 'trips.form.tripCapacity' | transloco }}</label>
-          @if (isAtCapacity) {
-            <div class="status-display status-display--danger">
-              <div class="status-display__body">
-                <span class="status-display__title">
-                  <i class="pi pi-lock"></i> {{ 'trips.form.tripIsFull' | transloco }}
-                </span>
-                <span class="status-display__desc">
-                  {{ 'trips.form.tripIsFullDesc' | transloco: { dogs: dogs.length, capacity: form.get('totalCapacity')?.value } }}
-                </span>
+    <p-accordion value="trip-info" styleClass="form-info-accordion">
+      <p-accordion-panel value="trip-info">
+        <p-accordion-header>
+          <span>{{ 'trips.form.title' | transloco }}</span>
+          <span class="dogs-counter">{{ dogs.length }} / {{ form.get('totalCapacity')?.value ?? 0 }} {{ 'trips.dogs' | transloco }}</span>
+        </p-accordion-header>
+        <p-accordion-content>
+          <div class="accordion-body" [style]="{'--p-inputtext-padding-y': '0.375rem', '--p-select-padding-y': '0.375rem', '--p-datepicker-input-padding': '0.375rem 0.75rem'}">
+            <div class="details-grid">
+              <!-- Left column: Date + route -->
+              <div class="details-col">
+                <div class="field fw">
+                  <p-ifta-label>
+                    <p-datepicker inputId="date" formControlName="date" [minDate]="isEdit ? null : today"
+                      dateFormat="dd/mm/yy" [showTime]="false" [showIcon]="true" styleClass="w-full" />
+                    <label for="date">{{ 'trips.form.date' | transloco }}</label>
+                  </p-ifta-label>
+                  @if (form.get('date')?.touched && form.get('date')?.invalid) {
+                    <small class="p-error">{{ 'trips.form.invalidDate' | transloco }}</small>
+                  }
+                </div>
+                <div class="row">
+                  <div class="field fw">
+                    <p-ifta-label>
+                      <input pInputText id="depCountry" formControlName="departureCountry" placeholder="Romania" />
+                      <label for="depCountry">{{ 'trips.form.departureCountry' | transloco }}</label>
+                    </p-ifta-label>
+                    @if (form.get('departureCountry')?.touched && form.get('departureCountry')?.invalid) {
+                      <small class="p-error">{{ 'trips.form.required' | transloco }}</small>
+                    }
+                  </div>
+                  <div class="field fw">
+                    <p-ifta-label>
+                      <input pInputText id="depCity" formControlName="departureCity" placeholder="Bucharest" />
+                      <label for="depCity">{{ 'trips.form.departureCity' | transloco }}</label>
+                    </p-ifta-label>
+                    @if (form.get('departureCity')?.touched && form.get('departureCity')?.invalid) {
+                      <small class="p-error">{{ 'trips.form.required' | transloco }}</small>
+                    }
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="field fw">
+                    <p-ifta-label>
+                      <input pInputText id="arrCountry" formControlName="arrivalCountry" placeholder="Netherlands" />
+                      <label for="arrCountry">{{ 'trips.form.arrivalCountry' | transloco }}</label>
+                    </p-ifta-label>
+                    @if (form.get('arrivalCountry')?.touched && form.get('arrivalCountry')?.invalid) {
+                      <small class="p-error">{{ 'trips.form.required' | transloco }}</small>
+                    }
+                  </div>
+                  <div class="field fw">
+                    <p-ifta-label>
+                      <input pInputText id="arrCity" formControlName="arrivalCity" placeholder="Amsterdam" />
+                      <label for="arrCity">{{ 'trips.form.arrivalCity' | transloco }}</label>
+                    </p-ifta-label>
+                    @if (form.get('arrivalCity')?.touched && form.get('arrivalCity')?.invalid) {
+                      <small class="p-error">{{ 'trips.form.required' | transloco }}</small>
+                    }
+                  </div>
+                </div>
               </div>
-              <span class="status-check__badge status-check__badge--danger">{{ 'trips.form.full' | transloco }}</span>
-            </div>
-          }
-          @if (!isAtCapacity) {
-            <label for="isFull" class="status-check" [class.status-check--danger]="form.get('isFull')?.value">
-              <p-checkbox formControlName="isFull" [binary]="true" inputId="isFull" />
-              <div class="status-check__body">
-                <span class="status-check__title">{{ 'trips.form.markAsFull' | transloco }}</span>
-                <span class="status-check__desc">{{ 'trips.form.markAsFullDesc' | transloco }}</span>
+
+              <!-- Right column: Status + Capacity + Notes -->
+              <div class="details-col">
+                <div class="row">
+                  <div class="field fw">
+                    <p-ifta-label>
+                      <p-select inputId="status" formControlName="status" [options]="statuses()"
+                        optionLabel="label" optionValue="value" styleClass="w-full" />
+                      <label for="status">{{ 'trips.form.status' | transloco }}</label>
+                    </p-ifta-label>
+                  </div>
+                  <div class="field fw">
+                    <p-ifta-label>
+                      <p-inputnumber inputId="totalCapacity" formControlName="totalCapacity"
+                        [min]="1" [showButtons]="true" styleClass="w-full" />
+                      <label for="totalCapacity">{{ 'trips.form.totalCapacity' | transloco }}</label>
+                    </p-ifta-label>
+                    @if (capacityWarning) {
+                      <small class="p-warn">{{ capacityWarning }}</small>
+                    }
+                    @if (!capacityWarning && form.get('totalCapacity')?.touched && form.get('totalCapacity')?.invalid) {
+                      <small class="p-error">{{ 'trips.form.mustBeAtLeast1' | transloco }}</small>
+                    }
+                  </div>
+                </div>
+                <div class="field fw notes-field">
+                  <p-ifta-label>
+                    <textarea pTextarea id="notes" formControlName="notes"></textarea>
+                    <label for="notes">{{ 'trips.form.notesOptional' | transloco }}</label>
+                  </p-ifta-label>
+                </div>
               </div>
-              @if (form.get('isFull')?.value) {
-                <span class="status-check__badge status-check__badge--danger">
-                  <i class="pi pi-lock"></i> {{ 'trips.form.full' | transloco }}
-                </span>
-              }
-              @if (!form.get('isFull')?.value) {
-                <span class="status-check__badge status-check__badge--ok">
-                  <i class="pi pi-lock-open"></i> {{ 'trips.form.open' | transloco }}
-                </span>
-              }
-            </label>
-          }
-        </div>
-        <div class="field fw">
-          <label class="field-section-label">{{ 'trips.form.requestAcceptance' | transloco }}</label>
-          <label for="acceptingRequests" class="status-check" [class.status-check--warn]="!form.get('acceptingRequests')?.value">
-            <p-checkbox formControlName="acceptingRequests" [binary]="true" inputId="acceptingRequests" />
-            <div class="status-check__body">
-              <span class="status-check__title">{{ 'trips.form.acceptingRequests' | transloco }}</span>
-              <span class="status-check__desc">{{ 'trips.form.acceptingRequestsDesc' | transloco }}</span>
             </div>
-            @if (form.get('acceptingRequests')?.value) {
-              <span class="status-check__badge status-check__badge--ok">
-                <i class="pi pi-check-circle"></i> {{ 'trips.form.open' | transloco }}
-              </span>
-            }
-            @if (!form.get('acceptingRequests')?.value) {
-              <span class="status-check__badge status-check__badge--warn">
-                <i class="pi pi-ban"></i> {{ 'trips.form.freezed' | transloco }}
-              </span>
-            }
-          </label>
-        </div>
-      </div>
-    </p-card>
+
+            <div class="row">
+              <div class="field fw">
+                <label class="field-section-label">{{ 'trips.form.tripCapacity' | transloco }}</label>
+                @if (isAtCapacity) {
+                  <div class="status-display status-display--danger">
+                    <div class="status-display__body">
+                      <span class="status-display__title">
+                        <i class="pi pi-lock"></i> {{ 'trips.form.tripIsFull' | transloco }}
+                      </span>
+                      <span class="status-display__desc">
+                        {{ 'trips.form.tripIsFullDesc' | transloco: { dogs: dogs.length, capacity: form.get('totalCapacity')?.value } }}
+                      </span>
+                    </div>
+                    <span class="status-check__badge status-check__badge--danger">{{ 'trips.form.full' | transloco }}</span>
+                  </div>
+                }
+                @if (!isAtCapacity) {
+                  <label for="isFull" class="status-check" [class.status-check--danger]="form.get('isFull')?.value">
+                    <p-checkbox formControlName="isFull" [binary]="true" inputId="isFull" />
+                    <div class="status-check__body">
+                      <span class="status-check__title">{{ 'trips.form.markAsFull' | transloco }}</span>
+                      <span class="status-check__desc">{{ 'trips.form.markAsFullDesc' | transloco }}</span>
+                    </div>
+                    @if (form.get('isFull')?.value) {
+                      <span class="status-check__badge status-check__badge--danger">
+                        <i class="pi pi-lock"></i> {{ 'trips.form.full' | transloco }}
+                      </span>
+                    }
+                    @if (!form.get('isFull')?.value) {
+                      <span class="status-check__badge status-check__badge--ok">
+                        <i class="pi pi-lock-open"></i> {{ 'trips.form.open' | transloco }}
+                      </span>
+                    }
+                  </label>
+                }
+              </div>
+              <div class="field fw">
+                <label class="field-section-label">{{ 'trips.form.requestAcceptance' | transloco }}</label>
+                <label for="acceptingRequests" class="status-check" [class.status-check--warn]="!form.get('acceptingRequests')?.value">
+                  <p-checkbox formControlName="acceptingRequests" [binary]="true" inputId="acceptingRequests" />
+                  <div class="status-check__body">
+                    <span class="status-check__title">{{ 'trips.form.acceptingRequests' | transloco }}</span>
+                    <span class="status-check__desc">{{ 'trips.form.acceptingRequestsDesc' | transloco }}</span>
+                  </div>
+                  @if (form.get('acceptingRequests')?.value) {
+                    <span class="status-check__badge status-check__badge--ok">
+                      <i class="pi pi-check-circle"></i> {{ 'trips.form.open' | transloco }}
+                    </span>
+                  }
+                  @if (!form.get('acceptingRequests')?.value) {
+                    <span class="status-check__badge status-check__badge--warn">
+                      <i class="pi pi-ban"></i> {{ 'trips.form.freezed' | transloco }}
+                    </span>
+                  }
+                </label>
+              </div>
+            </div>
+          </div>
+        </p-accordion-content>
+      </p-accordion-panel>
+    </p-accordion>
 
     <!-- Dogs section -->
     @if (isEdit) {

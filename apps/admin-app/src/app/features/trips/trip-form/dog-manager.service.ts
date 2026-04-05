@@ -26,6 +26,7 @@ export class DogManagerService {
 
   readonly dogColumns: TableColumn<Dog & { _idx: number }>[] = [
     { field: 'name', header: 'Name', sortable: true },
+    { field: 'gender', header: 'Gender', formatter: (v) => String(v ?? '—') },
     {
       field: 'size', header: 'Size', type: 'badge',
       badgeConfig: {
@@ -74,6 +75,7 @@ export class DogManagerService {
       id:             [dog?.id             ?? ''],
       name:           [dog?.name           ?? ''],
       size:           [dog?.size           ?? ''],
+      gender:         [dog?.gender         ?? ''],
       age:            [dog?.age            ??  1],
       chipId:         [dog?.chipId         ?? ''],
       pickupLocation: [dog?.pickupLocation ?? ''],

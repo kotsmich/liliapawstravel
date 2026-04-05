@@ -195,7 +195,7 @@
                 @for (d of form.value.dogs; track d; let i = $index) {
                   <div class="summary-row flex flex-column">
                     <strong>{{ 'tripRequest.dogNum' | transloco: { num: i + 1 } }}: {{ d.name }}</strong>
-                    <span>{{ d.size }} | {{ d.age }} yr | {{ d.chipId }}</span>
+                    <span>{{ d.size }} | {{ d.gender }} | {{ d.age }} yr | {{ d.chipId }}</span>
                     <span>{{ d.pickupLocation }} → {{ d.dropLocation }}</span>
                   </div>
                 }

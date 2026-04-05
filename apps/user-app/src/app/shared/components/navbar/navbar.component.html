@@ -4,17 +4,17 @@
       <span aria-hidden="true">🐾</span>
       <span class="navbar__name">Lilia Paws Travel</span>
     </button>
+    <ul class="navbar__links flex align-items-center" [class.open]="menuOpen" role="menubar">
+      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/')" (click)="navigateTo('/')">{{ 'nav.home' | transloco }}</button></li>
+      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/request')" (click)="navigateTo('/request')">{{ 'nav.requestTransport' | transloco }}</button></li>
+      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/contact')" (click)="navigateTo('/contact')">{{ 'nav.contact' | transloco }}</button></li>
+    </ul>
     <div class="navbar__right">
+      <app-language-switcher />
       <button class="navbar__reserve-btn" type="button" (click)="navigateTo('/request')">{{ 'nav.requestTransport' | transloco }}</button>
       <button class="navbar__burger" type="button" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen" aria-label="Toggle navigation menu">
         <i class="pi" [ngClass]="menuOpen ? 'pi-times' : 'pi-bars'"></i>
       </button>
     </div>
-    <ul class="navbar__links flex align-items-center" [class.open]="menuOpen" role="menubar">
-      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/')" (click)="navigateTo('/')">{{ 'nav.home' | transloco }}</button></li>
-      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/request')" (click)="navigateTo('/request')">{{ 'nav.requestTransport' | transloco }}</button></li>
-      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/contact')" (click)="navigateTo('/contact')">{{ 'nav.contact' | transloco }}</button></li>
-      <li role="none"><app-language-switcher /></li>
-    </ul>
   </div>
 </nav>

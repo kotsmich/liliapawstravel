@@ -24,6 +24,16 @@
   <div class="row">
     <div class="field fw">
       <p-ifta-label>
+        <p-select [inputId]="'gender-' + idx" formControlName="gender" [options]="genders()"
+          optionLabel="label" optionValue="value" styleClass="w-full" />
+        <label [for]="'gender-' + idx">{{ 'dogs.fields.gender' | transloco }}</label>
+      </p-ifta-label>
+      @if (form.get('gender')?.touched && form.get('gender')?.invalid) {
+        <small class="p-error">{{ 'dogs.errors.required' | transloco }}</small>
+      }
+    </div>
+    <div class="field fw">
+      <p-ifta-label>
         <p-inputnumber [inputId]="'age-' + idx" formControlName="age" [min]="0"
           [showButtons]="false" styleClass="w-full" />
         <label [for]="'age-' + idx">{{ 'dogs.fields.ageYears' | transloco }}</label>

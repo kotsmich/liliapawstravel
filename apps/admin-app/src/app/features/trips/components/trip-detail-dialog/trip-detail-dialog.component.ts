@@ -60,6 +60,7 @@ export class TripDetailDialogComponent {
     return [
       { field: 'name', header: this.transloco.translate('trips.table.name') },
       { field: 'size', header: this.transloco.translate('trips.table.size') },
+      { field: 'gender', header: this.transloco.translate('trips.table.gender') },
       { field: 'age', header: this.transloco.translate('trips.table.age'), formatter: (val) => `${val} yr` },
       { field: 'chipId', header: this.transloco.translate('trips.table.chipId') },
       { field: 'requesterName', header: this.transloco.translate('trips.table.requester') },
