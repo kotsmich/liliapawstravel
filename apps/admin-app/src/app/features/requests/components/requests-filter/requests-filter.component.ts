@@ -22,6 +22,7 @@ export class RequestsFilterComponent {
   @Input() pendingCount: number = 0;
   @Input() approvedCount: number = 0;
   @Input() rejectedCount: number = 0;
+  @Input() cancelledCount: number = 0;
 
   @Output() tripSelected = new EventEmitter<string | null>();
   @Output() tabChanged = new EventEmitter<string>();

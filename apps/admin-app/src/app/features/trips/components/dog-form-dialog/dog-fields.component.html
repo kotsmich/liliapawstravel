@@ -102,6 +102,9 @@
       </p-ifta-label>
     </div>
   </div>
+  @if (form.touched && form.hasError('requesterRequired')) {
+    <small class="p-error">{{ 'dogs.errors.requesterRequired' | transloco }}</small>
+  }
 
   <div class="field fw">
     <p-ifta-label>

@@ -107,6 +107,7 @@
       "mustBeAtLeast1": "Must be at least 1.",
       "noDogsHint": "No dogs added yet. Use the \"Add Dog\" button above.",
       "dogsCounter": "{{ dogs }} / {{ capacity }} dogs",
+      "status": "Status",
       "statusUpcoming": "Upcoming",
       "statusInProgress": "In Progress",
       "statusCompleted": "Completed",
@@ -187,7 +188,8 @@
     "errors": {
       "required": "Required.",
       "ageMinimum": "Must be 0 or greater.",
-      "chipIdRequired": "15-digit chip ID required."
+      "chipIdRequired": "15-digit chip ID required.",
+      "requesterRequired": "Please select an existing requestor or enter a new one."
     }
   },
   "requests": {
@@ -197,6 +199,7 @@
     "pending": "Pending",
     "approved": "Approved",
     "rejected": "Rejected",
+    "cancelled": "Cancelled",
     "all": "All",
     "noRequests": "No requests found.",
     "approve": "Approve",

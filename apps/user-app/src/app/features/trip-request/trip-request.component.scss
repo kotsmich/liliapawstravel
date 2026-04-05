@@ -155,7 +155,10 @@
 
   .field { margin-bottom: 0; }
 
-  @media(max-width:600px) {
+  input.p-inputtext { padding-top: 1.25rem; padding-bottom: 0.35rem; font-size: 0.875rem; }
+  ::ng-deep p-ifta-label label { font-size: 0.8rem; }
+
+  @media(max-width:840px) {
     grid-template-columns: 1fr;
     gap: 0.5rem;
   }

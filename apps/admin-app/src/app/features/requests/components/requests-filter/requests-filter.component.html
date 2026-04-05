@@ -53,5 +53,15 @@
           />
       }
     </p-tab>
+    <p-tab value="cancelled">
+      {{ 'requests.cancelled' | transloco }}
+      @if (cancelledCount > 0) {
+        <p-badge
+          [value]="cancelledCount.toString()"
+          severity="secondary"
+          class="tab-badge"
+          />
+      }
+    </p-tab>
   </p-tablist>
 </p-tabs>

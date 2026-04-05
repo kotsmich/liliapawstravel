@@ -56,13 +56,15 @@ export class RequestsTableComponent implements OnChanges {
             const r = row as RequestRow;
             if (r.status === 'pending') return 'warn';
             if (r.status === 'approved') return 'success';
-            return 'danger';
+            if (r.status === 'rejected') return 'danger';
+            return 'secondary';
           },
           label: (_, row) => {
             const status = (row as RequestRow).status;
             if (status === 'pending') return this.transloco.translate('requests.pending');
             if (status === 'approved') return this.transloco.translate('requests.approved');
-            return this.transloco.translate('requests.rejected');
+            if (status === 'rejected') return this.transloco.translate('requests.rejected');
+            return this.transloco.translate('requests.cancelled');
           },
         },
       },

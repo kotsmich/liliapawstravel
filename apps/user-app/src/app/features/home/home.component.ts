@@ -17,10 +17,9 @@ export class HomeComponent {
   private readonly router = inject(Router);
 
   stats = [
-    { value: '1,200+', label: 'stats.dogsTransported' },
-    { value: '18',     label: 'stats.countries' },
-    { value: '6',      label: 'stats.yearsActive' },
-    { value: '99%',    label: 'stats.safeArrivals' },
+    // { value: '1,200+', label: 'stats.dogsTransported' },
+    // { value: '18',     label: 'stats.countries' },
+    // { value: '6',      label: 'stats.yearsActive' },
   ];
 
   steps = [

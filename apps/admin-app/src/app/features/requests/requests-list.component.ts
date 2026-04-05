@@ -71,9 +71,10 @@ export class RequestsListComponent implements OnInit {
     return tripId ? requests.filter((r) => r.tripId === tripId) : requests;
   });
 
-  readonly pendingCount  = computed(() => this.filteredByTrip().filter((x) => x.status === 'pending').length);
-  readonly approvedCount = computed(() => this.filteredByTrip().filter((x) => x.status === 'approved').length);
-  readonly rejectedCount = computed(() => this.filteredByTrip().filter((x) => x.status === 'rejected').length);
+  readonly pendingCount   = computed(() => this.filteredByTrip().filter((x) => x.status === 'pending').length);
+  readonly approvedCount  = computed(() => this.filteredByTrip().filter((x) => x.status === 'approved').length);
+  readonly rejectedCount  = computed(() => this.filteredByTrip().filter((x) => x.status === 'rejected').length);
+  readonly cancelledCount = computed(() => this.filteredByTrip().filter((x) => x.status === 'cancelled').length);
 
   readonly finalRequests = computed(() => {
     const requests = this.filteredByTrip();

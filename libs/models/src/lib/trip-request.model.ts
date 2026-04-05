@@ -4,7 +4,7 @@ export interface TripRequest {
   id: string;
   submittedAt: string;
   dogs: Dog[];
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected' | 'cancelled';
   tripId?: string;
   requesterName: string;
   requesterEmail: string;

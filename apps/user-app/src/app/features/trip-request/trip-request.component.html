@@ -207,6 +207,7 @@
                 [label]="'tripRequest.preview' | transloco"
                 icon="pi pi-eye"
                 [outlined]="true"
+                [disabled]="formInvalid()"
                 (onClick)="preview()"
                 />
               <p-button
@@ -214,7 +215,7 @@
                 [label]="submitting() ? ('tripRequest.submitting' | transloco) : ('tripRequest.submit' | transloco)"
                 [icon]="submitting() ? '' : 'pi pi-send'"
                 [loading]="submitting()"
-                [disabled]="submitting()"
+                [disabled]="submitting() || formInvalid()"
                 />
             </div>
           </form>

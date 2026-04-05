@@ -1,5 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectionStrategy, inject } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { Subject, switchMap, startWith, map } from 'rxjs';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { AccordionModule } from 'primeng/accordion';
@@ -41,6 +43,15 @@ export class DogFormDialogComponent implements OnChanges {
   /** FormArray of dog panels used in add mode. */
   addForms!: FormArray;
 
+  private readonly activeForm$ = new Subject<AbstractControl>();
+  readonly formInvalid = toSignal(
+    this.activeForm$.pipe(
+      switchMap(f => f.statusChanges.pipe(startWith(f.status))),
+      map(status => status === 'INVALID'),
+    ),
+    { initialValue: false },
+  );
+
   get isNewDog(): boolean { return this.dog === null; }
   get panelForms(): FormGroup[] { return (this.addForms?.controls ?? []) as FormGroup[]; }
 
@@ -58,9 +69,17 @@ export class DogFormDialogComponent implements OnChanges {
     if (this.isNewDog) {
       this.addForms = this.fb.array([this.buildDogGroup()]);
       this.activeAccordionPanels = ['0'];
+      this.activeForm$.next(this.addForms);
     } else {
       this.editForm = this.buildDogGroup(this.dog!);
+      this.activeForm$.next(this.editForm);
     }
+  }
+
+  private static requesterValidator(group: AbstractControl): ValidationErrors | null {
+    const hasExisting = !!group.get('requestId')?.value;
+    const hasNew = !!group.get('newRequesterName')?.value?.trim();
+    return hasExisting || hasNew ? null : { requesterRequired: true };
   }
 
   private buildDogGroup(d?: Dog | null): FormGroup {
@@ -76,7 +95,7 @@ export class DogFormDialogComponent implements OnChanges {
       requesterName:    [d?.requesterName  ?? RandomUtil.pick(RandomProperty.requesterNames)],
       requestId:        [d?.requestId      ?? null],
       newRequesterName: [null],
-    });
+    }, { validators: DogFormDialogComponent.requesterValidator });
   }
 
   panelLabel(i: number): string {

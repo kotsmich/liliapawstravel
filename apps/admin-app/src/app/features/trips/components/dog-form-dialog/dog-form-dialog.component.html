@@ -56,7 +56,7 @@
       icon="pi pi-check"
       type="button"
       [loading]="saving"
-      [disabled]="saving"
+      [disabled]="saving || formInvalid()"
       (onClick)="onSave()" />
   </ng-template>
 </p-dialog>

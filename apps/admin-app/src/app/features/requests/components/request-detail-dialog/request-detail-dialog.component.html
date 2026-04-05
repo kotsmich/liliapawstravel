@@ -25,7 +25,7 @@
         <p class="info-row"><i class="pi pi-clock"></i> {{ 'requests.detail.submitted' | transloco }} {{ req.submittedAt | date:'dd/MM/yyyy HH:mm' }}</p>
         <p class="status-row">
           <span style="color: var(--text-color-secondary); font-size: 0.9rem;">{{ 'requests.detail.statusLabel' | transloco }}</span>
-          <p-tag [value]="req.status" [severity]="statusSeverity(req.status)" />
+          <p-tag [value]="statusLabel(req.status)" [severity]="statusSeverity(req.status)" />
         </p>
       </div>
     </div>

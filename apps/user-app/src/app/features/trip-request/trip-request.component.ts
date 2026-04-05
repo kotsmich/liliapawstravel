@@ -15,7 +15,7 @@ import { Store } from '@ngrx/store';
 import { ConfirmationService } from 'primeng/api';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { DogFormComponent } from '@ui/lib/dog-form/dog-form.component';
 import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
 import { ToastNotificationComponent } from '@ui/lib/toast-notification/toast-notification.component';
@@ -62,6 +62,11 @@ export class TripRequestComponent {
     requesterPhone: [RandomUtil.pick(RandomProperty.requesterPhones), Validators.required],
     dogs: this.fb.array([this.dogGroup()]),
   });
+
+  readonly formInvalid = toSignal(
+    this.form.statusChanges.pipe(map(() => this.form.invalid)),
+    { initialValue: this.form.invalid },
+  );
 
   constructor() {
     // Toast handled by NotificationEffects — reset form and scroll on success

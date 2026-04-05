@@ -69,7 +69,14 @@ export class RequestDetailDialogComponent implements OnChanges {
     if (status === 'pending') return 'warn';
     if (status === 'approved') return 'success';
     if (status === 'rejected') return 'danger';
-    return 'secondary';
+    return 'secondary'; // cancelled
+  }
+
+  statusLabel(status: TripRequest['status']): string {
+    if (status === 'pending') return this.transloco.translate('requests.pending');
+    if (status === 'approved') return this.transloco.translate('requests.approved');
+    if (status === 'rejected') return this.transloco.translate('requests.rejected');
+    return this.transloco.translate('requests.cancelled');
   }
 
   fmtDate(date: string): string {
