@@ -67,6 +67,7 @@ export class DogFormDialogComponent implements OnChanges {
     return this.fb.group({
       name:           [d?.name           ?? RandomUtil.pick(RandomProperty.dogNames),        Validators.required],
       size:           [d?.size           ?? RandomUtil.pick(RandomProperty.sizes),           Validators.required],
+      gender:         [d?.gender         ?? RandomUtil.pick(RandomProperty.genders),         Validators.required],
       age:            [d?.age            ?? RandomUtil.pick(RandomProperty.ages),            [Validators.required, Validators.min(0)]],
       chipId:         [d?.chipId         ?? RandomUtil.pick(RandomProperty.chipIds),         [Validators.required, Validators.pattern(/^\d{15}$/)]],
       pickupLocation: [d?.pickupLocation ?? RandomUtil.pick(RandomProperty.pickupLocations), Validators.required],
