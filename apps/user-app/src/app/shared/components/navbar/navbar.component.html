@@ -11,8 +11,7 @@
     </ul>
     <div class="navbar__right">
       <app-language-switcher />
-      <button class="navbar__reserve-btn" type="button" (click)="navigateTo('/request')">{{ 'nav.requestTransport' | transloco }}</button>
-      <button class="navbar__burger" type="button" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen" aria-label="Toggle navigation menu">
+<button class="navbar__burger" type="button" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen" aria-label="Toggle navigation menu">
         <i class="pi" [ngClass]="menuOpen ? 'pi-times' : 'pi-bars'"></i>
       </button>
     </div>

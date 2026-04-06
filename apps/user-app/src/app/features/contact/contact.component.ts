@@ -7,12 +7,13 @@ import { TranslocoModule } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { submitContact, resetContact, selectContactIsLoading, selectContactIsSuccess, selectContactError } from '@user/features/contact/store';
 import { ContactFormComponent } from './components/contact-form/contact-form.component';
+import { ContactMapComponent } from './components/contact-map/contact-map.component';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, CardModule, ContactFormComponent, TranslocoModule],
+  imports: [ReactiveFormsModule, CardModule, ContactFormComponent, ContactMapComponent, TranslocoModule],
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss'],
 })
