@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Startseite",
+    "about": "Über uns",
     "requestTransport": "Transport anfragen",
     "contact": "Kontakt"
   },
@@ -119,6 +120,66 @@
     "submit": "Anfrage einreichen",
     "submitting": "Wird eingereicht...",
     "noTripHint": "Wählen Sie ein hervorgehobenes Datum im Kalender oben, um Ihre Buchung zu starten."
+  },
+  "aboutPage": {
+    "heroTag": "Unsere Geschichte",
+    "heroTitle": "Entstanden aus Liebe zu Rettungshunden",
+    "heroSubtitle": "Seit 2018 transportieren wir adoptierte Hunde sicher durch Europa — eine liebevolle Reise nach der anderen.",
+    "founder": "Gründerin & Fahrerin",
+    "missionQuote": "Hunde sind kein Frachtgut. Sie sind Familie, die darauf wartet, nach Hause zu kommen — und diese Verantwortung tragen wir mit ganzem Herzen.",
+    "storyTag": "Wer Wir Sind",
+    "storyTitle": "Eine Mission, die mit einem Van und einem Versprechen begann",
+    "storyP1": "Lilia Paws Travel wurde 2018 von Lilia Kovacs gegründet, einer leidenschaftlichen Tierschutzaktivistin, die sah, wie Tausende von Hunden grenzüberschreitend adoptiert wurden — ohne sichere, humane Transportlösung.",
+    "storyP2": "Was als Wochenendfahrten mit einem einzigen Van begann, wuchs schnell zu einem vertrauenswürdigen Netzwerk in 18 Ländern und 200+ zertifizierten Tierheimen.",
+    "storyP3": "Heute sind wir stolz darauf, über 1.200 Hunde sicher in die Arme ihrer neuen Familien gebracht zu haben. Jede Reise ist einzigartig.",
+    "timelineTag": "Unsere Reise",
+    "timelineTitle": "Sechs Jahre sichere Lieferungen",
+    "timeline": {
+      "2018": { "title": "Der Anfang", "desc": "Erste grenzüberschreitende Fahrt von Griechenland nach Deutschland. Ein Van, ein Hund, ein Traum." },
+      "2019": { "title": "Netzwerk wächst", "desc": "Partnerschaften mit 20+ Tierheimen in 5 Ländern. Wochenendfahrten wurden zu wöchentlichen Routen." },
+      "2021": { "title": "500 Hunde-Meilenstein", "desc": "500. Hund sicher geliefert. Erweiterung auf eine Flotte klimatisierter Vans." },
+      "2023": { "title": "18 Länder", "desc": "Jetzt in 18 europäischen Ländern mit vollständiger EU-Haustierreise-Konformität." },
+      "2025": { "title": "1.200+ und weiter", "desc": "Über 1.200 Hunde sicher zu Hause. 100% sichere Ankunftsrate auf allen Fahrten." }
+    },
+    "valuesTag": "Unsere Werte",
+    "valuesTitle": "Woran wir glauben",
+    "valuesSubtitle": "Jede Entscheidung — von der Routenplanung bis zu den Pausen — wird von diesen Grundsätzen geleitet.",
+    "values": {
+      "safety":  { "title": "Sicherheit über alles",      "desc": "Tierärztlich genehmigte Gesundheitszertifikate, Mikrochip-Verifizierung und kontinuierliche Überwachung auf jeder Fahrt." },
+      "care":    { "title": "Echte Fürsorge",              "desc": "Komfortpausen, frisches Wasser und Streicheleinheiten inklusive. Hunde werden während der Fahrt nie allein gelassen." },
+      "legal":   { "title": "Vollständig EU-konform",      "desc": "Wir übernehmen alle Dokumente — Heimtierausweise, Mikrochips, Gesundheitszertifikate, Grenzpapiere." },
+      "shelter": { "title": "Tierheim-Partnerschaften",    "desc": "Wir arbeiten ausschließlich mit 200+ zertifizierten, ethischen Tierheimen und verifizierten Adoptern." },
+      "vehicle": { "title": "Klimatisierte Vans",          "desc": "Temperaturgeregelt, vor und nach jeder Fahrt desinfiziert. Sicher und geräumig für alle Rassengrößen." },
+      "reach":   { "title": "Gesamteuropäische Reichweite","desc": "Von Griechenland bis Deutschland, Spanien bis Schweden — wir verbinden Tierheime mit Familien europaweit." }
+    },
+    "testimonialsTag": "Adoptergeschichten",
+    "testimonialsTitle": "Von unseren Familien zu Ihrer",
+    "testimonials": {
+      "1": {
+        "quote": "Lilia und ihr Team transportierten unseren Rettungswelpen von Rumänien in die Niederlande. Regelmäßige Foto-Updates den ganzen Weg — wir waren so erleichtert. Max kam glücklich und gesund an!",
+        "name": "Sophie van der Berg",
+        "location": "Amsterdam, Niederlande"
+      },
+      "2": {
+        "quote": "Professionell, fürsorglich und zuverlässig. Unser Hund Bella kam aus Griechenland. Lilia hat alle Dokumente perfekt gehandhabt. Ich würde ihr unsere Hündin immer wieder anvertrauen.",
+        "name": "Maria Papadopoulou",
+        "location": "München, Deutschland"
+      },
+      "3": {
+        "quote": "Wir adoptierten einen älteren Hund aus einem spanischen Tierheim. Lilias Team gab ihm die sanfteste Fahrt, die man sich vorstellen kann. Er kam ruhig, sicher und bereit für sein neues Leben an.",
+        "name": "James Thornton",
+        "location": "London, Vereinigtes Königreich"
+      }
+    },
+    "trustTitle": "Sie können sich auf uns verlassen",
+    "trust": {
+      "euCompliant":    "EU-Reisekonform",
+      "insured":        "Vollversichert",
+      "vetApproved":    "Tierärztlich geprüft",
+      "gpsTracked":     "GPS-verfolgte Fahrten",
+      "shelterPartner": "200+ Tierheim-Partner",
+      "response24h":    "24h Antwortgarantie"
+    }
   },
   "dogs": {
     "dogName": "Name",

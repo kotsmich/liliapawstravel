@@ -1,0 +1,200 @@
+<div class="page">
+
+  <!-- ══════════════════════════════════════════════════════
+       PAGE HERO
+       ══════════════════════════════════════════════════════ -->
+  <header class="page-intro" aria-label="About us">
+    <div class="page-intro__slides" aria-hidden="true">
+      @for (slide of heroSlides; track $index; let i = $index) {
+        <div class="page-intro__slide" [class.active]="i === currentSlide">
+          <img
+            [src]="slide"
+            alt=""
+            [loading]="i === 0 ? 'eager' : 'lazy'"
+          />
+        </div>
+      }
+      <div class="page-intro__bg-overlay"></div>
+    </div>
+
+    <div class="page-intro__inner">
+      <span class="page-eyebrow">{{ 'aboutPage.heroTag' | transloco }}</span>
+      <h1>{{ 'aboutPage.heroTitle' | transloco }}</h1>
+      <p>{{ 'aboutPage.heroSubtitle' | transloco }}</p>
+    </div>
+
+    <div class="page-intro__rule" aria-hidden="true"></div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════
+       MISSION BANNER
+       ══════════════════════════════════════════════════════ -->
+  <section class="mission" aria-label="Our mission">
+    <div class="mission__container">
+      <span class="mission__paw" aria-hidden="true">🐾</span>
+      <blockquote class="mission__quote">
+        <p>{{ 'aboutPage.missionQuote' | transloco }}</p>
+        <cite>— Lilia Kovacs, {{ 'aboutPage.founder' | transloco }}</cite>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       OUR STORY
+       ══════════════════════════════════════════════════════ -->
+  <section class="story" aria-label="Our story">
+    <div class="story__container">
+
+      <!-- Text column -->
+      <div class="story__text">
+        <span class="eyebrow">{{ 'aboutPage.storyTag' | transloco }}</span>
+        <h2>{{ 'aboutPage.storyTitle' | transloco }}</h2>
+        <p>{{ 'aboutPage.storyP1' | transloco }}</p>
+        <p>{{ 'aboutPage.storyP2' | transloco }}</p>
+        <p>{{ 'aboutPage.storyP3' | transloco }}</p>
+
+        <div class="story__founder">
+          <img
+            class="story__founder-photo"
+            src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face"
+            alt="Lilia Kovacs"
+            loading="lazy"
+          />
+          <div>
+            <strong>Lilia Kovacs</strong>
+            <span>{{ 'aboutPage.founder' | transloco }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Photo column -->
+      <div class="story__photo" aria-hidden="true">
+        <img
+          src="https://images.unsplash.com/photo-1601979031925-424e53b6caaa?w=700&q=80"
+          alt="Dogs safely transported in our van"
+          loading="lazy"
+        />
+        <div class="story__photo-badge">
+          <span class="story__photo-badge-num">1,200+</span>
+          <span>{{ 'stats.dogsTransported' | transloco }}</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       JOURNEY TIMELINE
+       ══════════════════════════════════════════════════════ -->
+  <section class="timeline" aria-label="Our journey">
+    <div class="timeline__container">
+      <div class="timeline__header">
+        <span class="eyebrow">{{ 'aboutPage.timelineTag' | transloco }}</span>
+        <h2>{{ 'aboutPage.timelineTitle' | transloco }}</h2>
+      </div>
+
+      <div class="timeline__track" role="list">
+        @for (item of timeline; track item.year; let i = $index; let last = $last) {
+          <div class="timeline__item" role="listitem" [style.animation-delay]="(i * 120) + 'ms'">
+            <div class="timeline__dot" aria-hidden="true">
+              <span class="timeline__year">{{ item.year }}</span>
+            </div>
+            @if (!last) {
+              <div class="timeline__line" aria-hidden="true"></div>
+            }
+            <div class="timeline__body">
+              <h3>{{ item.titleKey | transloco }}</h3>
+              <p>{{ item.descKey | transloco }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       OUR VALUES
+       ══════════════════════════════════════════════════════ -->
+  <section class="values" aria-label="Our values">
+    <div class="values__container">
+      <div class="values__header">
+        <span class="eyebrow">{{ 'aboutPage.valuesTag' | transloco }}</span>
+        <h2>{{ 'aboutPage.valuesTitle' | transloco }}</h2>
+        <p class="values__subtitle">{{ 'aboutPage.valuesSubtitle' | transloco }}</p>
+      </div>
+
+      <div class="values__grid">
+        @for (v of values; track v.titleKey; let i = $index) {
+          <div class="value-card" [style.animation-delay]="(i * 100) + 'ms'">
+            <span class="value-card__icon" aria-hidden="true">{{ v.icon }}</span>
+            <h3>{{ v.titleKey | transloco }}</h3>
+            <p>{{ v.descKey | transloco }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       STATS
+       ══════════════════════════════════════════════════════ -->
+  <app-stats-section [stats]="stats" />
+
+  <!-- ══════════════════════════════════════════════════════
+       TESTIMONIALS
+       ══════════════════════════════════════════════════════ -->
+  <section class="testimonials" aria-label="What adopters say">
+    <div class="testimonials__container">
+      <div class="testimonials__header">
+        <span class="eyebrow">{{ 'aboutPage.testimonialsTag' | transloco }}</span>
+        <h2>{{ 'aboutPage.testimonialsTitle' | transloco }}</h2>
+      </div>
+
+      <div class="testimonials__grid">
+        @for (t of testimonials; track t.name; let i = $index) {
+          <article class="testimonial-card" [style.animation-delay]="(i * 130) + 'ms'">
+            <div class="testimonial-card__stars" aria-label="5 stars" aria-hidden="true">★★★★★</div>
+            <blockquote class="testimonial-card__quote">
+              "{{ t.quote | transloco }}"
+            </blockquote>
+            <footer class="testimonial-card__footer">
+              <img
+                class="testimonial-card__avatar"
+                [src]="t.avatar"
+                [alt]="t.name | transloco"
+                loading="lazy"
+              />
+              <div>
+                <strong>{{ t.name | transloco }}</strong>
+                <span>{{ t.location | transloco }}</span>
+              </div>
+            </footer>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       TRUST BADGES
+       ══════════════════════════════════════════════════════ -->
+  <section class="trust" aria-label="Our certifications and guarantees">
+    <div class="trust__container">
+      <h2 class="trust__title">{{ 'aboutPage.trustTitle' | transloco }}</h2>
+      <div class="trust__grid">
+        @for (badge of trustBadges; track badge.labelKey) {
+          <div class="trust__badge">
+            <span class="trust__badge-icon" aria-hidden="true">{{ badge.icon }}</span>
+            <span>{{ badge.labelKey | transloco }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       CTA
+       ══════════════════════════════════════════════════════ -->
+  <app-cta-section (requestClicked)="goToRequest()" (contactClicked)="goToContact()" />
+
+</div>

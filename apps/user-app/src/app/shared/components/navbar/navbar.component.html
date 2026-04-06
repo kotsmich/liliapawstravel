@@ -6,6 +6,7 @@
     </button>
     <ul class="navbar__links flex align-items-center" [class.open]="menuOpen" role="menubar">
       <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/')" (click)="navigateTo('/')">{{ 'nav.home' | transloco }}</button></li>
+      <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/about')" (click)="navigateTo('/about')">{{ 'nav.about' | transloco }}</button></li>
       <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/request')" (click)="navigateTo('/request')">{{ 'nav.requestTransport' | transloco }}</button></li>
       <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/contact')" (click)="navigateTo('/contact')">{{ 'nav.contact' | transloco }}</button></li>
     </ul>

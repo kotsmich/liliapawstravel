@@ -45,6 +45,12 @@
             </button>
           </li>
           <li>
+            <button type="button" class="footer__link" (click)="navigateTo('/about')">
+              <i class="pi pi-info-circle" aria-hidden="true"></i>
+              {{ 'nav.about' | transloco }}
+            </button>
+          </li>
+          <li>
             <button type="button" class="footer__link" (click)="navigateTo('/request')">
               <i class="pi pi-send" aria-hidden="true"></i>
               {{ 'nav.requestTransport' | transloco }}
