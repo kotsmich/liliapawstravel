@@ -1,12 +1,31 @@
-<section class="stats">
-  <div class="container">
-    <div class="stats__grid">
-      @for (s of stats; track s.label) {
-        <div class="stat flex flex-column gap-2">
-          <span class="stat__value">{{ s.value }}</span>
-          <span class="stat__label">{{ s.label | transloco }}</span>
-        </div>
-      }
+@if (stats.length > 0) {
+  <section class="stats" aria-label="Our achievements">
+
+    <!-- Parallax background -->
+    <div class="stats__bg" aria-hidden="true">
+      <img
+        src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80"
+        alt=""
+        loading="lazy"
+      />
+      <div class="stats__bg-overlay"></div>
     </div>
-  </div>
-</section>
+
+    <div class="stats__container">
+      <div class="stats__header">
+        <span class="stats__eyebrow">By the numbers</span>
+        <h2>Our journey in numbers</h2>
+      </div>
+
+      <div class="stats__grid">
+        @for (s of stats; track s.label; let i = $index) {
+          <div class="stat" [style.animation-delay]="(i * 150) + 'ms'">
+            <span class="stat__value">{{ s.value }}</span>
+            <span class="stat__label">{{ s.label | transloco }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+  </section>
+}

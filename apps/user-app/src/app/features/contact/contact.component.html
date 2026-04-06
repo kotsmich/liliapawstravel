@@ -1,25 +1,106 @@
 <div class="page">
-  <div class="page-header">
-    <div class="container">
-      <span class="tag">{{ 'contact.tag' | transloco }}</span>
-      <h1>{{ 'contact.title' | transloco }}</h1>
+
+  <!-- ── Page hero ── -->
+  <div class="page-intro">
+    <!-- Full-width photo background -->
+    <div class="page-intro__bg" aria-hidden="true">
+      <img
+        src="https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?w=1400&q=80"
+        alt=""
+        loading="eager"
+      />
+      <div class="page-intro__bg-overlay"></div>
     </div>
+
+    <div class="page-intro__inner">
+      <span class="page-eyebrow">{{ 'contact.tag' | transloco }}</span>
+      <h1>{{ 'contact.title' | transloco }}</h1>
+      <p>Let's talk about your dog's journey home. We respond within 24 hours.</p>
+    </div>
+    <div class="page-intro__rule" aria-hidden="true"></div>
   </div>
 
-  <div class="container body">
-    <div class="info-cards flex flex-column gap-3">
-      <div class="info-card"><span aria-hidden="true">📧</span><h3>{{ 'contact.emailLabel' | transloco }}</h3><p>liliapawstravel&#64;gmail.com</p></div>
-      <div class="info-card"><span aria-hidden="true">📞</span><h3>{{ 'contact.phoneLabel' | transloco }}</h3><p>+30 6907288150</p><p>+30 6948225016</p></div>
-      <div class="info-card"><span aria-hidden="true">⏰</span><h3>{{ 'contact.responseLabel' | transloco }}</h3><p>{{ 'contact.responseTime' | transloco }}</p></div>
-    </div>
+  <!-- ── 2-col layout ── -->
+  <div class="page-layout">
 
-    <app-contact-form
-      [form]="contactForm"
-      [loading]="loading()"
-      [success]="success()"
-      [error]="error()"
-      (formSubmit)="onSubmit()"
-      (reset)="onReset()"
-    />
+    <!-- Main column: form -->
+    <main class="main-col">
+      <app-contact-form
+        [form]="contactForm"
+        [loading]="loading()"
+        [success]="success()"
+        [error]="error()"
+        (formSubmit)="onSubmit()"
+        (reset)="onReset()"
+      />
+    </main>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" aria-label="Contact information">
+
+      <div class="sidebar-card">
+        <div class="sidebar-card__header">
+          <span class="sidebar-card__icon" aria-hidden="true">📬</span>
+          <h3>Reach us directly</h3>
+        </div>
+
+        <ul class="contact-items">
+          <li class="contact-item">
+            <div class="contact-item__icon-wrap">
+              <i class="pi pi-envelope" aria-hidden="true"></i>
+            </div>
+            <div class="contact-item__body">
+              <span class="contact-item__label">{{ 'contact.emailLabel' | transloco }}</span>
+              <a href="mailto:liliapawstravel@gmail.com" class="contact-item__value">
+                liliapawstravel&#64;gmail.com
+              </a>
+            </div>
+          </li>
+          <li class="contact-item">
+            <div class="contact-item__icon-wrap">
+              <i class="pi pi-phone" aria-hidden="true"></i>
+            </div>
+            <div class="contact-item__body">
+              <span class="contact-item__label">{{ 'contact.phoneLabel' | transloco }}</span>
+              <a href="tel:+306907288150" class="contact-item__value">+30 690 728 8150</a>
+              <a href="tel:+306948225016" class="contact-item__value">+30 694 822 5016</a>
+            </div>
+          </li>
+          <li class="contact-item">
+            <div class="contact-item__icon-wrap">
+              <i class="pi pi-clock" aria-hidden="true"></i>
+            </div>
+            <div class="contact-item__body">
+              <span class="contact-item__label">{{ 'contact.responseLabel' | transloco }}</span>
+              <span class="contact-item__value contact-item__value--green">
+                {{ 'contact.responseTime' | transloco }}
+              </span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Languages card -->
+      <div class="sidebar-card">
+        <div class="sidebar-card__header">
+          <span class="sidebar-card__icon" aria-hidden="true">🌍</span>
+          <h3>We speak your language</h3>
+        </div>
+        <div class="lang-list">
+          <div class="lang-item"><span>🇬🇧</span><span>English</span></div>
+          <div class="lang-item"><span>🇬🇷</span><span>Greek</span></div>
+          <div class="lang-item"><span>🇩🇪</span><span>German</span></div>
+        </div>
+      </div>
+
+      <!-- Trust badges -->
+      <div class="sidebar-trust">
+        <span class="trust-badge">🛡️ Safe transport</span>
+        <span class="trust-badge">📋 EU compliant</span>
+        <span class="trust-badge">🐾 1,200+ dogs</span>
+        <span class="trust-badge">⭐ Trusted by families across Europe</span>
+      </div>
+
+    </aside>
   </div>
 </div>

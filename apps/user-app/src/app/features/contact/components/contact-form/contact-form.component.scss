@@ -1,76 +1,97 @@
 :host { display: block; }
 
+/* ── Card wrapper ── */
 .form-wrapper {
-  background: #faf8f5;
-  border-radius: 12px;
-  border: 1px solid #c3b8a9;
-  padding: 1.25rem 1.5rem;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.05);
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #f0e0d0;
+  padding: 2.5rem;
+  box-shadow: 0 4px 32px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 600px) { padding: 1.75rem 1.5rem; border-radius: 16px; }
+  @media (max-width: 480px) { padding: 1.5rem 1.25rem; }
 }
 
+/* ── Form layout ── */
 form {
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
-.field.fw.message-field {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-@media (max-width: 480px) {
-  .form-wrapper { padding: 1rem 1.125rem; }
-}
-
 .fields-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0 0.75rem;
-}
-
-@media (max-width: 600px) {
-  .fields-row { grid-template-columns: 1fr; }
+  gap: 0 1rem;
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
 }
 
 .fw {
   width: 100%;
-  margin-bottom: 0.375rem;
-
+  margin-bottom: .5rem;
   p-ifta-label { display: block; width: 100%; }
 }
 
+.field.fw.message-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 140px;
+}
+
+/* ── Submit row ── */
 .submit-row {
   display: flex;
   justify-content: flex-end;
-  margin-top: 0.5rem;
+  margin-top: .75rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f5ede4;
 }
 
-.feedback {
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.5rem;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
-  h3 { margin: 0 0 0.25rem; font-weight: 600; }
-  p { margin: 0; }
-}
+/* ── Hint ── */
+.hint { color: #8a7a6a; font-size: .78rem; }
 
+/* ── Success state ── */
 .feedback.success {
-  background: #f0fdf4;
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
   border: 1px solid #86efac;
-  color: #166534;
-  i { font-size: 2rem; color: #16a34a; }
+  border-radius: 16px;
+  color: #14532d;
+  padding: 2rem;
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  animation: fadeUp .5s cubic-bezier(.4,0,.2,1) both;
+
+  i.pi {
+    font-size: 2.5rem;
+    color: #16a34a;
+    flex-shrink: 0;
+    margin-top: .1rem;
+  }
+
+  div { flex: 1; }
+
+  h3 {
+    margin: 0 0 .35rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  p { margin: 0; font-size: .9rem; opacity: .85; }
 }
 
+/* ── Error state ── */
 .feedback.error {
   background: #fef2f2;
   border: 1px solid #fca5a5;
+  border-radius: 12px;
   color: #991b1b;
-  i { font-size: 2rem; color: #dc2626; }
-}
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
 
-.hint { color: #6b6259; font-size: 0.78rem; }
+  i.pi { font-size: 2rem; color: #dc2626; }
+}

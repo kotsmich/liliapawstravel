@@ -1,13 +1,37 @@
-<section class="cta">
-  <div class="container">
-    <div class="cta__box">
-      <span aria-hidden="true">🐶</span>
+<section class="cta" aria-label="Call to action">
+
+  <!-- Full-width background image -->
+  <div class="cta__bg" aria-hidden="true">
+    <img
+      src="https://images.unsplash.com/photo-1485833077593-4278bba3f11f?w=1600&q=80"
+      alt=""
+      loading="lazy"
+    />
+    <div class="cta__bg-overlay"></div>
+  </div>
+
+  <div class="cta__container">
+    <div class="cta__content">
+      <span class="cta__eyebrow">Ready to start?</span>
       <h2>{{ 'cta.title' | transloco }}</h2>
       <p>{{ 'cta.subtitle' | transloco }}</p>
-      <div class="cta__actions flex justify-content-center flex-wrap">
-        <button class="btn-primary" type="button" (click)="requestClicked.emit()">{{ 'cta.bookTransport' | transloco }}</button>
-        <button class="btn-outline-light" type="button" (click)="contactClicked.emit()">{{ 'cta.askQuestion' | transloco }}</button>
+
+      <div class="cta__actions">
+        <button class="btn-primary" type="button" (click)="requestClicked.emit()">
+          {{ 'cta.bookTransport' | transloco }}
+        </button>
+        <button class="btn-outline-light" type="button" (click)="contactClicked.emit()">
+          {{ 'cta.askQuestion' | transloco }}
+        </button>
+      </div>
+
+      <!-- Trust micro-badges -->
+      <div class="cta__badges" aria-hidden="true">
+        <span class="cta__badge">🔒 Secure booking</span>
+        <span class="cta__badge">⚡ 24h response</span>
+        <span class="cta__badge">🌍 18 countries</span>
       </div>
     </div>
   </div>
+
 </section>
