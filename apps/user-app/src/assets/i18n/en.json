@@ -9,7 +9,7 @@
     "tagline": "Safely transporting adopted dogs across Europe.",
     "navigation": "Navigation",
     "contact": "Contact",
-    "copyright": "Lilia Paws Travel. Made with ❤️ for dogs."
+    "copyright": "Lilia Paws Travel."
   },
   "hero": {
     "badge": "Europe's trusted dog transport",
@@ -36,7 +36,7 @@
   "about": {
     "whoWeAreTag": "Who We Are",
     "title": "Born from a love for rescue dogs",
-    "p1": "Lilia Paws Travel was founded in 2018 by Lilia Kovacs, a passionate animal welfare advocate who recognized a critical gap — thousands of dogs were being adopted across borders with no safe, reliable transport.",
+    "p1": "Lilia Paws Travel was founded by Lilia Pontika, a passionate animal welfare advocate. Through years of experience, she witnessed hundreds of dogs adopted across borders with no safe, humane transport solution.",
     "p2": "From a one-van operation to a network spanning 18 countries and 200+ shelters, we've safely transported over 1,200 dogs and counting.",
     "safetyFirst": { "title": "Safety First", "desc": "Vet-approved health certificates and constant monitoring." },
     "weCare": { "title": "We Care Deeply", "desc": "Dogs are not cargo. Comfort stops and cuddles on every trip." },
@@ -54,7 +54,7 @@
   "fleet": {
     "tag": "Our Fleet",
     "title": "Built for safe, comfortable journeys",
-    "p1": "Our climate-controlled vans are specially outfitted for animal transport — spacious crates, ventilation, and hygiene protocols on every trip.",
+    "p1": "Our climate-controlled van is specially outfitted for animal transport — spacious crates, ventilation, and hygiene protocols on every trip.",
     "p2": "Each vehicle is inspected and sanitised before departure, ensuring your dog travels in the safest and most comfortable conditions possible.",
     "cta": "View Our Fleet"
   },
