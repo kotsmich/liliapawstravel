@@ -2,13 +2,14 @@ import {
   Component, Input, ChangeDetectionStrategy,
   OnInit, OnDestroy, ChangeDetectorRef, inject,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-about-section',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslocoModule],
+  imports: [TranslocoModule, RouterLink],
   templateUrl: './about-section.component.html',
   styleUrls: ['./about-section.component.scss'],
 })
@@ -25,41 +26,38 @@ export class AboutSectionComponent implements OnInit, OnDestroy {
   ];
 
   readonly galleryImages = [
-    {
-      src: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=80',
-      alt: 'Dog looking out car window',
-    },
-    {
-      src: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80',
-      alt: 'Dog portrait',
-    },
-    {
-      src: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=800&q=80',
-      alt: 'Cute dog close up',
-    },
-    {
-      src: 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=800&q=80',
-      alt: 'Two dogs playing together',
-    },
+    { src: 'assets/images/gallery-1.jpeg', alt: 'Rescued dog' },
+    { src: 'assets/images/gallery-2.jpeg', alt: 'Dog on transport' },
+    { src: 'assets/images/gallery-3.jpeg', alt: 'Happy dog' },
+    { src: 'assets/images/gallery-4.jpeg', alt: 'Dog portrait' },
   ];
 
   readonly photos = [
-    '/assets/images/van.png',
-    'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=450&fit=crop',
-    'https://images.unsplash.com/photo-1601979031925-424e53b6caaa?w=600&h=450&fit=crop',
-    'https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?w=600&h=450&fit=crop',
-    'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&h=450&fit=crop',
+    'assets/images/photo-1.jpeg',
+    'assets/images/photo-2.jpeg',
+    'assets/images/photo-3.jpeg',
+    'assets/images/photo-4.jpeg',
+  ];
+
+  readonly fleetPhotos = [
+    'assets/images/van-daylight.png',
+    'assets/images/fleet-van.png',
+    'assets/images/van.png',
   ];
 
   currentIndex = 0;
+  fleetIndex = 0;
   private timer: ReturnType<typeof setInterval> | null = null;
+  private fleetTimer: ReturnType<typeof setInterval> | null = null;
 
   ngOnInit(): void {
     this.startTimer();
+    this.startFleetTimer();
   }
 
   ngOnDestroy(): void {
     this.stopTimer();
+    this.stopFleetTimer();
   }
 
   prev(): void {
@@ -80,6 +78,24 @@ export class AboutSectionComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
+  fleetPrev(): void {
+    this.fleetIndex = (this.fleetIndex - 1 + this.fleetPhotos.length) % this.fleetPhotos.length;
+    this.resetFleetTimer();
+    this.cdr.markForCheck();
+  }
+
+  fleetNext(): void {
+    this.fleetIndex = (this.fleetIndex + 1) % this.fleetPhotos.length;
+    this.resetFleetTimer();
+    this.cdr.markForCheck();
+  }
+
+  fleetGoTo(index: number): void {
+    this.fleetIndex = index;
+    this.resetFleetTimer();
+    this.cdr.markForCheck();
+  }
+
   private startTimer(): void {
     this.timer = setInterval(() => {
       this.currentIndex = (this.currentIndex + 1) % this.photos.length;
@@ -94,5 +110,21 @@ export class AboutSectionComponent implements OnInit, OnDestroy {
   private resetTimer(): void {
     this.stopTimer();
     this.startTimer();
+  }
+
+  private startFleetTimer(): void {
+    this.fleetTimer = setInterval(() => {
+      this.fleetIndex = (this.fleetIndex + 1) % this.fleetPhotos.length;
+      this.cdr.markForCheck();
+    }, 4500);
+  }
+
+  private stopFleetTimer(): void {
+    if (this.fleetTimer) { clearInterval(this.fleetTimer); this.fleetTimer = null; }
+  }
+
+  private resetFleetTimer(): void {
+    this.stopFleetTimer();
+    this.startFleetTimer();
   }
 }

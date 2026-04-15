@@ -363,8 +363,6 @@
     grid-template-columns: 1fr 1fr;
     align-items: start;
 
-    /* Trust badges span full width */
-    .sidebar-trust { grid-column: 1 / -1; }
   }
 
   @media (max-width: 540px) {
@@ -434,11 +432,6 @@
 
   .pi { font-size: .82rem; color: var(--color-primary, #e07b54); flex-shrink: 0; }
   &:hover { color: var(--color-primary, #e07b54); }
-}
-
-/* Trust badges */
-.sidebar-trust {
-  display: flex; flex-wrap: wrap; gap: .45rem;
 }
 
 .trust-badge {

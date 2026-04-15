@@ -20,12 +20,6 @@
   <!-- ── Main Content ── -->
   <div class="hero__inner">
     <div class="hero__content">
-
-      <span class="hero__badge">
-        <span class="hero__badge-dot"></span>
-        {{ 'hero.badge' | transloco }}
-      </span>
-
       <h1 class="hero__title">
         {{ 'hero.title' | transloco }}<br>
         <em>{{ 'hero.titleAccent' | transloco }}</em>
@@ -42,7 +36,6 @@
         </button>
       </div>
 
-      <!-- Slide progress dots -->
       <div class="hero__dots" role="tablist" aria-label="Slide navigation">
         @for (slide of slides; track $index; let i = $index) {
           <button
@@ -55,41 +48,6 @@
             [attr.aria-selected]="i === currentSlide"
           ></button>
         }
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Trust Bar ── -->
-  <div class="hero__trust" aria-label="Why choose us">
-    <div class="hero__trust-item">
-      <span class="hero__trust-icon">🛡️</span>
-      <div>
-        <strong>{{ 'about.safetyFirst.title' | transloco }}</strong>
-        <span>{{ 'about.safetyFirst.desc' | transloco }}</span>
-      </div>
-    </div>
-    <div class="hero__trust-divider" aria-hidden="true"></div>
-    <div class="hero__trust-item">
-      <span class="hero__trust-icon">🐾</span>
-      <div>
-        <strong>{{ 'about.weCare.title' | transloco }}</strong>
-        <span>{{ 'about.weCare.desc' | transloco }}</span>
-      </div>
-    </div>
-    <div class="hero__trust-divider" aria-hidden="true"></div>
-    <div class="hero__trust-item">
-      <span class="hero__trust-icon">✅</span>
-      <div>
-        <strong>{{ 'about.fullyLegal.title' | transloco }}</strong>
-        <span>{{ 'about.fullyLegal.desc' | transloco }}</span>
-      </div>
-    </div>
-    <div class="hero__trust-divider" aria-hidden="true"></div>
-    <div class="hero__trust-item">
-      <span class="hero__trust-icon">🏠</span>
-      <div>
-        <strong>{{ 'about.shelterPartners.title' | transloco }}</strong>
-        <span>{{ 'about.shelterPartners.desc' | transloco }}</span>
       </div>
     </div>
   </div>

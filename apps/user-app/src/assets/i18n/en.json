@@ -29,6 +29,10 @@
       "reunitedWithFamily": "Reunited with family"
     }
   },
+  "gallery": {
+    "passengersTag": "Our Passengers",
+    "title": "Furry travellers we've loved"
+  },
   "about": {
     "whoWeAreTag": "Who We Are",
     "title": "Born from a love for rescue dogs",
@@ -40,18 +44,25 @@
     "shelterPartners": { "title": "Shelter Partners", "desc": "We work with 200+ certified shelters and verified adopters." },
     "processTag": "The Process",
     "processTitle": "How adoption transport works",
+    "processSubtitle": "Simple, transparent, stress-free — for you and your dog.",
     "step1": { "title": "Adopter Approved", "desc": "Shelter confirms the adoption." },
     "step2": { "title": "Book a Trip", "desc": "Submit the transport request." },
     "step3": { "title": "We Prepare", "desc": "Route planned, documents checked." },
-    "step4": { "title": "Safe Delivery", "desc": "Your dog arrives happy and healthy." }
+    "step4": { "title": "Safe Delivery", "desc": "Your dog arrives happy and healthy." },
+    "learnMore": "Learn More About Us"
+  },
+  "fleet": {
+    "tag": "Our Fleet",
+    "title": "Built for safe, comfortable journeys",
+    "p1": "Our climate-controlled vans are specially outfitted for animal transport — spacious crates, ventilation, and hygiene protocols on every trip.",
+    "p2": "Each vehicle is inspected and sanitised before departure, ensuring your dog travels in the safest and most comfortable conditions possible.",
+    "cta": "View Our Fleet"
   },
   "stats": {
-    "dogsTransported": "Dogs Transported",
-    "countries": "Countries",
-    "yearsActive": "Years Active",
-    "safeArrivals": "Safe Arrivals"
+    "dogsTransported": "Dogs Transported"
   },
   "cta": {
+    "eyebrow": "Ready to start?",
     "title": "Ready to bring your dog home?",
     "subtitle": "Submit a transport request and we'll respond within 24 hours.",
     "bookTransport": "Book a Transport",
@@ -60,6 +71,9 @@
   "contact": {
     "tag": "Get In Touch",
     "title": "We'd love to hear from you",
+    "heroSubtitle": "Let's talk about your dog's journey home. We respond within 24 hours.",
+    "reachUs": "Reach us directly",
+    "speakYourLang": "We speak your language",
     "emailLabel": "Email",
     "phoneLabel": "Phone",
     "responseLabel": "Response",
@@ -119,66 +133,48 @@
     "preview": "Preview",
     "submit": "Submit Request",
     "submitting": "Submitting...",
-    "noTripHint": "Select a highlighted date on the calendar above to start your booking."
+    "noTripHint": "Select a highlighted date on the calendar above to start your booking.",
+    "from": "From",
+    "to": "To",
+    "pickDateTitle": "Pick a travel date above",
+    "howItWorksTitle": "How it works",
+    "sidebarStep1Title": "Pick a date",
+    "sidebarStep1Desc": "Select from available trips on the calendar",
+    "sidebarStep2Title": "Fill in details",
+    "sidebarStep2Desc": "Your info and your dog's details",
+    "sidebarStep3Title": "We review",
+    "sidebarStep3Desc": "Confirmation sent within 24 hours",
+    "sidebarStep4Title": "Safe delivery",
+    "sidebarStep4Desc": "Your dog arrives happy and healthy",
+    "questionsTitle": "Questions?",
+    "questionsDesc": "Contact us directly and we'll help you book.",
+    "trust": {
+      "vetApproved": "Vet approved",
+      "euCompliant": "EU compliant",
+      "dogs": "1,200+ dogs",
+      "countries": "18 countries"
+    }
   },
   "aboutPage": {
     "heroTag": "Our Story",
     "heroTitle": "Born from a love for rescue dogs",
-    "heroSubtitle": "Since 2018 we've been safely transporting adopted dogs across Europe — one loving journey at a time.",
+    "heroSubtitle": "Many years on the road, thousands of dogs home — one loving journey at a time.",
     "founder": "Founder & Driver",
-    "missionQuote": "Dogs are not cargo. They are family waiting to arrive home — and we take that responsibility with our whole heart.",
     "storyTag": "Who We Are",
     "storyTitle": "A mission that started with one van and a promise",
-    "storyP1": "Lilia Paws Travel was founded in 2018 by Lilia Kovacs, a passionate animal welfare advocate who saw thousands of dogs adopted across European borders with no safe, humane transport solution.",
-    "storyP2": "What began as weekend trips in a single van quickly grew into a trusted network spanning 18 countries and 200+ certified shelters. Every trip is personally overseen — no middlemen, no shortcuts.",
-    "storyP3": "Today we're proud to have delivered over 1,200 dogs safely into the arms of their new families. Each journey is unique, and every dog's comfort comes first.",
-    "timelineTag": "Our Journey",
-    "timelineTitle": "Six years of safe deliveries",
-    "timeline": {
-      "2018": { "title": "The Beginning", "desc": "First cross-border transport from Greece to Germany. One van, one dog, one dream." },
-      "2019": { "title": "Network Grows", "desc": "Partnered with 20+ shelters across 5 countries. Weekend trips became weekly routes." },
-      "2021": { "title": "500 Dogs Milestone", "desc": "500th dog safely delivered. Expanded to a fleet of climate-controlled vans." },
-      "2023": { "title": "18 Countries", "desc": "Now serving adopters across 18 European countries with full EU pet travel compliance." },
-      "2025": { "title": "1,200+ & Counting", "desc": "Over 1,200 dogs home safe. 100% safe arrival rate across all journeys." }
-    },
+    "storyP1": "Lilia Paws Travel was founded by Lilia Pontika, a passionate animal welfare advocate. Through years of experience, she witnessed hundreds of dogs adopted across borders with no safe, humane transport solution.",
+    "storyP2": "What began as voluntary dog transport quickly grew into a deep responsibility — to create a humane, safe, and reliable way of transporting animals that respects every life.",
+    "storyP3": "Our responsibility is not simply transporting an animal to a new owner — it is carrying a soul to a new family. Transparency, safety, and humane treatment are our primary concern on every journey.",
     "valuesTag": "Our Values",
     "valuesTitle": "What we believe in",
     "valuesSubtitle": "Every decision we make — from route planning to rest stops — is guided by these principles.",
     "values": {
       "safety":  { "title": "Safety Above All",        "desc": "Vet-approved health certificates, microchip verification, and continuous monitoring on every trip." },
-      "care":    { "title": "Genuine Care",             "desc": "Comfort stops, fresh water, and cuddles included. Dogs are never left unattended during transit." },
-      "legal":   { "title": "Fully EU Compliant",       "desc": "We handle all paperwork — pet passports, microchips, health certificates, and border documentation." },
-      "shelter": { "title": "Shelter Partnerships",     "desc": "We work exclusively with 200+ certified, ethical shelters and thoroughly verified adopters." },
-      "vehicle": { "title": "Climate-Controlled Vans",  "desc": "Temperature-regulated, sanitised before and after every trip. Safe and spacious for all breed sizes." },
-      "reach":   { "title": "Pan-European Reach",       "desc": "From Greece to Germany, Spain to Sweden — we connect shelters with families across the continent." }
-    },
-    "testimonialsTag": "Adopter Stories",
-    "testimonialsTitle": "From our families to yours",
-    "testimonials": {
-      "1": {
-        "quote": "Lilia and her team transported our rescue pup from Romania to the Netherlands. Regular photo updates the whole way — we were so relieved. Max arrived happy and healthy!",
-        "name": "Sophie van der Berg",
-        "location": "Amsterdam, Netherlands"
-      },
-      "2": {
-        "quote": "Professional, caring, and reliable. Our dog Bella came all the way from Greece. Lilia handled every document perfectly. I wouldn't trust anyone else with our girl.",
-        "name": "Maria Papadopoulou",
-        "location": "Munich, Germany"
-      },
-      "3": {
-        "quote": "We adopted a senior dog from a Spanish shelter. Lilia's team gave him the gentlest ride imaginable. He arrived calm, safe, and ready for his new life with us.",
-        "name": "James Thornton",
-        "location": "London, United Kingdom"
-      }
-    },
-    "trustTitle": "You can count on us",
-    "trust": {
-      "euCompliant":    "EU Pet Travel Compliant",
-      "insured":        "Fully Insured",
-      "vetApproved":    "Vet-Approved Routes",
-      "gpsTracked":     "GPS Tracked Journeys",
-      "shelterPartner": "200+ Shelter Partners",
-      "response24h":    "24h Response Guarantee"
+      "care":    { "title": "Genuine Care",             "desc": "Comfort stops, food, water, and hygiene on every route. Dogs are never left unattended." },
+      "legal":   { "title": "Fully EU Compliant",       "desc": "We handle all paperwork — pet passports, health certificates, microchips, and TRACES certificates." },
+      "shelter": { "title": "Shelter Partnerships",     "desc": "We work exclusively with certified, ethical shelters, ensuring every adoption is verified and responsible." },
+      "vehicle": { "title": "Climate-Controlled Vans & Direct Contact", "desc": "Temperature-regulated, sanitised before every trip. Our drivers maintain direct access to the crates throughout the journey. Comfortable and safe for dogs of all sizes." },
+      "reach":   { "title": "Pan-European Reach",       "desc": "From Greece to Italy, Germany, France, and the Netherlands — we connect shelters with families across Europe." }
     }
   },
   "dogs": {

@@ -3,6 +3,7 @@
 /* ── Hero wrapper ── */
 .hero {
   position: relative;
+  z-index: 2;
   /* Pull up behind the transparent navbar, then pad content below it */
   margin-top: calc(-1 * var(--navbar-h, 72px));
   padding-top: var(--navbar-h, 72px);
@@ -145,13 +146,13 @@
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  margin-bottom: 2.5rem;
 }
 
 /* ── Slide dots ── */
 .hero__dots {
   display: flex;
   gap: 10px;
+  margin-top: 2rem;
 }
 
 .hero__dot {
@@ -232,19 +233,31 @@
 /* ── Mobile ── */
 @media (max-width: 768px) {
   .hero {
-    min-height: 55svh;
+    min-height: 100svh;
+    justify-content: flex-end;
   }
 
   .hero__inner {
     align-items: flex-end;
-    padding: 2rem 1.25rem 1.5rem;
+    padding: 1.5rem 1.25rem 5rem;
   }
 
   .hero__content { max-width: none; }
 
-  .hero__title { font-size: clamp(1.9rem, 8vw, 2.6rem); }
+  .hero__badge { margin-bottom: 1rem; }
 
-  .hero__subtitle { font-size: .95rem; max-width: none; }
+  .hero__title {
+    font-size: clamp(1.9rem, 8vw, 2.6rem);
+    margin-bottom: 1rem;
+  }
+
+  .hero__subtitle {
+    font-size: .9rem;
+    max-width: none;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero__dots { margin-top: 1.25rem; }
 
   .hero__trust {
     flex-wrap: wrap;

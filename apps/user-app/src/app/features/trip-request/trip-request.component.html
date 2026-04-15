@@ -5,7 +5,7 @@
     <!-- Full-width photo background -->
     <div class="page-intro__bg" aria-hidden="true">
       <img
-        src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1400&q=80"
+        src="assets/images/request-hero.jpeg"
         alt=""
         loading="eager"
       />
@@ -54,7 +54,7 @@
           </div>
           <div class="trip-details__route">
             <div class="trip-details__city">
-              <span class="trip-details__city-label">From</span>
+              <span class="trip-details__city-label">{{ 'tripRequest.from' | transloco }}</span>
               <strong>{{ trip.departureCity }}</strong>
               <span class="trip-details__country">{{ trip.departureCountry }}</span>
             </div>
@@ -62,7 +62,7 @@
               <i class="pi pi-arrow-right"></i>
             </div>
             <div class="trip-details__city">
-              <span class="trip-details__city-label">To</span>
+              <span class="trip-details__city-label">{{ 'tripRequest.to' | transloco }}</span>
               <strong>{{ trip.arrivalCity }}</strong>
               <span class="trip-details__country">{{ trip.arrivalCountry }}</span>
             </div>
@@ -259,7 +259,7 @@
       @if (!selectedTrip() && !loading()) {
         <div class="no-trip-hint">
           <div class="no-trip-hint__icon" aria-hidden="true">🗓️</div>
-          <h3>Pick a travel date above</h3>
+          <h3>{{ 'tripRequest.pickDateTitle' | transloco }}</h3>
           <p>{{ 'tripRequest.noTripHint' | transloco }}</p>
         </div>
       }
@@ -273,35 +273,35 @@
       <div class="sidebar-card">
         <div class="sidebar-card__header">
           <span class="sidebar-card__icon" aria-hidden="true">🗺️</span>
-          <h3>How it works</h3>
+          <h3>{{ 'tripRequest.howItWorksTitle' | transloco }}</h3>
         </div>
         <ol class="mini-steps">
           <li class="mini-step">
             <span class="mini-step__num">1</span>
             <div class="mini-step__body">
-              <strong>Pick a date</strong>
-              <p>Select from available trips on the calendar</p>
+              <strong>{{ 'tripRequest.sidebarStep1Title' | transloco }}</strong>
+              <p>{{ 'tripRequest.sidebarStep1Desc' | transloco }}</p>
             </div>
           </li>
           <li class="mini-step">
             <span class="mini-step__num">2</span>
             <div class="mini-step__body">
-              <strong>Fill in details</strong>
-              <p>Your info and your dog's details</p>
+              <strong>{{ 'tripRequest.sidebarStep2Title' | transloco }}</strong>
+              <p>{{ 'tripRequest.sidebarStep2Desc' | transloco }}</p>
             </div>
           </li>
           <li class="mini-step">
             <span class="mini-step__num">3</span>
             <div class="mini-step__body">
-              <strong>We review</strong>
-              <p>Confirmation sent within 24 hours</p>
+              <strong>{{ 'tripRequest.sidebarStep3Title' | transloco }}</strong>
+              <p>{{ 'tripRequest.sidebarStep3Desc' | transloco }}</p>
             </div>
           </li>
           <li class="mini-step">
             <span class="mini-step__num">4</span>
             <div class="mini-step__body">
-              <strong>Safe delivery</strong>
-              <p>Your dog arrives happy and healthy</p>
+              <strong>{{ 'tripRequest.sidebarStep4Title' | transloco }}</strong>
+              <p>{{ 'tripRequest.sidebarStep4Desc' | transloco }}</p>
             </div>
           </li>
         </ol>
@@ -311,14 +311,18 @@
       <div class="sidebar-card sidebar-card--help">
         <div class="sidebar-card__header">
           <span class="sidebar-card__icon" aria-hidden="true">💬</span>
-          <h3>Questions?</h3>
+          <h3>{{ 'tripRequest.questionsTitle' | transloco }}</h3>
         </div>
-        <p class="sidebar-help-text">Contact us directly and we'll help you book.</p>
+        <p class="sidebar-help-text">{{ 'tripRequest.questionsDesc' | transloco }}</p>
         <ul class="help-links">
           <li>
             <a href="tel:+306907288150" class="help-link">
               <i class="pi pi-phone" aria-hidden="true"></i>
               +30 690 728 8150
+            </a>
+                 <a href="tel:+306907288150" class="help-link">
+              <i class="pi pi-phone" aria-hidden="true"></i>
+              +30 694 822 5016
             </a>
           </li>
           <li>
@@ -328,14 +332,6 @@
             </a>
           </li>
         </ul>
-      </div>
-
-      <!-- Trust badges -->
-      <div class="sidebar-trust">
-        <span class="trust-badge">🛡️ Vet approved</span>
-        <span class="trust-badge">📋 EU compliant</span>
-        <span class="trust-badge">🐾 1,200+ dogs</span>
-        <span class="trust-badge">🌍 18 countries</span>
       </div>
 
     </aside>

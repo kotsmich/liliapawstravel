@@ -1,7 +1,7 @@
 import { ApplicationConfig, isDevMode } from '@angular/core';
 import { provideTransloco } from '@jsverse/transloco';
 import { TranslocoHttpLoader } from '@user/core/transloco-loader';
-import { provideRouter, withRouterConfig, withPreloading, PreloadAllModules } from '@angular/router';
+import { provideRouter, withRouterConfig, withPreloading, PreloadAllModules, withInMemoryScrolling } from '@angular/router';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -42,7 +42,12 @@ const LiliaPreset = definePreset(Aura, {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideClientHydration(withEventReplay()),
-    provideRouter(APP_ROUTES, withRouterConfig({ onSameUrlNavigation: 'reload' }), withPreloading(PreloadAllModules)),
+    provideRouter(
+      APP_ROUTES,
+      withRouterConfig({ onSameUrlNavigation: 'reload' }),
+      withPreloading(PreloadAllModules),
+      withInMemoryScrolling({ scrollPositionRestoration: 'top' })
+    ),
     provideAnimationsAsync(),
     provideHttpClient(withInterceptors([userApiInterceptor])),
     provideStore({

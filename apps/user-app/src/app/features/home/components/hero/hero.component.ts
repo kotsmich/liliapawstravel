@@ -20,19 +20,19 @@ export class HeroComponent implements OnInit, OnDestroy {
 
   readonly slides = [
     {
-      image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1600&q=85',
+      image: 'assets/images/van-daylight.png',
       captionKey: 'hero.slides.safeInTransit',
     },
     {
-      image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=1600&q=85',
+      image: 'assets/images/hero-2.jpeg',
       captionKey: 'hero.slides.everyPawMatters',
     },
     {
-      image: 'https://images.unsplash.com/photo-1601979031925-424e53b6caaa?w=1600&q=85',
+      image: 'assets/images/hero-3.jpeg',
       captionKey: 'hero.slides.goldenHeading',
     },
     {
-      image: 'https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?w=1600&q=85',
+      image: 'assets/images/hero-4.jpeg',
       captionKey: 'hero.slides.adoptedWithLove',
     },
   ];

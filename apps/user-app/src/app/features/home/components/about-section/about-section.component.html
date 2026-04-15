@@ -1,7 +1,7 @@
 <!-- ══════════════════════════════════════════════════════
      SERVICES STRIP
      ══════════════════════════════════════════════════════ -->
-<section class="services" aria-label="Our services">
+<!-- <section class="services" aria-label="Our services">
   <div class="services__container">
     @for (f of features; track f.titleKey; let i = $index) {
       <div class="service-card" [style.animation-delay]="(i * 120) + 'ms'">
@@ -13,7 +13,7 @@
       </div>
     }
   </div>
-</section>
+</section> -->
 
 <!-- ══════════════════════════════════════════════════════
      ABOUT STORY + PHOTO SLIDER
@@ -27,6 +27,7 @@
       <h2>{{ 'about.title' | transloco }}</h2>
       <p>{{ 'about.p1' | transloco }}</p>
       <p>{{ 'about.p2' | transloco }}</p>
+      <a class="about__cta" routerLink="/about">{{ 'about.learnMore' | transloco }}</a>
     </div>
 
     <!-- Photo slider column -->
@@ -41,28 +42,27 @@
             loading="lazy"
           />
         }
+        <div class="slider__counter" aria-live="polite" aria-atomic="true">
+          {{ currentIndex + 1 }} / {{ photos.length }}
+        </div>
       </div>
 
-      <!-- Slide counter pill -->
-      <div class="slider__counter" aria-live="polite" aria-atomic="true">
-        {{ currentIndex + 1 }} / {{ photos.length }}
-      </div>
-
-      <button class="slider__btn slider__btn--prev" type="button" (click)="prev()" aria-label="Previous photo">&#8249;</button>
-      <button class="slider__btn slider__btn--next" type="button" (click)="next()" aria-label="Next photo">&#8250;</button>
-
-      <div class="slider__dots" role="tablist" aria-label="Slide navigation">
-        @for (photo of photos; track $index; let i = $index) {
-          <button
-            class="slider__dot"
-            type="button"
-            role="tab"
-            [class.active]="i === currentIndex"
-            (click)="goTo(i)"
-            [attr.aria-label]="'Go to slide ' + (i + 1)"
-            [attr.aria-selected]="i === currentIndex"
-          ></button>
-        }
+      <div class="slider__nav">
+        <button class="slider__btn" type="button" (click)="prev()" aria-label="Previous photo">&#8249;</button>
+        <div class="slider__dots" role="tablist" aria-label="Slide navigation">
+          @for (photo of photos; track $index; let i = $index) {
+            <button
+              class="slider__dot"
+              type="button"
+              role="tab"
+              [class.active]="i === currentIndex"
+              (click)="goTo(i)"
+              [attr.aria-label]="'Go to slide ' + (i + 1)"
+              [attr.aria-selected]="i === currentIndex"
+            ></button>
+          }
+        </div>
+        <button class="slider__btn" type="button" (click)="next()" aria-label="Next photo">&#8250;</button>
       </div>
     </div>
 
@@ -70,24 +70,55 @@
 </section>
 
 <!-- ══════════════════════════════════════════════════════
-     PHOTO GALLERY
+     OUR FLEET
      ══════════════════════════════════════════════════════ -->
-<section class="gallery" aria-label="Photo gallery">
-  <div class="gallery__container">
-    <div class="gallery__header">
-      <span class="eyebrow">Our Passengers</span>
-      <h2>Furry travellers we've loved</h2>
-    </div>
-    <div class="gallery__grid">
-      @for (img of galleryImages; track img.src; let i = $index) {
-        <div class="gallery__item" [attr.data-index]="i">
-          <img [src]="img.src" [alt]="img.alt" loading="lazy" />
-          <div class="gallery__overlay" aria-hidden="true">
-            <span class="gallery__overlay-icon">🐾</span>
-          </div>
+<section class="about about--fleet" aria-label="Our fleet">
+  <div class="about__container about__container--reversed">
+
+    <!-- Photo slider column (left) -->
+    <div class="slider" aria-label="Fleet slideshow">
+      <div class="slider__viewport">
+        @for (photo of fleetPhotos; track $index; let i = $index) {
+          <img
+            class="slider__img"
+            [class.active]="i === fleetIndex"
+            [src]="photo"
+            [alt]="'Fleet photo ' + (i + 1)"
+            loading="lazy"
+          />
+        }
+        <div class="slider__counter" aria-live="polite" aria-atomic="true">
+          {{ fleetIndex + 1 }} / {{ fleetPhotos.length }}
         </div>
-      }
+      </div>
+      <div class="slider__nav">
+        <button class="slider__btn" type="button" (click)="fleetPrev()" aria-label="Previous photo">&#8249;</button>
+        <div class="slider__dots" role="tablist" aria-label="Slide navigation">
+          @for (photo of fleetPhotos; track $index; let i = $index) {
+            <button
+              class="slider__dot"
+              type="button"
+              role="tab"
+              [class.active]="i === fleetIndex"
+              (click)="fleetGoTo(i)"
+              [attr.aria-label]="'Go to slide ' + (i + 1)"
+              [attr.aria-selected]="i === fleetIndex"
+            ></button>
+          }
+        </div>
+        <button class="slider__btn" type="button" (click)="fleetNext()" aria-label="Next photo">&#8250;</button>
+      </div>
     </div>
+
+    <!-- Story column (right) -->
+    <div class="about__story">
+      <span class="eyebrow">{{ 'fleet.tag' | transloco }}</span>
+      <h2>{{ 'fleet.title' | transloco }}</h2>
+      <p>{{ 'fleet.p1' | transloco }}</p>
+      <p>{{ 'fleet.p2' | transloco }}</p>
+      <button class="about__cta" type="button">{{ 'fleet.cta' | transloco }}</button>
+    </div>
+
   </div>
 </section>
 
@@ -98,7 +129,7 @@
   <!-- Background image with overlay -->
   <div class="how__bg" aria-hidden="true">
     <img
-      src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1400&q=80"
+      src="assets/images/how-bg.jpeg"
       alt=""
       loading="lazy"
     />
@@ -109,7 +140,7 @@
     <div class="how__header">
       <span class="eyebrow how__eyebrow">{{ 'about.processTag' | transloco }}</span>
       <h2>{{ 'about.processTitle' | transloco }}</h2>
-      <p class="how__subtitle">Simple, transparent, stress-free — for you and your dog.</p>
+      <p class="how__subtitle">{{ 'about.processSubtitle' | transloco }}</p>
     </div>
 
     <div class="how__steps">
@@ -122,6 +153,28 @@
           <div class="how__step-body">
             <h3>{{ s.title | transloco }}</h3>
             <p>{{ s.desc | transloco }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     PHOTO GALLERY
+     ══════════════════════════════════════════════════════ -->
+<section class="gallery" aria-label="Photo gallery">
+  <div class="gallery__container">
+    <div class="gallery__header">
+      <span class="eyebrow">{{ 'gallery.passengersTag' | transloco }}</span>
+      <h2>{{ 'gallery.title' | transloco }}</h2>
+    </div>
+    <div class="gallery__grid">
+      @for (img of galleryImages; track img.src; let i = $index) {
+        <div class="gallery__item" [attr.data-index]="i">
+          <img [src]="img.src" [alt]="img.alt" loading="lazy" />
+          <div class="gallery__overlay" aria-hidden="true">
+            <span class="gallery__overlay-icon">🐾</span>
           </div>
         </div>
       }

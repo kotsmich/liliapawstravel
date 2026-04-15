@@ -29,6 +29,10 @@
       "reunitedWithFamily": "Mit der Familie vereint"
     }
   },
+  "gallery": {
+    "passengersTag": "Unsere Passagiere",
+    "title": "Pelzige Reisende, die wir liebten"
+  },
   "about": {
     "whoWeAreTag": "Wer Wir Sind",
     "title": "Entstanden aus Liebe zu Rettungshunden",
@@ -40,18 +44,25 @@
     "shelterPartners": { "title": "Tierheim-Partner", "desc": "Wir arbeiten mit 200+ zertifizierten Tierheimen und verifizierten Adoptern." },
     "processTag": "Der Ablauf",
     "processTitle": "Wie Adoptionsstransport funktioniert",
+    "processSubtitle": "Einfach, transparent, stressfrei — für Sie und Ihren Hund.",
     "step1": { "title": "Adopter Genehmigt", "desc": "Tierheim bestätigt die Adoption." },
     "step2": { "title": "Reise Buchen", "desc": "Transportanfrage einreichen." },
     "step3": { "title": "Wir Bereiten Vor", "desc": "Route geplant, Dokumente geprüft." },
-    "step4": { "title": "Sichere Lieferung", "desc": "Ihr Hund kommt glücklich und gesund an." }
+    "step4": { "title": "Sichere Lieferung", "desc": "Ihr Hund kommt glücklich und gesund an." },
+    "learnMore": "Mehr Über Uns"
+  },
+  "fleet": {
+    "tag": "Unsere Flotte",
+    "title": "Gebaut für sichere, komfortable Reisen",
+    "p1": "Unsere klimatisierten Transporter sind speziell für den Tiertransport ausgestattet — geräumige Transportboxen, Belüftung und Hygieneprotokolle auf jeder Fahrt.",
+    "p2": "Jedes Fahrzeug wird vor der Abfahrt geprüft und desinfiziert, um Ihrem Hund die sichersten und komfortabelsten Reisebedingungen zu bieten.",
+    "cta": "Unsere Flotte ansehen"
   },
   "stats": {
-    "dogsTransported": "Hunde Transportiert",
-    "countries": "Länder",
-    "yearsActive": "Jahre Aktiv",
-    "safeArrivals": "Sichere Ankünfte"
+    "dogsTransported": "Hunde Transportiert"
   },
   "cta": {
+    "eyebrow": "Bereit loszulegen?",
     "title": "Bereit, Ihren Hund nach Hause zu bringen?",
     "subtitle": "Transportanfrage einreichen und wir antworten innerhalb von 24 Stunden.",
     "bookTransport": "Transport buchen",
@@ -60,6 +71,9 @@
   "contact": {
     "tag": "Kontakt aufnehmen",
     "title": "Wir freuen uns von Ihnen zu hören",
+    "heroSubtitle": "Lassen Sie uns über die Heimreise Ihres Hundes sprechen. Wir antworten innerhalb von 24 Stunden.",
+    "reachUs": "Kontaktieren Sie uns direkt",
+    "speakYourLang": "Wir sprechen Ihre Sprache",
     "emailLabel": "E-Mail",
     "phoneLabel": "Telefon",
     "responseLabel": "Antwort",
@@ -119,66 +133,48 @@
     "preview": "Vorschau",
     "submit": "Anfrage einreichen",
     "submitting": "Wird eingereicht...",
-    "noTripHint": "Wählen Sie ein hervorgehobenes Datum im Kalender oben, um Ihre Buchung zu starten."
+    "noTripHint": "Wählen Sie ein hervorgehobenes Datum im Kalender oben, um Ihre Buchung zu starten.",
+    "from": "Von",
+    "to": "Nach",
+    "pickDateTitle": "Wählen Sie oben ein Reisedatum",
+    "howItWorksTitle": "So funktioniert es",
+    "sidebarStep1Title": "Datum auswählen",
+    "sidebarStep1Desc": "Wählen Sie aus verfügbaren Reisen im Kalender",
+    "sidebarStep2Title": "Details ausfüllen",
+    "sidebarStep2Desc": "Ihre Daten und die Details Ihres Hundes",
+    "sidebarStep3Title": "Wir prüfen",
+    "sidebarStep3Desc": "Bestätigung innerhalb von 24 Stunden",
+    "sidebarStep4Title": "Sichere Lieferung",
+    "sidebarStep4Desc": "Ihr Hund kommt glücklich und gesund an",
+    "questionsTitle": "Fragen?",
+    "questionsDesc": "Kontaktieren Sie uns direkt und wir helfen Ihnen bei der Buchung.",
+    "trust": {
+      "vetApproved": "Tierärztlich genehmigt",
+      "euCompliant": "EU-konform",
+      "dogs": "1.200+ Hunde",
+      "countries": "18 Länder"
+    }
   },
   "aboutPage": {
     "heroTag": "Unsere Geschichte",
     "heroTitle": "Entstanden aus Liebe zu Rettungshunden",
-    "heroSubtitle": "Seit 2018 transportieren wir adoptierte Hunde sicher durch Europa — eine liebevolle Reise nach der anderen.",
+    "heroSubtitle": "Viele Jahre unterwegs, Tausende Hunde zu Hause — eine liebevolle Reise nach der anderen.",
     "founder": "Gründerin & Fahrerin",
-    "missionQuote": "Hunde sind kein Frachtgut. Sie sind Familie, die darauf wartet, nach Hause zu kommen — und diese Verantwortung tragen wir mit ganzem Herzen.",
     "storyTag": "Wer Wir Sind",
     "storyTitle": "Eine Mission, die mit einem Van und einem Versprechen begann",
-    "storyP1": "Lilia Paws Travel wurde 2018 von Lilia Kovacs gegründet, einer leidenschaftlichen Tierschutzaktivistin, die sah, wie Tausende von Hunden grenzüberschreitend adoptiert wurden — ohne sichere, humane Transportlösung.",
-    "storyP2": "Was als Wochenendfahrten mit einem einzigen Van begann, wuchs schnell zu einem vertrauenswürdigen Netzwerk in 18 Ländern und 200+ zertifizierten Tierheimen.",
-    "storyP3": "Heute sind wir stolz darauf, über 1.200 Hunde sicher in die Arme ihrer neuen Familien gebracht zu haben. Jede Reise ist einzigartig.",
-    "timelineTag": "Unsere Reise",
-    "timelineTitle": "Sechs Jahre sichere Lieferungen",
-    "timeline": {
-      "2018": { "title": "Der Anfang", "desc": "Erste grenzüberschreitende Fahrt von Griechenland nach Deutschland. Ein Van, ein Hund, ein Traum." },
-      "2019": { "title": "Netzwerk wächst", "desc": "Partnerschaften mit 20+ Tierheimen in 5 Ländern. Wochenendfahrten wurden zu wöchentlichen Routen." },
-      "2021": { "title": "500 Hunde-Meilenstein", "desc": "500. Hund sicher geliefert. Erweiterung auf eine Flotte klimatisierter Vans." },
-      "2023": { "title": "18 Länder", "desc": "Jetzt in 18 europäischen Ländern mit vollständiger EU-Haustierreise-Konformität." },
-      "2025": { "title": "1.200+ und weiter", "desc": "Über 1.200 Hunde sicher zu Hause. 100% sichere Ankunftsrate auf allen Fahrten." }
-    },
+    "storyP1": "Lilia Paws Travel wurde von Lilia Pontika gegründet, einer leidenschaftlichen Tierschutzaktivistin. Durch jahrelange Erfahrung erlebte sie, wie Hunderte von Hunden grenzüberschreitend adoptiert wurden — ohne sichere, humane Transportlösung.",
+    "storyP2": "Was als freiwilliger Hundetransport begann, wurde schnell zu einer tiefen Verantwortung — einen humanen, sicheren und zuverlässigen Transportweg zu schaffen, der jedes Leben respektiert.",
+    "storyP3": "Unsere Verantwortung besteht nicht nur darin, ein Tier zu einem neuen Besitzer zu transportieren — es ist die Beförderung einer Seele in eine neue Familie. Transparenz, Sicherheit und humane Behandlung sind unser vorrangiges Anliegen auf jeder Reise.",
     "valuesTag": "Unsere Werte",
     "valuesTitle": "Woran wir glauben",
     "valuesSubtitle": "Jede Entscheidung — von der Routenplanung bis zu den Pausen — wird von diesen Grundsätzen geleitet.",
     "values": {
       "safety":  { "title": "Sicherheit über alles",      "desc": "Tierärztlich genehmigte Gesundheitszertifikate, Mikrochip-Verifizierung und kontinuierliche Überwachung auf jeder Fahrt." },
-      "care":    { "title": "Echte Fürsorge",              "desc": "Komfortpausen, frisches Wasser und Streicheleinheiten inklusive. Hunde werden während der Fahrt nie allein gelassen." },
-      "legal":   { "title": "Vollständig EU-konform",      "desc": "Wir übernehmen alle Dokumente — Heimtierausweise, Mikrochips, Gesundheitszertifikate, Grenzpapiere." },
-      "shelter": { "title": "Tierheim-Partnerschaften",    "desc": "Wir arbeiten ausschließlich mit 200+ zertifizierten, ethischen Tierheimen und verifizierten Adoptern." },
-      "vehicle": { "title": "Klimatisierte Vans",          "desc": "Temperaturgeregelt, vor und nach jeder Fahrt desinfiziert. Sicher und geräumig für alle Rassengrößen." },
-      "reach":   { "title": "Gesamteuropäische Reichweite","desc": "Von Griechenland bis Deutschland, Spanien bis Schweden — wir verbinden Tierheime mit Familien europaweit." }
-    },
-    "testimonialsTag": "Adoptergeschichten",
-    "testimonialsTitle": "Von unseren Familien zu Ihrer",
-    "testimonials": {
-      "1": {
-        "quote": "Lilia und ihr Team transportierten unseren Rettungswelpen von Rumänien in die Niederlande. Regelmäßige Foto-Updates den ganzen Weg — wir waren so erleichtert. Max kam glücklich und gesund an!",
-        "name": "Sophie van der Berg",
-        "location": "Amsterdam, Niederlande"
-      },
-      "2": {
-        "quote": "Professionell, fürsorglich und zuverlässig. Unser Hund Bella kam aus Griechenland. Lilia hat alle Dokumente perfekt gehandhabt. Ich würde ihr unsere Hündin immer wieder anvertrauen.",
-        "name": "Maria Papadopoulou",
-        "location": "München, Deutschland"
-      },
-      "3": {
-        "quote": "Wir adoptierten einen älteren Hund aus einem spanischen Tierheim. Lilias Team gab ihm die sanfteste Fahrt, die man sich vorstellen kann. Er kam ruhig, sicher und bereit für sein neues Leben an.",
-        "name": "James Thornton",
-        "location": "London, Vereinigtes Königreich"
-      }
-    },
-    "trustTitle": "Sie können sich auf uns verlassen",
-    "trust": {
-      "euCompliant":    "EU-Reisekonform",
-      "insured":        "Vollversichert",
-      "vetApproved":    "Tierärztlich geprüft",
-      "gpsTracked":     "GPS-verfolgte Fahrten",
-      "shelterPartner": "200+ Tierheim-Partner",
-      "response24h":    "24h Antwortgarantie"
+      "care":    { "title": "Echte Fürsorge",              "desc": "Komfortpausen, Futter, Wasser und Hygiene auf jeder Route. Hunde werden nie allein gelassen." },
+      "legal":   { "title": "Vollständig EU-konform",      "desc": "Wir übernehmen alle Dokumente — Heimtierausweise, Gesundheitszertifikate, Mikrochips und TRACES-Zertifikate." },
+      "shelter": { "title": "Tierheim-Partnerschaften",    "desc": "Wir arbeiten ausschließlich mit zertifizierten, ethischen Tierheimen — jede Adoption ist verifiziert und verantwortungsvoll." },
+      "vehicle": { "title": "Klimatisierte Vans & Direkter Kontakt", "desc": "Temperaturgeregelt, vor jeder Fahrt desinfiziert. Unsere Fahrer haben auf der gesamten Route direkten Zugang zu den Transportboxen. Komfortabel und sicher für Hunde aller Größen." },
+      "reach":   { "title": "Gesamteuropäische Reichweite","desc": "Von Griechenland nach Italien, Deutschland, Frankreich und in die Niederlande — wir verbinden Tierheime mit Familien in ganz Europa." }
     }
   },
   "dogs": {
