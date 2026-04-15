@@ -3,12 +3,13 @@ import { Router } from '@angular/router';
 import { HeroComponent } from './components/hero/hero.component';
 import { AboutSectionComponent } from './components/about-section/about-section.component';
 import { CtaSectionComponent } from './components/cta-section/cta-section.component';
+import { PanoramaSectionComponent } from './components/panorama-section/panorama-section.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [HeroComponent, AboutSectionComponent, CtaSectionComponent],
+  imports: [HeroComponent, AboutSectionComponent, CtaSectionComponent, PanoramaSectionComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
