@@ -1,0 +1,27 @@
+@if (requestors().length === 0) {
+  <div class="no-requestors">{{ 'trips.noRequestorsLinked' | transloco }}</div>
+} @else {
+  <p-accordion [multiple]="true" [value]="[]">
+    @for (req of requestors(); track (req.requestId ?? req.name); let i = $index) {
+      @let groupKey = req.requestId ?? req.name;
+      @let dogs = dogsPerRequestor().get(groupKey) ?? [];
+      <p-accordion-panel [value]="req.requestId ?? ('req:' + i)">
+        <p-accordion-header>
+          <div class="requestor-header">
+            <span class="requestor-header__name">{{ req.name }}</span>
+            <span class="requestor-header__count">{{ dogs.length }} {{ 'trips.dogs' | transloco }}</span>
+          </div>
+        </p-accordion-header>
+        <p-accordion-content>
+          <app-dogs-table
+            [dogs]="dogs"
+            [columns]="dogColumns()"
+            [actions]="dogActions()"
+            [config]="tableConfig()"
+            (selectionChange)="selectionChange.emit({ dogs: $event, groupKey: groupKey })"
+            (rowClicked)="rowClicked.emit($event)" />
+        </p-accordion-content>
+      </p-accordion-panel>
+    }
+  </p-accordion>
+}

@@ -1,5 +1,16 @@
-import { Component, Input, Output, EventEmitter, inject, computed } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  inject,
+  computed,
+  ViewChild,
+  ElementRef,
+  ChangeDetectorRef,
+} from '@angular/core';
 
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, AbstractControl } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -13,6 +24,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
   selector: 'ui-dog-form',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     InputTextModule,
     InputNumberModule,
@@ -29,8 +41,17 @@ export class DogFormComponent {
   @Input() index!: number;
   @Input() canRemove = false;
   @Output() removeClicked = new EventEmitter<void>();
+  @Output() photoFileChange = new EventEmitter<File | null>();
+  @Output() documentFileChange = new EventEmitter<File | null>();
+
+  @ViewChild('photoInput') photoInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('documentInput') documentInput!: ElementRef<HTMLInputElement>;
+
+  photoPreview: string | null = null;
+  documentName: string | null = null;
 
   private readonly transloco = inject(TranslocoService);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
   readonly sizes = computed((): { value: string; label: string }[] => {
@@ -62,5 +83,62 @@ export class DogFormComponent {
     if (c.errors['minlength']) return `Min ${c.errors['minlength'].requiredLength} chars.`;
     if (c.errors['pattern']) return field === 'chipId' ? '15-digit chip ID.' : 'Invalid format.';
     return '';
+  }
+
+  onPhotoSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.photoPreview = e.target?.result as string;
+      this.cdr.markForCheck();
+    };
+    reader.readAsDataURL(file);
+    this.photoFileChange.emit(file);
+    this.photoInput.nativeElement.value = '';
+  }
+
+  onDocumentSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.documentName = file.name;
+    this.documentFileChange.emit(file);
+    this.documentInput.nativeElement.value = '';
+  }
+
+  onPhotoDrop(event: DragEvent): void {
+    event.preventDefault();
+    const file = event.dataTransfer?.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.photoPreview = e.target?.result as string;
+      this.cdr.markForCheck();
+    };
+    reader.readAsDataURL(file);
+    this.photoFileChange.emit(file);
+  }
+
+  onDocumentDrop(event: DragEvent): void {
+    event.preventDefault();
+    const file = event.dataTransfer?.files[0];
+    if (!file) return;
+    this.documentName = file.name;
+    this.documentFileChange.emit(file);
+  }
+
+  removePhoto(): void {
+    this.photoPreview = null;
+    this.photoFileChange.emit(null);
+  }
+
+  removeDocument(): void {
+    this.documentName = null;
+    this.documentFileChange.emit(null);
+  }
+
+  reset(): void {
+    this.photoPreview = null;
+    this.documentName = null;
   }
 }

@@ -3,43 +3,33 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
-import { IftaLabelModule } from 'primeng/iftalabel';
-import { TextareaModule } from 'primeng/textarea';
-import { DatePickerModule } from 'primeng/datepicker';
-import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
-import { TooltipModule } from 'primeng/tooltip';
-import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { TabsModule } from 'primeng/tabs';
 import { Store } from '@ngrx/store';
 import { filter, map, take } from 'rxjs';
 import { clearSelectedTrip, loadTripById, updateTrip, addTrip, selectSelectedTrip, selectTripsMutating } from '@admin/features/trips/store';
 import { Dog } from '@models/lib/dog.model';
-import { DogFormDialogComponent } from '@admin/features/trips/components/dog-form-dialog/dog-form-dialog.component';
-import { DogsTableComponent } from './components/dogs-table.component';
-import { AccordionModule } from 'primeng/accordion';
+import { DogDetailDialogComponent } from '@admin/features/trips/components/dog-detail-dialog/dog-detail-dialog.component';
 import { DogManagerService } from './dog-manager.service';
+import { DogDialogService } from './dog-dialog.service';
+import { TripFormHeaderComponent } from './trip-form-header/trip-form-header.component';
+import { TripInfoFormComponent } from './trip-info-form/trip-info-form.component';
+import { TripDogsManagerComponent } from './trip-dogs-manager/trip-dogs-manager.component';
 
 @Component({
   selector: 'app-trip-form',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [DogManagerService],
+  providers: [DogDialogService, DogManagerService],
   imports: [
     RouterModule, ReactiveFormsModule,
-    InputTextModule, InputNumberModule, SelectModule, ButtonModule,
-    IftaLabelModule, TextareaModule, DatePickerModule,
-    MessageModule, ToastModule, TooltipModule, CheckboxModule, ConfirmDialogModule,
-    TabsModule,
-    DogFormDialogComponent,
-    DogsTableComponent,
-    AccordionModule,
+    ButtonModule, ToastModule, ConfirmDialogModule,
     TranslocoModule,
+    DogDetailDialogComponent,
+    TripFormHeaderComponent,
+    TripInfoFormComponent,
+    TripDogsManagerComponent,
   ],
   templateUrl: './trip-form.component.html',
   styleUrls: ['./trip-form.component.scss'],
@@ -71,7 +61,8 @@ export class TripFormComponent implements OnInit {
     { initialValue: [] as { label: string; value: string }[] },
   );
 
-  activeDogsTab = 'all';
+  selectedDog: Dog | null = null;
+  dogDetailVisible = false;
 
   ngOnInit(): void {
     this.editId = this.route.snapshot.paramMap.get('id');
@@ -84,7 +75,10 @@ export class TripFormComponent implements OnInit {
     if (this.isEdit && this.editId) {
       this.loadTripForEdit();
     } else {
-      this.prefillNewTrip();
+      const prefilledDate = this.route.snapshot.queryParamMap.get('date');
+      if (prefilledDate) {
+        this.form.patchValue({ date: new Date(prefilledDate + 'T00:00:00') });
+      }
     }
   }
 
@@ -104,22 +98,6 @@ export class TripFormComponent implements OnInit {
     });
   }
 
-  private prefillNewTrip(): void {
-    const pick = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
-    this.form.patchValue({
-      departureCountry: pick(['Greece', 'Romania', 'Bulgaria']),
-      departureCity:    pick(['Thessaloniki', 'Athens', 'Bucharest', 'Sofia']),
-      arrivalCountry:   pick(['Austria', 'Netherlands', 'Germany']),
-      arrivalCity:      pick(['Vienna', 'Amsterdam', 'Berlin', 'Munich']),
-      totalCapacity:    pick([25, 35, 45, 55]),
-    });
-
-    const prefilledDate = this.route.snapshot.queryParamMap.get('date');
-    if (prefilledDate) {
-      this.form.patchValue({ date: new Date(prefilledDate + 'T00:00:00') });
-    }
-  }
-
   private loadTripForEdit(): void {
     this.store.dispatch(loadTripById({ id: this.editId! }));
 
@@ -134,7 +112,6 @@ export class TripFormComponent implements OnInit {
     });
   }
 
-  /** Convenience getter so template expressions like `dogs.length` remain unchanged. */
   get dogs(): FormArray { return this.dogManager.dogsArray; }
 
   get isAtCapacity(): boolean {
@@ -149,8 +126,9 @@ export class TripFormComponent implements OnInit {
     return null;
   }
 
-  onTabChange(): void {
-    this.dogManager.clearGroupSelections();
+  openDogDetail(dog: Dog): void {
+    this.selectedDog = dog;
+    this.dogDetailVisible = true;
   }
 
   navigateToTrips(): void {

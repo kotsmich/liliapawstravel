@@ -1,0 +1,121 @@
+:host { display: contents; }
+
+.field { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.75rem; }
+.fw { width: 100%; }
+
+/* ── Section label above each status row ── */
+.field-section-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-slate-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Read-only locked display ── */
+.status-display {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--color-border-light);
+  border-radius: 8px;
+  background: #f8fafc;
+
+  &--danger {
+    border-color: #fca5a5;
+    background: #fff5f5;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.15rem;
+  }
+
+  &__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-slate-text);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  &__desc {
+    font-size: 0.775rem;
+    color: var(--color-slate-mid);
+  }
+}
+
+/* ── Interactive status checkbox rows ── */
+.status-check {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--color-border-light);
+  border-radius: 8px;
+  background: var(--color-bg-light);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover { border-color: #cbd5e1; }
+
+  &--danger {
+    border-color: #fca5a5;
+    background: #fff5f5;
+  }
+
+  &--warn {
+    border-color: #fcd34d;
+    background: #fffbeb;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.1rem;
+  }
+
+  &__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-slate-text);
+  }
+
+  &__desc {
+    font-size: 0.775rem;
+    color: var(--color-slate-mid);
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    white-space: nowrap;
+
+    &--ok {
+      color: #15803d;
+      background: #dcfce7;
+    }
+
+    &--danger {
+      color: #b91c1c;
+      background: #fee2e2;
+    }
+
+    &--warn {
+      color: #92400e;
+      background: #fef3c7;
+    }
+  }
+}

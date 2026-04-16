@@ -1,0 +1,39 @@
+.dog-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 1.25rem;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-color-secondary);
+  margin: 0 0 0.75rem;
+}
+
+.photo-panel {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.details-panel {
+  grid-column: 2;
+  grid-row: 1;
+
+  @media (max-width: 600px) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+}
+
+.doc-panel {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}

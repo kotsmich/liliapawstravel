@@ -21,6 +21,7 @@
   "common": {
     "save": "Save",
     "cancel": "Cancel",
+    "back": "Back",
     "delete": "Delete",
     "edit": "Edit",
     "add": "Add",
@@ -37,6 +38,7 @@
     "view": "View",
     "approve": "Approve",
     "reject": "Reject",
+    "remove": "Remove",
     "actions": "Actions",
     "noRecordsFound": "No records found"
   },
@@ -60,6 +62,33 @@
     "editTrip": "Edit Trip",
     "newTrip": "New Trip",
     "deleteTrip": "Delete Trip",
+    "confirm": {
+      "deleteTrip": {
+        "header": "Delete Trip",
+        "message": "Delete the trip {{ route }} on {{ date }}?"
+      },
+      "approveRequest": {
+        "header": "Confirm Approval",
+        "message": "Approve request by {{ name }} ({{ count }} dog(s))?"
+      },
+      "rejectRequest": {
+        "header": "Confirm Rejection",
+        "message": "Reject request by {{ name }}? This cannot be undone."
+      },
+      "deleteRequest": {
+        "header": "Delete Request",
+        "message": "Delete the request from {{ name }}?",
+        "messageApproved": "Delete the request from {{ name }}? The dogs added to the trip will remain."
+      },
+      "removeDog": {
+        "header": "Remove Dog",
+        "message": "Remove {{ name }} from this trip? This cannot be undone."
+      },
+      "removeDogs": {
+        "header": "Remove Dogs",
+        "message": "Remove {{ count }} dog(s) from this trip? This cannot be undone."
+      }
+    },
     "noTrips": "No trips found.",
     "noTripScheduled": "No trip scheduled for {{ date }}.",
     "selectDateHint": "Select a date on the calendar to see trip details.",
@@ -157,7 +186,16 @@
       "reject": "Reject",
       "delete": "Delete",
       "editDogTooltip": "Edit dog",
-      "deleteDogTooltip": "Delete dog"
+      "deleteDogTooltip": "Delete dog",
+      "dog": {
+        "photoSection": "Photo",
+        "documentSection": "Document",
+        "detailsSection": "Details",
+        "noPhoto": "No photo uploaded",
+        "noDocument": "No document uploaded",
+        "downloadBio": "Download Bio PDF",
+        "close": "Close"
+      }
     }
   },
   "dogs": {
@@ -184,7 +222,17 @@
       "sizeLarge": "Large (> 25 kg)",
       "gender": "Gender",
       "genderMale": "Male",
-      "genderFemale": "Female"
+      "genderFemale": "Female",
+      "photoLabel": "Dog Photo",
+      "photoOptional": "(optional)",
+      "photoClickHint": "Click or drag photo",
+      "photoFormats": "JPG, PNG, WEBP — max 5MB",
+      "documentLabel": "Document",
+      "documentOptional": "(optional — TRACES or authorization)",
+      "documentClickHint": "Click or drag document",
+      "documentFormats": "PDF, JPG, PNG — max 10MB",
+      "removePhoto": "Remove photo",
+      "removeDocument": "Remove document"
     },
     "errors": {
       "required": "Required.",
@@ -203,6 +251,26 @@
     "cancelled": "Cancelled",
     "all": "All",
     "noRequests": "No requests found.",
+    "confirm": {
+      "approve": {
+        "header": "Confirm Approval",
+        "message": "Approve the request for trip {{ trip }} by {{ requester }}?"
+      },
+      "reject": {
+        "header": "Confirm Rejection",
+        "message": "Reject the request for trip {{ trip }} by {{ requester }}? This cannot be undone."
+      },
+      "bulkApprove": {
+        "header": "Bulk Approve",
+        "message": "Approve {{ count }} pending request(s)?",
+        "accept": "Approve All"
+      },
+      "bulkReject": {
+        "header": "Bulk Reject",
+        "message": "Reject {{ count }} pending request(s)? This cannot be undone.",
+        "accept": "Reject All"
+      }
+    },
     "approve": "Approve",
     "reject": "Reject",
     "view": "View",
@@ -237,7 +305,13 @@
       "approve": "Approve",
       "reject": "Reject",
       "cancel": "Cancel",
-      "noDogs": "No dogs."
+      "noDogs": "No dogs.",
+      "colPhoto": "Photo",
+      "colDocument": "Doc",
+      "viewPhoto": "View photo",
+      "viewDocument": "View document",
+      "photoPreviewHeader": "Dog Photo",
+      "documentPreviewHeader": "Dog Document"
     }
   },
   "messages": {

@@ -68,4 +68,82 @@
     </div>
   </div>
 
+  <!-- File uploads -->
+  <div class="dog-form__row flex flex-wrap gap-2">
+
+    <!-- Photo Upload -->
+    <div class="dog-form__upload flex flex-column">
+      <label class="dog-form__upload-label">
+        {{ 'dogs.photoLabel' | transloco }}
+        <span class="dog-form__upload-optional">{{ 'dogs.photoOptional' | transloco }}</span>
+      </label>
+
+      @if (!photoPreview) {
+        <div class="upload-area"
+             (click)="photoInput.click()"
+             (dragover)="$event.preventDefault()"
+             (drop)="onPhotoDrop($event)"
+             role="button" tabindex="0"
+             (keydown.enter)="photoInput.click()">
+          <i class="pi pi-camera upload-area__icon"></i>
+          <p class="upload-area__hint">{{ 'dogs.photoClickHint' | transloco }}</p>
+          <small class="upload-area__hint">{{ 'dogs.photoFormats' | transloco }}</small>
+        </div>
+      }
+
+      @if (photoPreview) {
+        <div class="photo-preview flex align-items-center gap-2">
+          <img [src]="photoPreview" alt="Dog photo preview" class="dog-photo-thumb" />
+          <p-button icon="pi pi-times" [text]="true" severity="danger"
+            [rounded]="true" size="small" [pTooltip]="'dogs.removePhoto' | transloco"
+            (onClick)="removePhoto()">
+          </p-button>
+        </div>
+      }
+
+      <input #photoInput type="file"
+             accept="image/jpg,image/jpeg,image/png,image/webp"
+             style="display:none"
+             (change)="onPhotoSelected($event)" />
+    </div>
+
+    <!-- Document Upload -->
+    <div class="dog-form__upload flex flex-column">
+      <label class="dog-form__upload-label">
+        {{ 'dogs.documentLabel' | transloco }}
+        <span class="dog-form__upload-optional">{{ 'dogs.documentOptional' | transloco }}</span>
+      </label>
+
+      @if (!documentName) {
+        <div class="upload-area"
+             (click)="documentInput.click()"
+             (dragover)="$event.preventDefault()"
+             (drop)="onDocumentDrop($event)"
+             role="button" tabindex="0"
+             (keydown.enter)="documentInput.click()">
+          <i class="pi pi-file upload-area__icon"></i>
+          <p class="upload-area__hint">{{ 'dogs.documentClickHint' | transloco }}</p>
+          <small class="upload-area__hint">{{ 'dogs.documentFormats' | transloco }}</small>
+        </div>
+      }
+
+      @if (documentName) {
+        <div class="document-preview flex align-items-center gap-2">
+          <i class="pi pi-file-pdf document-preview__icon"></i>
+          <span class="flex-1 text-sm document-preview__name">{{ documentName }}</span>
+          <p-button icon="pi pi-times" [text]="true" severity="danger"
+            [rounded]="true" size="small" [pTooltip]="'dogs.removeDocument' | transloco"
+            (onClick)="removeDocument()">
+          </p-button>
+        </div>
+      }
+
+      <input #documentInput type="file"
+             accept=".pdf,image/jpg,image/jpeg,image/png"
+             style="display:none"
+             (change)="onDocumentSelected($event)" />
+    </div>
+
+  </div>
+
 </div>

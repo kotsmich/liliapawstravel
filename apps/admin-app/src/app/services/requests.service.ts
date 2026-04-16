@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { Trip } from '@models/lib/trip.model';
+import { RequestStatus } from '@admin/shared/utils/status';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -25,7 +26,7 @@ export class RequestsService {
 
   updateRequestStatus(
     id: string,
-    status: 'rejected',
+    status: RequestStatus,
   ): Observable<TripRequest> {
     return this.http.patch<TripRequest>(`${this.baseUrl}/${id}/status`, { status });
   }

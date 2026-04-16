@@ -1,12 +1,13 @@
 <p-dialog
   [header]="'requests.detail.header' | transloco"
-  [visible]="visible"
+  [visible]="visible()"
   (visibleChange)="visibleChange.emit($event)"
   [modal]="true"
-  [style]="{ width: 'min(92vw, 860px)' }"
+  [style]="{ width: '95vw', height: '95vh' }"
+  [contentStyle]="{ overflowY: 'auto', height: '100%' }"
   [draggable]="false">
 
-  @if (request; as req) {
+  @if (request(); as req) {
     <p class="request-summary">
       {{ 'requests.detail.requestFor' | transloco: { trip: tripDate(req.tripId), requester: req.requesterName } }}
     </p>
@@ -25,7 +26,7 @@
         <p class="info-row"><i class="pi pi-clock"></i> {{ 'requests.detail.submitted' | transloco }} {{ req.submittedAt | date:'dd/MM/yyyy HH:mm' }}</p>
         <p class="status-row">
           <span style="color: var(--text-color-secondary); font-size: 0.9rem;">{{ 'requests.detail.statusLabel' | transloco }}</span>
-          <p-tag [value]="statusLabel(req.status)" [severity]="statusSeverity(req.status)" />
+          <p-tag [value]="requestStatusLabel(req.status)" [severity]="requestStatusSeverity(req.status)" />
         </p>
       </div>
     </div>
@@ -41,40 +42,37 @@
       </div>
     </div>
 
-    <div class="note-section">
-      <h3>{{ 'requests.detail.internalNote' | transloco }}</h3>
-      <p class="note-hint">{{ 'requests.detail.noteHint' | transloco }}</p>
-      <textarea
-        pTextarea
-        [value]="noteText"
-        (input)="noteText = $any($event.target).value"
-        rows="3"
-        [placeholder]="'requests.detail.notePlaceholder' | transloco"></textarea>
-      <div class="save-btn">
-        <p-button
-          [label]="'requests.detail.saveNote' | transloco"
-          icon="pi pi-save"
-          severity="secondary"
-          [outlined]="true"
-          size="small"
-          (onClick)="saveNote.emit(noteText)" />
-      </div>
-    </div>
+    <app-internal-note-editor
+      [note]="req.adminNote ?? ''"
+      (noteSaved)="saveNote.emit($event)" />
   }
+
+  <p-dialog
+    [header]="previewHeader()"
+    [visible]="previewVisible()"
+    (visibleChange)="previewVisible.set($event)"
+    [modal]="true"
+    [draggable]="false"
+    [style]="{ width: isDocPreview() ? 'min(90vw, 700px)' : 'min(80vw, 360px)' }">
+    <app-media-viewer
+      [url]="previewUrl()"
+      frameHeight="70vh"
+      imgMaxHeight="50vh" />
+  </p-dialog>
 
   <ng-template pTemplate="footer">
     <p-button
       [label]="'requests.detail.approve' | transloco"
       icon="pi pi-check"
       severity="success"
-      [disabled]="request?.status !== 'pending'"
+      [disabled]="request()?.status !== 'pending'"
       (onClick)="approve.emit()" />
     <p-button
       [label]="'requests.detail.reject' | transloco"
       icon="pi pi-times"
       severity="danger"
       [outlined]="true"
-      [disabled]="request?.status !== 'pending'"
+      [disabled]="request()?.status !== 'pending'"
       (onClick)="reject.emit()" />
     <p-button
       [label]="'requests.detail.cancel' | transloco"

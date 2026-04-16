@@ -1,0 +1,31 @@
+<div class="row">
+  @if (requestors().length > 0) {
+    <div class="field fw">
+      <p-ifta-label>
+        <p-select
+          [inputId]="'requestor-' + idx()"
+          formControlName="requesterKey"
+          [options]="requestorOptions()"
+          optionLabel="name"
+          optionValue="_key"
+          [showClear]="true"
+          [placeholder]="'dogs.fields.selectExistingRequestor' | transloco"
+          styleClass="w-full"
+          appendTo="body"
+          (onChange)="onRequestorChange($event.value)" />
+        <label [for]="'requestor-' + idx()">{{ 'dogs.fields.existingRequestor' | transloco }}</label>
+      </p-ifta-label>
+    </div>
+  }
+  <div class="field fw">
+    <p-ifta-label>
+      <input pInputText [id]="'new-requester-' + idx()" formControlName="newRequesterName"
+        class="w-full"
+        (input)="onNewRequesterNameInput()" />
+      <label [for]="'new-requester-' + idx()">{{ 'dogs.fields.newRequesterName' | transloco }}</label>
+    </p-ifta-label>
+  </div>
+</div>
+@if (form.touched && form.hasError('requesterRequired')) {
+  <small class="p-error">{{ 'dogs.errors.requesterRequired' | transloco }}</small>
+}

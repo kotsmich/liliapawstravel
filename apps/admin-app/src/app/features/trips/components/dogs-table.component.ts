@@ -14,7 +14,8 @@ import { GenericTableComponent } from '@ui/lib/components/table/generic-table.co
       [actions]="actions()"
       [config]="config()"
       [selection]="selectedDogs()"
-      (selectionChange)="onSelectionChange($any($event))" />
+      (selectionChange)="onSelectionChange($any($event))"
+      (rowClicked)="rowClicked.emit($event)" />
   `,
   styles: [':host { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; }'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,6 +27,7 @@ export class DogsTableComponent {
   readonly config  = input<TableConfig>({});
 
   readonly selectionChange = output<(Dog & { _idx: number })[]>();
+  readonly rowClicked      = output<Dog & { _idx: number }>();
 
   // Resets to [] whenever the dogs list changes; user selections override it via .set()
   readonly selectedDogs = linkedSignal<(Dog & { _idx: number })[]>(() => (this.dogs(), []));

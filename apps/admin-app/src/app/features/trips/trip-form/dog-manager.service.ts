@@ -1,45 +1,52 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, DestroyRef, inject, signal, computed } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 import { FormBuilder, FormArray, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { ConfirmationService } from 'primeng/api';
+import { TranslocoService } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
 import { TripRequester } from '@models/lib/trip.model';
-import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.interface';
-import { addDog, addDogs, updateDog, deleteDog, deleteDogs } from '@admin/features/trips/store';
+import { TableAction, TableConfig } from '@models/lib/table-column.interface';
+import { addDog, addDogs, updateDog, deleteDog, deleteDogs, loadTripById } from '@admin/features/trips/store';
+import { buildDogColumns } from '@admin/features/trips/shared/dog-columns';
+import { DogsService } from '@admin/services/dogs.service';
+import { ConfirmActionService } from '@admin/shared/services/confirm-action.service';
+import { DogDialogService } from './dog-dialog.service';
 
 @Injectable()
 export class DogManagerService {
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store);
-  private readonly confirmationService = inject(ConfirmationService);
+  private readonly confirm = inject(ConfirmActionService);
+  private readonly transloco = inject(TranslocoService);
+  private readonly dogsService = inject(DogsService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /** Exposed so templates and the wrapper component can bind directly. */
+  readonly dialog = inject(DogDialogService);
 
   readonly dogsArray: FormArray = this.fb.array([]);
 
-  readonly dialogVisible = signal(false);
-  readonly selectedDog = signal<Dog | null>(null);
-  readonly dogsData = signal<(Dog & { _idx: number })[]>([]);
-  readonly dogsPerRequestor = signal<Map<string, (Dog & { _idx: number })[]>>(new Map());
-  readonly selectedDogs = signal<(Dog & { _idx: number })[]>([]);
   readonly tripRequestors = signal<TripRequester[]>([]);
+  readonly selectedDogs = signal<(Dog & { _idx: number })[]>([]);
 
-  private editingIndex: number | null = null;
+  readonly dogsData = toSignal(
+    this.dogsArray.valueChanges.pipe(
+      map((values: Dog[]) => values.map((v, i) => ({ ...v, _idx: i }))),
+    ),
+    { initialValue: [] as (Dog & { _idx: number })[] },
+  );
 
-  readonly dogColumns: TableColumn<Dog & { _idx: number }>[] = [
-    { field: 'name', header: 'Name', sortable: true },
-    { field: 'gender', header: 'Gender', formatter: (v) => String(v ?? '—') },
-    {
-      field: 'size', header: 'Size', type: 'badge',
-      badgeConfig: {
-        severity: (v) => v === 'small' ? 'success' : v === 'medium' ? 'warn' : 'danger',
-        label: (v) => String(v ?? ''),
-      },
-    },
-    { field: 'age', header: 'Age', formatter: (v) => v != null ? `${v} yr` : '—' },
-    { field: 'pickupLocation', header: 'Pickup' },
-    { field: 'dropLocation', header: 'Drop' },
-    { field: 'chipId', header: 'Chip ID' },
-    { field: 'requesterName', header: 'Requester', formatter: (v) => String(v ?? '—') },
-  ];
+  readonly dogsPerRequestor = computed(() => {
+    const data = this.dogsData();
+    const result = new Map<string, (Dog & { _idx: number })[]>();
+    this.tripRequestors().forEach(req => {
+      result.set(req.requestId ?? req.name, data.filter(d => req.dogs.some(rd => rd.id === d.id)));
+    });
+    return result;
+  });
+
+  readonly dogColumns = buildDogColumns<Dog & { _idx: number }>();
 
   readonly dogTableConfig: TableConfig = {
     selectable: true,
@@ -48,26 +55,53 @@ export class DogManagerService {
     emptyMessage: 'No dogs added yet. Use the "Add Dog" button above.',
   };
 
-  readonly dogActions = signal<TableAction<Dog & { _idx: number }>[]>([
-    { icon: 'pi pi-pencil', tooltip: 'Edit dog', severity: 'secondary', action: (row) => this.openEditDialog(row._idx) },
+  readonly dogActions = computed((): TableAction<Dog & { _idx: number }>[] => [
+    {
+      icon: 'pi pi-pencil', tooltip: 'Edit dog', severity: 'secondary',
+      action: (row) => this.dialog.openEdit(row._idx, row),
+    },
+    {
+      icon: 'pi pi-trash', tooltip: 'Remove dog', severity: 'danger',
+      action: (dog) => this.deleteDog(dog),
+    },
   ]);
 
   private isEdit = false;
   private editId: string | null = null;
 
-  /** Call once in ngOnInit after edit context is known. */
   init(isEdit: boolean, editId: string | null): void {
     this.isEdit = isEdit;
     this.editId = editId;
   }
 
-  /** Replace all dogs in the array and refresh derived table data. */
+  deleteDog(dog: Dog & { _idx: number }): void {
+    const doRemove = () => {
+      if (this.dogsArray.length > dog._idx) {
+        this.dogsArray.removeAt(dog._idx);
+      }
+    };
+
+    if (this.isEdit && this.editId && dog.id) {
+      this.confirm.confirm({
+        header:      this.transloco.translate('trips.confirm.removeDog.header'),
+        message:     this.transloco.translate('trips.confirm.removeDog.message', { name: dog.name }),
+        acceptLabel: this.transloco.translate('common.remove'),
+        severity:    'danger',
+        accept: () => {
+          this.store.dispatch(deleteDog({ tripId: this.editId!, dogId: dog.id }));
+          doRemove();
+        },
+      });
+    } else {
+      doRemove();
+    }
+  }
+
   setDogs(dogs: Dog[], requestors: TripRequester[]): void {
     this.dogsArray.clear();
     dogs.forEach(d => this.dogsArray.push(this.dogGroup(d)));
     this.tripRequestors.set(requestors);
     this.clearGroupSelections();
-    this.refreshDogsData();
   }
 
   dogGroup(dog?: Partial<Dog>): FormGroup {
@@ -83,86 +117,60 @@ export class DogManagerService {
       notes:          [dog?.notes          ?? ''],
       requesterName:  [dog?.requesterName  ?? ''],
       requestId:      [dog?.requestId      ?? null],
+      photoUrl:       [dog?.photoUrl       ?? null],
+      documentUrl:    [dog?.documentUrl    ?? null],
     });
-  }
-
-  refreshDogsData(): void {
-    const data = this.dogsArray.controls.map((ctrl, i) => ({ ...ctrl.value, _idx: i }));
-    this.dogsData.set(data);
-    const map = new Map<string, (Dog & { _idx: number })[]>();
-    this.tripRequestors().forEach(req => {
-      map.set(req.requestId ?? req.name, data.filter(d => req.dogs.some(rd => rd.id === d.id)));
-    });
-    this.dogsPerRequestor.set(map);
-  }
-
-  openAddDialog(): void {
-    this.selectedDog.set(null);
-    this.editingIndex = null;
-    this.dialogVisible.set(true);
-  }
-
-  openEditDialog(index: number): void {
-    this.selectedDog.set({ ...this.dogsArray.at(index).value } as Dog);
-    this.editingIndex = index;
-    this.dialogVisible.set(true);
   }
 
   onDogSaved(dogs: Dog[]): void {
-    if (this.editingIndex !== null) {
-      const dog = dogs[0];
-      if (this.isEdit && this.editId && dog.id) {
-        this.store.dispatch(updateDog({ tripId: this.editId, dog }));
-      }
-      (this.dogsArray.at(this.editingIndex) as FormGroup).patchValue(dog);
-      this.refreshDogsData();
-    } else {
-      if (this.editId) {
-        const payload = dogs.map(({ id: _id, ...rest }) => rest);
-        if (payload.length === 1) {
-          this.store.dispatch(addDog({ tripId: this.editId, dog: payload[0] }));
-        } else {
-          this.store.dispatch(addDogs({ tripId: this.editId, dogs: payload }));
-        }
-      } else {
-        dogs.forEach(dog => this.dogsArray.push(this.dogGroup(dog)));
-        this.refreshDogsData();
-      }
-    }
-    this.dialogVisible.set(false);
-    this.selectedDog.set(null);
-    this.editingIndex = null;
+    const { editingIndex } = this.dialog;
+    if (editingIndex !== null) this.saveEditedDog(dogs[0], editingIndex);
+    else this.addNewDogs(dogs);
+    this.dialog.close();
   }
 
-  onDogDialogCancelled(): void {
-    this.dialogVisible.set(false);
-    this.selectedDog.set(null);
-    this.editingIndex = null;
-  }
-
-  removeDog(i: number, capacity: number, onCapacityUnderflow: () => void): void {
-    const dog = this.dogsArray.at(i).value as Dog;
-    const doRemove = () => {
-      this.dogsArray.removeAt(i);
-      if (this.dogsArray.length < capacity) {
-        onCapacityUnderflow();
-      }
-      this.refreshDogsData();
-    };
+  private saveEditedDog(dog: Dog, index: number): void {
     if (this.isEdit && this.editId && dog.id) {
-      this.confirmationService.confirm({
-        header: 'Remove Dog',
-        message: `Remove <strong>${dog.name}</strong> from this trip? This cannot be undone.`,
-        acceptLabel: 'Remove',
-        rejectLabel: 'Cancel',
-        acceptButtonStyleClass: 'p-button-danger',
-        accept: () => {
-          this.store.dispatch(deleteDog({ tripId: this.editId!, dogId: dog.id }));
-          doRemove();
-        },
-      });
+      this.store.dispatch(updateDog({ tripId: this.editId, dog }));
+      this.uploadPendingFiles(dog.id);
+    }
+    (this.dogsArray.at(index) as FormGroup).patchValue(dog);
+  }
+
+  private addNewDogs(dogs: Dog[]): void {
+    if (this.editId) {
+      const payload = dogs.map(({ id: _id, ...rest }) => rest);
+      if (payload.length === 1) {
+        this.store.dispatch(addDog({ tripId: this.editId, dog: payload[0] }));
+      } else {
+        this.store.dispatch(addDogs({ tripId: this.editId, dogs: payload }));
+      }
     } else {
-      doRemove();
+      dogs.forEach(dog => this.dogsArray.push(this.dogGroup(dog)));
+    }
+  }
+
+  private uploadPendingFiles(dogId: string): void {
+    const { photo, document } = this.dialog.takePendingFiles();
+    if (photo) {
+      const fd = new FormData();
+      fd.append('photo', photo);
+      this.dogsService.uploadDogPhoto(dogId, fd)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => { if (this.editId) this.store.dispatch(loadTripById({ id: this.editId })); },
+          error: (err) => console.error('Photo upload failed', err),
+        });
+    }
+    if (document) {
+      const fd = new FormData();
+      fd.append('document', document);
+      this.dogsService.uploadDogDocument(dogId, fd)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => { if (this.editId) this.store.dispatch(loadTripById({ id: this.editId })); },
+          error: (err) => console.error('Document upload failed', err),
+        });
     }
   }
 
@@ -190,12 +198,11 @@ export class DogManagerService {
     const dogIdsToDelete = toRemove.map(d => d.id).filter((id): id is string => !!id);
     if (!this.isEdit || !this.editId || !dogIdsToDelete.length) return;
 
-    this.confirmationService.confirm({
-      header: 'Remove Dogs',
-      message: `Remove <strong>${toRemove.length}</strong> dog(s) from this trip? This cannot be undone.`,
-      acceptLabel: 'Remove',
-      rejectLabel: 'Cancel',
-      acceptButtonStyleClass: 'p-button-danger',
+    this.confirm.confirm({
+      header:      this.transloco.translate('trips.confirm.removeDogs.header'),
+      message:     this.transloco.translate('trips.confirm.removeDogs.message', { count: toRemove.length }),
+      acceptLabel: this.transloco.translate('common.remove'),
+      severity:    'danger',
       accept: () => {
         this.store.dispatch(deleteDogs({ tripId: this.editId!, dogIds: dogIdsToDelete }));
         this.selectedDogs.set([]);

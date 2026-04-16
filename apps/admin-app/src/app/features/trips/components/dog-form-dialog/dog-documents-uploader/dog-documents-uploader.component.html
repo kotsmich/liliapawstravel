@@ -1,0 +1,25 @@
+<div class="upload-row">
+  <app-file-upload-area
+    [label]="'dogs.fields.photoLabel' | transloco"
+    [optionalLabel]="'dogs.fields.photoOptional' | transloco"
+    [clickHint]="'dogs.fields.photoClickHint' | transloco"
+    [formatsHint]="'dogs.fields.photoFormats' | transloco"
+    icon="pi pi-camera"
+    accept="image/jpg,image/jpeg,image/png,image/webp"
+    previewType="image"
+    [removeTooltip]="'dogs.fields.removePhoto' | transloco"
+    [existingUrl]="existingPhotoUrl()"
+    (fileChange)="photoFileChange.emit($event)" />
+
+  <app-file-upload-area
+    [label]="'dogs.fields.documentLabel' | transloco"
+    [optionalLabel]="'dogs.fields.documentOptional' | transloco"
+    [clickHint]="'dogs.fields.documentClickHint' | transloco"
+    [formatsHint]="'dogs.fields.documentFormats' | transloco"
+    icon="pi pi-file"
+    accept=".pdf,image/jpg,image/jpeg,image/png"
+    previewType="document"
+    [removeTooltip]="'dogs.fields.removeDocument' | transloco"
+    [existingUrl]="existingDocumentUrl()"
+    (fileChange)="documentFileChange.emit($event)" />
+</div>

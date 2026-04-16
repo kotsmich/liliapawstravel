@@ -21,6 +21,7 @@
   "common": {
     "save": "Αποθήκευση",
     "cancel": "Ακύρωση",
+    "back": "Πίσω",
     "delete": "Διαγραφή",
     "edit": "Επεξεργασία",
     "add": "Προσθήκη",
@@ -37,6 +38,7 @@
     "view": "Προβολή",
     "approve": "Έγκριση",
     "reject": "Απόρριψη",
+    "remove": "Αφαίρεση",
     "actions": "Ενέργειες",
     "noRecordsFound": "Δεν βρέθηκαν εγγραφές"
   },
@@ -60,6 +62,33 @@
     "editTrip": "Επεξεργασία Ταξιδιού",
     "newTrip": "Νέο Ταξίδι",
     "deleteTrip": "Διαγραφή Ταξιδιού",
+    "confirm": {
+      "deleteTrip": {
+        "header": "Διαγραφή Ταξιδιού",
+        "message": "Διαγραφή του ταξιδιού {{ route }} στις {{ date }};"
+      },
+      "approveRequest": {
+        "header": "Επιβεβαίωση Έγκρισης",
+        "message": "Έγκριση αιτήματος από {{ name }} ({{ count }} σκύλος/οι);"
+      },
+      "rejectRequest": {
+        "header": "Επιβεβαίωση Απόρριψης",
+        "message": "Απόρριψη αιτήματος από {{ name }}; Αυτό δεν μπορεί να αναιρεθεί."
+      },
+      "deleteRequest": {
+        "header": "Διαγραφή Αιτήματος",
+        "message": "Διαγραφή του αιτήματος από {{ name }};",
+        "messageApproved": "Διαγραφή του αιτήματος από {{ name }}; Οι σκύλοι που προστέθηκαν στο ταξίδι θα παραμείνουν."
+      },
+      "removeDog": {
+        "header": "Αφαίρεση Σκύλου",
+        "message": "Αφαίρεση {{ name }} από αυτό το ταξίδι; Αυτό δεν μπορεί να αναιρεθεί."
+      },
+      "removeDogs": {
+        "header": "Αφαίρεση Σκύλων",
+        "message": "Αφαίρεση {{ count }} σκύλου/ων από αυτό το ταξίδι; Αυτό δεν μπορεί να αναιρεθεί."
+      }
+    },
     "noTrips": "Δεν βρέθηκαν ταξίδια.",
     "noTripScheduled": "Δεν υπάρχει ταξίδι για {{ date }}.",
     "selectDateHint": "Επιλέξτε μια ημερομηνία στο ημερολόγιο για να δείτε λεπτομέρειες.",
@@ -157,7 +186,16 @@
       "reject": "Απόρριψη",
       "delete": "Διαγραφή",
       "editDogTooltip": "Επεξεργασία σκύλου",
-      "deleteDogTooltip": "Διαγραφή σκύλου"
+      "deleteDogTooltip": "Διαγραφή σκύλου",
+      "dog": {
+        "photoSection": "Φωτογραφία",
+        "documentSection": "Έγγραφο",
+        "detailsSection": "Στοιχεία",
+        "noPhoto": "Δεν έχει ανέβει φωτογραφία",
+        "noDocument": "Δεν έχει ανέβει έγγραφο",
+        "downloadBio": "Λήψη Bio PDF",
+        "close": "Κλείσιμο"
+      }
     }
   },
   "dogs": {
@@ -184,7 +222,17 @@
       "sizeLarge": "Μεγάλος (> 25 kg)",
       "gender": "Φύλο",
       "genderMale": "Αρσενικό",
-      "genderFemale": "Θηλυκό"
+      "genderFemale": "Θηλυκό",
+      "photoLabel": "Φωτογραφία Σκύλου",
+      "photoOptional": "(προαιρετικό)",
+      "photoClickHint": "Κλικ ή σύρτε φωτογραφία",
+      "photoFormats": "JPG, PNG, WEBP — max 5MB",
+      "documentLabel": "Έγγραφο",
+      "documentOptional": "(προαιρετικό — TRACES ή εξουσιοδότηση)",
+      "documentClickHint": "Κλικ ή σύρτε έγγραφο",
+      "documentFormats": "PDF, JPG, PNG — max 10MB",
+      "removePhoto": "Αφαίρεση φωτογραφίας",
+      "removeDocument": "Αφαίρεση εγγράφου"
     },
     "errors": {
       "required": "Υποχρεωτικό.",
@@ -203,6 +251,26 @@
     "cancelled": "Ακυρωμένα",
     "all": "Όλα",
     "noRequests": "Δεν βρέθηκαν αιτήματα.",
+    "confirm": {
+      "approve": {
+        "header": "Επιβεβαίωση Έγκρισης",
+        "message": "Έγκριση αιτήματος για ταξίδι {{ trip }} από {{ requester }};"
+      },
+      "reject": {
+        "header": "Επιβεβαίωση Απόρριψης",
+        "message": "Απόρριψη αιτήματος για ταξίδι {{ trip }} από {{ requester }}; Αυτό δεν μπορεί να αναιρεθεί."
+      },
+      "bulkApprove": {
+        "header": "Μαζική Έγκριση",
+        "message": "Έγκριση {{ count }} εκκρεμούς/ών αιτήματος/ων;",
+        "accept": "Έγκριση Όλων"
+      },
+      "bulkReject": {
+        "header": "Μαζική Απόρριψη",
+        "message": "Απόρριψη {{ count }} εκκρεμούς/ών αιτήματος/ων; Αυτό δεν μπορεί να αναιρεθεί.",
+        "accept": "Απόρριψη Όλων"
+      }
+    },
     "approve": "Έγκριση",
     "reject": "Απόρριψη",
     "view": "Προβολή",
@@ -237,7 +305,13 @@
       "approve": "Έγκριση",
       "reject": "Απόρριψη",
       "cancel": "Ακύρωση",
-      "noDogs": "Χωρίς σκύλους."
+      "noDogs": "Χωρίς σκύλους.",
+      "colPhoto": "Φωτό",
+      "colDocument": "Έγγρ.",
+      "viewPhoto": "Προβολή φωτογραφίας",
+      "viewDocument": "Προβολή εγγράφου",
+      "photoPreviewHeader": "Φωτογραφία σκύλου",
+      "documentPreviewHeader": "Έγγραφο σκύλου"
     }
   },
   "messages": {

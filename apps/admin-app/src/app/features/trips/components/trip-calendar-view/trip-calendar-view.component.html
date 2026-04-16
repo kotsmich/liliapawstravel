@@ -15,51 +15,13 @@
   <div class="trips-list flex flex-column gap-3">
     @if (selectedDate() && tripsForDate().length > 0) {
       @for (trip of tripsForDate(); track trackByTripId($index, trip)) {
-        <p-card [class]="'trip-card' + (trip.isFull || trip.spotsAvailable <= 0 || !trip.acceptingRequests ? ' event--locked' : '')">
-          <ng-template pTemplate="header">
-            <div class="trip-header">
-              <div class="trip-header__main flex flex-column gap-1">
-                <span class="trip-date-title"><i class="pi pi-calendar"></i> {{ trip.date | localDate }}</span>
-                <div class="trip-route">
-                  <strong>{{ trip.departureCity }}, {{ trip.departureCountry }}</strong>
-                  <i class="pi pi-arrow-right mx-2"></i>
-                  <strong>{{ trip.arrivalCity }}, {{ trip.arrivalCountry }}</strong>
-                </div>
-              </div>
-              <div class="flex align-items-center gap-2 flex-wrap">
-                @if (trip.isFull || trip.spotsAvailable <= 0) {
-                  <p-tag severity="danger" [value]="'trips.tags.full' | transloco" />
-                }
-                @if (!trip.isFull && trip.spotsAvailable > 0 && !trip.acceptingRequests) {
-                  <p-tag severity="warn" [value]="'trips.tags.freezed' | transloco" />
-                }
-                <p-tag [value]="trip.status" [severity]="statusSeverity(trip.status)" />
-              </div>
-            </div>
-          </ng-template>
-          <div class="trip-body">
-            <span class="dogs-count">🐶 {{ trip.totalCapacity - trip.spotsAvailable }} / {{ trip.totalCapacity }} {{ 'trips.dogs' | transloco }}</span>
-            <span class="spots-count" [class.low]="trip.spotsAvailable <= 2">
-              🐾 {{ trip.spotsAvailable }} spot{{ trip.spotsAvailable !== 1 ? 's' : '' }} remaining
-            </span>
-            @if (trip.notes) {
-              <p class="notes">{{ trip.notes }}</p>
-            }
-          </div>
-          <ng-template pTemplate="footer">
-            <div class="trip-actions">
-              <p-button [label]="'requests.details' | transloco" icon="pi pi-eye" [text]="true" size="small"
-                (onClick)="viewDetails.emit(trip)" />
-              <p-button [label]="'common.edit' | transloco" icon="pi pi-pencil" [outlined]="true" size="small"
-                (onClick)="editTrip.emit(trip)" />
-              <p-button [label]="'trips.detail.exportPdf' | transloco" icon="pi pi-file-pdf" severity="secondary" [outlined]="true" size="small"
-                [disabled]="trip.spotsAvailable === trip.totalCapacity"
-                (onClick)="exportPdf.emit(trip)" />
-              <p-button [label]="'common.delete' | transloco" icon="pi pi-trash" severity="danger" [text]="true" size="small"
-                (onClick)="deleteTrip.emit(trip)" />
-            </div>
-          </ng-template>
-        </p-card>
+        <app-trip-calendar-card
+          [trip]="trip"
+          (viewDetails)="viewDetails.emit($event)"
+          (edit)="editTrip.emit($event)"
+          (exportPdf)="exportPdf.emit($event)"
+          (delete)="deleteTrip.emit($event)"
+        />
       }
     }
 

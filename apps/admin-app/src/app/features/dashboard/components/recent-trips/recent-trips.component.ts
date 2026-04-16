@@ -1,11 +1,11 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, inject, computed } from '@angular/core';
-
+import { Component, ChangeDetectionStrategy, inject, computed, input, output } from '@angular/core';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Trip } from '@models/lib/trip.model';
 import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.interface';
+import { tripStatusSeverity, tripStatusLabel, TripStatus } from '@admin/shared/utils/status';
 import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
 
 @Component({
@@ -14,12 +14,12 @@ import { GenericTableComponent } from '@ui/lib/components/table/generic-table.co
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CardModule, ButtonModule, GenericTableComponent, TranslocoModule],
   templateUrl: './recent-trips.component.html',
-  styles: [`:host ::ng-deep .table-scroll { overflow-x: auto; }`],
+  styleUrl: './recent-trips.component.scss',
 })
 export class RecentTripsComponent {
-  @Input() trips: Trip[] = [];
-  @Output() viewTrip = new EventEmitter<Trip>();
-  @Output() navigateToAllTrips = new EventEmitter<void>();
+  readonly trips = input<Trip[]>([]);
+  readonly viewTrip = output<Trip>();
+  readonly navigateToAllTrips = output<void>();
 
   private readonly transloco = inject(TranslocoService);
   private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
@@ -55,16 +55,8 @@ export class RecentTripsComponent {
         header: this.transloco.translate('trips.table.status'),
         type: 'badge',
         badgeConfig: {
-          severity: (_, row) => {
-            const trip = row as Trip;
-            return trip.status === 'upcoming' ? 'info' : trip.status === 'completed' ? 'success' : 'secondary';
-          },
-          label: (_, row) => {
-            const status = (row as Trip).status;
-            if (status === 'upcoming') return this.transloco.translate('trips.tags.upcoming');
-            if (status === 'completed') return this.transloco.translate('trips.tags.completed');
-            return this.transloco.translate('trips.tags.inProgress');
-          },
+          severity: (_, row) => tripStatusSeverity((row as Trip).status as TripStatus),
+          label:    (_, row) => tripStatusLabel((row as Trip).status as TripStatus, this.transloco),
         },
       },
     ];

@@ -1,0 +1,11 @@
+:host ::ng-deep td.icon-btn-cell {
+  padding: 0.25rem 0.5rem;
+  text-align: center;
+  vertical-align: middle;
+
+  .p-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}

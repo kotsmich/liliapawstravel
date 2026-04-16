@@ -16,6 +16,7 @@ import { ConfirmationService } from 'primeng/api';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 import { DogFormComponent } from '@ui/lib/dog-form/dog-form.component';
 import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
 import { ToastNotificationComponent } from '@ui/lib/toast-notification/toast-notification.component';
@@ -24,6 +25,7 @@ import { RandomUtil, RandomProperty } from '@models/lib/utils';
 import { clearSelectedTrip, selectTripsAsCalendarEvents, selectTripsIsLoading } from '@user/core/store/trips';
 import { selectDate, clearDate, selectCalendarSelectedDate, selectTripForSelectedDate } from '@user/core/store/calendar';
 import { submitRequest, resetRequest, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError } from '@user/features/trip-request/store';
+import { TripsService } from '@user/services/trips.service';
 
 @Component({
   selector: 'app-trip-request',
@@ -44,9 +46,13 @@ export class TripRequestComponent {
   private readonly confirmationService = inject(ConfirmationService);
   private readonly viewportScroller = inject(ViewportScroller);
   private readonly transloco = inject(TranslocoService);
+  private readonly tripsService = inject(TripsService);
 
   showSummary = false;
   expandedIndex: number | null = 0;
+
+  readonly dogPhotoFiles = new Map<number, File>();
+  readonly dogDocumentFiles = new Map<number, File>();
 
   readonly calendarEvents  = toSignal(this.store.select(selectTripsAsCalendarEvents), { initialValue: [] as CalendarEvent[] });
   readonly selectedDateLocal = toSignal(this.store.select(selectCalendarSelectedDate), { initialValue: null as string | null });
@@ -94,6 +100,22 @@ export class TripRequestComponent {
     });
   }
 
+  onDogPhotoChange(index: number, file: File | null): void {
+    if (file) {
+      this.dogPhotoFiles.set(index, file);
+    } else {
+      this.dogPhotoFiles.delete(index);
+    }
+  }
+
+  onDogDocumentChange(index: number, file: File | null): void {
+    if (file) {
+      this.dogDocumentFiles.set(index, file);
+    } else {
+      this.dogDocumentFiles.delete(index);
+    }
+  }
+
   addDog(): void {
     this.dogs.push(this.dogGroup());
     this.expandedIndex = this.dogs.length - 1;
@@ -110,6 +132,18 @@ export class TripRequestComponent {
       accept: () => {
         this.dogs.removeAt(index);
         this.showSummary = false;
+        // Shift file maps: remove index, move higher indices down
+        this.dogPhotoFiles.delete(index);
+        this.dogDocumentFiles.delete(index);
+        const totalDogs = this.dogs.length;
+        for (let i = index; i < totalDogs; i++) {
+          const photo = this.dogPhotoFiles.get(i + 1);
+          const doc = this.dogDocumentFiles.get(i + 1);
+          photo ? this.dogPhotoFiles.set(i, photo) : this.dogPhotoFiles.delete(i);
+          doc ? this.dogDocumentFiles.set(i, doc) : this.dogDocumentFiles.delete(i);
+        }
+        this.dogPhotoFiles.delete(totalDogs);
+        this.dogDocumentFiles.delete(totalDogs);
         if (this.expandedIndex === index) {
           this.expandedIndex = null;
         } else if (this.expandedIndex !== null && this.expandedIndex > index) {
@@ -128,16 +162,43 @@ export class TripRequestComponent {
     this.showSummary = true;
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const { requesterName, requesterEmail, requesterPhone } = this.form.value;
+    const rawDogs = this.form.value.dogs as Record<string, unknown>[];
+    const dogs = await this.uploadDogFiles(rawDogs);
     this.store.dispatch(submitRequest({
-      dogs: this.form.value.dogs!,
+      dogs,
       tripId: this.selectedTrip()!.id,
       requesterName: requesterName!,
       requesterEmail: requesterEmail!,
       requesterPhone: requesterPhone!,
     }));
+  }
+
+  private async uploadDogFiles(dogs: Record<string, unknown>[]): Promise<Record<string, unknown>[]> {
+    return Promise.all(
+      dogs.map(async (dog, index) => {
+        const photoFile = this.dogPhotoFiles.get(index);
+        const docFile = this.dogDocumentFiles.get(index);
+        if (!photoFile && !docFile) return dog;
+
+        const formData = new FormData();
+        if (photoFile) formData.append('photo', photoFile);
+        if (docFile) formData.append('document', docFile);
+
+        try {
+          const urls = await firstValueFrom(this.tripsService.uploadTempDogFiles(formData));
+          return {
+            ...dog,
+            photoUrl: urls.photoUrl ?? null,
+            documentUrl: urls.documentUrl ?? null,
+          };
+        } catch {
+          return dog;
+        }
+      }),
+    );
   }
 
   onReset(): void {
@@ -146,6 +207,8 @@ export class TripRequestComponent {
     this.dogs.push(this.dogGroup());
     this.expandedIndex = 0;
     this.showSummary = false;
+    this.dogPhotoFiles.clear();
+    this.dogDocumentFiles.clear();
     this.store.dispatch(resetRequest());
     this.store.dispatch(clearSelectedTrip());
     this.store.dispatch(clearDate());

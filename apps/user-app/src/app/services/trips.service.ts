@@ -17,4 +17,13 @@ export class TripsService {
   getTripById(id: string): Observable<Trip> {
     return this.http.get<Trip>(`${this.baseUrl}/${id}`);
   }
+
+  uploadTempDogFiles(
+    formData: FormData,
+  ): Observable<{ photoUrl: string | null; documentUrl: string | null }> {
+    return this.http.post<{ photoUrl: string | null; documentUrl: string | null }>(
+      `${environment.apiUrl}/dogs/upload-temp`,
+      formData,
+    );
+  }
 }

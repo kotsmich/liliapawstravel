@@ -190,6 +190,16 @@
     "sizeMedium": "Μεσαίο (10–25 kg)",
     "sizeLarge": "Μεγάλο (> 25 kg)",
     "genderMale": "Αρσενικό",
-    "genderFemale": "Θηλυκό"
+    "genderFemale": "Θηλυκό",
+    "photoLabel": "Φωτογραφία Σκύλου",
+    "photoOptional": "(προαιρετικό)",
+    "photoClickHint": "Κλικ ή σύρτε φωτογραφία",
+    "photoFormats": "JPG, PNG, WEBP — max 5MB",
+    "documentLabel": "Έγγραφο",
+    "documentOptional": "(προαιρετικό — TRACES ή εξουσιοδότηση)",
+    "documentClickHint": "Κλικ ή σύρτε έγγραφο",
+    "documentFormats": "PDF, JPG, PNG — max 10MB",
+    "removePhoto": "Αφαίρεση φωτογραφίας",
+    "removeDocument": "Αφαίρεση εγγράφου"
   }
 }

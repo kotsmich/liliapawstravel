@@ -21,6 +21,7 @@
   "common": {
     "save": "Speichern",
     "cancel": "Abbrechen",
+    "back": "Zurück",
     "delete": "Löschen",
     "edit": "Bearbeiten",
     "add": "Hinzufügen",
@@ -37,6 +38,7 @@
     "view": "Anzeigen",
     "approve": "Genehmigen",
     "reject": "Ablehnen",
+    "remove": "Entfernen",
     "actions": "Aktionen",
     "noRecordsFound": "Keine Einträge gefunden"
   },
@@ -60,6 +62,33 @@
     "editTrip": "Reise bearbeiten",
     "newTrip": "Neue Reise",
     "deleteTrip": "Reise löschen",
+    "confirm": {
+      "deleteTrip": {
+        "header": "Reise löschen",
+        "message": "Reise {{ route }} am {{ date }} löschen?"
+      },
+      "approveRequest": {
+        "header": "Genehmigung bestätigen",
+        "message": "Anfrage von {{ name }} genehmigen ({{ count }} Hund/e)?"
+      },
+      "rejectRequest": {
+        "header": "Ablehnung bestätigen",
+        "message": "Anfrage von {{ name }} ablehnen? Dies kann nicht rückgängig gemacht werden."
+      },
+      "deleteRequest": {
+        "header": "Anfrage löschen",
+        "message": "Anfrage von {{ name }} löschen?",
+        "messageApproved": "Anfrage von {{ name }} löschen? Die zur Reise hinzugefügten Hunde bleiben erhalten."
+      },
+      "removeDog": {
+        "header": "Hund entfernen",
+        "message": "{{ name }} von dieser Reise entfernen? Dies kann nicht rückgängig gemacht werden."
+      },
+      "removeDogs": {
+        "header": "Hunde entfernen",
+        "message": "{{ count }} Hund/e von dieser Reise entfernen? Dies kann nicht rückgängig gemacht werden."
+      }
+    },
     "noTrips": "Keine Reisen gefunden.",
     "noTripScheduled": "Keine Reise für {{ date }} geplant.",
     "selectDateHint": "Datum im Kalender wählen, um Details anzuzeigen.",
@@ -157,7 +186,16 @@
       "reject": "Ablehnen",
       "delete": "Löschen",
       "editDogTooltip": "Hund bearbeiten",
-      "deleteDogTooltip": "Hund löschen"
+      "deleteDogTooltip": "Hund löschen",
+      "dog": {
+        "photoSection": "Foto",
+        "documentSection": "Dokument",
+        "detailsSection": "Details",
+        "noPhoto": "Kein Foto hochgeladen",
+        "noDocument": "Kein Dokument hochgeladen",
+        "downloadBio": "Bio als PDF herunterladen",
+        "close": "Schließen"
+      }
     }
   },
   "dogs": {
@@ -184,7 +222,17 @@
       "sizeLarge": "Groß (> 25 kg)",
       "gender": "Geschlecht",
       "genderMale": "Männlich",
-      "genderFemale": "Weiblich"
+      "genderFemale": "Weiblich",
+      "photoLabel": "Hundefoto",
+      "photoOptional": "(optional)",
+      "photoClickHint": "Klicken oder Foto hierher ziehen",
+      "photoFormats": "JPG, PNG, WEBP — max 5MB",
+      "documentLabel": "Dokument",
+      "documentOptional": "(optional — TRACES oder Genehmigung)",
+      "documentClickHint": "Klicken oder Dokument hierher ziehen",
+      "documentFormats": "PDF, JPG, PNG — max 10MB",
+      "removePhoto": "Foto entfernen",
+      "removeDocument": "Dokument entfernen"
     },
     "errors": {
       "required": "Pflichtfeld.",
@@ -203,6 +251,26 @@
     "cancelled": "Storniert",
     "all": "Alle",
     "noRequests": "Keine Anfragen gefunden.",
+    "confirm": {
+      "approve": {
+        "header": "Genehmigung bestätigen",
+        "message": "Anfrage für Reise {{ trip }} von {{ requester }} genehmigen?"
+      },
+      "reject": {
+        "header": "Ablehnung bestätigen",
+        "message": "Anfrage für Reise {{ trip }} von {{ requester }} ablehnen? Dies kann nicht rückgängig gemacht werden."
+      },
+      "bulkApprove": {
+        "header": "Massenfreigabe",
+        "message": "{{ count }} ausstehende Anfrage(n) genehmigen?",
+        "accept": "Alle genehmigen"
+      },
+      "bulkReject": {
+        "header": "Massenablehnung",
+        "message": "{{ count }} ausstehende Anfrage(n) ablehnen? Dies kann nicht rückgängig gemacht werden.",
+        "accept": "Alle ablehnen"
+      }
+    },
     "approve": "Genehmigen",
     "reject": "Ablehnen",
     "view": "Anzeigen",
@@ -237,7 +305,13 @@
       "approve": "Genehmigen",
       "reject": "Ablehnen",
       "cancel": "Abbrechen",
-      "noDogs": "Keine Hunde."
+      "noDogs": "Keine Hunde.",
+      "colPhoto": "Foto",
+      "colDocument": "Dok.",
+      "viewPhoto": "Foto anzeigen",
+      "viewDocument": "Dokument anzeigen",
+      "photoPreviewHeader": "Hundefoto",
+      "documentPreviewHeader": "Hundedokument"
     }
   },
   "messages": {

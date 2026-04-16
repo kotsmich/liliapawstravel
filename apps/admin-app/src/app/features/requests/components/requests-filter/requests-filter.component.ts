@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { BadgeModule } from 'primeng/badge';
+import { StatusTabComponent } from '@admin/shared/components/status-tab/status-tab.component';
 
 @Component({
   selector: 'app-requests-filter',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, SelectModule, TabsModule, BadgeModule, TranslocoModule],
+  imports: [FormsModule, SelectModule, TabsModule, BadgeModule, TranslocoModule, StatusTabComponent],
   templateUrl: './requests-filter.component.html',
   styles: [`
     .trip-option { display: flex; align-items: center; gap: 0.5rem; }

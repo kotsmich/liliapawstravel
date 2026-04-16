@@ -1,0 +1,21 @@
+@if (url()) {
+  @if (isPdf()) {
+    <iframe
+      class="media-frame-pdf"
+      [src]="safeUrl()"
+      [style.height]="frameHeight()"
+      title="Document">
+    </iframe>
+  } @else {
+    <div class="media-frame-image">
+      <img [src]="url()" [style.maxHeight]="imgMaxHeight()" alt="Media" />
+    </div>
+  }
+} @else {
+  <div class="media-placeholder">
+    <i [class]="'pi ' + noMediaIcon()"></i>
+    @if (noMediaLabel()) {
+      <span>{{ noMediaLabel() | transloco }}</span>
+    }
+  </div>
+}

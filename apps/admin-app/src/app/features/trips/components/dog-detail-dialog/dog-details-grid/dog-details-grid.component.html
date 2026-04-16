@@ -1,0 +1,34 @@
+<dl class="detail-grid">
+  <dt>{{ 'trips.table.name' | transloco }}</dt>
+  <dd>{{ dog().name }}</dd>
+
+  <dt>{{ 'trips.table.gender' | transloco }}</dt>
+  <dd>{{ dog().gender }}</dd>
+
+  <dt>{{ 'trips.table.size' | transloco }}</dt>
+  <dd>
+    <p-tag [value]="dog().size" [severity]="sizeSeverity(dog().size)" />
+  </dd>
+
+  <dt>{{ 'trips.table.age' | transloco }}</dt>
+  <dd>{{ dog().age }} yr</dd>
+
+  <dt>{{ 'trips.table.chipId' | transloco }}</dt>
+  <dd class="mono">{{ dog().chipId }}</dd>
+
+  <dt>{{ 'trips.table.pickup' | transloco }}</dt>
+  <dd>{{ dog().pickupLocation }}</dd>
+
+  <dt>{{ 'trips.table.drop' | transloco }}</dt>
+  <dd>{{ dog().dropLocation }}</dd>
+
+  @if (dog().requesterName) {
+    <dt>{{ 'trips.table.requester' | transloco }}</dt>
+    <dd>{{ dog().requesterName }}</dd>
+  }
+
+  @if (dog().notes) {
+    <dt>{{ 'trips.table.notes' | transloco }}</dt>
+    <dd>{{ dog().notes }}</dd>
+  }
+</dl>

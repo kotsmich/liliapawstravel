@@ -1,0 +1,34 @@
+<div [formGroup]="form()" class="row">
+  <app-status-check-field
+    sectionLabelKey="trips.form.tripCapacity"
+    controlName="isFull"
+    titleKey="trips.form.markAsFull"
+    descKey="trips.form.markAsFullDesc"
+    [checked]="!!form().get('isFull')?.value"
+    [isReadonly]="isAtCapacity()"
+    checkedModifier="danger"
+    readonlyTitleKey="trips.form.tripIsFull"
+    readonlyDescKey="trips.form.tripIsFullDesc"
+    [readonlyDescParams]="{ dogs: dogsCount(), capacity: form().get('totalCapacity')?.value }"
+    trueBadgeLabelKey="trips.form.full"
+    trueBadgeSeverity="danger"
+    trueBadgeIcon="pi pi-lock"
+    falseBadgeLabelKey="trips.form.open"
+    falseBadgeSeverity="ok"
+    falseBadgeIcon="pi pi-lock-open"
+  />
+  <app-status-check-field
+    sectionLabelKey="trips.form.requestAcceptance"
+    controlName="acceptingRequests"
+    titleKey="trips.form.acceptingRequests"
+    descKey="trips.form.acceptingRequestsDesc"
+    [checked]="!!form().get('acceptingRequests')?.value"
+    uncheckedModifier="warn"
+    trueBadgeLabelKey="trips.form.open"
+    trueBadgeSeverity="ok"
+    trueBadgeIcon="pi pi-check-circle"
+    falseBadgeLabelKey="trips.form.freezed"
+    falseBadgeSeverity="warn"
+    falseBadgeIcon="pi pi-ban"
+  />
+</div>

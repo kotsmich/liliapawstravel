@@ -1,29 +1,27 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { LocalDatePipe } from '@ui/lib/pipes/local-date.pipe';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { Store } from '@ngrx/store';
-import { ConfirmationService } from 'primeng/api';
 import { of, switchMap } from 'rxjs';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
-import { loadTrips, loadTripById, deleteTrip, updateDog, deleteDog, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents, selectTripsForSelectedDate, selectTripById } from '@admin/features/trips/store';
+import { loadTrips, loadTripById, deleteTrip, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents, selectTripsForSelectedDate, selectTripById } from '@admin/features/trips/store';
 import { selectDate, selectCalendarSelectedDate } from '@admin/core/store/calendar';
 import { loadRequests, approveRequest, rejectRequest, deleteRequest, selectRequestsByTripId } from '@admin/features/requests/store';
 import { LoadingSpinnerComponent } from '@ui/lib/loading-spinner/loading-spinner.component';
 import { Trip } from '@models/lib/trip.model';
-import { Dog } from '@models/lib/dog.model';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { sanitizeHtml } from '@admin/shared/utils/sanitize';
+import { ConfirmActionService } from '@admin/shared/services/confirm-action.service';
 import { TripCalendarViewComponent } from '../components/trip-calendar-view/trip-calendar-view.component';
 import { AllTripsTabComponent } from '../components/all-trips-tab/all-trips-tab.component';
 import { TripDetailDialogComponent } from '../components/trip-detail-dialog/trip-detail-dialog.component';
-import { DogFormDialogComponent } from '../components/dog-form-dialog/dog-form-dialog.component';
-import { ExportService } from '../../../services/export.service';
+import { TripManifestExportService } from '../../../services/trip-manifest-export.service';
 
 @Component({
   selector: 'app-trip-list-page',
@@ -36,7 +34,6 @@ import { ExportService } from '../../../services/export.service';
     TripCalendarViewComponent,
     AllTripsTabComponent,
     TripDetailDialogComponent,
-    DogFormDialogComponent,
     TranslocoModule,
   ],
   providers: [LocalDatePipe],
@@ -46,37 +43,36 @@ import { ExportService } from '../../../services/export.service';
 export class TripsListComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly router = inject(Router);
-  private readonly confirmationService = inject(ConfirmationService);
-  private readonly exportService = inject(ExportService);
+  private readonly confirm = inject(ConfirmActionService);
+  private readonly transloco = inject(TranslocoService);
+  private readonly exportService = inject(TripManifestExportService);
   private readonly localDate = inject(LocalDatePipe);
 
   trips$ = this.store.select(selectAllTrips);
   loading$ = this.store.select(selectTripsIsLoading);
   calendarEvents$ = this.store.select(selectTripsAsCalendarEvents);
-
   tripsForDate$ = this.store.select(selectTripsForSelectedDate);
 
-readonly selectedDate = toSignal(this.store.select(selectCalendarSelectedDate), { initialValue: null });
-  activeTab: 'calendar' | 'all' = 'calendar';
+  readonly selectedDate = toSignal(this.store.select(selectCalendarSelectedDate), { initialValue: null });
+  readonly activeTab = signal<'calendar' | 'all'>('calendar');
 
-  // Trip detail dialog
-  detailDialogVisible = false;
-  detailHeader = 'Trip Details';
-  detailActiveTab = 'dogs';
-  detailTripId = signal<string | null>(null);
+  readonly detailDialogVisible = signal(false);
+  readonly detailActiveTab = signal('dogs');
+  readonly detailTripId = signal<string | null>(null);
 
   readonly detailTrip = toSignal(toObservable(this.detailTripId).pipe(
     switchMap((id) => id ? this.store.select(selectTripById(id)) : of(null))
   ), { initialValue: null as Trip | null });
 
+  readonly detailHeader = computed(() => {
+    const trip = this.detailTrip();
+    if (!trip) return '';
+    return `${trip.departureCity} → ${trip.arrivalCity}  ·  ${this.localDate.transform(trip.date)}`;
+  });
+
   readonly detailRequests = toSignal(toObservable(this.detailTripId).pipe(
     switchMap((id) => id ? this.store.select(selectRequestsByTripId(id)) : of([]))
   ), { initialValue: [] as TripRequest[] });
-
-  // Dog edit dialog (within trip detail)
-  dogEditVisible = false;
-  dogEditValues: Dog | null = null;
-  dogEditTripId: string | null = null;
 
   ngOnInit(): void {
     this.store.dispatch(loadTrips());
@@ -97,25 +93,22 @@ readonly selectedDate = toSignal(this.store.select(selectCalendarSelectedDate), 
   }
 
   deleteTrip(trip: Trip): void {
-    this.confirmationService.confirm({
-      header: 'Delete Trip',
-      message: `Delete the trip ${trip.departureCity} → ${trip.arrivalCity} on ${trip.date}?`,
-      acceptLabel: 'Delete',
-      rejectLabel: 'Cancel',
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => {
-        this.store.dispatch(deleteTrip({ id: trip.id }));
-      },
+    const route = `${sanitizeHtml(trip.departureCity)} → ${sanitizeHtml(trip.arrivalCity)}`;
+    this.confirm.confirm({
+      header:      this.transloco.translate('trips.confirm.deleteTrip.header'),
+      message:     this.transloco.translate('trips.confirm.deleteTrip.message', { route, date: trip.date }),
+      acceptLabel: this.transloco.translate('common.delete'),
+      severity:    'danger',
+      accept: () => this.store.dispatch(deleteTrip({ id: trip.id })),
     });
   }
 
   openDetail(trip: Trip): void {
-    this.detailHeader = `${trip.departureCity} → ${trip.arrivalCity}  ·  ${this.localDate.transform(trip.date)}`;
-    this.detailActiveTab = 'dogs';
+    this.detailActiveTab.set('dogs');
     this.detailTripId.set(trip.id);
     this.store.dispatch(loadTripById({ id: trip.id }));
     this.store.dispatch(loadRequests());
-    this.detailDialogVisible = true;
+    this.detailDialogVisible.set(true);
   }
 
   onExportPdfFromCard(trip: Trip): void {
@@ -124,75 +117,43 @@ readonly selectedDate = toSignal(this.store.select(selectCalendarSelectedDate), 
 
   closeDetail(): void {
     this.detailTripId.set(null);
-    this.dogEditVisible = false;
-  }
-
-  onEditDog(event: { dog: Dog; tripId: string }): void {
-    this.dogEditValues = { ...event.dog };
-    this.dogEditTripId = event.tripId;
-    this.dogEditVisible = true;
-  }
-
-  onSaveDog(dogs: Dog[]): void {
-    if (!this.dogEditTripId || !dogs.length) return;
-    this.store.dispatch(updateDog({ tripId: this.dogEditTripId, dog: dogs[0] }));
-    this.dogEditVisible = false;
-  }
-
-  onCancelDog(): void {
-    this.dogEditVisible = false;
-    this.dogEditValues = null;
-  }
-
-  onDeleteDog(event: { dog: Dog; tripId: string }): void {
-    this.confirmationService.confirm({
-      header: 'Delete Dog',
-      message: `Remove <strong>${sanitizeHtml(event.dog.name)}</strong> from this trip? This cannot be undone.`,
-      acceptLabel: 'Delete',
-      rejectLabel: 'Cancel',
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => {
-        this.store.dispatch(deleteDog({ tripId: event.tripId, dogId: event.dog.id }));
-      },
-    });
   }
 
   approveRequestInDetail(req: TripRequest): void {
-    this.confirmationService.confirm({
-      header: 'Confirm Approval',
-      message: `Approve request by <strong>${sanitizeHtml(req.requesterName)}</strong> (${req.dogs.length} dog${req.dogs.length !== 1 ? 's' : ''})?`,
-      acceptLabel: 'Approve',
-      rejectLabel: 'Back',
-      acceptButtonStyleClass: 'p-button-success',
-      accept: () => {
-        this.store.dispatch(approveRequest({ requestId: req.id, tripId: req.tripId! }));
-      },
+    this.confirm.confirm({
+      header:      this.transloco.translate('trips.confirm.approveRequest.header'),
+      message:     this.transloco.translate('trips.confirm.approveRequest.message', {
+        name:  sanitizeHtml(req.requesterName),
+        count: req.dogs.length,
+      }),
+      acceptLabel: this.transloco.translate('common.approve'),
+      rejectLabel: this.transloco.translate('common.back'),
+      severity:    'success',
+      accept: () => this.store.dispatch(approveRequest({ requestId: req.id, tripId: req.tripId! })),
     });
   }
 
   rejectRequestInDetail(req: TripRequest): void {
-    this.confirmationService.confirm({
-      header: 'Confirm Rejection',
-      message: `Reject request by <strong>${sanitizeHtml(req.requesterName)}</strong>? This cannot be undone.`,
-      acceptLabel: 'Reject',
-      rejectLabel: 'Back',
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => {
-        this.store.dispatch(rejectRequest({ id: req.id }));
-      },
+    this.confirm.confirm({
+      header:      this.transloco.translate('trips.confirm.rejectRequest.header'),
+      message:     this.transloco.translate('trips.confirm.rejectRequest.message', { name: sanitizeHtml(req.requesterName) }),
+      acceptLabel: this.transloco.translate('common.reject'),
+      rejectLabel: this.transloco.translate('common.back'),
+      severity:    'danger',
+      accept: () => this.store.dispatch(rejectRequest({ id: req.id })),
     });
   }
 
   deleteRequestInDetail(req: TripRequest): void {
-    this.confirmationService.confirm({
-      header: 'Delete Request',
-      message: `Delete the request from <strong>${sanitizeHtml(req.requesterName)}</strong>?${req.status === 'approved' ? ' The dogs added to the trip will remain.' : ''}`,
-      acceptLabel: 'Delete',
-      rejectLabel: 'Cancel',
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => {
-        this.store.dispatch(deleteRequest({ requestId: req.id }));
-      },
+    const msgKey = req.status === 'approved'
+      ? 'trips.confirm.deleteRequest.messageApproved'
+      : 'trips.confirm.deleteRequest.message';
+    this.confirm.confirm({
+      header:      this.transloco.translate('trips.confirm.deleteRequest.header'),
+      message:     this.transloco.translate(msgKey, { name: sanitizeHtml(req.requesterName) }),
+      acceptLabel: this.transloco.translate('common.delete'),
+      severity:    'danger',
+      accept: () => this.store.dispatch(deleteRequest({ requestId: req.id })),
     });
   }
 }

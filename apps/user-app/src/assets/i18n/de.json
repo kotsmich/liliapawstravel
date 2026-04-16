@@ -190,6 +190,16 @@
     "sizeMedium": "Mittel (10–25 kg)",
     "sizeLarge": "Groß (> 25 kg)",
     "genderMale": "Männlich",
-    "genderFemale": "Weiblich"
+    "genderFemale": "Weiblich",
+    "photoLabel": "Hundefoto",
+    "photoOptional": "(optional)",
+    "photoClickHint": "Klicken oder Foto hierher ziehen",
+    "photoFormats": "JPG, PNG, WEBP — max 5MB",
+    "documentLabel": "Dokument",
+    "documentOptional": "(optional — TRACES oder Genehmigung)",
+    "documentClickHint": "Klicken oder Dokument hierher ziehen",
+    "documentFormats": "PDF, JPG, PNG — max 10MB",
+    "removePhoto": "Foto entfernen",
+    "removeDocument": "Dokument entfernen"
   }
 }

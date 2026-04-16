@@ -1,0 +1,20 @@
+<div class="note-editor">
+  <h3>{{ 'requests.detail.internalNote' | transloco }}</h3>
+  <p class="note-hint">{{ 'requests.detail.noteHint' | transloco }}</p>
+  <textarea
+    pTextarea
+    [value]="noteText()"
+    (input)="noteText.set($any($event.target).value)"
+    rows="3"
+    [placeholder]="'requests.detail.notePlaceholder' | transloco">
+  </textarea>
+  <div class="save-btn">
+    <p-button
+      [label]="'requests.detail.saveNote' | transloco"
+      icon="pi pi-save"
+      severity="secondary"
+      [outlined]="true"
+      size="small"
+      (onClick)="noteSaved.emit(noteText())" />
+  </div>
+</div>

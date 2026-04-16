@@ -1,0 +1,89 @@
+<p-accordion value="trip-info" styleClass="form-info-accordion">
+  <p-accordion-panel value="trip-info">
+    <p-accordion-header>
+      <span>{{ 'trips.form.title' | transloco }}</span>
+      <span class="dogs-counter">{{ dogsCount() }} / {{ form().get('totalCapacity')?.value ?? 0 }} {{ 'trips.dogs' | transloco }}</span>
+    </p-accordion-header>
+    <p-accordion-content>
+      <div class="accordion-body" [formGroup]="form()">
+        <div class="details-grid">
+          <!-- Left column: Date + route -->
+          <div class="details-col">
+            <div class="field fw">
+              <p-ifta-label>
+                <p-datepicker inputId="date" formControlName="date" [minDate]="isEdit() ? null : today()"
+                  dateFormat="dd/mm/yy" [showTime]="false" [showIcon]="true" styleClass="w-full" />
+                <label for="date">{{ 'trips.form.date' | transloco }}</label>
+              </p-ifta-label>
+              @if (form().get('date')?.touched && form().get('date')?.invalid) {
+                <small class="p-error">{{ 'trips.form.invalidDate' | transloco }}</small>
+              }
+            </div>
+            <div class="row">
+              <app-form-field
+                controlName="departureCountry"
+                labelKey="trips.form.departureCountry"
+                errorKey="trips.form.required"
+                placeholder="Romania" />
+              <app-form-field
+                controlName="departureCity"
+                labelKey="trips.form.departureCity"
+                errorKey="trips.form.required"
+                placeholder="Bucharest" />
+            </div>
+            <div class="row">
+              <app-form-field
+                controlName="arrivalCountry"
+                labelKey="trips.form.arrivalCountry"
+                errorKey="trips.form.required"
+                placeholder="Netherlands" />
+              <app-form-field
+                controlName="arrivalCity"
+                labelKey="trips.form.arrivalCity"
+                errorKey="trips.form.required"
+                placeholder="Amsterdam" />
+            </div>
+          </div>
+
+          <!-- Right column: Status + Capacity + Notes -->
+          <div class="details-col">
+            <div class="row">
+              <div class="field fw">
+                <p-ifta-label>
+                  <p-select inputId="status" formControlName="status" [options]="statuses()"
+                    optionLabel="label" optionValue="value" styleClass="w-full" />
+                  <label for="status">{{ 'trips.form.status' | transloco }}</label>
+                </p-ifta-label>
+              </div>
+              <div class="field fw">
+                <p-ifta-label>
+                  <p-inputnumber inputId="totalCapacity" formControlName="totalCapacity"
+                    [min]="1" [showButtons]="true" styleClass="w-full" />
+                  <label for="totalCapacity">{{ 'trips.form.totalCapacity' | transloco }}</label>
+                </p-ifta-label>
+                @if (capacityWarning()) {
+                  <small class="p-warn">{{ capacityWarning() }}</small>
+                }
+                @if (!capacityWarning() && form().get('totalCapacity')?.touched && form().get('totalCapacity')?.invalid) {
+                  <small class="p-error">{{ 'trips.form.mustBeAtLeast1' | transloco }}</small>
+                }
+              </div>
+            </div>
+            <div class="field fw notes-field">
+              <p-ifta-label>
+                <textarea pTextarea id="notes" formControlName="notes"></textarea>
+                <label for="notes">{{ 'trips.form.notesOptional' | transloco }}</label>
+              </p-ifta-label>
+            </div>
+          </div>
+        </div>
+
+        <app-trip-status-checks
+          [form]="form()"
+          [isAtCapacity]="isAtCapacity()"
+          [capacityWarning]="capacityWarning()"
+          [dogsCount]="dogsCount()" />
+      </div>
+    </p-accordion-content>
+  </p-accordion-panel>
+</p-accordion>

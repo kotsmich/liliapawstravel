@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { LocalDatePipe } from '@ui/lib/pipes/local-date.pipe';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Store } from '@ngrx/store';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { loadTrips, selectAllTrips } from '@admin/features/trips/store';
 import { sanitizeHtml } from '@admin/shared/utils/sanitize';
 import {
@@ -22,6 +22,7 @@ import { resetRequests } from '@admin/core/store/notifications';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { Trip } from '@models/lib/trip.model';
 import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
+import { ConfirmActionService } from '@admin/shared/services/confirm-action.service';
 import { RequestsFilterComponent } from './components/requests-filter/requests-filter.component';
 import { RequestsTableComponent } from './components/requests-table/requests-table.component';
 import { RequestDetailDialogComponent } from './components/request-detail-dialog/request-detail-dialog.component';
@@ -45,7 +46,8 @@ import { RequestDetailDialogComponent } from './components/request-detail-dialog
 export class RequestsListComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly messageService = inject(MessageService);
-  private readonly confirmationService = inject(ConfirmationService);
+  private readonly confirm = inject(ConfirmActionService);
+  private readonly transloco = inject(TranslocoService);
   private readonly localDate = inject(LocalDatePipe);
 
   loading$ = this.store.select(selectRequestsIsLoading);
@@ -64,7 +66,6 @@ export class RequestsListComponent implements OnInit {
     return this.allRequests().find((r) => r.id === id) ?? null;
   });
 
-  // Filter requests by selected trip only (no tab filter) — used for badge counts
   private readonly filteredByTrip = computed(() => {
     const requests = this.allRequests();
     const tripId = this.selectedTripId();
@@ -120,14 +121,17 @@ export class RequestsListComponent implements OnInit {
   }
 
   approve(): void {
-    if (!this.selectedRequest()?.tripId) return;
-    const req = this.selectedRequest()!;
-    this.confirmationService.confirm({
-      header: 'Confirm Approval',
-      message: `Approve the request for trip <strong>${sanitizeHtml(this.tripDate(req.tripId))}</strong> by <strong>${sanitizeHtml(req.requesterName)}</strong>?`,
-      acceptLabel: 'Approve',
-      rejectLabel: 'Back',
-      acceptButtonStyleClass: 'p-button-success',
+    const req = this.selectedRequest();
+    if (!req?.tripId) return;
+    this.confirm.confirm({
+      header:      this.transloco.translate('requests.confirm.approve.header'),
+      message:     this.transloco.translate('requests.confirm.approve.message', {
+        trip:      sanitizeHtml(this.tripDate(req.tripId)),
+        requester: sanitizeHtml(req.requesterName),
+      }),
+      acceptLabel: this.transloco.translate('common.approve'),
+      rejectLabel: this.transloco.translate('common.back'),
+      severity:    'success',
       accept: () => {
         this.store.dispatch(approveRequest({ requestId: req.id, tripId: req.tripId! }));
         this.dialogVisible.set(false);
@@ -136,14 +140,17 @@ export class RequestsListComponent implements OnInit {
   }
 
   reject(): void {
-    if (!this.selectedRequest()) return;
-    const req = this.selectedRequest()!;
-    this.confirmationService.confirm({
-      header: 'Confirm Rejection',
-      message: `Reject the request for trip <strong>${sanitizeHtml(this.tripDate(req.tripId))}</strong> by <strong>${sanitizeHtml(req.requesterName)}</strong>? This cannot be undone.`,
-      acceptLabel: 'Reject',
-      rejectLabel: 'Back',
-      acceptButtonStyleClass: 'p-button-danger',
+    const req = this.selectedRequest();
+    if (!req) return;
+    this.confirm.confirm({
+      header:      this.transloco.translate('requests.confirm.reject.header'),
+      message:     this.transloco.translate('requests.confirm.reject.message', {
+        trip:      sanitizeHtml(this.tripDate(req.tripId)),
+        requester: sanitizeHtml(req.requesterName),
+      }),
+      acceptLabel: this.transloco.translate('common.reject'),
+      rejectLabel: this.transloco.translate('common.back'),
+      severity:    'danger',
       accept: () => {
         this.store.dispatch(rejectRequest({ id: req.id }));
         this.dialogVisible.set(false);
@@ -170,12 +177,11 @@ export class RequestsListComponent implements OnInit {
       this.messageService.add({ severity: 'warn', summary: 'Nothing to approve', detail: 'Select pending requests assigned to a trip.' });
       return;
     }
-    this.confirmationService.confirm({
-      header: 'Bulk Approve',
-      message: `Approve <strong>${sanitizeHtml(String(requests.length))}</strong> pending request(s)?`,
-      acceptLabel: 'Approve All',
-      rejectLabel: 'Cancel',
-      acceptButtonStyleClass: 'p-button-success',
+    this.confirm.confirm({
+      header:      this.transloco.translate('requests.confirm.bulkApprove.header'),
+      message:     this.transloco.translate('requests.confirm.bulkApprove.message', { count: requests.length }),
+      acceptLabel: this.transloco.translate('requests.confirm.bulkApprove.accept'),
+      severity:    'success',
       accept: () => this.store.dispatch(bulkApproveRequests({ ids: requests.map((r) => r.id) })),
     });
   }
@@ -185,12 +191,11 @@ export class RequestsListComponent implements OnInit {
       this.messageService.add({ severity: 'warn', summary: 'Nothing to reject', detail: 'Select pending requests to reject.' });
       return;
     }
-    this.confirmationService.confirm({
-      header: 'Bulk Reject',
-      message: `Reject <strong>${sanitizeHtml(String(requests.length))}</strong> pending request(s)? This cannot be undone.`,
-      acceptLabel: 'Reject All',
-      rejectLabel: 'Cancel',
-      acceptButtonStyleClass: 'p-button-danger',
+    this.confirm.confirm({
+      header:      this.transloco.translate('requests.confirm.bulkReject.header'),
+      message:     this.transloco.translate('requests.confirm.bulkReject.message', { count: requests.length }),
+      acceptLabel: this.transloco.translate('requests.confirm.bulkReject.accept'),
+      severity:    'danger',
       accept: () => this.store.dispatch(bulkRejectRequests({ ids: requests.map((r) => r.id) })),
     });
   }

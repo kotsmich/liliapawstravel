@@ -1,15 +1,15 @@
-@if (selection.length > 0) {
+@if (selection().length > 0) {
   <div class="bulk-bar flex align-items-center gap-2 p-3 mb-2 border-round surface-100">
-    <span class="text-sm font-medium mr-2">{{ 'requests.selected' | transloco: { count: selection.length } }}</span>
-    @if (pendingSelected > 0) {
+    <span class="text-sm font-medium mr-2">{{ 'requests.selected' | transloco: { count: selection().length } }}</span>
+    @if (pendingSelected() > 0) {
       <p-button
-        [label]="'requests.approveSelected' | transloco: { count: pendingSelected }"
+        [label]="'requests.approveSelected' | transloco: { count: pendingSelected() }"
         icon="pi pi-check"
         severity="success"
         size="small"
         (onClick)="onBulkApprove()" />
       <p-button
-        [label]="'requests.rejectSelected' | transloco: { count: pendingSelected }"
+        [label]="'requests.rejectSelected' | transloco: { count: pendingSelected() }"
         icon="pi pi-times"
         severity="danger"
         [outlined]="true"
@@ -27,13 +27,13 @@
 }
 <div class="table-scroll">
   <app-generic-table
-    [data]="requests"
+    [data]="requests()"
     [columns]="columns()"
     [actions]="actions()"
     [config]="tableConfig()"
-    [loading]="loading"
-    [selection]="$any(selection)"
-    [rowSelectable]="$any(rowSelectable)"
+    [loading]="loading()"
+    [selection]="$any(selection())"
+    [rowSelectable]="rowSelectable"
     (selectionChange)="selectionChange.emit($any($event))"
     (rowClicked)="rowClicked.emit($event)">
   </app-generic-table>

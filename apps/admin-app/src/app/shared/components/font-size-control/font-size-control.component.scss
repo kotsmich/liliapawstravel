@@ -1,0 +1,112 @@
+.fs-wrap {
+  position: relative;
+}
+
+.fs-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 199;
+}
+
+.fs-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.15s, background 0.15s;
+
+  &:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.fs-panel {
+  position: fixed;
+  top: 52px;
+  right: 10px;
+  width: 260px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-top: none;
+  border-radius: 0 0 0 8px;
+  padding: 16px 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  z-index: 200;
+  font-size: 16px; /* immune to root font-size changes */
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  &__label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__row {
+    gap: 8px;
+  }
+
+  &__icon {
+    font-size: 10px;
+    color: #64748b;
+    flex-shrink: 0;
+  }
+
+  &__track {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
+    background: #475569;
+    outline: none;
+    cursor: pointer;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: #f0a05a;
+      cursor: pointer;
+      transition: background 0.15s;
+
+      &:hover { background: #e07b54; }
+    }
+
+    &::-moz-range-thumb {
+      width: 13px;
+      height: 13px;
+      border: none;
+      border-radius: 50%;
+      background: #f0a05a;
+      cursor: pointer;
+    }
+  }
+
+  &__reset {
+    align-self: flex-end;
+    background: none;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    color: #64748b;
+    font-size: 11px;
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+
+    &:hover {
+      color: #cbd5e1;
+      border-color: #64748b;
+    }
+  }
+}

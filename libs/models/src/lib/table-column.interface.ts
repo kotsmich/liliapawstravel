@@ -5,11 +5,18 @@ export interface TableColumn<T = unknown> {
   header: string;
   sortable?: boolean;
   width?: string;
-  type?: 'text' | 'date' | 'badge' | 'avatar' | 'actions' | 'template';
+  type?: 'text' | 'date' | 'badge' | 'avatar' | 'actions' | 'template' | 'icon-button';
   dateFormat?: string;
   badgeConfig?: {
     severity: (value: unknown, row: T) => 'success' | 'warning' | 'danger' | 'info' | 'secondary' | 'warn';
     label?: (value: unknown, row: T) => string;
+  };
+  iconButtonConfig?: {
+    icon: string;
+    tooltip?: string;
+    severity?: 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contrast';
+    disabled?: (row: T) => boolean;
+    action: (row: T) => void;
   };
   template?: TemplateRef<unknown>;
   formatter?: (value: unknown, row: T) => string;

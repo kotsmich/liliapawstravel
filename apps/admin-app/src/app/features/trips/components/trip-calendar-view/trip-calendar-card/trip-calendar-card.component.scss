@@ -1,0 +1,50 @@
+.trip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+
+  &__main {
+    gap: 0.2rem;
+  }
+}
+
+.trip-date-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-primary, #e07b54);
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  i { font-size: 0.75rem; }
+}
+
+.trip-route {
+  align-items: center;
+  gap: 0.5rem;
+  strong { color: var(--color-slate-text); font-size: 0.95rem; }
+}
+
+.trip-body {
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+
+  .dogs-count { color: var(--color-slate-mid); }
+  .spots-count {
+    color: var(--color-slate-mid);
+    &.low { color: #dc2626; font-weight: 600; }
+  }
+  .notes { color: var(--color-slate-mid); font-style: italic; width: 100%; }
+}
+
+.trip-actions { gap: 0.5rem; flex-wrap: wrap; }
+
+.event--locked {
+  opacity: 0.65;
+  filter: grayscale(0.35);
+}

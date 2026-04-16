@@ -5,9 +5,10 @@ import { Store } from '@ngrx/store';
 import { filter, firstValueFrom, map } from 'rxjs';
 import { Trip } from '@models/lib/trip.model';
 import { loadTripById, selectAllTrips } from '@admin/features/trips/store';
+import { BRAND_COLOR, PAGE_MARGIN, drawBrandedHeader } from './pdf-export.utils';
 
 @Injectable({ providedIn: 'root' })
-export class ExportService {
+export class TripManifestExportService {
   private readonly store = inject(Store);
 
   async exportTripById(tripId: string): Promise<void> {
@@ -22,28 +23,11 @@ export class ExportService {
   }
 
   exportTripManifestPdf(trip: Trip): void {
-    const doc = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    // Branded header bar — compact (≈50px / ~18mm)
-    doc.setFillColor(224, 123, 84);
-    doc.rect(0, 0, pageWidth, 12, 'F');
+    drawBrandedHeader(doc, 'Trip Dog Manifest');
 
-    // Company name + title on same line
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Lilia Paws Travel', 14, 8);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Trip Dog Manifest', 14 + 44, 8);
-
-    // Trip info block — single line, small font
     doc.setTextColor(60, 60, 60);
     doc.setFontSize(7.5);
 
@@ -53,57 +37,32 @@ export class ExportService {
       ` → ` +
       `${trip.arrivalCity}, ${trip.arrivalCountry}`;
 
-    doc.text(`Date: ${tripDate}   Route: ${route}`, 14, 17);
+    doc.text(`Date: ${tripDate}   Route: ${route}`, PAGE_MARGIN, 17);
     doc.text(
       `Dogs: ${trip.dogs?.length ?? 0}/${trip.totalCapacity}   Status: ${trip.status.toUpperCase()}   Generated: ${new Date().toLocaleDateString('el-GR')}`,
-      14, 22
+      PAGE_MARGIN, 22
     );
 
-    // Divider line
-    doc.setDrawColor(224, 123, 84);
+    doc.setDrawColor(...BRAND_COLOR);
     doc.setLineWidth(0.5);
-    doc.line(14, 25, pageWidth - 14, 25);
+    doc.line(PAGE_MARGIN, 25, pageWidth - PAGE_MARGIN, 25);
 
-    // Dogs table
     autoTable(doc, {
       startY: 28,
-      head: [[
-        '#',
-        'Dog Name',
-        'Size',
-        'Age',
-        'Microchip ID',
-        'Pickup Location',
-        'Drop Location',
-        'Notes'
-      ]],
+      head: [['#', 'Dog Name', 'Size', 'Age', 'Microchip ID', 'Pickup Location', 'Drop Location', 'Notes']],
       body: (trip.dogs ?? []).map((dog, index) => [
         index + 1,
         dog.name ?? '',
-        dog.size
-          ? dog.size.charAt(0).toUpperCase() + dog.size.slice(1)
-          : '',
+        dog.size ? dog.size.charAt(0).toUpperCase() + dog.size.slice(1) : '',
         dog.age ?? '',
         dog.chipId ?? '',
         dog.pickupLocation ?? '',
         dog.dropLocation ?? '',
-        dog.notes ?? ''
+        dog.notes ?? '',
       ]),
-      headStyles: {
-        fillColor: [224, 123, 84],
-        textColor: [255, 255, 255],
-        fontStyle: 'bold',
-        fontSize: 8,
-        halign: 'left'
-      },
-      bodyStyles: {
-        fontSize: 8,
-        textColor: [50, 50, 50],
-        valign: 'middle'
-      },
-      alternateRowStyles: {
-        fillColor: [255, 248, 240]
-      },
+      headStyles:         { fillColor: BRAND_COLOR, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 8, halign: 'left' },
+      bodyStyles:         { fontSize: 8, textColor: [50, 50, 50], valign: 'middle' },
+      alternateRowStyles: { fillColor: [255, 248, 240] },
       columnStyles: {
         0: { cellWidth: 10, halign: 'center' },
         1: { cellWidth: 24 },
@@ -112,9 +71,9 @@ export class ExportService {
         4: { cellWidth: 28 },
         5: { cellWidth: 30 },
         6: { cellWidth: 30 },
-        7: { cellWidth: 40 }
+        7: { cellWidth: 40 },
       },
-      margin: { left: 14, right: 14 },
+      margin: { left: PAGE_MARGIN, right: PAGE_MARGIN },
       didDrawPage: (d) => {
         doc.setFontSize(7);
         doc.setTextColor(150, 150, 150);
@@ -124,19 +83,13 @@ export class ExportService {
           doc.internal.pageSize.getHeight() - 5,
           { align: 'center' }
         );
-      }
+      },
     });
 
-    // Empty state message if no dogs
     if (!trip.dogs?.length) {
       doc.setFontSize(10);
       doc.setTextColor(150, 150, 150);
-      doc.text(
-        'No dogs assigned to this trip yet.',
-        pageWidth / 2,
-        80,
-        { align: 'center' }
-      );
+      doc.text('No dogs assigned to this trip yet.', pageWidth / 2, 80, { align: 'center' });
     }
 
     const safeName = route.replace(/[^a-z0-9]/gi, '-').toLowerCase();

@@ -190,6 +190,16 @@
     "sizeMedium": "Medium (10–25 kg)",
     "sizeLarge": "Large (> 25 kg)",
     "genderMale": "Male",
-    "genderFemale": "Female"
+    "genderFemale": "Female",
+    "photoLabel": "Dog Photo",
+    "photoOptional": "(optional)",
+    "photoClickHint": "Click or drag photo",
+    "photoFormats": "JPG, PNG, WEBP — max 5MB",
+    "documentLabel": "Document",
+    "documentOptional": "(optional — TRACES or authorization)",
+    "documentClickHint": "Click or drag document",
+    "documentFormats": "PDF, JPG, PNG — max 10MB",
+    "removePhoto": "Remove photo",
+    "removeDocument": "Remove document"
   }
 }

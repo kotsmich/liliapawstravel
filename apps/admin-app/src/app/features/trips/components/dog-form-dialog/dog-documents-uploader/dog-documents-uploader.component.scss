@@ -1,0 +1,9 @@
+:host { display: block; }
+
+.upload-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,16 @@
+<div class="flex align-items-center gap-2 flex-wrap">
+  @if (trip().isFull || trip().spotsAvailable <= 0) {
+    <p-tag severity="danger" [value]="'trips.tags.full' | transloco" />
+  } @else if (!trip().acceptingRequests) {
+    <p-tag severity="warn" [value]="'trips.tags.freezed' | transloco" />
+  } @else {
+    <p-tag severity="success" [value]="'trips.tags.open' | transloco" />
+  }
+  @if (trip().status === 'upcoming') {
+    <p-tag severity="info" [value]="'trips.tags.upcoming' | transloco" />
+  } @else if (trip().status === 'completed') {
+    <p-tag severity="success" [value]="'trips.tags.completed' | transloco" />
+  } @else {
+    <p-tag severity="secondary" [value]="'trips.tags.inProgress' | transloco" />
+  }
+</div>

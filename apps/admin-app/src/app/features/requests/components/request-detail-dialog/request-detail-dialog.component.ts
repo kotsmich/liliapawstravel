@@ -1,15 +1,18 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnChanges, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed, input, output, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { LocalDatePipe } from '@ui/lib/pipes/local-date.pipe';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
-import { TextareaModule } from 'primeng/textarea';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { Trip } from '@models/lib/trip.model';
 import { TableColumn, TableConfig } from '@models/lib/table-column.interface';
+import { requestStatusSeverity, requestStatusLabel, RequestStatus } from '@admin/shared/utils/status';
 import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
+import { MediaViewerComponent } from '../../../../shared/components/media-viewer/media-viewer.component';
+import { InternalNoteEditorComponent } from './internal-note-editor/internal-note-editor.component';
 
 type RequestDog = TripRequest['dogs'][number];
 
@@ -17,24 +20,35 @@ type RequestDog = TripRequest['dogs'][number];
   selector: 'app-request-detail-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, DialogModule, ButtonModule, TagModule, TextareaModule, GenericTableComponent, TranslocoModule],
+  imports: [DatePipe, DialogModule, ButtonModule, TagModule, GenericTableComponent, TranslocoModule, MediaViewerComponent, InternalNoteEditorComponent],
+  providers: [LocalDatePipe],
   templateUrl: './request-detail-dialog.component.html',
   styleUrl: './request-detail-dialog.component.scss',
 })
-export class RequestDetailDialogComponent implements OnChanges {
-  @Input() visible = false;
-  @Input() request: TripRequest | null = null;
-  @Input() trips: Trip[] = [];
+export class RequestDetailDialogComponent {
+  readonly visible = input(false);
+  readonly request = input<TripRequest | null>(null);
+  readonly trips = input<Trip[]>([]);
 
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() approve = new EventEmitter<void>();
-  @Output() reject = new EventEmitter<void>();
-  @Output() cancel = new EventEmitter<void>();
-  @Output() saveNote = new EventEmitter<string>();
+  readonly visibleChange = output<boolean>();
+  readonly approve = output<void>();
+  readonly reject = output<void>();
+  readonly cancel = output<void>();
+  readonly saveNote = output<string>();
 
-  noteText = '';
+  readonly requestStatusSeverity = requestStatusSeverity;
+  readonly requestStatusLabel = (status: RequestStatus) => requestStatusLabel(status, this.transloco);
+
+  readonly previewUrl = signal<string | null>(null);
+  readonly previewHeader = signal('');
+  readonly previewVisible = signal(false);
+
+  readonly isDocPreview = computed(() =>
+    (this.previewUrl() ?? '').toLowerCase().includes('.pdf'),
+  );
 
   private readonly transloco = inject(TranslocoService);
+  private readonly localDate = inject(LocalDatePipe);
   private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
   readonly dogConfig = computed((): TableConfig => {
@@ -49,6 +63,38 @@ export class RequestDetailDialogComponent implements OnChanges {
   readonly dogColumns = computed((): TableColumn<RequestDog>[] => {
     this._t();
     return [
+      {
+        field: 'photoUrl',
+        header: this.transloco.translate('requests.detail.colPhoto'),
+        width: '3rem',
+        type: 'icon-button',
+        iconButtonConfig: {
+          icon: 'pi pi-image',
+          tooltip: this.transloco.translate('requests.detail.viewPhoto'),
+          disabled: (dog) => !dog.photoUrl,
+          action: (dog) => {
+            this.previewUrl.set(dog.photoUrl ?? null);
+            this.previewHeader.set(this.transloco.translate('requests.detail.photoPreviewHeader'));
+            this.previewVisible.set(true);
+          },
+        },
+      },
+      {
+        field: 'documentUrl',
+        header: this.transloco.translate('requests.detail.colDocument'),
+        width: '3rem',
+        type: 'icon-button',
+        iconButtonConfig: {
+          icon: 'pi pi-file',
+          tooltip: this.transloco.translate('requests.detail.viewDocument'),
+          disabled: (dog) => !dog.documentUrl,
+          action: (dog) => {
+            this.previewUrl.set(dog.documentUrl ?? null);
+            this.previewHeader.set(this.transloco.translate('requests.detail.documentPreviewHeader'));
+            this.previewVisible.set(true);
+          },
+        },
+      },
       { field: 'name', header: this.transloco.translate('trips.table.name') },
       { field: 'size', header: this.transloco.translate('trips.table.size') },
       { field: 'gender', header: this.transloco.translate('trips.table.gender') },
@@ -59,35 +105,9 @@ export class RequestDetailDialogComponent implements OnChanges {
     ];
   });
 
-  ngOnChanges(): void {
-    if (this.request) {
-      this.noteText = this.request.adminNote ?? '';
-    }
-  }
-
-  statusSeverity(status: TripRequest['status']): 'warn' | 'success' | 'danger' | 'secondary' {
-    if (status === 'pending') return 'warn';
-    if (status === 'approved') return 'success';
-    if (status === 'rejected') return 'danger';
-    return 'secondary'; // cancelled
-  }
-
-  statusLabel(status: TripRequest['status']): string {
-    if (status === 'pending') return this.transloco.translate('requests.pending');
-    if (status === 'approved') return this.transloco.translate('requests.approved');
-    if (status === 'rejected') return this.transloco.translate('requests.rejected');
-    return this.transloco.translate('requests.cancelled');
-  }
-
-  fmtDate(date: string): string {
-    if (!date) return '—';
-    const [y, m, d] = date.split('-');
-    return `${d}/${m}/${y}`;
-  }
-
   tripDate(tripId: string | undefined): string {
     if (!tripId) return '—';
-    const trip = this.trips.find((t) => t.id === tripId);
-    return trip ? this.fmtDate(trip.date) : tripId;
+    const trip = this.trips().find((t) => t.id === tripId);
+    return trip ? this.localDate.transform(trip.date) : tripId;
   }
 }

@@ -1,0 +1,41 @@
+.media-frame-image {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-ground);
+
+  img {
+    display: block;
+    width: 100%;
+    object-fit: contain;
+  }
+}
+
+.media-frame-pdf {
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  border: 1px solid var(--surface-border);
+}
+
+.media-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 140px;
+  border-radius: 8px;
+  border: 1px dashed var(--surface-border);
+  color: var(--text-color-secondary);
+
+  i {
+    font-size: 2rem;
+    opacity: 0.4;
+  }
+
+  span {
+    font-size: 0.8rem;
+  }
+}

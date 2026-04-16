@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnChanges, SimpleChanges, ChangeDetectionStrategy, inject, input, output } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject, switchMap, startWith, map } from 'rxjs';
@@ -24,19 +24,21 @@ import { DogFieldsComponent } from './dog-fields.component';
   styleUrls: ['./dog-form-dialog.component.scss'],
 })
 export class DogFormDialogComponent implements OnChanges {
-  @Input() tripId: string | null = null;
+  readonly tripId = input<string | null>(null);
   /** Dog to edit. Null opens in add mode (accordion, multiple dogs). */
-  @Input() dog: Dog | null = null;
-  @Input() visible = false;
+  readonly dog = input<Dog | null>(null);
+  readonly visible = input(false);
   /** Set by parent while dispatching so the save button shows a spinner. */
-  @Input() saving = false;
+  readonly saving = input(false);
   /** Requestors from trip.requesters — used to populate the requestor dropdown. */
-  @Input() requestors: TripRequester[] = [];
+  readonly requestors = input<TripRequester[]>([]);
 
-  @Output() visibleChange = new EventEmitter<boolean>();
+  readonly visibleChange = output<boolean>();
   /** Edit mode emits a single-element array; add mode emits all dogs. */
-  @Output() dogSaved = new EventEmitter<Dog[]>();
-  @Output() cancelled = new EventEmitter<void>();
+  readonly dogSaved = output<Dog[]>();
+  readonly cancelled = output<void>();
+  readonly photoFileChange = output<File | null>();
+  readonly documentFileChange = output<File | null>();
 
   /** Single form used in edit mode. */
   editForm!: FormGroup;
@@ -52,7 +54,7 @@ export class DogFormDialogComponent implements OnChanges {
     { initialValue: false },
   );
 
-  get isNewDog(): boolean { return this.dog === null; }
+  get isNewDog(): boolean { return this.dog() === null; }
   get panelForms(): FormGroup[] { return (this.addForms?.controls ?? []) as FormGroup[]; }
 
   activeAccordionPanels: string[] = ['0'];
@@ -71,15 +73,21 @@ export class DogFormDialogComponent implements OnChanges {
       this.activeAccordionPanels = ['0'];
       this.activeForm$.next(this.addForms);
     } else {
-      this.editForm = this.buildDogGroup(this.dog!);
+      this.editForm = this.buildDogGroup(this.dog()!);
       this.activeForm$.next(this.editForm);
     }
   }
 
   private static requesterValidator(group: AbstractControl): ValidationErrors | null {
-    const hasExisting = !!group.get('requestId')?.value;
+    const hasExisting = !!group.get('requestId')?.value || !!group.get('requesterName')?.value?.trim();
     const hasNew = !!group.get('newRequesterName')?.value?.trim();
     return hasExisting || hasNew ? null : { requesterRequired: true };
+  }
+
+  static requesterKey(d?: Dog | null): string | null {
+    if (d?.requestId) return d.requestId;
+    if (d?.requesterName) return `__m__${d.requesterName}`;
+    return null;
   }
 
   private buildDogGroup(d?: Dog | null): FormGroup {
@@ -94,6 +102,7 @@ export class DogFormDialogComponent implements OnChanges {
       notes:          [d?.notes          ?? RandomUtil.pick(RandomProperty.notes)],
       requesterName:    [d?.requesterName  ?? RandomUtil.pick(RandomProperty.requesterNames)],
       requestId:        [d?.requestId      ?? null],
+      requesterKey:     [DogFormDialogComponent.requesterKey(d)],
       newRequesterName: [null],
     }, { validators: DogFormDialogComponent.requesterValidator });
   }
@@ -117,14 +126,20 @@ export class DogFormDialogComponent implements OnChanges {
       this.addForms.markAllAsTouched();
       if (this.addForms.invalid) return;
 
-      this.dogSaved.emit(this.addForms.value as Dog[]);
+      const dogs = (this.addForms.value as Array<{ newRequesterName: string | null; requesterName: string | null; requesterKey: string | null; [key: string]: unknown }>)
+        .map(({ newRequesterName, requesterKey: _rk, ...rest }) => ({
+          ...rest,
+          requesterName: newRequesterName?.trim() || rest.requesterName,
+        }));
+      this.dogSaved.emit(dogs as Dog[]);
       this.visibleChange.emit(false);
     } else {
       this.editForm.markAllAsTouched();
       if (this.editForm.invalid) return;
 
-      const { newRequesterName: _nr, ...editValues } = this.editForm.value;
-      this.dogSaved.emit([{ id: this.dog!.id, ...editValues } as Dog]);
+      const { newRequesterName, requesterKey: _rk, ...editValues } = this.editForm.value;
+      const resolvedRequesterName = (newRequesterName as string | null)?.trim() || editValues.requesterName;
+      this.dogSaved.emit([{ id: this.dog()!.id, ...editValues, requesterName: resolvedRequesterName } as Dog]);
       this.visibleChange.emit(false);
     }
   }

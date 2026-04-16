@@ -42,6 +42,10 @@ export class DogsService {
     return this.http.post<{ photoUrl: string }>(`${this.baseUrl}/${id}/photo`, formData);
   }
 
+  uploadDogDocument(id: string, formData: FormData): Observable<{ documentUrl: string }> {
+    return this.http.post<{ documentUrl: string }>(`${this.baseUrl}/${id}/document`, formData);
+  }
+
   verifyDocument(
     dogId: string,
     docId: string,

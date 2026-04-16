@@ -1,0 +1,38 @@
+<div class="field fw">
+  <label class="field-section-label">{{ sectionLabelKey() | transloco }}</label>
+
+  @if (isReadonly()) {
+    <!-- Read-only display: shown when the field is forced into a locked state (e.g. at-capacity). -->
+    <div class="status-display status-display--danger">
+      <div class="status-display__body">
+        <span class="status-display__title">
+          <i class="pi pi-lock"></i> {{ effectiveReadonlyTitleKey() | transloco }}
+        </span>
+        @if (readonlyDescKey()) {
+          <span class="status-display__desc">
+            {{ readonlyDescKey() | transloco: readonlyDescParams() }}
+          </span>
+        }
+      </div>
+      <span class="status-check__badge status-check__badge--danger">{{ trueBadgeLabelKey() | transloco }}</span>
+    </div>
+  } @else {
+    <!-- Interactive checkbox row. -->
+    <label
+      [for]="controlName()"
+      class="status-check"
+      [ngClass]="activeModifier() ? 'status-check--' + activeModifier() : null">
+      <p-checkbox [formControlName]="controlName()" [binary]="true" [inputId]="controlName()" />
+      <div class="status-check__body">
+        <span class="status-check__title">{{ titleKey() | transloco }}</span>
+        <span class="status-check__desc">{{ descKey() | transloco }}</span>
+      </div>
+      <span class="status-check__badge" [ngClass]="'status-check__badge--' + activeBadgeSeverity()">
+        @if (activeBadgeIcon()) {
+          <i [class]="activeBadgeIcon()"></i>
+        }
+        {{ activeBadgeLabelKey() | transloco }}
+      </span>
+    </label>
+  }
+</div>

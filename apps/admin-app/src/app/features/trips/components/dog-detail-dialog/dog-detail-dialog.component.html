@@ -1,0 +1,54 @@
+<p-dialog
+  [header]="header()"
+  [visible]="visible()"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(96vw, 1100px)', height: '70vh' }"
+  [contentStyle]="{ 'overflow-y': 'auto', 'flex': '1' }">
+
+  @if (dog(); as d) {
+    <div class="dog-layout">
+
+      <!-- ── Photo ──────────────────────────────────────────── -->
+      <section class="panel photo-panel">
+        <h3 class="panel-title">{{ 'trips.detail.dog.photoSection' | transloco }}</h3>
+        <app-media-viewer
+          [url]="d.photoUrl ?? null"
+          noMediaIcon="pi-image"
+          noMediaLabel="trips.detail.dog.noPhoto" />
+      </section>
+
+      <!-- ── Details ───────────────────────────────────────── -->
+      <section class="panel details-panel">
+        <h3 class="panel-title">{{ 'trips.detail.dog.detailsSection' | transloco }}</h3>
+        <app-dog-details-grid [dog]="d" />
+      </section>
+
+      <!-- ── Document ──────────────────────────────────────── -->
+      <section class="panel doc-panel">
+        <h3 class="panel-title">{{ 'trips.detail.dog.documentSection' | transloco }}</h3>
+        <app-media-viewer
+          [url]="d.documentUrl ?? null"
+          noMediaIcon="pi-file"
+          noMediaLabel="trips.detail.dog.noDocument"
+          frameHeight="380px" />
+      </section>
+
+    </div>
+  }
+
+  <ng-template pTemplate="footer">
+    <p-button
+      [label]="'trips.detail.dog.downloadBio' | transloco"
+      icon="pi pi-download"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="onDownloadBio()" />
+    <p-button
+      [label]="'trips.detail.dog.close' | transloco"
+      icon="pi pi-times"
+      severity="secondary"
+      (onClick)="visibleChange.emit(false)" />
+  </ng-template>
+</p-dialog>

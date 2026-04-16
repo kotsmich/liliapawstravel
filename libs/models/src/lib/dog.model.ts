@@ -8,6 +8,9 @@ export interface Dog {
   pickupLocation: string;
   dropLocation: string;
   notes: string;
+  photoUrl?: string | null;
+  documentUrl?: string | null;
+  documentType?: string | null;
   requesterName?: string | null;
   requesterEmail?: string | null;
   requesterPhone?: string | null;

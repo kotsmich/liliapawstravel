@@ -204,7 +204,12 @@
                                 [text]="true" size="small" (onClick)="expandedIndex = null" />
                             </div>
                           </ng-template>
-                          <ui-dog-form [formGroup]="$any(dogs.at(i))" [index]="i" [canRemove]="false" />
+                          <ui-dog-form
+                            [formGroup]="$any(dogs.at(i))"
+                            [index]="i"
+                            [canRemove]="false"
+                            (photoFileChange)="onDogPhotoChange(i, $event)"
+                            (documentFileChange)="onDogDocumentChange(i, $event)" />
                           @if (dogs.length > 1) {
                             <ng-template pTemplate="footer">
                               <p-button icon="pi pi-trash" [label]="'tripRequest.removeDog' | transloco"

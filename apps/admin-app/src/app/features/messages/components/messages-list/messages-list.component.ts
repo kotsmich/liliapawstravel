@@ -1,13 +1,12 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, inject, computed } from '@angular/core';
-
+import { Component, ChangeDetectionStrategy, inject, computed, input, output } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ContactSubmission } from '@models/lib/contact-form.model';
 import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.interface';
 import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
+import { ConfirmActionService } from '@admin/shared/services/confirm-action.service';
 
 @Component({
   selector: 'app-messages-list',
@@ -15,14 +14,14 @@ import { GenericTableComponent } from '@ui/lib/components/table/generic-table.co
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ButtonModule, ConfirmDialogModule, GenericTableComponent, TranslocoModule],
   templateUrl: './messages-list.component.html',
-  styles: [],
+  styleUrl: './messages-list.component.scss',
 })
 export class MessagesListComponent {
-  @Input() messages: ContactSubmission[] = [];
-  @Output() rowClicked = new EventEmitter<ContactSubmission>();
-  @Output() deleteClicked = new EventEmitter<ContactSubmission>();
+  readonly messages = input<ContactSubmission[]>([]);
+  readonly rowClicked = output<ContactSubmission>();
+  readonly deleteClicked = output<ContactSubmission>();
 
-  private readonly confirmationService = inject(ConfirmationService);
+  private readonly confirm = inject(ConfirmActionService);
   private readonly transloco = inject(TranslocoService);
   private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
@@ -67,12 +66,12 @@ export class MessagesListComponent {
         icon: 'pi pi-trash',
         tooltip: this.transloco.translate('messages.table.deleteTooltip'),
         severity: 'danger',
-        action: (msg) => this.confirmationService.confirm({
-          header: this.transloco.translate('messages.confirmDelete.header'),
-          message: this.transloco.translate('messages.confirmDelete.message', { name: msg.name }),
+        action: (msg) => this.confirm.confirm({
+          header:      this.transloco.translate('messages.confirmDelete.header'),
+          message:     this.transloco.translate('messages.confirmDelete.message', { name: msg.name }),
           acceptLabel: this.transloco.translate('messages.confirmDelete.accept'),
           rejectLabel: this.transloco.translate('messages.confirmDelete.reject'),
-          acceptButtonStyleClass: 'p-button-danger',
+          severity:    'danger',
           accept: () => this.deleteClicked.emit(msg),
         }),
       },

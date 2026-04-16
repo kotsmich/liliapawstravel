@@ -1,0 +1,18 @@
+<div class="page-header flex align-items-center">
+  <p-button icon="pi pi-arrow-left" [text]="true" [rounded]="true" (onClick)="cancel.emit()" />
+  <h1>{{ title() }}</h1>
+  <div class="header-actions">
+    <p-button
+      type="button"
+      [label]="'trips.form.cancel' | transloco"
+      [outlined]="true"
+      (onClick)="cancel.emit()" />
+    <p-button
+      type="button"
+      [label]="saveLabel()"
+      icon="pi pi-save"
+      [loading]="isSaving()"
+      [disabled]="isSaving()"
+      (onClick)="save.emit()" />
+  </div>
+</div>

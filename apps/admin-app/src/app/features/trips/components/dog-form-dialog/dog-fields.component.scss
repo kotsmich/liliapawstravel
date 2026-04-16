@@ -1,0 +1,15 @@
+:host { display: block; }
+
+.dlg-form { display: flex; flex-direction: column; }
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 1rem;
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.field { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.75rem; }
+.fw { width: 100%; }
+.p-error { font-size: 0.75rem; color: var(--color-error-alt); }
+

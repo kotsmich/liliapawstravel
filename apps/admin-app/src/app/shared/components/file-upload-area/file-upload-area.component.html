@@ -1,0 +1,43 @@
+<div class="upload-block">
+  <span class="upload-label">
+    {{ label() }}
+    @if (optionalLabel()) {
+      <span class="upload-optional">{{ optionalLabel() }}</span>
+    }
+  </span>
+
+  @if (!hasPreview()) {
+    <div class="upload-area"
+         (click)="fileInput.click()"
+         (dragover)="$event.preventDefault()"
+         (drop)="onDrop($event)"
+         role="button" tabindex="0"
+         (keydown.enter)="fileInput.click()">
+      <i [class]="icon() + ' upload-area__icon'"></i>
+      <p class="upload-area__hint">{{ clickHint() }}</p>
+      <small class="upload-area__hint">{{ formatsHint() }}</small>
+    </div>
+  }
+
+  @if (previewType() === 'image' && previewUrl()) {
+    <div class="photo-preview">
+      <img [src]="previewUrl()" alt="preview" class="file-thumb" />
+      <p-button icon="pi pi-times" [text]="true" severity="danger" [rounded]="true"
+        size="small" [pTooltip]="removeTooltip()"
+        (onClick)="removeFile()" />
+    </div>
+  }
+
+  @if (previewType() === 'document' && fileName()) {
+    <div class="document-preview">
+      <i class="pi pi-file-pdf document-preview__icon"></i>
+      <span class="document-preview__name">{{ fileName() }}</span>
+      <p-button icon="pi pi-times" [text]="true" severity="danger" [rounded]="true"
+        size="small" [pTooltip]="removeTooltip()"
+        (onClick)="removeFile()" />
+    </div>
+  }
+
+  <input #fileInput type="file" [accept]="accept()" class="file-input-hidden"
+         (change)="onFileSelected($event)" />
+</div>

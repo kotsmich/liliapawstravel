@@ -41,7 +41,7 @@
         <td (click)="$event.stopPropagation()"><p-tableCheckbox [value]="row" [disabled]="rowSelectable ? !rowSelectable(row) : false" /></td>
       }
       @for (col of columns; track col.field) {
-        <td>
+        <td [class.icon-btn-cell]="col.type === 'icon-button'">
           @switch (col.type) {
             @case ('badge') {
               <p-tag
@@ -58,6 +58,17 @@
                 [icon]="!getCellValue(row, col.field) ? 'pi pi-user' : ''"
                 shape="circle">
               </p-avatar>
+            }
+            @case ('icon-button') {
+              <p-button
+                [icon]="col.iconButtonConfig?.icon ?? ''"
+                [pTooltip]="col.iconButtonConfig?.tooltip ?? ''"
+                [severity]="$any(col.iconButtonConfig?.severity ?? 'secondary')"
+                [disabled]="col.iconButtonConfig?.disabled?.(row) ?? false"
+                [text]="true"
+                size="small"
+                (onClick)="col.iconButtonConfig?.action(row)">
+              </p-button>
             }
             @case ('template') {
               <ng-container

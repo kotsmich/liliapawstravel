@@ -23,45 +23,9 @@
 <p-tabs [value]="activeTab" (valueChange)="tabChanged.emit($event?.toString() ?? activeTab)">
   <p-tablist>
     <p-tab value="all">{{ 'requests.all' | transloco }}</p-tab>
-    <p-tab value="pending">
-      {{ 'requests.pending' | transloco }}
-      @if (pendingCount > 0) {
-        <p-badge
-          [value]="pendingCount.toString()"
-          severity="warn"
-          class="tab-badge"
-          />
-      }
-    </p-tab>
-    <p-tab value="approved">
-      {{ 'requests.approved' | transloco }}
-      @if (approvedCount > 0) {
-        <p-badge
-          [value]="approvedCount.toString()"
-          severity="success"
-          class="tab-badge"
-          />
-      }
-    </p-tab>
-    <p-tab value="rejected">
-      {{ 'requests.rejected' | transloco }}
-      @if (rejectedCount > 0) {
-        <p-badge
-          [value]="rejectedCount.toString()"
-          severity="danger"
-          class="tab-badge"
-          />
-      }
-    </p-tab>
-    <p-tab value="cancelled">
-      {{ 'requests.cancelled' | transloco }}
-      @if (cancelledCount > 0) {
-        <p-badge
-          [value]="cancelledCount.toString()"
-          severity="secondary"
-          class="tab-badge"
-          />
-      }
-    </p-tab>
+    <app-status-tab value="pending"   labelKey="requests.pending"   [count]="pendingCount"   severity="warn"      />
+    <app-status-tab value="approved"  labelKey="requests.approved"  [count]="approvedCount"  severity="success"   />
+    <app-status-tab value="rejected"  labelKey="requests.rejected"  [count]="rejectedCount"  severity="danger"    />
+    <app-status-tab value="cancelled" labelKey="requests.cancelled" [count]="cancelledCount" severity="secondary" />
   </p-tablist>
 </p-tabs>

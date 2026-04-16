@@ -3,8 +3,8 @@
   [visible]="visible()"
   (visibleChange)="visibleChange.emit($event)"
   [modal]="true"
-  [style]="{ width: '90vw', maxWidth: '900px' }"
-  [contentStyle]="{ overflowX: 'auto' }"
+  [style]="{ width: '95vw', height: '95vh' }"
+  [contentStyle]="{ overflowX: 'auto', overflowY: 'auto', height: '100%' }"
   [draggable]="false"
   (onHide)="onHide()">
 
@@ -12,7 +12,7 @@
     <p-tabs [value]="activeTab()" (valueChange)="tabChanged.emit($event?.toString() ?? activeTab())">
       <p-tablist>
         <p-tab value="dogs">{{ 'trips.detail.dogsTab' | transloco: { count: t.dogs?.length ?? 0 } }}</p-tab>
-        <p-tab value="requests">{{ 'trips.detail.requestersTab' | transloco: { count: requests().length } }}</p-tab>
+        <p-tab value="requests">{{ 'trips.detail.requestersTab' | transloco: { count: (t.requesters?.length ?? 0) } }}</p-tab>
       </p-tablist>
     </p-tabs>
 
@@ -29,56 +29,41 @@
             (onClick)="onExportPdf()">
           </p-button>
         </div>
-        <app-generic-table
-          [data]="t.dogs ?? []"
+        <app-dogs-table
+          [dogs]="indexedDogs()"
           [columns]="dogColumns()"
-          [actions]="dogActions()"
-          [config]="tableConfig()">
-        </app-generic-table>
+          [actions]="dogManager.dogActions()"
+          [config]="tableConfig"
+          (rowClicked)="openDogDetail($event)">
+        </app-dogs-table>
       </div>
     }
 
     @if (activeTab() === 'requests') {
       <div class="tab-content">
-        @if (requests().length > 0) {
-          <p-accordion [multiple]="true">
-            @for (req of requests(); track req.id) {
-              <p-accordion-panel [value]="req.id">
-                <p-accordion-header>
-                  <div class="req-header flex align-items-center flex-wrap flex-1">
-                    <span class="req-name">{{ req.requesterName }}</span>
-                    <span class="req-meta">{{ req.requesterEmail }}</span>
-                    <span class="req-meta">{{ req.submittedAt | date:'dd/MM/yyyy HH:mm' }}</span>
-                    <p-tag [value]="req.status" [severity]="requestStatusSeverity(req.status)" />
-                  </div>
-                </p-accordion-header>
-                <p-accordion-content>
-                  <app-generic-table
-                    [data]="req.dogs"
-                    [columns]="requestDogColumns()"
-                    [config]="requestDogConfig">
-                  </app-generic-table>
-                  <div class="req-actions flex align-items-center gap-2">
-                    @if (req.status === 'pending') {
-                      <p-button [label]="'trips.detail.approve' | transloco" icon="pi pi-check" severity="success" size="small"
-                        (onClick)="approveRequest.emit(req)" />
-                      <p-button [label]="'trips.detail.reject' | transloco" icon="pi pi-times" severity="danger" size="small"
-                        (onClick)="rejectRequest.emit(req)" />
-                    } @else {
-                      <p-tag [value]="req.status" [severity]="requestStatusSeverity(req.status)" />
-                      <p-button [label]="'trips.detail.delete' | transloco" icon="pi pi-trash" severity="danger" [text]="true" size="small"
-                        (onClick)="deleteRequest.emit(req)" />
-                    }
-                  </div>
-                </p-accordion-content>
-              </p-accordion-panel>
-            }
-          </p-accordion>
-        }
-        @if (requests().length === 0) {
+        @if ((t.requesters?.length ?? 0) === 0) {
           <app-empty-state icon="pi pi-inbox" [title]="'trips.detail.noRequests' | transloco"></app-empty-state>
+        } @else {
+          <app-dogs-by-requestor
+            [requestors]="dogManager.tripRequestors()"
+            [dogsPerRequestor]="dogManager.dogsPerRequestor()"
+            [dogColumns]="dogColumns()"
+            [dogActions]="dogManager.dogActions()"
+            [tableConfig]="tableConfig"
+            [requests]="requests()"
+            (rowClicked)="openDogDetail($event)" />
         }
       </div>
     }
   }
 </p-dialog>
+
+<app-dog-detail-dialog
+  [visible]="dogDetailVisible()"
+  [dog]="selectedDog()"
+  (visibleChange)="dogDetailVisible.set($event)">
+</app-dog-detail-dialog>
+
+<p-confirmdialog />
+
+<app-dog-form-dialog-wrapper [tripId]="trip()?.id ?? null" />

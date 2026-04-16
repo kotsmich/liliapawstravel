@@ -1,0 +1,26 @@
+.detail-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 1rem;
+  margin: 0;
+
+  dt {
+    font-size: 0.78rem;
+    color: var(--text-color-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+    align-self: center;
+  }
+
+  dd {
+    font-size: 0.875rem;
+    color: var(--text-color);
+    margin: 0;
+    align-self: center;
+  }
+
+  .mono {
+    font-family: monospace;
+    font-size: 0.8rem;
+  }
+}

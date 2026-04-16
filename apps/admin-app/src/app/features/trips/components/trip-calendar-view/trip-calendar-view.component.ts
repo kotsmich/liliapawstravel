@@ -1,18 +1,18 @@
 import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { TranslocoModule } from '@jsverse/transloco';
 import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
 import { LocalDatePipe } from '@ui/lib/pipes/local-date.pipe';
+import { ButtonModule } from 'primeng/button';
+import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
 import { Trip } from '@models/lib/trip.model';
 import { CalendarEvent } from '@models/lib/calendar-event.model';
+import { TripCalendarCardComponent } from './trip-calendar-card/trip-calendar-card.component';
 
 @Component({
   selector: 'app-trip-calendar-view',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardModule, ButtonModule, TagModule, TripCalendarComponent, LocalDatePipe, TranslocoModule],
+  imports: [CardModule, ButtonModule, TripCalendarComponent, LocalDatePipe, TranslocoModule, TripCalendarCardComponent],
   templateUrl: './trip-calendar-view.component.html',
   styleUrls: ['./trip-calendar-view.component.scss'],
 })
@@ -35,7 +35,4 @@ export class TripCalendarViewComponent {
     if (trip) this.editTrip.emit(trip);
   }
 
-  statusSeverity(status: Trip['status']): 'info' | 'success' | 'secondary' {
-    return status === 'upcoming' ? 'info' : status === 'completed' ? 'success' : 'secondary';
-  }
 }

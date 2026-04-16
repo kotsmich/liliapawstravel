@@ -1,5 +1,6 @@
 :host ::ng-deep .p-dialog {
-  width: min(92vw, 860px) !important;
+  width: 95vw !important;
+  height: 95vh !important;
   max-width: none !important;
 }
 
@@ -76,33 +77,6 @@
     overflow-x: auto;
     border-radius: 8px;
     border: 1px solid var(--surface-border);
-  }
-}
-
-.note-section {
-  h3 {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-color-secondary);
-    margin: 0 0 0.35rem;
-  }
-
-  .note-hint {
-    font-size: 0.78rem;
-    color: var(--text-color-secondary);
-    margin-bottom: 0.6rem;
-  }
-
-  textarea {
-    width: 100%;
-    resize: vertical;
-    font-size: 0.875rem;
-  }
-
-  .save-btn {
-    margin-top: 0.5rem;
   }
 }
 
