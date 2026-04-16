@@ -129,6 +129,8 @@
     "removeDog": "Remove Dog",
     "addAnotherDog": "Add Another Dog",
     "submissionFailed": "Submission failed: {{ error }}",
+    "uploadFailedTitle": "Photo Upload Failed",
+    "uploadFailedDetail": "The photo could not be uploaded (file may be too large). Your request will be submitted without it.",
     "summary": "Summary",
     "preview": "Preview",
     "submit": "Submit Request",

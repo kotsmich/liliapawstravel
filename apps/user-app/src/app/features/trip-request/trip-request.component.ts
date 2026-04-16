@@ -12,7 +12,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { Store } from '@ngrx/store';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs/operators';
@@ -44,6 +44,7 @@ export class TripRequestComponent {
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store);
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly messageService = inject(MessageService);
   private readonly viewportScroller = inject(ViewportScroller);
   private readonly transloco = inject(TranslocoService);
   private readonly tripsService = inject(TripsService);
@@ -195,6 +196,11 @@ export class TripRequestComponent {
             documentUrl: urls.documentUrl ?? null,
           };
         } catch {
+          this.messageService.add({
+            severity: 'warn',
+            summary: this.transloco.translate('tripRequest.uploadFailedTitle'),
+            detail: this.transloco.translate('tripRequest.uploadFailedDetail'),
+          });
           return dog;
         }
       }),

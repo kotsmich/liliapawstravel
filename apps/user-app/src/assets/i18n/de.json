@@ -129,6 +129,8 @@
     "removeDog": "Hund entfernen",
     "addAnotherDog": "Weiteren Hund hinzufügen",
     "submissionFailed": "Einreichung fehlgeschlagen: {{ error }}",
+    "uploadFailedTitle": "Foto-Upload fehlgeschlagen",
+    "uploadFailedDetail": "Das Foto konnte nicht hochgeladen werden (Datei möglicherweise zu groß). Ihre Anfrage wird ohne Foto eingereicht.",
     "summary": "Zusammenfassung",
     "preview": "Vorschau",
     "submit": "Anfrage einreichen",
