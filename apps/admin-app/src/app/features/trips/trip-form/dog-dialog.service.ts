@@ -15,18 +15,34 @@ export class DogDialogService {
 
   private pendingPhotoFile: File | null = null;
   private pendingDocumentFile: File | null = null;
+  private photoRemoved = false;
+  private documentRemoved = false;
 
-  setPendingPhotoFile(file: File | null): void { this.pendingPhotoFile = file; }
-  setPendingDocumentFile(file: File | null): void { this.pendingDocumentFile = file; }
+  setPendingPhotoFile(file: File | null): void {
+    this.pendingPhotoFile = file;
+    this.photoRemoved = file === null;
+  }
+
+  setPendingDocumentFile(file: File | null): void {
+    this.pendingDocumentFile = file;
+    this.documentRemoved = file === null;
+  }
 
   /**
-   * Returns and clears both pending files so the caller can upload them.
-   * Calling this a second time always returns nulls.
+   * Returns and clears both pending files (and removal flags) so the caller can
+   * upload or delete them. Calling this a second time always returns nulls/false.
    */
-  takePendingFiles(): { photo: File | null; document: File | null } {
-    const result = { photo: this.pendingPhotoFile, document: this.pendingDocumentFile };
+  takePendingFiles(): { photo: File | null; document: File | null; photoRemoved: boolean; documentRemoved: boolean } {
+    const result = {
+      photo: this.pendingPhotoFile,
+      document: this.pendingDocumentFile,
+      photoRemoved: this.photoRemoved,
+      documentRemoved: this.documentRemoved,
+    };
     this.pendingPhotoFile = null;
     this.pendingDocumentFile = null;
+    this.photoRemoved = false;
+    this.documentRemoved = false;
     return result;
   }
 
@@ -49,10 +65,12 @@ export class DogDialogService {
     this.editingIndex = null;
   }
 
-  /** Cancel without saving — also discards any staged files. */
+  /** Cancel without saving — also discards any staged files and removal flags. */
   cancel(): void {
     this.pendingPhotoFile = null;
     this.pendingDocumentFile = null;
+    this.photoRemoved = false;
+    this.documentRemoved = false;
     this.close();
   }
 }

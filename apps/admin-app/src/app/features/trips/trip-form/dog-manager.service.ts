@@ -131,8 +131,17 @@ export class DogManagerService {
 
   private saveEditedDog(dog: Dog, index: number): void {
     if (this.isEdit && this.editId && dog.id) {
-      this.store.dispatch(updateDog({ tripId: this.editId, dog }));
-      this.uploadPendingFiles(dog.id);
+      const { photo, document, photoRemoved, documentRemoved } = this.dialog.takePendingFiles();
+      const existing = this.dialog.selectedDog();
+
+      const dogToUpdate: Dog = {
+        ...dog,
+        photoUrl:    photoRemoved    ? null : (existing?.photoUrl    ?? dog.photoUrl    ?? null),
+        documentUrl: documentRemoved ? null : (existing?.documentUrl ?? dog.documentUrl ?? null),
+      };
+
+      this.store.dispatch(updateDog({ tripId: this.editId, dog: dogToUpdate }));
+      this.uploadNewFiles(dog.id, photo, document);
     }
     (this.dogsArray.at(index) as FormGroup).patchValue(dog);
   }
@@ -150,8 +159,7 @@ export class DogManagerService {
     }
   }
 
-  private uploadPendingFiles(dogId: string): void {
-    const { photo, document } = this.dialog.takePendingFiles();
+  private uploadNewFiles(dogId: string, photo: File | null, document: File | null): void {
     if (photo) {
       const fd = new FormData();
       fd.append('photo', photo);
@@ -162,6 +170,7 @@ export class DogManagerService {
           error: (err) => console.error('Photo upload failed', err),
         });
     }
+
     if (document) {
       const fd = new FormData();
       fd.append('document', document);
