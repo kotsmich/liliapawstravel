@@ -30,7 +30,7 @@ export class RequestsTableComponent {
   readonly bulkReject = output<TripRequest[]>();
 
   private readonly transloco = inject(TranslocoService);
-  private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
+  private readonly langChange = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
   constructor() {
     // Emit empty selection when requests are cleared while items were selected
@@ -42,7 +42,7 @@ export class RequestsTableComponent {
   }
 
   readonly tableConfig = computed((): TableConfig => {
-    this._t();
+    this.langChange();
     return {
       sortField: 'submittedAt',
       sortOrder: -1,
@@ -54,7 +54,7 @@ export class RequestsTableComponent {
   });
 
   readonly columns = computed((): TableColumn<RequestRow>[] => {
-    this._t();
+    this.langChange();
     return [
       { field: 'requesterName', header: this.transloco.translate('requests.table.requester'), sortable: true },
       { field: 'dogsCount', header: this.transloco.translate('requests.table.dogs'), sortable: true },
@@ -69,7 +69,7 @@ export class RequestsTableComponent {
   });
 
   readonly actions = computed((): TableAction<RequestRow>[] => {
-    this._t();
+    this.langChange();
     return [
       {
         icon: 'pi pi-eye',

@@ -50,7 +50,7 @@ import { DogManagerService } from '../../trip-form/dog-manager.service';
 export class TripDetailDialogComponent {
   private readonly exportService = inject(TripManifestExportService);
   private readonly transloco = inject(TranslocoService);
-  private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
+  private readonly langChange = toSignal(this.transloco.selectTranslation(), { initialValue: null });
   readonly dogManager = inject(DogManagerService);
 
   readonly visible = input(false);
@@ -78,7 +78,7 @@ export class TripDetailDialogComponent {
     (this.trip()?.dogs ?? []).map((d, i) => ({ ...d, _idx: i }))
   );
 
-  readonly dogColumns = computed(() => { this._t(); return buildDogColumns<Dog & { _idx: number }>(); });
+  readonly dogColumns = computed(() => { this.langChange(); return buildDogColumns<Dog & { _idx: number }>(); });
 
   constructor() {
     // toObservable must be called in injection context (constructor/field init, not ngOnInit)

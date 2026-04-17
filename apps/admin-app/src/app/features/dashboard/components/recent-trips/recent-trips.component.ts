@@ -22,10 +22,10 @@ export class RecentTripsComponent {
   readonly navigateToAllTrips = output<void>();
 
   private readonly transloco = inject(TranslocoService);
-  private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
+  private readonly langChange = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
   readonly tableConfig = computed((): TableConfig => {
-    this._t();
+    this.langChange();
     return {
       trackByField: 'id',
       emptyMessage: this.transloco.translate('trips.table.empty'),
@@ -34,7 +34,7 @@ export class RecentTripsComponent {
   });
 
   readonly columns = computed((): TableColumn<Trip>[] => {
-    this._t();
+    this.langChange();
     return [
       {
         field: 'route',
@@ -63,7 +63,7 @@ export class RecentTripsComponent {
   });
 
   readonly actions = computed((): TableAction<Trip>[] => {
-    this._t();
+    this.langChange();
     return [
       {
         icon: 'pi pi-pencil',

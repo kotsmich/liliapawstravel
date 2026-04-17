@@ -37,10 +37,10 @@ export class DogFieldsComponent {
   readonly documentFileChange = output<File | null>();
 
   private readonly transloco = inject(TranslocoService);
-  private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
+  private readonly langChange = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
   readonly sizes = computed((): { value: string; label: string }[] => {
-    this._t();
+    this.langChange();
     return [
       { value: 'small',  label: this.transloco.translate('dogs.fields.sizeSmall') },
       { value: 'medium', label: this.transloco.translate('dogs.fields.sizeMedium') },
@@ -49,7 +49,7 @@ export class DogFieldsComponent {
   });
 
   readonly genders = computed((): { value: string; label: string }[] => {
-    this._t();
+    this.langChange();
     return [
       { value: 'male',   label: this.transloco.translate('dogs.fields.genderMale') },
       { value: 'female', label: this.transloco.translate('dogs.fields.genderFemale') },

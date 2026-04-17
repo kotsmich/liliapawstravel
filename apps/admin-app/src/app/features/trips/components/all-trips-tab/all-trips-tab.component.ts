@@ -26,10 +26,10 @@ export class AllTripsTabComponent {
   readonly statusBadgesTpl = viewChild.required<TemplateRef<unknown>>('statusBadgesTpl');
 
   private readonly transloco = inject(TranslocoService);
-  private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
+  private readonly langChange = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
   readonly tableConfig = computed((): TableConfig => {
-    this._t();
+    this.langChange();
     return {
       trackByField: 'id',
       emptyMessage: this.transloco.translate('trips.table.empty'),
@@ -38,7 +38,7 @@ export class AllTripsTabComponent {
   });
 
   readonly columns = computed((): TableColumn<Trip>[] => {
-    this._t();
+    this.langChange();
     return [
       { field: 'date', header: this.transloco.translate('trips.table.date'), sortable: true },
       { field: 'route', header: this.transloco.translate('trips.table.route'), type: 'template', template: this.routeTpl() },
@@ -50,7 +50,7 @@ export class AllTripsTabComponent {
   });
 
   readonly actions = computed((): TableAction<Trip>[] => {
-    this._t();
+    this.langChange();
     return [
       {
         icon: 'pi pi-pencil',

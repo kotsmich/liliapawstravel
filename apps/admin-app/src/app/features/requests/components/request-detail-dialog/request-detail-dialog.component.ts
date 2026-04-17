@@ -49,10 +49,10 @@ export class RequestDetailDialogComponent {
 
   private readonly transloco = inject(TranslocoService);
   private readonly localDate = inject(LocalDatePipe);
-  private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
+  private readonly langChange = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
   readonly dogConfig = computed((): TableConfig => {
-    this._t();
+    this.langChange();
     return {
       paginator: false,
       emptyMessage: this.transloco.translate('requests.detail.noDogs'),
@@ -61,7 +61,7 @@ export class RequestDetailDialogComponent {
   });
 
   readonly dogColumns = computed((): TableColumn<RequestDog>[] => {
-    this._t();
+    this.langChange();
     return [
       {
         field: 'photoUrl',

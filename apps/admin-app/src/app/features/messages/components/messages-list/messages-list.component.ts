@@ -23,10 +23,10 @@ export class MessagesListComponent {
 
   private readonly confirm = inject(ConfirmActionService);
   private readonly transloco = inject(TranslocoService);
-  private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
+  private readonly langChange = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
   readonly tableConfig = computed((): TableConfig => {
-    this._t();
+    this.langChange();
     return {
       sortField: 'submittedAt',
       sortOrder: -1,
@@ -38,7 +38,7 @@ export class MessagesListComponent {
   });
 
   readonly columns = computed((): TableColumn<ContactSubmission>[] => {
-    this._t();
+    this.langChange();
     return [
       { field: 'name', header: this.transloco.translate('messages.table.name'), sortable: true },
       { field: 'email', header: this.transloco.translate('messages.table.email'), sortable: true },
@@ -60,7 +60,7 @@ export class MessagesListComponent {
   });
 
   readonly actions = computed((): TableAction<ContactSubmission>[] => {
-    this._t();
+    this.langChange();
     return [
       {
         icon: 'pi pi-trash',
