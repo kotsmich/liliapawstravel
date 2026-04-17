@@ -1,27 +1,11 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { Store } from '@ngrx/store';
-import { filter, firstValueFrom, map } from 'rxjs';
 import { Trip } from '@models/lib/trip.model';
-import { loadTripById, selectAllTrips } from '@admin/features/trips/store';
 import { BRAND_COLOR, PAGE_MARGIN, drawBrandedHeader } from './pdf-export.utils';
 
 @Injectable({ providedIn: 'root' })
 export class TripManifestExportService {
-  private readonly store = inject(Store);
-
-  async exportTripById(tripId: string): Promise<void> {
-    this.store.dispatch(loadTripById({ id: tripId }));
-    const trip = await firstValueFrom(
-      this.store.select(selectAllTrips).pipe(
-        map((trips) => trips.find((t) => t.id === tripId)),
-        filter((t): t is Trip => t?.dogs !== undefined),
-      )
-    );
-    this.exportTripManifestPdf(trip);
-  }
-
   exportTripManifestPdf(trip: Trip): void {
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -74,11 +58,11 @@ export class TripManifestExportService {
         7: { cellWidth: 40 },
       },
       margin: { left: PAGE_MARGIN, right: PAGE_MARGIN },
-      didDrawPage: (d) => {
+      didDrawPage: (pageData) => {
         doc.setFontSize(7);
         doc.setTextColor(150, 150, 150);
         doc.text(
-          `Page ${d.pageNumber} — Lilia Paws Travel — Confidential`,
+          `Page ${pageData.pageNumber} — Lilia Paws Travel — Confidential`,
           pageWidth / 2,
           doc.internal.pageSize.getHeight() - 5,
           { align: 'center' }

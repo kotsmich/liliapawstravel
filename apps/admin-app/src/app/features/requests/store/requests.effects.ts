@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, filter, map, mergeMap, of, switchMap, withLatestFrom } from 'rxjs';
+import { extractError } from '@admin/shared/utils/extract-error';
 import { Store } from '@ngrx/store';
 import { RequestsService } from '@admin/services/requests.service';
 import {
@@ -28,7 +29,7 @@ export class RequestsEffects {
       switchMap(() =>
         this.requestsService.getRequests().pipe(
           map((requests) => loadRequestsSuccess({ requests })),
-          catchError((error) => of(loadRequestsFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(loadRequestsFailure({ error: extractError(error) })))
         )
       )
     )
@@ -43,7 +44,7 @@ export class RequestsEffects {
             approveRequestSuccess({ request }),
             loadTripByIdSuccess({ trip }),
           ]),
-          catchError((error) => of(approveRequestFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(approveRequestFailure({ error: extractError(error) })))
         )
       )
     )
@@ -62,7 +63,7 @@ export class RequestsEffects {
       switchMap(({ id }) =>
         this.requestsService.updateRequestStatus(id, 'rejected').pipe(
           map((request) => rejectRequestSuccess({ request })),
-          catchError((error) => of(rejectRequestFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(rejectRequestFailure({ error: extractError(error) })))
         )
       )
     )
@@ -81,7 +82,7 @@ export class RequestsEffects {
       switchMap(({ requestId }) =>
         this.requestsService.deleteRequest(requestId).pipe(
           map(() => deleteRequestSuccess({ requestId })),
-          catchError((error) => of(deleteRequestFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(deleteRequestFailure({ error: extractError(error) })))
         )
       )
     )
@@ -93,7 +94,7 @@ export class RequestsEffects {
       switchMap(({ ids }) =>
         this.requestsService.bulkApproveRequests(ids).pipe(
           map((result) => bulkApproveRequestsSuccess(result)),
-          catchError((error) => of(bulkApproveRequestsFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(bulkApproveRequestsFailure({ error: extractError(error) })))
         )
       )
     )
@@ -112,7 +113,7 @@ export class RequestsEffects {
       switchMap(({ ids }) =>
         this.requestsService.bulkRejectRequests(ids).pipe(
           map((result) => bulkRejectRequestsSuccess(result)),
-          catchError((error) => of(bulkRejectRequestsFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(bulkRejectRequestsFailure({ error: extractError(error) })))
         )
       )
     )
@@ -139,7 +140,7 @@ export class RequestsEffects {
       filter(([, current]) => current === null),
       map(([{ trips }]) => {
         const nearest = [...trips]
-          .filter((t) => t.status === 'upcoming')
+          .filter((trip) => trip.status === 'upcoming')
           .sort((a, b) => a.date.localeCompare(b.date))[0];
         return setSelectedTripId({ tripId: nearest?.id ?? null });
       })
@@ -152,7 +153,7 @@ export class RequestsEffects {
       switchMap(({ id, note }) =>
         this.requestsService.updateRequestNote(id, note).pipe(
           map((request) => updateRequestNoteSuccess({ request })),
-          catchError((error) => of(updateRequestNoteFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(updateRequestNoteFailure({ error: extractError(error) })))
         )
       )
     )

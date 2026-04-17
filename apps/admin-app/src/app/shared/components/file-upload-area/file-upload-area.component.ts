@@ -1,6 +1,6 @@
 import {
   Component, ChangeDetectionStrategy, ViewChild, ElementRef,
-  input, output, signal, ChangeDetectorRef, inject,
+  Input, input, output, signal, ChangeDetectorRef, inject,
 } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
@@ -33,8 +33,9 @@ export class FileUploadAreaComponent {
   readonly previewType = input<FileUploadPreviewType>('document');
   /** Tooltip for the remove button. */
   readonly removeTooltip = input.required<string>();
-  /** Pre-existing URL shown as preview when the component first loads (edit mode). */
-  readonly existingUrl = input<string | null>(null);
+  @Input() set existingUrl(value: string | null) {
+    this.seedFromExisting(value);
+  }
 
   readonly fileChange = output<File | null>();
 
@@ -45,16 +46,7 @@ export class FileUploadAreaComponent {
 
   private readonly cdr = inject(ChangeDetectorRef);
 
-  ngOnInit(): void {
-    this.seedFromExisting();
-  }
-
-  ngOnChanges(): void {
-    this.seedFromExisting();
-  }
-
-  private seedFromExisting(): void {
-    const url = this.existingUrl();
+  private seedFromExisting(url: string | null): void {
     if (url) {
       if (this.previewType() === 'image') {
         this.previewUrl.set(url);
@@ -68,6 +60,7 @@ export class FileUploadAreaComponent {
       this.fileName.set(null);
     }
   }
+
 
   hasPreview(): boolean {
     return this.previewType() === 'image' ? !!this.previewUrl() : !!this.fileName();
@@ -90,8 +83,8 @@ export class FileUploadAreaComponent {
   private applyFile(file: File): void {
     if (this.previewType() === 'image') {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        this.previewUrl.set(e.target?.result as string);
+      reader.onload = (event) => {
+        this.previewUrl.set((event.target as FileReader).result as string);
         this.cdr.markForCheck();
       };
       reader.readAsDataURL(file);

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
-import { AsyncPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { LocalDatePipe } from '@ui/lib/pipes/local-date.pipe';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Store } from '@ngrx/store';
@@ -32,7 +32,6 @@ import { RequestDetailDialogComponent } from './components/request-detail-dialog
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     ButtonModule,
     ToastModule, ConfirmDialogModule,
     PageHeaderComponent,
@@ -50,7 +49,7 @@ export class RequestsListComponent implements OnInit {
   private readonly transloco = inject(TranslocoService);
   private readonly localDate = inject(LocalDatePipe);
 
-  loading$ = this.store.select(selectRequestsIsLoading);
+  readonly loading = toSignal(this.store.select(selectRequestsIsLoading), { initialValue: false });
 
   readonly selectedTripId = toSignal(this.store.select(selectSelectedTripId), { initialValue: null as string | null });
   activeTab = signal('all');
@@ -63,25 +62,33 @@ export class RequestsListComponent implements OnInit {
   readonly tripOptions = computed(() => this.buildTripOptionsFrom(this.trips(), this.allRequests()));
   readonly selectedRequest = computed(() => {
     const id = this.selectedRequestId();
-    return this.allRequests().find((r) => r.id === id) ?? null;
+    return this.allRequests().find((request) => request.id === id) ?? null;
   });
 
   private readonly filteredByTrip = computed(() => {
     const requests = this.allRequests();
     const tripId = this.selectedTripId();
-    return tripId ? requests.filter((r) => r.tripId === tripId) : requests;
+    return tripId ? requests.filter((request) => request.tripId === tripId) : requests;
   });
 
-  readonly pendingCount   = computed(() => this.filteredByTrip().filter((x) => x.status === 'pending').length);
-  readonly approvedCount  = computed(() => this.filteredByTrip().filter((x) => x.status === 'approved').length);
-  readonly rejectedCount  = computed(() => this.filteredByTrip().filter((x) => x.status === 'rejected').length);
-  readonly cancelledCount = computed(() => this.filteredByTrip().filter((x) => x.status === 'cancelled').length);
+  private readonly statusCounts = computed(() => {
+    const counts = { pending: 0, approved: 0, rejected: 0, cancelled: 0 };
+    for (const r of this.filteredByTrip()) {
+      if (r.status in counts) counts[r.status as keyof typeof counts]++;
+    }
+    return counts;
+  });
+
+  readonly pendingCount   = computed(() => this.statusCounts().pending);
+  readonly approvedCount  = computed(() => this.statusCounts().approved);
+  readonly rejectedCount  = computed(() => this.statusCounts().rejected);
+  readonly cancelledCount = computed(() => this.statusCounts().cancelled);
 
   readonly finalRequests = computed(() => {
     const requests = this.filteredByTrip();
     const tab = this.activeTab();
-    const filtered = tab !== 'all' ? requests.filter((r) => r.status === tab) : requests;
-    return filtered.map((r) => ({ ...r, dogsCount: r.dogs.length }));
+    const filtered = tab !== 'all' ? requests.filter((request) => request.status === tab) : requests;
+    return filtered.map((request) => ({ ...request, dogsCount: request.dogs.length }));
   });
 
   ngOnInit(): void {
@@ -91,7 +98,7 @@ export class RequestsListComponent implements OnInit {
   }
 
   onSelectionChange(requests: TripRequest[]): void {
-    this.store.dispatch(setSelectedRequests({ requests }));
+    this.store.dispatch(setSelectedRequests({ ids: requests.map((request) => request.id) }));
   }
 
   onTripSelected(tripId: string | null): void {
@@ -100,18 +107,18 @@ export class RequestsListComponent implements OnInit {
 
   private buildTripOptionsFrom(trips: Trip[], requests: TripRequest[] = []): Array<{ label: string; value: string; pending: number }> {
     return [...trips]
-      .filter((t) => t.status === 'upcoming')
+      .filter((trip) => trip.status === 'upcoming')
       .sort((a, b) => a.date.localeCompare(b.date))
-      .map((t) => ({
-        label: this.localDate.transform(t.date),
-        value: t.id,
-        pending: requests.filter((r) => r.tripId === t.id && r.status === 'pending').length,
+      .map((trip) => ({
+        label: this.localDate.transform(trip.date),
+        value: trip.id,
+        pending: requests.filter((request) => request.tripId === trip.id && request.status === 'pending').length,
       }));
   }
 
   tripDate(tripId: string | undefined): string {
     if (!tripId) return '—';
-    const trip = this.trips().find((t) => t.id === tripId);
+    const trip = this.trips().find((trip) => trip.id === tripId);
     return trip ? this.localDate.transform(trip.date) : tripId;
   }
 
@@ -182,7 +189,7 @@ export class RequestsListComponent implements OnInit {
       message:     this.transloco.translate('requests.confirm.bulkApprove.message', { count: requests.length }),
       acceptLabel: this.transloco.translate('requests.confirm.bulkApprove.accept'),
       severity:    'success',
-      accept: () => this.store.dispatch(bulkApproveRequests({ ids: requests.map((r) => r.id) })),
+      accept: () => this.store.dispatch(bulkApproveRequests({ ids: requests.map((request) => request.id) })),
     });
   }
 
@@ -196,7 +203,7 @@ export class RequestsListComponent implements OnInit {
       message:     this.transloco.translate('requests.confirm.bulkReject.message', { count: requests.length }),
       acceptLabel: this.transloco.translate('requests.confirm.bulkReject.accept'),
       severity:    'danger',
-      accept: () => this.store.dispatch(bulkRejectRequests({ ids: requests.map((r) => r.id) })),
+      accept: () => this.store.dispatch(bulkRejectRequests({ ids: requests.map((request) => request.id) })),
     });
   }
 

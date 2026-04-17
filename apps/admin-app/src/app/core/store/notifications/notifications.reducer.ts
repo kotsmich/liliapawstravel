@@ -15,13 +15,13 @@ export const notificationsFeature = createFeature({
   name: 'notifications',
   reducer: createReducer(
     initialState,
-    on(increment, (s, { notificationType }) => ({
-      ...s,
-      requestsCount: notificationType === 'requests' ? s.requestsCount + 1 : s.requestsCount,
-      messagesCount: notificationType === 'messages' ? s.messagesCount + 1 : s.messagesCount,
+    on(increment, (state, { notificationType }) => ({
+      ...state,
+      requestsCount: notificationType === 'requests' ? state.requestsCount + 1 : state.requestsCount,
+      messagesCount: notificationType === 'messages' ? state.messagesCount + 1 : state.messagesCount,
     })),
-    on(resetRequests, (s) => ({ ...s, requestsCount: 0 })),
-    on(resetMessages, (s) => ({ ...s, messagesCount: 0 })),
+    on(resetRequests, (state) => ({ ...state, requestsCount: 0 })),
+    on(resetMessages, (state) => ({ ...state, messagesCount: 0 })),
   ),
 });
 

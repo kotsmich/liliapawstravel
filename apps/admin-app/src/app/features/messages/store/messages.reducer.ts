@@ -25,32 +25,32 @@ export const messagesFeature = createFeature({
   name: 'messages',
   reducer: createReducer(
     initialState,
-    on(loadMessages, (s) => ({ ...s, loading: true, error: null })),
-    on(loadMessagesSuccess, (s, { messages }) => ({ ...s, messages, loading: false })),
-    on(loadMessagesFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(loadMessageById, (s) => ({ ...s, loading: true })),
-    on(loadMessageByIdSuccess, (s, { message }) => ({
-      ...s,
+    on(loadMessages, (state) => ({ ...state, loading: true, error: null })),
+    on(loadMessagesSuccess, (state, { messages }) => ({ ...state, messages, loading: false })),
+    on(loadMessagesFailure, (state, { error }) => ({ ...state, loading: false, error })),
+    on(loadMessageById, (state) => ({ ...state, loading: true })),
+    on(loadMessageByIdSuccess, (state, { message }) => ({
+      ...state,
       selectedMessage: message,
-      messages: s.messages.map((m) => (m.id === message.id ? message : m)),
+      messages: state.messages.map((existing) => (existing.id === message.id ? message : existing)),
       loading: false,
     })),
-    on(loadMessageByIdFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(deleteMessage, (s) => ({ ...s, loading: true })),
-    on(deleteMessageSuccess, (s, { id }) => ({
-      ...s,
-      messages: s.messages.filter((m) => m.id !== id),
-      selectedMessage: s.selectedMessage?.id === id ? null : s.selectedMessage,
+    on(loadMessageByIdFailure, (state, { error }) => ({ ...state, loading: false, error })),
+    on(deleteMessage, (state) => ({ ...state, loading: true })),
+    on(deleteMessageSuccess, (state, { id }) => ({
+      ...state,
+      messages: state.messages.filter((message) => message.id !== id),
+      selectedMessage: state.selectedMessage?.id === id ? null : state.selectedMessage,
       loading: false,
     })),
-    on(deleteMessageFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(markAsRead, (s, { id }) => ({
-      ...s,
-      messages: s.messages.map((m) => (m.id === id ? { ...m, isRead: true } : m)),
+    on(deleteMessageFailure, (state, { error }) => ({ ...state, loading: false, error })),
+    on(markAsRead, (state, { id }) => ({
+      ...state,
+      messages: state.messages.map((message) => (message.id === id ? { ...message, isRead: true } : message)),
     })),
-    on(addMessageFromSocket, (s, { message }) => ({
-      ...s,
-      messages: [message, ...s.messages],
+    on(addMessageFromSocket, (state, { message }) => ({
+      ...state,
+      messages: [message, ...state.messages],
     })),
   ),
 });

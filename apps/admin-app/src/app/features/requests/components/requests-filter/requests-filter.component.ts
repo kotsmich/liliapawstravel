@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { TranslocoModule } from '@jsverse/transloco';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -17,14 +17,14 @@ import { StatusTabComponent } from '@admin/shared/components/status-tab/status-t
   `],
 })
 export class RequestsFilterComponent {
-  @Input() tripOptions: Array<{ label: string; value: string | null; pending: number }> = [];
-  @Input() selectedTripId: string | null = null;
-  @Input() activeTab: string = 'all';
-  @Input() pendingCount: number = 0;
-  @Input() approvedCount: number = 0;
-  @Input() rejectedCount: number = 0;
-  @Input() cancelledCount: number = 0;
+  readonly tripOptions = input<Array<{ label: string; value: string | null; pending: number }>>([]);
+  readonly selectedTripId = input<string | null>(null);
+  readonly activeTab = input<string>('all');
+  readonly pendingCount = input<number>(0);
+  readonly approvedCount = input<number>(0);
+  readonly rejectedCount = input<number>(0);
+  readonly cancelledCount = input<number>(0);
 
-  @Output() tripSelected = new EventEmitter<string | null>();
-  @Output() tabChanged = new EventEmitter<string>();
+  readonly tripSelected = output<string | null>();
+  readonly tabChanged = output<string>();
 }

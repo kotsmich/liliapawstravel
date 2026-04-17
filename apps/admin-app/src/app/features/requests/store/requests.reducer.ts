@@ -14,7 +14,7 @@ import {
 
 export interface RequestsState {
   requests: TripRequest[];
-  selectedRequests: TripRequest[];
+  selectedRequestIds: string[];
   selectedTripId: string | null;
   loading: boolean;
   error: string | null;
@@ -22,7 +22,7 @@ export interface RequestsState {
 
 const initialState: RequestsState = {
   requests: [],
-  selectedRequests: [],
+  selectedRequestIds: [],
   selectedTripId: null,
   loading: false,
   error: null,
@@ -32,49 +32,49 @@ export const requestsFeature = createFeature({
   name: 'requests',
   reducer: createReducer(
     initialState,
-    on(loadRequests, (s) => ({ ...s, loading: true, error: null })),
-    on(loadRequestsSuccess, (s, { requests }) => ({ ...s, requests, loading: false })),
-    on(loadRequestsFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(approveRequest, (s) => ({ ...s, loading: true, error: null })),
-    on(approveRequestSuccess, (s, { request }) => ({
-      ...s,
-      requests: s.requests.map((r) => (r.id === request.id ? request : r)),
+    on(loadRequests, (state) => ({ ...state, loading: true, error: null })),
+    on(loadRequestsSuccess, (state, { requests }) => ({ ...state, requests, loading: false })),
+    on(loadRequestsFailure, (state, { error }) => ({ ...state, loading: false, error })),
+    on(approveRequest, (state) => ({ ...state, loading: true, error: null })),
+    on(approveRequestSuccess, (state, { request }) => ({
+      ...state,
+      requests: state.requests.map((existing) => (existing.id === request.id ? request : existing)),
       loading: false,
     })),
-    on(approveRequestFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(rejectRequest, (s) => ({ ...s, loading: true, error: null })),
-    on(rejectRequestSuccess, (s, { request }) => ({
-      ...s,
-      requests: s.requests.map((r) => (r.id === request.id ? request : r)),
+    on(approveRequestFailure, (state, { error }) => ({ ...state, loading: false, error })),
+    on(rejectRequest, (state) => ({ ...state, loading: true, error: null })),
+    on(rejectRequestSuccess, (state, { request }) => ({
+      ...state,
+      requests: state.requests.map((existing) => (existing.id === request.id ? request : existing)),
       loading: false,
     })),
-    on(rejectRequestFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(deleteRequest, (s) => ({ ...s, loading: true, error: null })),
-    on(deleteRequestSuccess, (s, { requestId }) => ({
-      ...s,
-      requests: s.requests.filter((r) => r.id !== requestId),
+    on(rejectRequestFailure, (state, { error }) => ({ ...state, loading: false, error })),
+    on(deleteRequest, (state) => ({ ...state, loading: true, error: null })),
+    on(deleteRequestSuccess, (state, { requestId }) => ({
+      ...state,
+      requests: state.requests.filter((request) => request.id !== requestId),
       loading: false,
     })),
-    on(deleteRequestFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(addRequestFromSocket, (s, { request }) => ({
-      ...s,
-      requests: [request, ...s.requests],
+    on(deleteRequestFailure, (state, { error }) => ({ ...state, loading: false, error })),
+    on(addRequestFromSocket, (state, { request }) => ({
+      ...state,
+      requests: [request, ...state.requests],
     })),
-    on(requestUpdatedFromSocket, (s, { request }) => ({
-      ...s,
-      requests: s.requests.map((r) => (r.id === request.id ? request : r)),
+    on(requestUpdatedFromSocket, (state, { request }) => ({
+      ...state,
+      requests: state.requests.map((existing) => (existing.id === request.id ? request : existing)),
     })),
-    on(bulkApproveRequests, bulkRejectRequests, (s) => ({ ...s, loading: true, error: null })),
-    on(bulkApproveRequestsSuccess, bulkRejectRequestsSuccess, (s) => ({ ...s, loading: false, selectedRequests: [] })),
-    on(bulkApproveRequestsFailure, bulkRejectRequestsFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(setSelectedRequests, (s, { requests }) => ({ ...s, selectedRequests: requests })),
-    on(setSelectedTripId, (s, { tripId }) => ({ ...s, selectedTripId: tripId })),
-    on(updateRequestNote, (s) => ({ ...s })),
-    on(updateRequestNoteSuccess, (s, { request }) => ({
-      ...s,
-      requests: s.requests.map((r) => (r.id === request.id ? request : r)),
+    on(bulkApproveRequests, bulkRejectRequests, (state) => ({ ...state, loading: true, error: null })),
+    on(bulkApproveRequestsSuccess, bulkRejectRequestsSuccess, (state) => ({ ...state, loading: false, selectedRequestIds: [] })),
+    on(bulkApproveRequestsFailure, bulkRejectRequestsFailure, (state, { error }) => ({ ...state, loading: false, error })),
+    on(setSelectedRequests, (state, { ids }) => ({ ...state, selectedRequestIds: ids })),
+    on(setSelectedTripId, (state, { tripId }) => ({ ...state, selectedTripId: tripId })),
+    on(updateRequestNote, (state) => ({ ...state })),
+    on(updateRequestNoteSuccess, (state, { request }) => ({
+      ...state,
+      requests: state.requests.map((existing) => (existing.id === request.id ? request : existing)),
     })),
-    on(updateRequestNoteFailure, (s, { error }) => ({ ...s, error })),
+    on(updateRequestNoteFailure, (state, { error }) => ({ ...state, error })),
   ),
 });
 

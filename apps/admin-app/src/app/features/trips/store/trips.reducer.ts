@@ -34,94 +34,78 @@ export const tripsFeature = createFeature({
   name: 'trips',
   reducer: createReducer(
     initialState,
-    on(loadTrips, (s) => ({ ...s, loading: true, error: null })),
-    on(loadTripsSuccess, (s, { trips }) => ({ ...s, trips, loading: false })),
-    on(loadTripsFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(selectTrip, (s, { id }) => ({ ...s, selectedTripId: id })),
-    on(clearSelectedTrip, (s) => ({ ...s, selectedTripId: null })),
-    on(addTrip, (s) => ({ ...s, mutating: true, error: null })),
-    on(addTripSuccess, (s, { trip }) => ({
-      ...s, trips: [...s.trips, trip], mutating: false,
+    on(loadTrips, (state) => ({ ...state, loading: true, error: null })),
+    on(loadTripsSuccess, (state, { trips }) => ({ ...state, trips, loading: false })),
+    on(loadTripsFailure, (state, { error }) => ({ ...state, loading: false, error })),
+    on(selectTrip, (state, { id }) => ({ ...state, selectedTripId: id })),
+    on(clearSelectedTrip, (state) => ({ ...state, selectedTripId: null })),
+    on(addTrip, (state) => ({ ...state, mutating: true, error: null })),
+    on(addTripSuccess, (state, { trip }) => ({
+      ...state, trips: [...state.trips, trip], mutating: false,
     })),
-    on(addTripFailure, (s, { error }) => ({ ...s, mutating: false, error })),
-    on(updateTrip, (s) => ({ ...s, mutating: true, error: null })),
-    on(updateTripSuccess, (s, { trip }) => ({
-      ...s,
-      trips: s.trips.map((t) => (t.id === trip.id ? trip : t)),
+    on(addTripFailure, (state, { error }) => ({ ...state, mutating: false, error })),
+    on(updateTrip, (state) => ({ ...state, mutating: true, error: null })),
+    on(updateTripSuccess, (state, { trip }) => ({
+      ...state,
+      trips: state.trips.map((existing) => (existing.id === trip.id ? trip : existing)),
       mutating: false,
     })),
-    on(updateTripFailure, (s, { error }) => ({ ...s, mutating: false, error })),
-    on(deleteTrip, (s) => ({ ...s, mutating: true, error: null })),
-    on(deleteTripSuccess, (s, { id }) => ({
-      ...s,
-      trips: s.trips.filter((t) => t.id !== id),
-      selectedTripId: s.selectedTripId === id ? null : s.selectedTripId,
+    on(updateTripFailure, (state, { error }) => ({ ...state, mutating: false, error })),
+    on(deleteTrip, (state) => ({ ...state, mutating: true, error: null })),
+    on(deleteTripSuccess, (state, { id }) => ({
+      ...state,
+      trips: state.trips.filter((trip) => trip.id !== id),
+      selectedTripId: state.selectedTripId === id ? null : state.selectedTripId,
       mutating: false,
     })),
-    on(deleteTripFailure, (s, { error }) => ({ ...s, mutating: false, error })),
-    on(loadTripById, (s) => ({ ...s, loading: true })),
-    on(loadTripByIdSuccess, (s, { trip }) => ({
-      ...s,
-      trips: s.trips.some((t) => t.id === trip.id)
-        ? s.trips.map((t) => (t.id === trip.id ? trip : t))
-        : [...s.trips, trip],
+    on(deleteTripFailure, (state, { error }) => ({ ...state, mutating: false, error })),
+    on(loadTripById, (state) => ({ ...state, loading: true })),
+    on(loadTripByIdSuccess, (state, { trip }) => ({
+      ...state,
+      trips: state.trips.some((existing) => existing.id === trip.id)
+        ? state.trips.map((existing) => (existing.id === trip.id ? trip : existing))
+        : [...state.trips, trip],
       selectedTripId: trip.id,
       loading: false,
     })),
-    on(loadTripByIdFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(addDog, (s) => ({ ...s, mutating: true, error: null })),
-    on(addDogSuccess, (s, { tripId, dog }) => ({
-      ...s,
-      trips: s.trips.map((t) => {
-        if (t.id !== tripId) return t;
-        const newSpotsAvailable = Math.max(0, t.spotsAvailable - 1);
-        return { ...t, dogs: [...(t.dogs ?? []), dog], spotsAvailable: newSpotsAvailable, isFull: newSpotsAvailable <= 0 };
-      }),
+    on(loadTripByIdFailure, (state, { error }) => ({ ...state, loading: false, error })),
+    on(addDog, (state) => ({ ...state, mutating: true, error: null })),
+    on(addDogSuccess, (state, { tripId, dog }) => ({
+      ...state,
+      trips: state.trips.map((trip) => trip.id !== tripId ? trip : { ...trip, dogs: [...(trip.dogs ?? []), dog] }),
       mutating: false,
     })),
-    on(addDogFailure, (s, { error }) => ({ ...s, mutating: false, error })),
-    on(addDogs, (s) => ({ ...s, mutating: true, error: null })),
-    on(addDogsSuccess, (s, { tripId, dogs }) => ({
-      ...s,
-      trips: s.trips.map((t) => {
-        if (t.id !== tripId) return t;
-        const newSpotsAvailable = Math.max(0, t.spotsAvailable - dogs.length);
-        return { ...t, dogs: [...(t.dogs ?? []), ...dogs], spotsAvailable: newSpotsAvailable, isFull: newSpotsAvailable <= 0 };
-      }),
+    on(addDogFailure, (state, { error }) => ({ ...state, mutating: false, error })),
+    on(addDogs, (state) => ({ ...state, mutating: true, error: null })),
+    on(addDogsSuccess, (state, { tripId, dogs }) => ({
+      ...state,
+      trips: state.trips.map((trip) => trip.id !== tripId ? trip : { ...trip, dogs: [...(trip.dogs ?? []), ...dogs] }),
       mutating: false,
     })),
-    on(addDogsFailure, (s, { error }) => ({ ...s, mutating: false, error })),
-    on(updateDog, (s) => ({ ...s, mutating: true, error: null })),
-    on(updateDogSuccess, (s, { tripId, dog }) => ({
-      ...s,
-      trips: s.trips.map((t) =>
-        t.id === tripId ? { ...t, dogs: t.dogs?.map((d) => (d.id === dog.id ? dog : d)) } : t
+    on(addDogsFailure, (state, { error }) => ({ ...state, mutating: false, error })),
+    on(updateDog, (state) => ({ ...state, mutating: true, error: null })),
+    on(updateDogSuccess, (state, { tripId, dog }) => ({
+      ...state,
+      trips: state.trips.map((trip) =>
+        trip.id === tripId ? { ...trip, dogs: trip.dogs?.map((existingDog) => (existingDog.id === dog.id ? dog : existingDog)) } : trip
       ),
       mutating: false,
     })),
-    on(updateDogFailure, (s, { error }) => ({ ...s, mutating: false, error })),
-    on(deleteDog, (s) => ({ ...s, mutating: true, error: null })),
-    on(deleteDogSuccess, (s, { tripId, dogId }) => ({
-      ...s,
-      trips: s.trips.map((t) => {
-        if (t.id !== tripId) return t;
-        const newSpotsAvailable = t.spotsAvailable + 1;
-        return { ...t, dogs: t.dogs?.filter((d) => d.id !== dogId), spotsAvailable: newSpotsAvailable, isFull: newSpotsAvailable <= 0 };
-      }),
+    on(updateDogFailure, (state, { error }) => ({ ...state, mutating: false, error })),
+    on(deleteDog, (state) => ({ ...state, mutating: true, error: null })),
+    on(deleteDogSuccess, (state, { tripId, dogId }) => ({
+      ...state,
+      trips: state.trips.map((trip) => trip.id !== tripId ? trip : { ...trip, dogs: trip.dogs?.filter((dog) => dog.id !== dogId) }),
       mutating: false,
     })),
-    on(deleteDogFailure, (s, { error }) => ({ ...s, mutating: false, error })),
-    on(deleteDogs, (s) => ({ ...s, mutating: true, error: null })),
-    on(deleteDogsSuccess, (s, { tripId, dogIds }) => ({
-      ...s,
-      trips: s.trips.map((t) => {
-        if (t.id !== tripId) return t;
-        const newSpots = Math.min(t.totalCapacity, t.spotsAvailable + dogIds.length);
-        return { ...t, dogs: t.dogs?.filter((d) => !dogIds.includes(d.id)), spotsAvailable: newSpots, isFull: newSpots <= 0 };
-      }),
+    on(deleteDogFailure, (state, { error }) => ({ ...state, mutating: false, error })),
+    on(deleteDogs, (state) => ({ ...state, mutating: true, error: null })),
+    on(deleteDogsSuccess, (state, { tripId, dogIds }) => ({
+      ...state,
+      trips: state.trips.map((trip) => trip.id !== tripId ? trip : { ...trip, dogs: trip.dogs?.filter((dog) => !dogIds.includes(dog.id)) }),
       mutating: false,
     })),
-    on(deleteDogsFailure, (s, { error }) => ({ ...s, mutating: false, error }))
+    on(deleteDogsFailure, (state, { error }) => ({ ...state, mutating: false, error }))
   ),
 });
 

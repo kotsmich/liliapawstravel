@@ -107,7 +107,7 @@ export class RequestDetailDialogComponent {
 
   tripDate(tripId: string | undefined): string {
     if (!tripId) return '—';
-    const trip = this.trips().find((t) => t.id === tripId);
+    const trip = this.trips().find((trip) => trip.id === tripId);
     return trip ? this.localDate.transform(trip.date) : tripId;
   }
 }

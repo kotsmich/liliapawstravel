@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -12,24 +12,32 @@ import { CalendarEvent } from '@models/lib/calendar-event.model';
   templateUrl: './trip-calendar.component.html',
   styleUrls: ['./trip-calendar.component.scss'],
 })
-export class TripCalendarComponent implements OnChanges {
-  @Input() events: CalendarEvent[] = [];
-  @Input() selectedDate: string | null = null;
+export class TripCalendarComponent {
+  @Input() set events(value: CalendarEvent[]) {
+    this._events = value;
+    this.eventMap = new Map(value.map((e) => [e.date, e.color]));
+    this.eventDataMap = new Map(value.map((e) => [e.date, e]));
+    // New reference forces p-datepicker (OnPush) to re-evaluate date-cell templates.
+    this.minDate = new Date();
+  }
+  get events(): CalendarEvent[] { return this._events; }
+
+  @Input() set selectedDate(value: string | null) {
+    this._selectedDate = value;
+    this.selectedDateObj = value ? new Date(value + 'T00:00:00') : null;
+    this.minDate = new Date();
+  }
+  get selectedDate(): string | null { return this._selectedDate; }
+
   @Output() dateSelected = new EventEmitter<string>();
   @Output() dateDblClicked = new EventEmitter<string>();
 
   selectedDateObj: Date | null = null;
   minDate = new Date();
+  private _events: CalendarEvent[] = [];
+  private _selectedDate: string | null = null;
   private eventMap = new Map<string, string>();
   private eventDataMap = new Map<string, CalendarEvent>();
-
-  ngOnChanges(): void {
-    this.eventMap = new Map(this.events.map((e) => [e.date, e.color]));
-    this.eventDataMap = new Map(this.events.map((e) => [e.date, e]));
-    this.selectedDateObj = this.selectedDate ? new Date(this.selectedDate + 'T00:00:00') : null;
-    // New reference forces p-datepicker (OnPush) to re-evaluate date-cell templates.
-    this.minDate = new Date();
-  }
 
   onSelect(date: Date): void {
     this.dateSelected.emit(this.toDateStr(date));

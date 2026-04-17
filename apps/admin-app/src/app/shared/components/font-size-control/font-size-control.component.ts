@@ -16,6 +16,6 @@ export class FontSizeControlComponent {
   readonly fontPanelOpen = signal(false);
 
   toggleFontPanel(): void {
-    this.fontPanelOpen.update(v => !v);
+    this.fontPanelOpen.update(isOpen => !isOpen);
   }
 }

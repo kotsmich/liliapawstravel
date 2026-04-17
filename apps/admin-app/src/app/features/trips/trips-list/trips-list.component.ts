@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
 import { LocalDatePipe } from '@ui/lib/pipes/local-date.pipe';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Router } from '@angular/router';
@@ -8,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { Store } from '@ngrx/store';
-import { of, switchMap } from 'rxjs';
+import { filter, firstValueFrom, map, of, switchMap } from 'rxjs';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { loadTrips, loadTripById, deleteTrip, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents, selectTripsForSelectedDate, selectTripById } from '@admin/features/trips/store';
 import { selectDate, selectCalendarSelectedDate } from '@admin/core/store/calendar';
@@ -28,7 +27,6 @@ import { TripManifestExportService } from '../../../services/trip-manifest-expor
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     CardModule, ButtonModule, ConfirmDialogModule, ToastModule,
     LoadingSpinnerComponent,
     TripCalendarViewComponent,
@@ -48,10 +46,10 @@ export class TripsListComponent implements OnInit {
   private readonly exportService = inject(TripManifestExportService);
   private readonly localDate = inject(LocalDatePipe);
 
-  trips$ = this.store.select(selectAllTrips);
-  loading$ = this.store.select(selectTripsIsLoading);
-  calendarEvents$ = this.store.select(selectTripsAsCalendarEvents);
-  tripsForDate$ = this.store.select(selectTripsForSelectedDate);
+  readonly trips = toSignal(this.store.select(selectAllTrips), { initialValue: [] as Trip[] });
+  readonly loading = toSignal(this.store.select(selectTripsIsLoading), { initialValue: false });
+  readonly calendarEvents = toSignal(this.store.select(selectTripsAsCalendarEvents), { initialValue: [] });
+  readonly tripsForDate = toSignal(this.store.select(selectTripsForSelectedDate), { initialValue: [] as Trip[] });
 
   readonly selectedDate = toSignal(this.store.select(selectCalendarSelectedDate), { initialValue: null });
   readonly activeTab = signal<'calendar' | 'all'>('calendar');
@@ -111,8 +109,15 @@ export class TripsListComponent implements OnInit {
     this.detailDialogVisible.set(true);
   }
 
-  onExportPdfFromCard(trip: Trip): void {
-    this.exportService.exportTripById(trip.id);
+  async onExportPdfFromCard(trip: Trip): Promise<void> {
+    this.store.dispatch(loadTripById({ id: trip.id }));
+    const loaded = await firstValueFrom(
+      this.store.select(selectAllTrips).pipe(
+        map((trips) => trips.find((existing) => existing.id === trip.id)),
+        filter((existing): existing is Trip => existing?.dogs !== undefined),
+      )
+    );
+    this.exportService.exportTripManifestPdf(loaded);
   }
 
   closeDetail(): void {

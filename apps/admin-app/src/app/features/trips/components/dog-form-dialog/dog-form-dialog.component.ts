@@ -1,4 +1,4 @@
-import { Component, OnChanges, SimpleChanges, ChangeDetectionStrategy, inject, input, output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input, output, effect } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject, switchMap, startWith, map } from 'rxjs';
@@ -23,7 +23,7 @@ import { DogFieldsComponent } from './dog-fields.component';
   templateUrl: './dog-form-dialog.component.html',
   styleUrls: ['./dog-form-dialog.component.scss'],
 })
-export class DogFormDialogComponent implements OnChanges {
+export class DogFormDialogComponent {
   readonly tripId = input<string | null>(null);
   /** Dog to edit. Null opens in add mode (accordion, multiple dogs). */
   readonly dog = input<Dog | null>(null);
@@ -48,7 +48,7 @@ export class DogFormDialogComponent implements OnChanges {
   private readonly activeForm$ = new Subject<AbstractControl>();
   readonly formInvalid = toSignal(
     this.activeForm$.pipe(
-      switchMap(f => f.statusChanges.pipe(startWith(f.status))),
+      switchMap(form => form.statusChanges.pipe(startWith(form.status))),
       map(status => status === 'INVALID'),
     ),
     { initialValue: false },
@@ -61,10 +61,12 @@ export class DogFormDialogComponent implements OnChanges {
 
   private readonly fb = inject(FormBuilder);
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['visible']?.currentValue === true) {
-      this.buildForms();
-    }
+  constructor() {
+    effect(() => {
+      if (this.visible()) {
+        this.buildForms();
+      }
+    });
   }
 
   private buildForms(): void {
@@ -125,23 +127,21 @@ export class DogFormDialogComponent implements OnChanges {
     if (this.isNewDog) {
       this.addForms.markAllAsTouched();
       if (this.addForms.invalid) return;
-
-      const dogs = (this.addForms.value as Array<{ newRequesterName: string | null; requesterName: string | null; requesterKey: string | null; [key: string]: unknown }>)
-        .map(({ newRequesterName, requesterKey: _rk, ...rest }) => ({
-          ...rest,
-          requesterName: newRequesterName?.trim() || rest.requesterName,
-        }));
-      this.dogSaved.emit(dogs as Dog[]);
-      this.visibleChange.emit(false);
+      this.dogSaved.emit(this.addForms.value.map((v: any) => this.stripInternalFields(v)));
     } else {
       this.editForm.markAllAsTouched();
       if (this.editForm.invalid) return;
-
-      const { newRequesterName, requesterKey: _rk, ...editValues } = this.editForm.value;
-      const resolvedRequesterName = (newRequesterName as string | null)?.trim() || editValues.requesterName;
-      this.dogSaved.emit([{ id: this.dog()!.id, ...editValues, requesterName: resolvedRequesterName } as Dog]);
-      this.visibleChange.emit(false);
+      this.dogSaved.emit([{ id: this.dog()!.id, ...this.stripInternalFields(this.editForm.value) } as Dog]);
     }
+    this.visibleChange.emit(false);
+  }
+
+  private resolveRequesterName(raw: { newRequesterName: string | null; requesterName: string | null }): string | null {
+    return raw.newRequesterName?.trim() || raw.requesterName;
+  }
+
+  private stripInternalFields({ newRequesterName, requesterKey: _rk, ...rest }: any): Omit<Dog, 'id'> {
+    return { ...rest, requesterName: this.resolveRequesterName({ newRequesterName, requesterName: rest.requesterName }) };
   }
 
   onCancel(): void {

@@ -5,7 +5,7 @@ import { FormBuilder, FormArray, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslocoService } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
-import { TripRequester } from '@models/lib/trip.model';
+import { Trip, TripRequester } from '@models/lib/trip.model';
 import { TableAction, TableConfig } from '@models/lib/table-column.interface';
 import { addDog, addDogs, updateDog, deleteDog, deleteDogs, loadTripById } from '@admin/features/trips/store';
 import { buildDogColumns } from '@admin/features/trips/shared/dog-columns';
@@ -41,7 +41,7 @@ export class DogManagerService {
     const data = this.dogsData();
     const result = new Map<string, (Dog & { _idx: number })[]>();
     this.tripRequestors().forEach(req => {
-      result.set(req.requestId ?? req.name, data.filter(d => req.dogs.some(rd => rd.id === d.id)));
+      result.set(req.requestId ?? req.name, data.filter(dog => req.dogs.some(requestDog => requestDog.id === dog.id)));
     });
     return result;
   });
@@ -74,6 +74,11 @@ export class DogManagerService {
     this.editId = editId;
   }
 
+  initFromTrip(trip: Trip): void {
+    this.init(true, trip.id);
+    this.setDogs(trip.dogs ?? [], trip.requesters ?? []);
+  }
+
   deleteDog(dog: Dog & { _idx: number }): void {
     const doRemove = () => {
       if (this.dogsArray.length > dog._idx) {
@@ -99,7 +104,7 @@ export class DogManagerService {
 
   setDogs(dogs: Dog[], requestors: TripRequester[]): void {
     this.dogsArray.clear();
-    dogs.forEach(d => this.dogsArray.push(this.dogGroup(d)));
+    dogs.forEach(dog => this.dogsArray.push(this.dogGroup(dog)));
     this.tripRequestors.set(requestors);
     this.clearGroupSelections();
   }
@@ -204,7 +209,7 @@ export class DogManagerService {
     const toRemove = [...this.selectedDogs()];
     if (!toRemove.length) return;
 
-    const dogIdsToDelete = toRemove.map(d => d.id).filter((id): id is string => !!id);
+    const dogIdsToDelete = toRemove.map(dog => dog.id).filter((id): id is string => !!id);
     if (!this.isEdit || !this.editId || !dogIdsToDelete.length) return;
 
     this.confirm.confirm({

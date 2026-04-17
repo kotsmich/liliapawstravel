@@ -85,19 +85,16 @@ export class TripDetailDialogComponent {
     toObservable(this.trip)
       .pipe(takeUntilDestroyed())
       .subscribe(trip => {
-        if (trip) {
-          this.dogManager.init(true, trip.id);
-          this.dogManager.setDogs(trip.dogs ?? [], trip.requesters ?? []);
-        }
+        if (trip) this.dogManager.initFromTrip(trip);
       });
   }
 
   /** Maps a requester's dog list to global _idx values so edit/delete actions target the right entry. */
   indexDogs(dogs: Dog[]): (Dog & { _idx: number })[] {
     const allDogs = this.trip()?.dogs ?? [];
-    return dogs.map(d => {
-      const globalIdx = allDogs.findIndex(ad => ad.id === d.id);
-      return { ...d, _idx: globalIdx >= 0 ? globalIdx : 0 };
+    return dogs.map(dog => {
+      const globalIdx = allDogs.findIndex(allDog => allDog.id === dog.id);
+      return { ...dog, _idx: globalIdx >= 0 ? globalIdx : 0 };
     });
   }
 
@@ -108,11 +105,11 @@ export class TripDetailDialogComponent {
 
   getRequest(requestId: string | null): TripRequest | null {
     if (!requestId) return null;
-    return this.requests().find((r) => r.id === requestId) ?? null;
+    return this.requests().find((request) => request.id === requestId) ?? null;
   }
 
   hasDogsWithoutDocuments(request: TripRequest): boolean {
-    return request.dogs?.some((d) => !d.documentUrl) ?? false;
+    return request.dogs?.some((dog) => !dog.documentUrl) ?? false;
   }
 
   onExportPdf(): void {

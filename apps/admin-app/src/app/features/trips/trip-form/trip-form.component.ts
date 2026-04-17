@@ -9,6 +9,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Store } from '@ngrx/store';
 import { filter, map, take } from 'rxjs';
 import { clearSelectedTrip, loadTripById, updateTrip, addTrip, selectSelectedTrip, selectTripsMutating } from '@admin/features/trips/store';
+import { toIsoDateStr } from '@admin/shared/utils/date';
 import { Dog } from '@models/lib/dog.model';
 import { DogDetailDialogComponent } from '@admin/features/trips/components/dog-detail-dialog/dog-detail-dialog.component';
 import { DogManagerService } from './dog-manager.service';
@@ -65,20 +66,27 @@ export class TripFormComponent implements OnInit {
   dogDetailVisible = false;
 
   ngOnInit(): void {
-    this.editId = this.route.snapshot.paramMap.get('id');
-    this.isEdit = !!this.editId;
-
+    this.resolveRouteContext();
     this.buildForm();
-    this.dogManager.init(this.isEdit, this.editId);
     this.store.dispatch(clearSelectedTrip());
 
     if (this.isEdit && this.editId) {
       this.loadTripForEdit();
     } else {
-      const prefilledDate = this.route.snapshot.queryParamMap.get('date');
-      if (prefilledDate) {
-        this.form.patchValue({ date: new Date(prefilledDate + 'T00:00:00') });
-      }
+      this.initNewTrip();
+    }
+  }
+
+  private resolveRouteContext(): void {
+    this.editId = this.route.snapshot.paramMap.get('id');
+    this.isEdit = !!this.editId;
+  }
+
+  private initNewTrip(): void {
+    this.dogManager.init(false, null);
+    const prefilledDate = this.route.snapshot.queryParamMap.get('date');
+    if (prefilledDate) {
+      this.form.patchValue({ date: new Date(prefilledDate + 'T00:00:00') });
     }
   }
 
@@ -108,7 +116,7 @@ export class TripFormComponent implements OnInit {
     });
 
     trip$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((trip) => {
-      this.dogManager.setDogs(trip.dogs ?? [], trip.requesters ?? []);
+      this.dogManager.initFromTrip(trip);
     });
   }
 
@@ -139,9 +147,7 @@ export class TripFormComponent implements OnInit {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
     const rawDate = this.form.value.date as Date | null;
-    const dateStr = rawDate
-      ? `${rawDate.getFullYear()}-${String(rawDate.getMonth() + 1).padStart(2, '0')}-${String(rawDate.getDate()).padStart(2, '0')}`
-      : '';
+    const dateStr = rawDate ? toIsoDateStr(rawDate) : '';
     const totalCapacity: number = this.form.value.totalCapacity;
     const { isFull: _isFull, dogs: _dogs, ...rest } = this.form.value;
     const payload = { ...rest, date: dateStr, totalCapacity };

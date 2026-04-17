@@ -101,7 +101,7 @@ export const updateRequestNoteFailure = createAction(
 
 export const setSelectedRequests = createAction(
   '[TripRequest] Set Selected Requests',
-  props<{ requests: TripRequest[] }>()
+  props<{ ids: string[] }>()
 );
 
 export const setSelectedTripId = createAction(

@@ -1,15 +1,15 @@
 <p-toast />
 <div class="messages-page">
   <app-page-header [title]="'messages.title' | transloco">
-    @if ((unreadCount$ | async); as unread) {
+    @if (unreadCount(); as unread) {
       <span actions class="unread-label">{{ 'messages.unreadCount' | transloco: { count: unread } }}</span>
     }
   </app-page-header>
 
-  <app-loading-overlay [loading]="!!(loading$ | async)" [rows]="3">
+  <app-loading-overlay [loading]="loading()" [rows]="3">
     <p-card>
       <app-messages-list
-        [messages]="(messages$ | async) ?? []"
+        [messages]="messages()"
         (rowClicked)="openMessage($event)"
         (deleteClicked)="deleteMessage($event)"
         />

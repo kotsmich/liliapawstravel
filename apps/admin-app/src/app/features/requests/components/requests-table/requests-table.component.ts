@@ -99,14 +99,14 @@ export class RequestsTableComponent {
   readonly rowSelectable = (req: RequestRow): boolean => req.status === 'pending';
 
   readonly pendingSelected = computed(() =>
-    this.selection().filter((r) => r.status === 'pending').length
+    this.selection().filter((request) => request.status === 'pending').length
   );
 
   onBulkApprove(): void {
-    this.bulkApprove.emit(this.selection().filter((r) => r.status === 'pending' && r.tripId));
+    this.bulkApprove.emit(this.selection().filter((request) => request.status === 'pending' && request.tripId));
   }
 
   onBulkReject(): void {
-    this.bulkReject.emit(this.selection().filter((r) => r.status === 'pending'));
+    this.bulkReject.emit(this.selection().filter((request) => request.status === 'pending'));
   }
 }

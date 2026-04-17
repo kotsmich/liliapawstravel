@@ -29,9 +29,9 @@ export class DogRequestorSelectorComponent {
   get form(): FormGroup { return this.cc.control as FormGroup; }
 
   readonly requestorOptions = computed(() =>
-    this.requestors().map((r) => ({
-      ...r,
-      _key: r.requestId ?? `__m__${r.name}`,
+    this.requestors().map((requestor) => ({
+      ...requestor,
+      _key: requestor.requestId ?? `__m__${requestor.name}`,
     }))
   );
 
@@ -39,7 +39,7 @@ export class DogRequestorSelectorComponent {
     if (!key) {
       this.form.patchValue({ requestId: null, requesterName: null, requesterKey: null });
     } else {
-      const option = this.requestorOptions().find((o) => o._key === key) ?? null;
+      const option = this.requestorOptions().find((option) => option._key === key) ?? null;
       this.form.patchValue({
         requestId: option?.requestId ?? null,
         requesterName: option?.name ?? '',

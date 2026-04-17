@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Store } from '@ngrx/store';
 import { ToastModule } from 'primeng/toast';
@@ -19,7 +18,6 @@ import { MessageDetailDialogComponent } from './components/message-detail-dialog
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     ToastModule, CardModule, SkeletonModule,
     PageHeaderComponent, LoadingOverlayComponent,
     MessagesListComponent, MessageDetailDialogComponent,
@@ -31,13 +29,12 @@ import { MessageDetailDialogComponent } from './components/message-detail-dialog
 export class MessagesPageComponent implements OnInit {
   private readonly store = inject(Store);
 
-  messages$ = this.store.select(selectAllMessages);
-  loading$ = this.store.select(selectMessagesIsLoading);
-  unreadCount$ = this.store.select(selectUnreadCount);
+  readonly messages = toSignal(this.store.select(selectAllMessages), { initialValue: [] as ContactSubmission[] });
+  readonly loading = toSignal(this.store.select(selectMessagesIsLoading), { initialValue: false });
+  readonly unreadCount = toSignal(this.store.select(selectUnreadCount), { initialValue: 0 });
 
   private readonly selectedMessageId = signal<string | null>(null);
-  private readonly allMessages = toSignal(this.store.select(selectAllMessages), { initialValue: [] as ContactSubmission[] });
-  readonly selectedMessage = computed(() => this.allMessages().find((m) => m.id === this.selectedMessageId()) ?? null);
+  readonly selectedMessage = computed(() => this.messages().find((message) => message.id === this.selectedMessageId()) ?? null);
   dialogVisible = signal(false);
 
   ngOnInit(): void {

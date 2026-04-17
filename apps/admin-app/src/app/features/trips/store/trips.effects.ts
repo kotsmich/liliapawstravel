@@ -7,6 +7,7 @@ import { selectCalendarSelectedDate, selectDate } from '@admin/core/store/calend
 import { Dog } from '@models/lib/dog.model';
 import { TripsService } from '@admin/services/trips.service';
 import { DogsService } from '@admin/services/dogs.service';
+import { extractError } from '@admin/shared/utils/extract-error';
 import {
   loadTrips, loadTripsSuccess, loadTripsFailure,
   addTrip, addTripSuccess, addTripFailure,
@@ -35,9 +36,10 @@ export class TripsEffects {
       filter(([, date]) => date === null),
       map(([{ trips }]) => {
         const today = new Date().toISOString().slice(0, 10);
-        const sorted = trips.map((t) => t.date).filter((d) => d >= today).sort();
-        const date = sorted[0] ?? [...trips.map((t) => t.date)].sort().reverse()[0];
-        return selectDate({ date: date ?? today });
+        const nearestFuture = trips.map((trip) => trip.date).filter((date) => date >= today).sort()[0];
+        const mostRecentPast = [...trips.map((trip) => trip.date)].sort().at(-1);
+        const selected = nearestFuture ?? mostRecentPast ?? today;
+        return selectDate({ date: selected });
       })
     )
   );
@@ -48,7 +50,7 @@ export class TripsEffects {
       switchMap(() =>
         this.tripsService.getTrips().pipe(
           map((trips) => loadTripsSuccess({ trips })),
-          catchError((error) => of(loadTripsFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(loadTripsFailure({ error: extractError(error) })))
         )
       )
     )
@@ -63,12 +65,12 @@ export class TripsEffects {
             if (dogs && dogs.length > 0) {
               return this.dogsService.createDogs(saved.id, dogs as Dog[]).pipe(
                 map((savedDogs) => addTripSuccess({ trip: { ...saved, dogs: savedDogs } })),
-                catchError((error) => of(addTripFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+                catchError((error) => of(addTripFailure({ error: extractError(error) })))
               );
             }
             return of(addTripSuccess({ trip: saved }));
           }),
-          catchError((error) => of(addTripFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(addTripFailure({ error: extractError(error) })))
         )
       )
     )
@@ -89,7 +91,7 @@ export class TripsEffects {
       switchMap(({ id, trip }) =>
         this.tripsService.updateTrip(id, trip).pipe(
           map((updated) => updateTripSuccess({ trip: updated })),
-          catchError((error) => of(updateTripFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(updateTripFailure({ error: extractError(error) })))
         )
       )
     )
@@ -110,7 +112,7 @@ export class TripsEffects {
       switchMap(({ id }) =>
         this.tripsService.deleteTrip(id).pipe(
           map(({ id: deletedId }) => deleteTripSuccess({ id: deletedId })),
-          catchError((error) => of(deleteTripFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(deleteTripFailure({ error: extractError(error) })))
         )
       )
     )
@@ -122,7 +124,7 @@ export class TripsEffects {
       switchMap(({ tripId, dog }) =>
         this.dogsService.createDog(tripId, dog).pipe(
           mergeMap((saved) => [addDogSuccess({ tripId, dog: saved }), loadTripById({ id: tripId })]),
-          catchError((error) => of(addDogFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(addDogFailure({ error: extractError(error) })))
         )
       )
     )
@@ -134,7 +136,7 @@ export class TripsEffects {
       switchMap(({ tripId, dogs }) =>
         this.dogsService.createDogs(tripId, dogs).pipe(
           mergeMap((saved) => [addDogsSuccess({ tripId, dogs: saved }), loadTripById({ id: tripId })]),
-          catchError((error) => of(addDogsFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(addDogsFailure({ error: extractError(error) })))
         )
       )
     )
@@ -146,7 +148,7 @@ export class TripsEffects {
       mergeMap(({ tripId, dogId }) =>
         this.dogsService.deleteDog(dogId).pipe(
           mergeMap(() => [deleteDogSuccess({ tripId, dogId }), loadTripById({ id: tripId })]),
-          catchError((error) => of(deleteDogFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(deleteDogFailure({ error: extractError(error) })))
         )
       )
     )
@@ -158,7 +160,7 @@ export class TripsEffects {
       switchMap(({ tripId, dog }) =>
         this.dogsService.updateDog(dog.id, dog).pipe(
            mergeMap((updated) => [ updateDogSuccess({ tripId, dog: updated }), loadTripById({ id: tripId })]),
-          catchError((error) => of(updateDogFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(updateDogFailure({ error: extractError(error) })))
         )
       )
     )
@@ -170,7 +172,7 @@ export class TripsEffects {
       switchMap(({ tripId, dogIds }) =>
         this.dogsService.deleteDogs(dogIds).pipe(
           mergeMap(() => [deleteDogsSuccess({ tripId, dogIds }), loadTripById({ id: tripId })]),
-          catchError((error) => of(deleteDogsFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(deleteDogsFailure({ error: extractError(error) })))
         )
       )
     )
@@ -182,7 +184,7 @@ export class TripsEffects {
       switchMap(({ id }) =>
         this.tripsService.getTripById(id).pipe(
           map((trip) => loadTripByIdSuccess({ trip })),
-          catchError((error) => of(loadTripByIdFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' })))
+          catchError((error) => of(loadTripByIdFailure({ error: extractError(error) })))
         )
       )
     )

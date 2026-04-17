@@ -17,7 +17,7 @@
     />
   <app-requests-table
     [requests]="finalRequests()"
-    [loading]="!!(loading$ | async)"
+    [loading]="loading()"
     [selection]="selectedRequests()"
     (selectionChange)="onSelectionChange($event)"
     (rowClicked)="openDetail($event)"

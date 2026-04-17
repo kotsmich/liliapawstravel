@@ -8,18 +8,18 @@ import { TableColumn } from '@models/lib/table-column.interface';
 export function buildDogColumns<T extends Dog>(): TableColumn<T>[] {
   return [
     { field: 'name', header: 'Name', sortable: true },
-    { field: 'gender', header: 'Gender', formatter: (v) => String(v ?? '—') },
+    { field: 'gender', header: 'Gender', formatter: (value) => String(value ?? '—') },
     {
       field: 'size', header: 'Size', type: 'badge',
       badgeConfig: {
-        severity: (v) => v === 'small' ? 'success' : v === 'medium' ? 'warn' : 'danger',
-        label: (v) => String(v ?? ''),
+        severity: (value) => value === 'small' ? 'success' : value === 'medium' ? 'warn' : 'danger',
+        label: (value) => String(value ?? ''),
       },
     },
-    { field: 'age', header: 'Age', formatter: (v) => v != null ? `${v} yr` : '—' },
+    { field: 'age', header: 'Age', formatter: (value) => value != null ? `${value} yr` : '—' },
     { field: 'pickupLocation', header: 'Pickup' },
     { field: 'dropLocation', header: 'Drop' },
     { field: 'chipId', header: 'Chip ID' },
-    { field: 'requesterName', header: 'Requester', formatter: (v) => String(v ?? '—') },
+    { field: 'requesterName', header: 'Requester', formatter: (value) => String(value ?? '—') },
   ] as TableColumn<T>[];
 }

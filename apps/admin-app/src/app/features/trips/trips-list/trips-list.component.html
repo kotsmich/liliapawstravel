@@ -2,49 +2,43 @@
   <p-toast />
   <p-confirmdialog />
 
-  @if (loading$ | async) {
+  @if (loading()) {
     <ui-loading-spinner [message]="'trips.loadingTrips' | transloco" />
   }
 
-    @if ({
-      trips: trips$ | async,
-      calendarEvents: calendarEvents$ | async,
-      tripsForDate: tripsForDate$ | async
-      }; as vm) {
-      <!-- Tab bar -->
-      <div class="tab-bar flex">
-        <button class="tab-btn inline-flex align-items-center" [class.active]="activeTab() === 'calendar'" (click)="activeTab.set('calendar')">
-          <i class="pi pi-calendar"></i> {{ 'trips.calendarView' | transloco }}
-        </button>
-        <button class="tab-btn inline-flex align-items-center" [class.active]="activeTab() === 'all'" (click)="activeTab.set('all')">
-          <i class="pi pi-list"></i> {{ 'trips.allTrips' | transloco }}
-        </button>
-      </div>
-      <!-- Calendar Tab -->
-      @if (activeTab() === 'calendar') {
-        <app-trip-calendar-view
-          [trips]="vm.trips || []"
-          [selectedDate]="selectedDate()"
-          [calendarEvents]="vm.calendarEvents || []"
-          [tripsForDate]="vm.tripsForDate || []"
-          (dateSelected)="onDateSelected($event)"
-          (addTripClicked)="addTripForDate()"
-          (editTrip)="onEditTrip($event)"
-          (deleteTrip)="deleteTrip($event)"
-          (viewDetails)="openDetail($event)"
-          (exportPdf)="onExportPdfFromCard($event)"
-          />
-      }
-      <!-- All Trips Tab -->
-      @if (activeTab() === 'all') {
-        <app-all-trips-tab
-          [trips]="vm.trips || []"
-          (editTrip)="onEditTrip($event)"
-          (deleteTrip)="deleteTrip($event)"
-          (viewDetails)="openDetail($event)"
-          />
-      }
-    }
+  <!-- Tab bar -->
+  <div class="tab-bar flex">
+    <button class="tab-btn inline-flex align-items-center" [class.active]="activeTab() === 'calendar'" (click)="activeTab.set('calendar')">
+      <i class="pi pi-calendar"></i> {{ 'trips.calendarView' | transloco }}
+    </button>
+    <button class="tab-btn inline-flex align-items-center" [class.active]="activeTab() === 'all'" (click)="activeTab.set('all')">
+      <i class="pi pi-list"></i> {{ 'trips.allTrips' | transloco }}
+    </button>
+  </div>
+  <!-- Calendar Tab -->
+  @if (activeTab() === 'calendar') {
+    <app-trip-calendar-view
+      [trips]="trips()"
+      [selectedDate]="selectedDate()"
+      [calendarEvents]="calendarEvents()"
+      [tripsForDate]="tripsForDate()"
+      (dateSelected)="onDateSelected($event)"
+      (addTripClicked)="addTripForDate()"
+      (editTrip)="onEditTrip($event)"
+      (deleteTrip)="deleteTrip($event)"
+      (viewDetails)="openDetail($event)"
+      (exportPdf)="onExportPdfFromCard($event)"
+      />
+  }
+  <!-- All Trips Tab -->
+  @if (activeTab() === 'all') {
+    <app-all-trips-tab
+      [trips]="trips()"
+      (editTrip)="onEditTrip($event)"
+      (deleteTrip)="deleteTrip($event)"
+      (viewDetails)="openDetail($event)"
+      />
+  }
 </div>
 
 <!-- Trip Detail Dialog -->

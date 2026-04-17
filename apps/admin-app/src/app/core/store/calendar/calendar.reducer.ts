@@ -14,7 +14,7 @@ export const calendarFeature = createFeature({
   reducer: createReducer(
     initialState,
     on(selectDate, (s, { date }) => ({ ...s, selectedDate: date })),
-    on(clearDate, (s) => ({ ...s, selectedDate: null }))
+    on(clearDate, (state) => ({ ...state, selectedDate: null }))
   ),
 });
 

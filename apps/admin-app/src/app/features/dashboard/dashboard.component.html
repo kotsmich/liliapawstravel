@@ -3,27 +3,20 @@
     <p-button actions [label]="'dashboard.newTrip' | transloco" icon="pi pi-plus" (onClick)="navigateToNewTrip()" />
   </app-page-header>
 
-  @if (loading$ | async) {
+  @if (loading()) {
     <ui-loading-spinner [message]="'dashboard.loading' | transloco" />
   }
 
-  @if (!(loading$ | async)) {
-    @if ({
-      total: totalTrips$ | async,
-      upcoming: upcomingCount$ | async,
-      completed: completedCount$ | async,
-      recent: recentTrips$ | async
-      }; as vm) {
-      <app-dashboard-stats
-        [totalTrips]="vm.total ?? 0"
-        [upcomingTrips]="vm.upcoming ?? 0"
-        [completedTrips]="vm.completed ?? 0"
-        />
-      <app-recent-trips
-        [trips]="vm.recent ?? []"
-        (navigateToAllTrips)="navigateToAllTrips()"
-        (viewTrip)="onViewTrip($event)"
-        />
-    }
+  @if (!loading()) {
+    <app-dashboard-stats
+      [totalTrips]="totalTrips()"
+      [upcomingTrips]="upcomingCount()"
+      [completedTrips]="completedCount()"
+      />
+    <app-recent-trips
+      [trips]="recentTrips()"
+      (navigateToAllTrips)="navigateToAllTrips()"
+      (viewTrip)="onViewTrip($event)"
+      />
   }
 </div>

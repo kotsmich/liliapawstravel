@@ -2,13 +2,18 @@ import { createSelector, MemoizedSelector } from '@ngrx/store';
 import { selectRequestsState } from './requests.reducer';
 import { TripRequest } from '@models/lib/trip-request.model';
 
-export const selectAllRequests = createSelector(selectRequestsState, (s) => s.requests);
-export const selectRequestsIsLoading = createSelector(selectRequestsState, (s) => s.loading);
-export const selectSelectedRequests = createSelector(selectRequestsState, (s) => s.selectedRequests);
-export const selectSelectedTripId = createSelector(selectRequestsState, (s) => s.selectedTripId);
+export const selectAllRequests = createSelector(selectRequestsState, (state) => state.requests);
+export const selectRequestsIsLoading = createSelector(selectRequestsState, (state) => state.loading);
+export const selectSelectedRequestIds = createSelector(selectRequestsState, (state) => state.selectedRequestIds);
+export const selectSelectedRequests = createSelector(
+  selectAllRequests,
+  selectSelectedRequestIds,
+  (requests, ids) => requests.filter((request) => ids.includes(request.id))
+);
+export const selectSelectedTripId = createSelector(selectRequestsState, (state) => state.selectedTripId);
 export const selectPendingRequestsCount = createSelector(
   selectAllRequests,
-  (requests) => requests.filter((r) => r.status === 'pending').length
+  (requests) => requests.filter((request) => request.status === 'pending').length
 );
 
 /**
@@ -24,7 +29,7 @@ export const selectRequestsByTripId = (tripId: string): MemoizedSelector<object,
       tripId,
       createSelector(selectAllRequests, (requests: TripRequest[]) =>
         requests
-          .filter((r) => r.tripId === tripId)
+          .filter((request) => request.tripId === tripId)
           .slice()
           .sort((a, b) => b.submittedAt.localeCompare(a.submittedAt))
       )
@@ -32,3 +37,5 @@ export const selectRequestsByTripId = (tripId: string): MemoizedSelector<object,
   }
   return _cache.get(tripId)!;
 };
+
+export const clearSelectRequestsByTripIdCache = (): void => _cache.clear();

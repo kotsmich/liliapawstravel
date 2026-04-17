@@ -81,41 +81,7 @@ export class DogBioExportService {
     const bioBytes = doc.output('arraybuffer');
     const merged   = await PDFDocument.load(bioBytes);
 
-    if (dog.documentUrl) {
-      const docResponse = await fetch(dog.documentUrl);
-      if (!docResponse.ok) {
-        console.warn(`Could not fetch document for dog "${dog.name}" (${docResponse.status}) — skipping document page.`);
-      } else {
-      const docBytes = await docResponse.arrayBuffer();
-      const isDocPdf = dog.documentUrl.toLowerCase().includes('.pdf');
-
-      if (isDocPdf) {
-        const srcDoc   = await PDFDocument.load(docBytes);
-        const srcPages = await merged.copyPages(srcDoc, srcDoc.getPageIndices());
-        srcPages.forEach((p) => merged.addPage(p));
-      } else {
-        const imgData = await fetchImageAsBase64(dog.documentUrl);
-        if (imgData) {
-          const a4W = 595;
-          const a4H = 842;
-          const page = merged.addPage([a4W, a4H]);
-          const embed = imgData.format === 'PNG'
-            ? await merged.embedPng(docBytes)
-            : await merged.embedJpg(docBytes);
-          const { width: iW, height: iH } = embed.size();
-          const scale = Math.min(a4W / iW, a4H / iH);
-          const drawW = iW * scale;
-          const drawH = iH * scale;
-          page.drawImage(embed, {
-            x: (a4W - drawW) / 2,
-            y: (a4H - drawH) / 2,
-            width:  drawW,
-            height: drawH,
-          });
-        }
-      }
-      } // end else (docResponse.ok)
-    }
+    await this._appendDocument(merged, dog);
 
     const finalBytes = await merged.save();
     const blob = new Blob([new Uint8Array(finalBytes)], { type: 'application/pdf' });
@@ -127,4 +93,43 @@ export class DogBioExportService {
     link.click();
     URL.revokeObjectURL(url);
   } // end _buildAndDownload
+
+  private async _appendDocument(merged: PDFDocument, dog: Dog): Promise<void> {
+    if (!dog.documentUrl) return;
+    const response = await fetch(dog.documentUrl);
+    if (!response.ok) {
+      console.warn(`Could not fetch document for dog "${dog.name}" (${response.status}) — skipping document page.`);
+      return;
+    }
+    const bytes = await response.arrayBuffer();
+    if (dog.documentUrl.toLowerCase().includes('.pdf')) {
+      await this._appendPdfBytes(merged, bytes);
+    } else {
+      await this._appendImageBytes(merged, bytes, dog.documentUrl);
+    }
+  }
+
+  private async _appendPdfBytes(merged: PDFDocument, bytes: ArrayBuffer): Promise<void> {
+    const src = await PDFDocument.load(bytes);
+    const pages = await merged.copyPages(src, src.getPageIndices());
+    pages.forEach((page) => merged.addPage(page));
+  }
+
+  private async _appendImageBytes(merged: PDFDocument, bytes: ArrayBuffer, url: string): Promise<void> {
+    const imgData = await fetchImageAsBase64(url);
+    if (!imgData) return;
+    const a4W = 595, a4H = 842;
+    const page = merged.addPage([a4W, a4H]);
+    const embed = imgData.format === 'PNG'
+      ? await merged.embedPng(bytes)
+      : await merged.embedJpg(bytes);
+    const { width: iW, height: iH } = embed.size();
+    const scale = Math.min(a4W / iW, a4H / iH);
+    page.drawImage(embed, {
+      x: (a4W - iW * scale) / 2,
+      y: (a4H - iH * scale) / 2,
+      width: iW * scale,
+      height: iH * scale,
+    });
+  }
 }

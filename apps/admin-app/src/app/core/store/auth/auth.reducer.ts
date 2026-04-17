@@ -22,14 +22,14 @@ export const authFeature = createFeature({
   name: 'auth',
   reducer: createReducer(
     initialState,
-    on(login, (s) => ({ ...s, loading: true, error: null })),
-    on(loginSuccess, (s, { token, user }) => ({
-      ...s, token, user, isAuthenticated: true, loading: false, error: null,
+    on(login, (state) => ({ ...state, loading: true, error: null })),
+    on(loginSuccess, (state, { token, user }) => ({
+      ...state, token, user, isAuthenticated: true, loading: false, error: null,
     })),
-    on(loginFailure, (s, { error }) => ({ ...s, loading: false, error })),
+    on(loginFailure, (state, { error }) => ({ ...state, loading: false, error })),
     on(logout, () => ({ ...initialState })),
-    on(restoreSession, (s, { user }) => ({
-      ...s, user, isAuthenticated: true,
+    on(restoreSession, (state, { user }) => ({
+      ...state, user, isAuthenticated: true,
     }))
   ),
 });

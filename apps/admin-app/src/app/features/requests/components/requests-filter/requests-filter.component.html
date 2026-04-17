@@ -1,8 +1,8 @@
 <!-- Trip filter -->
 <div class="filter-bar">
   <p-select
-    [options]="tripOptions"
-    [ngModel]="selectedTripId"
+    [options]="tripOptions()"
+    [ngModel]="selectedTripId()"
     (ngModelChange)="tripSelected.emit($event)"
     optionLabel="label"
     optionValue="value"
@@ -20,12 +20,12 @@
 </div>
 
 <!-- Status tabs -->
-<p-tabs [value]="activeTab" (valueChange)="tabChanged.emit($event?.toString() ?? activeTab)">
+<p-tabs [value]="activeTab()" (valueChange)="tabChanged.emit($event?.toString() ?? activeTab())">
   <p-tablist>
     <p-tab value="all">{{ 'requests.all' | transloco }}</p-tab>
-    <app-status-tab value="pending"   labelKey="requests.pending"   [count]="pendingCount"   severity="warn"      />
-    <app-status-tab value="approved"  labelKey="requests.approved"  [count]="approvedCount"  severity="success"   />
-    <app-status-tab value="rejected"  labelKey="requests.rejected"  [count]="rejectedCount"  severity="danger"    />
-    <app-status-tab value="cancelled" labelKey="requests.cancelled" [count]="cancelledCount" severity="secondary" />
+    <app-status-tab value="pending"   labelKey="requests.pending"   [count]="pendingCount()"   severity="warn"      />
+    <app-status-tab value="approved"  labelKey="requests.approved"  [count]="approvedCount()"  severity="success"   />
+    <app-status-tab value="rejected"  labelKey="requests.rejected"  [count]="rejectedCount()"  severity="danger"    />
+    <app-status-tab value="cancelled" labelKey="requests.cancelled" [count]="cancelledCount()" severity="secondary" />
   </p-tablist>
 </p-tabs>
