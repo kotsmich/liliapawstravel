@@ -15,9 +15,9 @@
       [isEdit]="isEdit"
       [today]="today"
       [statuses]="statuses()"
-      [isAtCapacity]="isAtCapacity"
-      [capacityWarning]="capacityWarning"
-      [dogsCount]="dogs.length" />
+      [isAtCapacity]="isAtCapacity()"
+      [capacityWarning]="capacityWarning()"
+      [dogsCount]="dogManager.dogsData().length" />
 
     @if (isEdit) {
       <app-trip-dogs-manager
