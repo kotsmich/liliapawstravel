@@ -46,7 +46,10 @@
             @case ('badge') {
               <p-tag
                 [severity]="$any(getBadgeSeverity(col, row))"
-                [value]="getBadgeLabel(col, row)">
+                [value]="getBadgeLabel(col, row)"
+                [icon]="getBadgeIcon(col, row)"
+                [pTooltip]="getBadgeTooltip(col, row)"
+                [tooltipDisabled]="!getBadgeTooltip(col, row)">
               </p-tag>
             }
             @case ('date') {

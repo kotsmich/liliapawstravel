@@ -55,6 +55,21 @@
       white-space: nowrap;
 
       @media (max-width: 480px) { font-size: 0.62rem; letter-spacing: 0.02em; }
+
+      &.label-with-info {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        white-space: normal;
+
+        .pi-info-circle {
+          font-size: 0.8rem;
+          color: var(--color-text-muted, #9e8b83);
+          cursor: pointer;
+          flex-shrink: 0;
+          &:hover { color: var(--color-primary, #c97d5b); }
+        }
+      }
     }
 
     input.p-inputtext {

@@ -55,6 +55,16 @@ export class GenericTableComponent<T extends object> {
     return col.badgeConfig?.label?.(value, row) ?? String(value ?? '');
   }
 
+  getBadgeIcon(col: TableColumn<T>, row: T): string {
+    const value = this.getCellValue(row, col.field);
+    return col.badgeConfig?.icon?.(value, row) ?? '';
+  }
+
+  getBadgeTooltip(col: TableColumn<T>, row: T): string {
+    const value = this.getCellValue(row, col.field);
+    return col.badgeConfig?.tooltip?.(value, row) ?? '';
+  }
+
   isRowClickable(): boolean {
     return this.rowClicked.observed;
   }

@@ -164,9 +164,10 @@
               <div class="form-section">
                 <div class="form-section__header">
                   <span class="form-section__icon" aria-hidden="true">🐕</span>
-                  <h2>{{ 'tripRequest.addDogs' | transloco }}</h2>
+                  <h2>{{ 'tripRequest.addDogs' | transloco }} 
+                  <i class="pi pi-info-circle" [pTooltip]="'dogs.dropLocationInfo' | transloco" tooltipPosition="top"></i>
+                  </h2>
                 </div>
-
                 <div formArrayName="dogs" class="dogs-list flex flex-column gap-2">
                   @for (dog of dogs.controls; track dog; let i = $index) {
                     <div>
@@ -184,7 +185,9 @@
                           @if (dog.get('size')?.value) {
                             <p-tag [value]="dog.get('size')?.value" severity="secondary" />
                           }
-                          <span class="chip-id">{{ 'tripRequest.chip' | transloco: { id: dog.get('chipId')?.value || 'N/A' } }}</span>
+                          @if (dog.get('receiver')?.value) {
+                            <span class="receiver-label">{{ 'tripRequest.receiver' | transloco }}: {{ dog.get('receiver')?.value }}</span>
+                          }
                           <div class="dog-row-actions flex align-items-center flex-shrink-0" (click)="$event.stopPropagation()">
                             <p-button icon="pi pi-pencil" [text]="true" size="small"
                               [pTooltip]="'tripRequest.edit' | transloco" tooltipPosition="top"
@@ -240,7 +243,10 @@
                   @for (d of form.value.dogs; track d; let i = $index) {
                     <div class="summary-row flex flex-column">
                       <strong>{{ 'tripRequest.dogNum' | transloco: { num: i + 1 } }}: {{ d.name }}</strong>
-                      <span>{{ d.size }} | {{ d.gender }} | {{ d.age }} yr | {{ d.chipId }}</span>
+                      <span>{{ d.size }} | {{ d.gender }} | {{ d.age }} yr</span>
+                      @if (d.receiver) {
+                        <span>{{ 'tripRequest.receiver' | transloco }}: {{ d.receiver }}</span>
+                      }
                       <span>{{ d.pickupLocation }} → {{ d.dropLocation }}</span>
                     </div>
                   }

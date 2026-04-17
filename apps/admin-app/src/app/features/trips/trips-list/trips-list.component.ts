@@ -55,7 +55,7 @@ export class TripsListComponent implements OnInit {
   readonly activeTab = signal<'calendar' | 'all'>('calendar');
 
   readonly detailDialogVisible = signal(false);
-  readonly detailActiveTab = signal('dogs');
+  readonly detailActiveTab = signal('all');
   readonly detailTripId = signal<string | null>(null);
 
   readonly detailTrip = toSignal(toObservable(this.detailTripId).pipe(
@@ -102,7 +102,7 @@ export class TripsListComponent implements OnInit {
   }
 
   openDetail(trip: Trip): void {
-    this.detailActiveTab.set('dogs');
+    this.detailActiveTab.set('all');
     this.detailTripId.set(trip.id);
     this.store.dispatch(loadTripById({ id: trip.id }));
     this.store.dispatch(loadRequests());

@@ -1,54 +1,11 @@
 <div class="dogs-card">
   <div class="dogs-card__header">
     <span>🐶 {{ 'trips.dogs' | transloco }}</span>
-    <div class="flex gap-2 align-items-center">
-      @if (dogManager.selectedDogs().length) {
-        <p-button
-          type="button"
-          [label]="'trips.deleteSelected' | transloco: { count: dogManager.selectedDogs().length }"
-          icon="pi pi-trash"
-          severity="danger"
-          [outlined]="true"
-          size="small"
-          (onClick)="dogManager.removeSelectedDogs()" />
-      }
-      <p-button
-        type="button"
-        [label]="'trips.addDog' | transloco"
-        icon="pi pi-plus"
-        [outlined]="true"
-        size="small"
-        (onClick)="dogManager.dialog.openAdd()" />
-    </div>
   </div>
 
-  <p-tabs [(value)]="activeDogsTab" (valueChange)="onTabChange()" styleClass="dogs-tabs">
-    <p-tablist>
-      <p-tab value="all">{{ 'trips.allDogsTab' | transloco: { count: dogManager.dogsData().length } }}</p-tab>
-      <p-tab value="byRequestor">{{ 'trips.byRequestorTab' | transloco: { count: dogManager.tripRequestors().length } }}</p-tab>
-    </p-tablist>
-  </p-tabs>
-
-  @if (activeDogsTab === 'all') {
-    <app-dogs-table
-      [dogs]="dogManager.dogsData()"
-      [columns]="dogManager.dogColumns"
-      [actions]="dogManager.dogActions()"
-      [config]="dogManager.dogTableConfig"
-      (selectionChange)="dogManager.onSelectionChange($event)"
-      (rowClicked)="rowClicked.emit($event)" />
-  }
-
-  @if (activeDogsTab === 'byRequestor') {
-    <app-dogs-by-requestor
-      [requestors]="dogManager.tripRequestors()"
-      [dogsPerRequestor]="dogManager.dogsPerRequestor()"
-      [dogColumns]="dogManager.dogColumns"
-      [dogActions]="dogManager.dogActions()"
-      [tableConfig]="dogManager.dogTableConfig"
-      (selectionChange)="dogManager.onSelectionChange($event.dogs, $event.groupKey)"
-      (rowClicked)="rowClicked.emit($event)" />
-  }
+  <app-trip-dogs-tabs
+    [tripId]="tripId()"
+    [showAddButton]="true"
+    [tableSelectable]="true"
+    (rowClicked)="rowClicked.emit($event)" />
 </div>
-
-<app-dog-form-dialog-wrapper [tripId]="tripId()" />

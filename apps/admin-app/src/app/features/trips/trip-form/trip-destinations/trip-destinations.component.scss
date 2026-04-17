@@ -1,0 +1,52 @@
+:host { display: block; }
+
+.destinations-card {
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: var(--p-card-background, #fff);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  &__hint {
+    color: var(--color-slate-mid);
+    font-weight: 400;
+  }
+}
+
+.destination-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-height: 2rem;
+  align-items: center;
+}
+
+.destinations-empty {
+  font-size: 0.85rem;
+  color: var(--color-slate-mid);
+}
+
+.add-destination-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.destination-input {
+  flex: 1;
+}
+
+.p-error {
+  font-size: 0.75rem;
+  color: var(--color-error-alt);
+}

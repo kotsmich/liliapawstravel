@@ -8,53 +8,15 @@
   [draggable]="false"
   (onHide)="onHide()">
 
-  @if (trip(); as t) {
-    <p-tabs [value]="activeTab()" (valueChange)="tabChanged.emit($event?.toString() ?? activeTab())">
-      <p-tablist>
-        <p-tab value="dogs">{{ 'trips.detail.dogsTab' | transloco: { count: t.dogs?.length ?? 0 } }}</p-tab>
-        <p-tab value="requests">{{ 'trips.detail.requestersTab' | transloco: { count: (t.requesters?.length ?? 0) } }}</p-tab>
-      </p-tablist>
-    </p-tabs>
-
-    @if (activeTab() === 'dogs') {
-      <div class="tab-content">
-        <div class="flex justify-content-between align-items-center mb-3">
-          <span class="font-semibold">{{ 'trips.detail.dogsTab' | transloco: { count: t.dogs?.length ?? 0 } }}</span>
-          <p-button
-            [label]="'trips.detail.exportPdf' | transloco"
-            icon="pi pi-file-pdf"
-            severity="secondary"
-            [outlined]="true"
-            [disabled]="!t.dogs?.length"
-            (onClick)="onExportPdf()">
-          </p-button>
-        </div>
-        <app-dogs-table
-          [dogs]="indexedDogs()"
-          [columns]="dogColumns()"
-          [actions]="dogManager.dogActions()"
-          [config]="tableConfig"
-          (rowClicked)="openDogDetail($event)">
-        </app-dogs-table>
-      </div>
-    }
-
-    @if (activeTab() === 'requests') {
-      <div class="tab-content">
-        @if ((t.requesters?.length ?? 0) === 0) {
-          <app-empty-state icon="pi pi-inbox" [title]="'trips.detail.noRequests' | transloco"></app-empty-state>
-        } @else {
-          <app-dogs-by-requestor
-            [requestors]="dogManager.tripRequestors()"
-            [dogsPerRequestor]="dogManager.dogsPerRequestor()"
-            [dogColumns]="dogColumns()"
-            [dogActions]="dogManager.dogActions()"
-            [tableConfig]="tableConfig"
-            [requests]="requests()"
-            (rowClicked)="openDogDetail($event)" />
-        }
-      </div>
-    }
+  @if (trip()) {
+    <app-trip-dogs-tabs
+      [tripId]="trip()?.id ?? null"
+      [activeTab]="activeTab()"
+      (activeTabChange)="tabChanged.emit($event)"
+      [showExportPdf]="true"
+      [requests]="requests()"
+      (rowClicked)="openDogDetail($event)"
+      (exportPdf)="onExportPdf()" />
   }
 </p-dialog>
 
@@ -65,5 +27,3 @@
 </app-dog-detail-dialog>
 
 <p-confirmdialog />
-
-<app-dog-form-dialog-wrapper [tripId]="trip()?.id ?? null" />

@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { AccordionModule } from 'primeng/accordion';
+import { TooltipModule } from 'primeng/tooltip';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
 import { TripRequester } from '@models/lib/trip.model';
@@ -13,6 +14,7 @@ import { DogsTableComponent } from '../dogs-table.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AccordionModule,
+    TooltipModule,
     TranslocoModule,
     DogsTableComponent,
   ],

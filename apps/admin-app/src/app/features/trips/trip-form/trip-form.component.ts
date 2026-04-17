@@ -2,21 +2,40 @@ import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject, compute
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { ChipModule } from 'primeng/chip';
 import { Store } from '@ngrx/store';
 import { filter, map, startWith } from 'rxjs';
 import { clearSelectedTrip, loadTripById, updateTrip, addTrip, selectSelectedTrip, selectTripsMutating } from '@admin/features/trips/store';
 import { toIsoDateStr } from '@admin/shared/utils/date';
 import { Dog } from '@models/lib/dog.model';
+import { TripDestination } from '@models/lib/trip.model';
 import { DogDetailDialogComponent } from '@admin/features/trips/components/dog-detail-dialog/dog-detail-dialog.component';
 import { DogManagerService } from './dog-manager.service';
 import { DogDialogService } from './dog-dialog.service';
 import { TripFormHeaderComponent } from './trip-form-header/trip-form-header.component';
 import { TripInfoFormComponent } from './trip-info-form/trip-info-form.component';
 import { TripDogsManagerComponent } from './trip-dogs-manager/trip-dogs-manager.component';
+import { TripDestinationsComponent } from './trip-destinations/trip-destinations.component';
+
+const DEFAULT_DESTINATIONS: TripDestination[] = [
+  { id: 'def-dest-01', name: 'Αθήνα, Ελλάδα' },
+  { id: 'def-dest-02', name: 'Θεσσαλονίκη, Ελλάδα' },
+  { id: 'def-dest-03', name: 'Βερολίνο, Γερμανία' },
+  { id: 'def-dest-04', name: 'Μόναχο, Γερμανία' },
+  { id: 'def-dest-05', name: 'Αμβούργο, Γερμανία' },
+  { id: 'def-dest-06', name: 'Παρίσι, Γαλλία' },
+  { id: 'def-dest-07', name: 'Άμστερνταμ, Ολλανδία' },
+  { id: 'def-dest-08', name: 'Ρώμη, Ιταλία' },
+  { id: 'def-dest-09', name: 'Βαρκελώνη, Ισπανία' },
+  { id: 'def-dest-10', name: 'Βιέννη, Αυστρία' },
+  { id: 'def-dest-11', name: 'Βρυξέλλες, Βέλγιο' },
+  { id: 'def-dest-12', name: 'Ζυρίχη, Ελβετία' },
+];
 
 @Component({
   selector: 'app-trip-form',
@@ -25,12 +44,13 @@ import { TripDogsManagerComponent } from './trip-dogs-manager/trip-dogs-manager.
   providers: [DogDialogService, DogManagerService],
   imports: [
     RouterModule, ReactiveFormsModule,
-    ButtonModule, ToastModule, ConfirmDialogModule,
+    ButtonModule, ToastModule, ConfirmDialogModule, InputTextModule, ChipModule,
     TranslocoModule,
     DogDetailDialogComponent,
     TripFormHeaderComponent,
     TripInfoFormComponent,
     TripDogsManagerComponent,
+    TripDestinationsComponent,
   ],
   templateUrl: './trip-form.component.html',
   styleUrls: ['./trip-form.component.scss'],
@@ -61,8 +81,32 @@ export class TripFormComponent implements OnInit {
     notes: [''],
     isFull: [false],
     acceptingRequests: [true],
+    destinations: new FormControl<TripDestination[]>(DEFAULT_DESTINATIONS, {
+      validators: (c) => (c.value as TripDestination[])?.length > 0 ? null : { destinationsRequired: true },
+    }),
     dogs: this.dogManager.dogsArray,
   });
+
+  readonly destinationInputCtrl = new FormControl('');
+
+  get destinationsValue(): TripDestination[] {
+    return (this.form.get('destinations')!.value as TripDestination[]) ?? [];
+  }
+
+  addDestination(): void {
+    const val = (this.destinationInputCtrl.value ?? '').trim();
+    if (!val) return;
+    const newDest: TripDestination = { id: crypto.randomUUID(), name: val };
+    this.form.get('destinations')!.setValue([...this.destinationsValue, newDest]);
+    this.destinationInputCtrl.setValue('');
+  }
+
+  removeDestination(index: number): void {
+    const updated = [...this.destinationsValue];
+    updated.splice(index, 1);
+    this.form.get('destinations')!.setValue(updated);
+    this.form.get('destinations')!.markAsTouched();
+  }
 
   readonly mutating = toSignal(this.store.select(selectTripsMutating), { initialValue: false });
 
@@ -122,7 +166,11 @@ export class TripFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((trip) => {
       if (!this.formPatched) {
-        this.form.patchValue({ ...trip, date: trip.date ? new Date(trip.date + 'T00:00:00') : null });
+        this.form.patchValue({
+          ...trip,
+          destinations: trip.destinations?.length ? trip.destinations : DEFAULT_DESTINATIONS,
+          date: trip.date ? new Date(trip.date + 'T00:00:00') : null,
+        });
         this.formPatched = true;
       }
       this.dogManager.initFromTrip(trip);
@@ -147,6 +195,7 @@ export class TripFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.form.get('destinations')!.markAsTouched();
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

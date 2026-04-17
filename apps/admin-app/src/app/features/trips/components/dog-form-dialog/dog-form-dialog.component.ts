@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, input, output, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input, output, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject, switchMap, startWith, map } from 'rxjs';
@@ -7,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { AccordionModule } from 'primeng/accordion';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
-import { TripRequester } from '@models/lib/trip.model';
+import { TripDestination, TripRequester } from '@models/lib/trip.model';
 import { DogFieldsComponent } from './dog-fields.component';
 
 
@@ -22,15 +22,17 @@ import { DogFieldsComponent } from './dog-fields.component';
   templateUrl: './dog-form-dialog.component.html',
   styleUrls: ['./dog-form-dialog.component.scss'],
 })
-export class DogFormDialogComponent {
+export class DogFormDialogComponent implements OnChanges {
   readonly tripId = input<string | null>(null);
+  readonly tripDestinations = input<TripDestination[]>([]);
   /** Dog to edit. Null opens in add mode (accordion, multiple dogs). */
   readonly dog = input<Dog | null>(null);
-  private _visible = false;
-  get visible(): boolean { return this._visible; }
-  @Input() set visible(value: boolean) {
-    this._visible = value;
-    if (value) this.buildForms();
+  @Input() visible = false;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['visible']?.currentValue === true) {
+      this.buildForms();
+    }
   }
   /** Set by parent while dispatching so the save button shows a spinner. */
   readonly saving = input(false);
@@ -90,18 +92,20 @@ export class DogFormDialogComponent {
 
   private buildDogGroup(d?: Dog | null): FormGroup {
     return this.fb.group({
-      name:           [d?.name           ?? '',   Validators.required],
-      size:           [d?.size           ?? '',   Validators.required],
-      gender:         [d?.gender         ?? '',   Validators.required],
-      age:            [d?.age            ?? null, [Validators.required, Validators.min(0)]],
-      chipId:         [d?.chipId         ?? '',   [Validators.required, Validators.pattern(/^\d{15}$/)]],
-      pickupLocation: [d?.pickupLocation ?? '',   Validators.required],
-      dropLocation:   [d?.dropLocation   ?? '',   Validators.required],
-      notes:          [d?.notes          ?? ''],
-      requesterName:    [d?.requesterName  ?? ''],
-      requestId:        [d?.requestId      ?? null],
+      name:             [d?.name             ?? '',   Validators.required],
+      size:             [d?.size             ?? '',   Validators.required],
+      gender:           [d?.gender           ?? '',   Validators.required],
+      age:              [d?.age              ?? null, [Validators.required, Validators.min(0)]],
+      chipId:           [d?.chipId           ?? '',   [Validators.required, Validators.pattern(/^\d{15}$/)]],
+      pickupLocation:   [d?.pickupLocation   ?? '',   Validators.required],
+      dropLocation:     [d?.dropLocation     ?? '',   ],
+      notes:            [d?.notes            ?? ''],
+      requesterName:    [d?.requesterName    ?? ''],
+      requestId:        [d?.requestId        ?? null],
       requesterKey:     [DogFormDialogComponent.requesterKey(d)],
       newRequesterName: [null],
+      destinationId: [d?.destinationId ?? null],
+      receiver:      [d?.receiver      ?? null],
     }, { validators: DogFormDialogComponent.requesterValidator });
   }
 

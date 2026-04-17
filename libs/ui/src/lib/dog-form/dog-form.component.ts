@@ -17,6 +17,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
+import { MessageModule } from 'primeng/message';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
 
@@ -31,6 +32,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
     SelectModule,
     ButtonModule,
     TooltipModule,
+    MessageModule,
     TranslocoModule,
   ],
   templateUrl: './dog-form.component.html',

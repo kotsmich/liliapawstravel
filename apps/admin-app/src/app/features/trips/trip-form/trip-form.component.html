@@ -19,6 +19,13 @@
       [capacityWarning]="capacityWarning()"
       [dogsCount]="dogManager.dogsData().length" />
 
+    <app-trip-destinations
+      [destinations]="destinationsValue"
+      [inputCtrl]="destinationInputCtrl"
+      [hasError]="!!(form.get('destinations')?.touched && form.get('destinations')?.invalid)"
+      (addDestination)="addDestination()"
+      (removeDestination)="removeDestination($event)" />
+
     @if (isEdit) {
       <app-trip-dogs-manager
         [tripId]="editId"

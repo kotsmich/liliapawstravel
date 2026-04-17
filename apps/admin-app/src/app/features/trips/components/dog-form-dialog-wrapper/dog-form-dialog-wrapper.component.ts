@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, input } from '@angular/core';
 import { DogManagerService } from '../../trip-form/dog-manager.service';
 import { DogFormDialogComponent } from '../dog-form-dialog/dog-form-dialog.component';
+import { TripDestination } from '@models/lib/trip.model';
 
 /**
  * Single canonical binding of <app-dog-form-dialog> to DogManagerService / DogDialogService.
@@ -20,6 +21,7 @@ import { DogFormDialogComponent } from '../dog-form-dialog/dog-form-dialog.compo
       [tripId]="tripId()"
       [dog]="dogManager.dialog.selectedDog()"
       [requestors]="dogManager.tripRequestors()"
+      [tripDestinations]="tripDestinations()"
       (dogSaved)="dogManager.onDogSaved($event)"
       (photoFileChange)="dogManager.dialog.setPendingPhotoFile($event)"
       (documentFileChange)="dogManager.dialog.setPendingDocumentFile($event)"
@@ -29,4 +31,5 @@ import { DogFormDialogComponent } from '../dog-form-dialog/dog-form-dialog.compo
 export class DogFormDialogWrapperComponent {
   readonly dogManager = inject(DogManagerService);
   readonly tripId = input<string | null>(null);
+  readonly tripDestinations = input<TripDestination[]>([]);
 }

@@ -5,7 +5,7 @@ import { FormBuilder, FormArray, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslocoService } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
-import { Trip, TripRequester } from '@models/lib/trip.model';
+import { Trip, TripDestination, TripRequester } from '@models/lib/trip.model';
 import { TableAction, TableConfig } from '@models/lib/table-column.interface';
 import { addDog, addDogs, updateDog, deleteDog, deleteDogs, loadTripById } from '@admin/features/trips/store';
 import { buildDogColumns } from '@admin/features/trips/shared/dog-columns';
@@ -27,7 +27,10 @@ export class DogManagerService {
 
   readonly dogsArray: FormArray = this.fb.array([]);
 
+  private readonly _lang = toSignal(this.transloco.langChanges$, { initialValue: '' });
+
   readonly tripRequestors = signal<TripRequester[]>([]);
+  readonly tripDestinations = signal<TripDestination[]>([]);
   readonly selectedDogs = signal<(Dog & { _idx: number })[]>([]);
 
   readonly dogsData = toSignal(
@@ -46,7 +49,20 @@ export class DogManagerService {
     return result;
   });
 
-  readonly dogColumns = buildDogColumns<Dog & { _idx: number }>();
+  readonly dogsPerDestination = computed((): { destination: TripDestination; dogs: (Dog & { _idx: number })[] }[] =>
+    this.tripDestinations().map(dest => ({
+      destination: dest,
+      dogs: this.dogsData().filter(d => d.destinationId === dest.id),
+    }))
+  );
+
+  readonly dogColumns = computed(() => {
+    this._lang();
+    return buildDogColumns<Dog & { _idx: number }>(
+      this.tripDestinations(),
+      (key) => this.transloco.translate(key),
+    );
+  });
 
   readonly dogTableConfig: TableConfig = {
     selectable: true,
@@ -76,6 +92,7 @@ export class DogManagerService {
 
   initFromTrip(trip: Trip): void {
     this.init(true, trip.id);
+    this.tripDestinations.set(trip.destinations ?? []);
     this.setDogs(trip.dogs ?? [], trip.requesters ?? []);
   }
 
@@ -122,8 +139,10 @@ export class DogManagerService {
       notes:          [dog?.notes          ?? ''],
       requesterName:  [dog?.requesterName  ?? ''],
       requestId:      [dog?.requestId      ?? null],
-      photoUrl:       [dog?.photoUrl       ?? null],
-      documentUrl:    [dog?.documentUrl    ?? null],
+      photoUrl:         [dog?.photoUrl         ?? null],
+      documentUrl:      [dog?.documentUrl      ?? null],
+      destinationId: [dog?.destinationId ?? null],
+      receiver:      [dog?.receiver      ?? null],
     });
   }
 

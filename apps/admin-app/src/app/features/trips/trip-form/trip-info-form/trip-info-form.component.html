@@ -12,7 +12,7 @@
             <div class="field fw">
               <p-ifta-label>
                 <p-datepicker inputId="date" formControlName="date" [minDate]="isEdit() ? null : today()"
-                  dateFormat="dd/mm/yy" [showTime]="false" [showIcon]="true" styleClass="w-full" />
+                  dateFormat="dd/mm/yy" [showTime]="false" [showIcon]="true" styleClass="w-full" appendTo="body" />
                 <label for="date">{{ 'trips.form.date' | transloco }}</label>
               </p-ifta-label>
               @if (form().get('date')?.touched && form().get('date')?.invalid) {

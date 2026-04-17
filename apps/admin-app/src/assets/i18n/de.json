@@ -108,6 +108,7 @@
     "deleteSelected": "Ausgewählte löschen ({{ count }})",
     "allDogsTab": "Alle Hunde ({{ count }})",
     "byRequestorTab": "Nach Antragsteller ({{ count }})",
+    "byDestinationTab": "Nach Zielort ({{ count }})",
     "noRequestorsLinked": "Noch keine Antragsteller mit dieser Reise verknüpft.",
     "form": {
       "title": "Reisedetails",
@@ -144,7 +145,13 @@
       "open": "Offen",
       "freezed": "Eingefroren",
       "status": "Status",
-      "capacityWarning": "Kapazität ({{ capacity }}) liegt unter aktuellen Hunden ({{ dogs }}) — Reise wird automatisch als belegt markiert."
+      "capacityWarning": "Kapazität ({{ capacity }}) liegt unter aktuellen Hunden ({{ dogs }}) — Reise wird automatisch als belegt markiert.",
+      "destinations": "Reiseziele",
+      "destinationsHint": "Lieferstopps der Reise",
+      "noDestinations": "Noch keine Reiseziele hinzugefügt.",
+      "destinationPlaceholder": "z.B. Athen, Griechenland",
+      "addDestination": "Hinzufügen",
+      "destinationsRequired": "Mindestens ein Reiseziel ist erforderlich."
     },
     "table": {
       "date": "Datum",
@@ -179,6 +186,8 @@
     "detail": {
       "dogsTab": "Hunde ({{ count }})",
       "requestersTab": "Antragsteller ({{ count }})",
+      "destinationsTab": "Zielorte ({{ count }})",
+      "noDogsForDestination": "Keine Hunde diesem Zielort zugewiesen.",
       "exportPdf": "PDF exportieren",
       "noDogsYet": "Noch keine Hunde auf dieser Reise.",
       "noRequests": "Keine Anfragen für diese Reise.",
@@ -232,13 +241,17 @@
       "documentClickHint": "Klicken oder Dokument hierher ziehen",
       "documentFormats": "PDF, JPG, PNG — max 10MB",
       "removePhoto": "Foto entfernen",
-      "removeDocument": "Dokument entfernen"
+      "removeDocument": "Dokument entfernen",
+      "adminDestination": "Lieferort"
     },
     "errors": {
       "required": "Pflichtfeld.",
       "ageMinimum": "Muss 0 oder größer sein.",
       "chipIdRequired": "15-stellige Chip-ID erforderlich.",
       "requesterRequired": "Bitte einen vorhandenen Anforderer auswählen oder einen neuen eingeben."
+    },
+    "warnings": {
+      "noDestination": "Der Admin hat noch keinen Lieferort für diesen Hund zugewiesen."
     }
   },
   "requests": {

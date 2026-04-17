@@ -10,6 +10,12 @@
           <div class="requestor-header">
             <span class="requestor-header__name">{{ req.name }}</span>
             <span class="requestor-header__count">{{ dogs.length }} {{ 'trips.dogs' | transloco }}</span>
+            @if (dogs.some(d => !d.destinationId)) {
+              <i class="pi pi-exclamation-triangle requestor-header__warn"
+                 [pTooltip]="'dogs.warnings.noDestination' | transloco"
+                 tooltipPosition="top"
+                 style="color: var(--p-yellow-500); margin-left: 0.5rem;"></i>
+            }
           </div>
         </p-accordion-header>
         <p-accordion-content>

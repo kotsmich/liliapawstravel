@@ -120,9 +120,11 @@
     "required": "Required.",
     "validEmail": "Valid email required.",
     "addDogs": "Add Dogs for this Trip",
+    "dogsDeliveryBanner": "The exact delivery stop for each dog will be confirmed by the admin after your request is approved, based on the available trip stops. Enter your preferred drop location below as a reference.",
     "dogNum": "Dog #{{ num }}",
     "unnamed": "Unnamed",
     "chip": "Chip: {{ id }}",
+    "receiver": "Receiver",
     "edit": "Edit",
     "remove": "Remove",
     "collapse": "Collapse",
@@ -186,7 +188,8 @@
     "ageYears": "Age",
     "microchipId": "Microchip",
     "pickupLocation": "Pickup",
-    "dropLocation": "Drop",
+    "dropLocation": "Requested Delivery",
+    "dropLocationInfo": "The exact delivery stop is determined by the admin based on the trip route. Enter your preferred location as a reference.",
     "notes": "Notes / Extra Details",
     "sizeSmall": "Small (< 10 kg)",
     "sizeMedium": "Medium (10–25 kg)",
@@ -202,6 +205,7 @@
     "documentClickHint": "Click or drag document",
     "documentFormats": "PDF, JPG, PNG — max 10MB",
     "removePhoto": "Remove photo",
-    "removeDocument": "Remove document"
+    "removeDocument": "Remove document",
+    "receiver": "Receiver (optional)"
   }
 }

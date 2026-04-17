@@ -59,6 +59,29 @@
       [idSuffix]="idx()" />
   </div>
 
+  @if (tripDestinations().length > 0) {
+    <div class="field fw">
+      <p-ifta-label>
+        <p-select
+          [inputId]="'adminDest-' + idx()"
+          formControlName="destinationId"
+          [options]="tripDestinations()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          styleClass="w-full" />
+        <label [for]="'adminDest-' + idx()">{{ 'dogs.fields.adminDestination' | transloco }}</label>
+      </p-ifta-label>
+    </div>
+  }
+
+  <div class="field fw">
+    <p-ifta-label class="w-full">
+      <input pInputText [id]="'receiver-' + idx()" formControlName="receiver" class="w-full" />
+      <label [for]="'receiver-' + idx()">{{ 'dogs.fields.receiver' | transloco }}</label>
+    </p-ifta-label>
+  </div>
+
   <app-dog-requestor-selector [requestors]="requestors()" [idx]="idx()" />
 
   <div class="field fw">

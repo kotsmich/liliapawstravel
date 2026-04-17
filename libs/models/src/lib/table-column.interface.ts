@@ -10,6 +10,8 @@ export interface TableColumn<T = unknown> {
   badgeConfig?: {
     severity: (value: unknown, row: T) => 'success' | 'warning' | 'danger' | 'info' | 'secondary' | 'warn';
     label?: (value: unknown, row: T) => string;
+    icon?: (value: unknown, row: T) => string;
+    tooltip?: (value: unknown, row: T) => string;
   };
   iconButtonConfig?: {
     icon: string;

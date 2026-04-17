@@ -108,6 +108,7 @@
     "deleteSelected": "Delete Selected ({{ count }})",
     "allDogsTab": "All Dogs ({{ count }})",
     "byRequestorTab": "By Requestor ({{ count }})",
+    "byDestinationTab": "By Destination ({{ count }})",
     "noRequestorsLinked": "No requestors linked to this trip yet.",
     "form": {
       "title": "Trip Details",
@@ -144,7 +145,13 @@
       "full": "Full",
       "open": "Open",
       "freezed": "Freezed",
-      "capacityWarning": "Capacity ({{ capacity }}) is below current dogs ({{ dogs }}) — trip will be auto-marked Full."
+      "capacityWarning": "Capacity ({{ capacity }}) is below current dogs ({{ dogs }}) — trip will be auto-marked Full.",
+      "destinations": "Destinations",
+      "destinationsHint": "Trip delivery stop cities",
+      "noDestinations": "No destinations added yet.",
+      "destinationPlaceholder": "e.g. Athens, Greece",
+      "addDestination": "Add",
+      "destinationsRequired": "At least one destination is required."
     },
     "table": {
       "date": "Date",
@@ -159,6 +166,9 @@
       "gender": "Gender",
       "age": "Age",
       "chipId": "Chip ID",
+      "deliveryStop": "Delivery Stop",
+      "receiver": "Receiver",
+      "notAssigned": "Not assigned",
       "requester": "Requester",
       "pickup": "Pickup",
       "drop": "Drop",
@@ -179,6 +189,8 @@
     "detail": {
       "dogsTab": "Dogs ({{ count }})",
       "requestersTab": "Requesters ({{ count }})",
+      "destinationsTab": "Destinations ({{ count }})",
+      "noDogsForDestination": "No dogs assigned to this destination.",
       "exportPdf": "Export PDF",
       "noDogsYet": "No dogs on this trip yet.",
       "noRequests": "No requests for this trip.",
@@ -212,7 +224,7 @@
       "ageYears": "Age",
       "microchipId": "Microchip ID",
       "pickupLocation": "Pickup Location",
-      "dropLocation": "Drop Location",
+      "dropLocation": "Requested Delivery",
       "existingRequestor": "Existing Requestor",
       "newRequesterName": "New Requester Name",
       "specialNotes": "Special Notes (optional)",
@@ -232,13 +244,18 @@
       "documentClickHint": "Click or drag document",
       "documentFormats": "PDF, JPG, PNG — max 10MB",
       "removePhoto": "Remove photo",
-      "removeDocument": "Remove document"
+      "removeDocument": "Remove document",
+      "adminDestination": "Delivery Stop",
+      "receiver": "Receiver (optional)"
     },
     "errors": {
       "required": "Required.",
       "ageMinimum": "Must be 0 or greater.",
       "chipIdRequired": "15-digit chip ID required.",
       "requesterRequired": "Please select an existing requestor or enter a new one."
+    },
+    "warnings": {
+      "noDestination": "Admin has not yet assigned a delivery stop for this dog."
     }
   },
   "requests": {

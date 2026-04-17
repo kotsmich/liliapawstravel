@@ -98,6 +98,7 @@ export class TripRequestComponent {
       pickupLocation: [RandomUtil.pick(RandomProperty.pickupLocations), Validators.required],
       dropLocation:   [RandomUtil.pick(RandomProperty.dropLocations),   Validators.required],
       notes:          [RandomUtil.pick(RandomProperty.notes)],
+      receiver:       [null],
     });
   }
 

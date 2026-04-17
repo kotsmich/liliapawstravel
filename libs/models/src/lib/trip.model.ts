@@ -2,6 +2,11 @@ import { Dog } from './dog.model';
 
 export type TripStatus = 'upcoming' | 'in-progress' | 'completed';
 
+export interface TripDestination {
+  id: string;
+  name: string;
+}
+
 export interface TripRequester {
   requestId: string | null;
   name: string;
@@ -19,6 +24,7 @@ export interface Trip {
   totalCapacity: number;
   spotsAvailable: number;
   notes: string;
+  destinations?: TripDestination[];
   dogs: Dog[] | undefined;
   requesters?: TripRequester[];
   isFull: boolean;

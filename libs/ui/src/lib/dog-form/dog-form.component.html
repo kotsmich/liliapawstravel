@@ -54,12 +54,22 @@
       }
     </div>
     <div class="dog-form__field flex flex-column">
-      <label [for]="'drop-' + index">{{ 'dogs.dropLocation' | transloco }}</label>
+      <label [for]="'drop-' + index" class="label-with-info">
+        {{ 'dogs.dropLocation' | transloco }}
+        <i class="pi pi-info-circle"
+           [pTooltip]="'dogs.dropLocationInfo' | transloco"
+           tooltipPosition="top"></i>
+      </label>
       <input pInputText [id]="'drop-' + index" formControlName="dropLocation"
         placeholder="e.g. Amsterdam, Netherlands" />
       @if (ctrl('dropLocation').touched && errorFor('dropLocation')) {
         <small class="p-error">{{ errorFor('dropLocation') }}</small>
       }
+    </div>
+    <div class="dog-form__field flex flex-column">
+      <label [for]="'receiver-' + index">{{ 'dogs.receiver' | transloco }}</label>
+      <input pInputText [id]="'receiver-' + index" formControlName="receiver"
+        placeholder="e.g. Maria Papadopoulou" />
     </div>
     <div class="dog-form__field flex flex-column">
       <label [for]="'notes-' + index">{{ 'dogs.notes' | transloco }}</label>

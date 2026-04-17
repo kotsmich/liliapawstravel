@@ -120,9 +120,11 @@
     "required": "Pflichtfeld.",
     "validEmail": "Gültige E-Mail erforderlich.",
     "addDogs": "Hunde für diese Reise hinzufügen",
+    "dogsDeliveryBanner": "Der genaue Lieferort für jeden Hund wird vom Admin nach Genehmigung Ihrer Anfrage basierend auf den verfügbaren Reisestopps bestätigt. Geben Sie unten Ihren bevorzugten Abgabeort als Referenz an.",
     "dogNum": "Hund #{{ num }}",
     "unnamed": "Unbenannt",
     "chip": "Chip: {{ id }}",
+    "receiver": "Empfänger",
     "edit": "Bearbeiten",
     "remove": "Entfernen",
     "collapse": "Einklappen",
@@ -187,6 +189,7 @@
     "microchipId": "Mikrochip-ID",
     "pickupLocation": "Abholung",
     "dropLocation": "Abgabe",
+    "dropLocationInfo": "Der genaue Lieferort wird vom Admin basierend auf der Reiseroute festgelegt. Geben Sie Ihren bevorzugten Ort als Referenz an.",
     "notes": "Notizen",
     "sizeSmall": "Klein (< 10 kg)",
     "sizeMedium": "Mittel (10–25 kg)",
@@ -202,6 +205,7 @@
     "documentClickHint": "Klicken oder Dokument hierher ziehen",
     "documentFormats": "PDF, JPG, PNG — max 10MB",
     "removePhoto": "Foto entfernen",
-    "removeDocument": "Dokument entfernen"
+    "removeDocument": "Dokument entfernen",
+    "receiver": "Empfänger (optional)"
   }
 }

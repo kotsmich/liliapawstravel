@@ -27,7 +27,7 @@
             }
           </p-accordion-header>
           <p-accordion-content>
-            <app-dog-fields [form]="panel" [idx]="$index" [requestors]="requestors()" />
+            <app-dog-fields [form]="panel" [idx]="$index" [requestors]="requestors()" [tripDestinations]="tripDestinations()" />
           </p-accordion-content>
         </p-accordion-panel>
       }
@@ -51,6 +51,7 @@
       [form]="editForm"
       idx="edit"
       [requestors]="requestors()"
+      [tripDestinations]="tripDestinations()"
       [existingPhotoUrl]="dog()?.photoUrl ?? null"
       [existingDocumentUrl]="dog()?.documentUrl ?? null"
       (photoFileChange)="photoFileChange.emit($event)"

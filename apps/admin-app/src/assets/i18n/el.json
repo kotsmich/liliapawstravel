@@ -108,6 +108,7 @@
     "deleteSelected": "Διαγραφή Επιλεγμένων ({{ count }})",
     "allDogsTab": "Όλοι οι Σκύλοι ({{ count }})",
     "byRequestorTab": "Ανά Αιτούντα ({{ count }})",
+    "byDestinationTab": "Ανά Προορισμό ({{ count }})",
     "noRequestorsLinked": "Δεν υπάρχουν αιτούντες συνδεδεμένοι με αυτό το ταξίδι ακόμα.",
     "form": {
       "title": "Στοιχεία Ταξιδιού",
@@ -144,7 +145,13 @@
       "full": "Πλήρες",
       "open": "Ανοιχτό",
       "freezed": "Παγωμένο",
-      "capacityWarning": "Χωρητικότητα ({{ capacity }}) είναι κάτω από τους τρέχοντες σκύλους ({{ dogs }}) — το ταξίδι θα σημανθεί αυτόματα ως πλήρες."
+      "capacityWarning": "Χωρητικότητα ({{ capacity }}) είναι κάτω από τους τρέχοντες σκύλους ({{ dogs }}) — το ταξίδι θα σημανθεί αυτόματα ως πλήρες.",
+      "destinations": "Προορισμοί",
+      "destinationsHint": "Πόλεις σταθμών παράδοσης",
+      "noDestinations": "Δεν έχουν προστεθεί προορισμοί ακόμα.",
+      "destinationPlaceholder": "π.χ. Αθήνα, Ελλάδα",
+      "addDestination": "Προσθήκη",
+      "destinationsRequired": "Απαιτείται τουλάχιστον ένας προορισμός."
     },
     "table": {
       "date": "Ημερομηνία",
@@ -159,6 +166,9 @@
       "gender": "Φύλο",
       "age": "Ηλικία",
       "chipId": "Αριθμός Τσιπ",
+      "deliveryStop": "Σταθμός Παράδοσης",
+      "receiver": "Παραλήπτης",
+      "notAssigned": "Μη ανατεθειμένο",
       "requester": "Αιτών",
       "pickup": "Παραλαβή",
       "drop": "Παράδοση",
@@ -179,6 +189,8 @@
     "detail": {
       "dogsTab": "Σκύλοι ({{ count }})",
       "requestersTab": "Αιτούντες ({{ count }})",
+      "destinationsTab": "Προορισμοί ({{ count }})",
+      "noDogsForDestination": "Δεν έχουν ανατεθεί σκύλοι σε αυτόν τον προορισμό.",
       "exportPdf": "Εξαγωγή PDF",
       "noDogsYet": "Δεν υπάρχουν σκύλοι σε αυτό το ταξίδι ακόμα.",
       "noRequests": "Δεν υπάρχουν αιτήματα για αυτό το ταξίδι.",
@@ -212,7 +224,7 @@
       "ageYears": "Ηλικία",
       "microchipId": "Αριθμός Μικροτσίπ",
       "pickupLocation": "Σημείο Παραλαβής",
-      "dropLocation": "Σημείο Παράδοσης",
+      "dropLocation": "Αίτημα Παράδοσης",
       "existingRequestor": "Υπάρχων Αιτών",
       "newRequesterName": "Όνομα Νέου Αιτούντα",
       "specialNotes": "Ειδικές Σημειώσεις (προαιρετικά)",
@@ -232,13 +244,18 @@
       "documentClickHint": "Κλικ ή σύρτε έγγραφο",
       "documentFormats": "PDF, JPG, PNG — max 10MB",
       "removePhoto": "Αφαίρεση φωτογραφίας",
-      "removeDocument": "Αφαίρεση εγγράφου"
+      "removeDocument": "Αφαίρεση εγγράφου",
+      "adminDestination": "Σταθμός Παράδοσης",
+      "receiver": "Παραλήπτης (προαιρετικό)"
     },
     "errors": {
       "required": "Υποχρεωτικό.",
       "ageMinimum": "Πρέπει να είναι 0 ή μεγαλύτερο.",
       "chipIdRequired": "Απαιτείται αριθμός τσιπ 15 ψηφίων.",
       "requesterRequired": "Παρακαλώ επιλέξτε υπάρχοντα αιτούντα ή εισάγετε νέο."
+    },
+    "warnings": {
+      "noDestination": "Ο διαχειριστής δεν έχει ακόμα ορίσει σταθμό παράδοσης για αυτόν τον σκύλο."
     }
   },
   "requests": {
