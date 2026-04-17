@@ -1,0 +1,18 @@
+<div class="detail-grid">
+  <div class="detail-section">
+    <h3>{{ 'requests.detail.requesterSection' | transloco }}</h3>
+    <p class="info-row"><i class="pi pi-user"></i> {{ req().requesterName }}</p>
+    <p class="info-row"><i class="pi pi-envelope"></i> {{ req().requesterEmail }}</p>
+    <p class="info-row"><i class="pi pi-phone"></i> {{ req().requesterPhone }}</p>
+  </div>
+
+  <div class="detail-section">
+    <h3>{{ 'requests.detail.tripSection' | transloco }}</h3>
+    <p class="info-row"><i class="pi pi-calendar"></i> <strong>{{ tripDateLabel() }}</strong></p>
+    <p class="info-row"><i class="pi pi-clock"></i> {{ 'requests.detail.submitted' | transloco }} {{ req().submittedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+    <p class="status-row">
+      <span style="color: var(--text-color-secondary); font-size: 0.9rem;">{{ 'requests.detail.statusLabel' | transloco }}</span>
+      <p-tag [value]="requestStatusLabel(req().status)" [severity]="requestStatusSeverity(req().status)" />
+    </p>
+  </div>
+</div>

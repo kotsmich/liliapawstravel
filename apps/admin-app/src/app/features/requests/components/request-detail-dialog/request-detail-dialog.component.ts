@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy, inject, computed, input, output, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { LocalDatePipe } from '@ui/lib/pipes/local-date.pipe';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -13,6 +12,8 @@ import { requestStatusSeverity, requestStatusLabel, RequestStatus } from '@admin
 import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
 import { MediaViewerComponent } from '../../../../shared/components/media-viewer/media-viewer.component';
 import { InternalNoteEditorComponent } from './internal-note-editor/internal-note-editor.component';
+import { RequestInfoGridComponent } from './request-info-grid/request-info-grid.component';
+import { RequestDetailFooterComponent } from './request-detail-footer/request-detail-footer.component';
 
 type RequestDog = TripRequest['dogs'][number];
 
@@ -20,7 +21,7 @@ type RequestDog = TripRequest['dogs'][number];
   selector: 'app-request-detail-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, DialogModule, ButtonModule, TagModule, GenericTableComponent, TranslocoModule, MediaViewerComponent, InternalNoteEditorComponent],
+  imports: [DialogModule, ButtonModule, TagModule, GenericTableComponent, TranslocoModule, MediaViewerComponent, InternalNoteEditorComponent, RequestInfoGridComponent, RequestDetailFooterComponent],
   providers: [LocalDatePipe],
   templateUrl: './request-detail-dialog.component.html',
   styleUrl: './request-detail-dialog.component.scss',
@@ -49,10 +50,9 @@ export class RequestDetailDialogComponent {
 
   private readonly transloco = inject(TranslocoService);
   private readonly localDate = inject(LocalDatePipe);
-  private readonly langChange = toSignal(this.transloco.selectTranslation(), { initialValue: null });
+  // private readonly langChange = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
   readonly dogConfig = computed((): TableConfig => {
-    this.langChange();
     return {
       paginator: false,
       emptyMessage: this.transloco.translate('requests.detail.noDogs'),
@@ -61,7 +61,6 @@ export class RequestDetailDialogComponent {
   });
 
   readonly dogColumns = computed((): TableColumn<RequestDog>[] => {
-    this.langChange();
     return [
       {
         field: 'photoUrl',

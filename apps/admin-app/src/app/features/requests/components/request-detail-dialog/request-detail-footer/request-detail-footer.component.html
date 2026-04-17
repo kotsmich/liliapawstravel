@@ -1,0 +1,19 @@
+<p-button
+  [label]="'requests.detail.approve' | transloco"
+  icon="pi pi-check"
+  severity="success"
+  [disabled]="status() !== 'pending'"
+  (onClick)="approve.emit()" />
+<p-button
+  [label]="'requests.detail.reject' | transloco"
+  icon="pi pi-times"
+  severity="danger"
+  [outlined]="true"
+  [disabled]="status() !== 'pending'"
+  (onClick)="reject.emit()" />
+<p-button
+  [label]="'requests.detail.cancel' | transloco"
+  icon="pi pi-arrow-left"
+  severity="secondary"
+  [outlined]="true"
+  (onClick)="cancel.emit()" />

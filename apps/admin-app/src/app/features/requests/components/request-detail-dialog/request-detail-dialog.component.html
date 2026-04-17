@@ -12,24 +12,7 @@
       {{ 'requests.detail.requestFor' | transloco: { trip: tripDate(req.tripId), requester: req.requesterName } }}
     </p>
 
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h3>{{ 'requests.detail.requesterSection' | transloco }}</h3>
-        <p class="info-row"><i class="pi pi-user"></i> {{ req.requesterName }}</p>
-        <p class="info-row"><i class="pi pi-envelope"></i> {{ req.requesterEmail }}</p>
-        <p class="info-row"><i class="pi pi-phone"></i> {{ req.requesterPhone }}</p>
-      </div>
-
-      <div class="detail-section">
-        <h3>{{ 'requests.detail.tripSection' | transloco }}</h3>
-        <p class="info-row"><i class="pi pi-calendar"></i> <strong>{{ tripDate(req.tripId) }}</strong></p>
-        <p class="info-row"><i class="pi pi-clock"></i> {{ 'requests.detail.submitted' | transloco }} {{ req.submittedAt | date:'dd/MM/yyyy HH:mm' }}</p>
-        <p class="status-row">
-          <span style="color: var(--text-color-secondary); font-size: 0.9rem;">{{ 'requests.detail.statusLabel' | transloco }}</span>
-          <p-tag [value]="requestStatusLabel(req.status)" [severity]="requestStatusSeverity(req.status)" />
-        </p>
-      </div>
-    </div>
+    <app-request-info-grid [req]="req" [tripDateLabel]="tripDate(req.tripId)" />
 
     <div class="dogs-section">
       <h3>{{ 'requests.detail.dogsSection' | transloco: { count: req.dogs.length } }}</h3>
@@ -61,24 +44,10 @@
   </p-dialog>
 
   <ng-template pTemplate="footer">
-    <p-button
-      [label]="'requests.detail.approve' | transloco"
-      icon="pi pi-check"
-      severity="success"
-      [disabled]="request()?.status !== 'pending'"
-      (onClick)="approve.emit()" />
-    <p-button
-      [label]="'requests.detail.reject' | transloco"
-      icon="pi pi-times"
-      severity="danger"
-      [outlined]="true"
-      [disabled]="request()?.status !== 'pending'"
-      (onClick)="reject.emit()" />
-    <p-button
-      [label]="'requests.detail.cancel' | transloco"
-      icon="pi pi-arrow-left"
-      severity="secondary"
-      [outlined]="true"
-      (onClick)="cancel.emit()" />
+    <app-request-detail-footer
+      [status]="request()?.status"
+      (approve)="approve.emit()"
+      (reject)="reject.emit()"
+      (cancel)="cancel.emit()" />
   </ng-template>
 </p-dialog>
