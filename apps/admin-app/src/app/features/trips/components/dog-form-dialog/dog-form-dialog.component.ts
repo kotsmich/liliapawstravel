@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, input, output, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input, output, Input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject, switchMap, startWith, map } from 'rxjs';
@@ -8,7 +8,6 @@ import { AccordionModule } from 'primeng/accordion';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
 import { TripRequester } from '@models/lib/trip.model';
-import { RandomUtil, RandomProperty } from '@models/lib/utils';
 import { DogFieldsComponent } from './dog-fields.component';
 
 
@@ -27,7 +26,12 @@ export class DogFormDialogComponent {
   readonly tripId = input<string | null>(null);
   /** Dog to edit. Null opens in add mode (accordion, multiple dogs). */
   readonly dog = input<Dog | null>(null);
-  readonly visible = input(false);
+  private _visible = false;
+  get visible(): boolean { return this._visible; }
+  @Input() set visible(value: boolean) {
+    this._visible = value;
+    if (value) this.buildForms();
+  }
   /** Set by parent while dispatching so the save button shows a spinner. */
   readonly saving = input(false);
   /** Requestors from trip.requesters — used to populate the requestor dropdown. */
@@ -61,14 +65,6 @@ export class DogFormDialogComponent {
 
   private readonly fb = inject(FormBuilder);
 
-  constructor() {
-    effect(() => {
-      if (this.visible()) {
-        this.buildForms();
-      }
-    });
-  }
-
   private buildForms(): void {
     if (this.isNewDog) {
       this.addForms = this.fb.array([this.buildDogGroup()]);
@@ -94,15 +90,15 @@ export class DogFormDialogComponent {
 
   private buildDogGroup(d?: Dog | null): FormGroup {
     return this.fb.group({
-      name:           [d?.name           ?? RandomUtil.pick(RandomProperty.dogNames),        Validators.required],
-      size:           [d?.size           ?? RandomUtil.pick(RandomProperty.sizes),           Validators.required],
-      gender:         [d?.gender         ?? RandomUtil.pick(RandomProperty.genders),         Validators.required],
-      age:            [d?.age            ?? RandomUtil.pick(RandomProperty.ages),            [Validators.required, Validators.min(0)]],
-      chipId:         [d?.chipId         ?? RandomUtil.pick(RandomProperty.chipIds),         [Validators.required, Validators.pattern(/^\d{15}$/)]],
-      pickupLocation: [d?.pickupLocation ?? RandomUtil.pick(RandomProperty.pickupLocations), Validators.required],
-      dropLocation:   [d?.dropLocation   ?? RandomUtil.pick(RandomProperty.dropLocations),   Validators.required],
-      notes:          [d?.notes          ?? RandomUtil.pick(RandomProperty.notes)],
-      requesterName:    [d?.requesterName  ?? RandomUtil.pick(RandomProperty.requesterNames)],
+      name:           [d?.name           ?? '',   Validators.required],
+      size:           [d?.size           ?? '',   Validators.required],
+      gender:         [d?.gender         ?? '',   Validators.required],
+      age:            [d?.age            ?? null, [Validators.required, Validators.min(0)]],
+      chipId:         [d?.chipId         ?? '',   [Validators.required, Validators.pattern(/^\d{15}$/)]],
+      pickupLocation: [d?.pickupLocation ?? '',   Validators.required],
+      dropLocation:   [d?.dropLocation   ?? '',   Validators.required],
+      notes:          [d?.notes          ?? ''],
+      requesterName:    [d?.requesterName  ?? ''],
       requestId:        [d?.requestId      ?? null],
       requesterKey:     [DogFormDialogComponent.requesterKey(d)],
       newRequesterName: [null],

@@ -9,6 +9,11 @@
   @media (max-width: 600px) { grid-template-columns: 1fr; }
 }
 
+.row-chip {
+  grid-template-columns: 130px 80px 1fr;
+  @media (max-width: 600px) { grid-template-columns: 1fr 1fr; }
+}
+
 .field { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.75rem; }
 .fw { width: 100%; }
 .p-error { font-size: 0.75rem; color: var(--color-error-alt); }

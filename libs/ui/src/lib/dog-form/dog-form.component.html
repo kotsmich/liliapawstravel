@@ -1,6 +1,6 @@
 <div class="dog-form flex flex-column gap-2" [formGroup]="formGroup">
 
-  <div class="dog-form__row flex flex-wrap gap-2">
+  <div class="dog-form__row dog-form__row--fields">
     <div class="dog-form__field flex flex-column">
       <label [for]="'name-' + index">{{ 'dogs.dogName' | transloco }}</label>
       <input pInputText [id]="'name-' + index" formControlName="name" placeholder="Buddy" />

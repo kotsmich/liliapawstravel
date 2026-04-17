@@ -23,10 +23,10 @@ export class ContactComponent {
 
   readonly contactForm = this.fb.group({
     name:    ['Kots', [Validators.required, Validators.minLength(2)]],
-    email:   ['konstantinos.mich91@gmail.com', [Validators.required, Validators.email]],
+    email:   ['εσττεστ1122@gmail.com', [Validators.required, Validators.email]],
     phone:   ['6948226016', [Validators.pattern(/^\+?[\d\s\-().]{7,20}$/)]],
     subject: ['Transportation pick up italy', [Validators.required, Validators.minLength(2)]],
-    message: ['Lorem ipson is a way to be a winner and not a loser', [Validators.required, Validators.minLength(20)]],
+    message: ['Gabislaya Gabislaya Gabislaya Gabislaya Gabislaya ', [Validators.required, Validators.minLength(20)]],
   });
 
   readonly loading = toSignal(this.store.select(selectContactIsLoading), { initialValue: false });

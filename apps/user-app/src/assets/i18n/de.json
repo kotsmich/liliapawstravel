@@ -183,7 +183,7 @@
     "dogName": "Name",
     "size": "Größe",
     "gender": "Geschlecht",
-    "ageYears": "Alter (Jahre)",
+    "ageYears": "Alter",
     "microchipId": "Mikrochip-ID",
     "pickupLocation": "Abholung",
     "dropLocation": "Abgabe",

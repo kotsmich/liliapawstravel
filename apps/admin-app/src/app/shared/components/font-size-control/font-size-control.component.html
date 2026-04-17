@@ -19,11 +19,11 @@
           type="range" min="90" max="200" step="5"
           class="fs-panel__track"
           [value]="fontSizeService.size()"
-          (input)="fontSizeService.size.set(+$any($event.target).value)"
+          (input)="fontSizeService.setSize(+$any($event.target).value)"
         />
         <i class="pi pi-search-plus fs-panel__icon"></i>
       </div>
-      <button type="button" class="fs-panel__reset" (click)="fontSizeService.size.set(100)">
+      <button type="button" class="fs-panel__reset" (click)="fontSizeService.setSize(100)">
         Reset
       </button>
     </div>

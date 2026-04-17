@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output, signal, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, output, signal } from '@angular/core';
 import { TextareaModule } from 'primeng/textarea';
 import { ButtonModule } from 'primeng/button';
 import { TranslocoModule } from '@jsverse/transloco';
@@ -12,14 +12,8 @@ import { TranslocoModule } from '@jsverse/transloco';
   styleUrl: './internal-note-editor.component.scss',
 })
 export class InternalNoteEditorComponent {
-  readonly note = input('');
+  @Input() set note(value: string) { this.noteText.set(value); }
   readonly noteSaved = output<string>();
 
   readonly noteText = signal('');
-
-  constructor() {
-    effect(() => {
-      this.noteText.set(this.note());
-    }, { allowSignalWrites: true });
-  }
 }

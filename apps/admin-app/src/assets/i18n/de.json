@@ -209,7 +209,7 @@
     "fields": {
       "dogName": "Hundename",
       "size": "Größe",
-      "ageYears": "Alter (Jahre)",
+      "ageYears": "Alter",
       "microchipId": "Mikrochip-ID",
       "pickupLocation": "Abholort",
       "dropLocation": "Abgabeort",

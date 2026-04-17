@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, inject, computed, input, output, signal } from '@angular/core';
-import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { Component, ChangeDetectionStrategy, inject, computed, Input, input, output, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoService } from '@jsverse/transloco';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -55,7 +55,12 @@ export class TripDetailDialogComponent {
 
   readonly visible = input(false);
   readonly header = input('');
-  readonly trip = input<Trip | null>(null);
+  readonly trip = signal<Trip | null>(null);
+
+  @Input('trip') set tripInput(value: Trip | null) {
+    this.trip.set(value);
+    if (value) this.dogManager.initFromTrip(value);
+  }
   readonly requests = input<TripRequest[]>([]);
   readonly activeTab = input('dogs');
   readonly visibleChange = output<boolean>();
@@ -80,16 +85,7 @@ export class TripDetailDialogComponent {
 
   readonly dogColumns = computed(() => { this.langChange(); return buildDogColumns<Dog & { _idx: number }>(); });
 
-  constructor() {
-    // toObservable must be called in injection context (constructor/field init, not ngOnInit)
-    toObservable(this.trip)
-      .pipe(takeUntilDestroyed())
-      .subscribe(trip => {
-        if (trip) this.dogManager.initFromTrip(trip);
-      });
-  }
-
-  /** Maps a requester's dog list to global _idx values so edit/delete actions target the right entry. */
+/** Maps a requester's dog list to global _idx values so edit/delete actions target the right entry. */
   indexDogs(dogs: Dog[]): (Dog & { _idx: number })[] {
     const allDogs = this.trip()?.dogs ?? [];
     return dogs.map(dog => {

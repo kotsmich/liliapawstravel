@@ -18,6 +18,6 @@ export const RandomProperty = {
   dropLocations:   ['Vienna', 'Amsterdam', 'Berlin', 'Munich', 'Hamburg', 'Utrecht'],
   notes:           ['Friendly dog', 'Needs medication', 'Shy around strangers', 'Good with kids', 'Loves car rides', ''],
   requesterNames:  ['Maria', 'Dimitra', 'Nikos', 'Elena', 'Kostas', 'Anna', 'Giorgos', 'Sofia', 'Petros', 'Ioanna', 'Thanasis', 'Christina', 'Vasilis', 'Katerina', 'Alexandros'],
-  requesterEmails: ['konstantinos.mich91@gmail.com'],
+  requesterEmails: ['τεσττεστ1122@gmail.com'],
   requesterPhones: ['+30 6901234567', '+30 6912345678', '+30 6923456789', '+40 7123456789'],
 };

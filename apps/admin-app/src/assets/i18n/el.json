@@ -209,7 +209,7 @@
     "fields": {
       "dogName": "Όνομα Σκύλου",
       "size": "Μέγεθος",
-      "ageYears": "Ηλικία (χρόνια)",
+      "ageYears": "Ηλικία",
       "microchipId": "Αριθμός Μικροτσίπ",
       "pickupLocation": "Σημείο Παραλαβής",
       "dropLocation": "Σημείο Παράδοσης",

@@ -13,6 +13,20 @@
     gap: 0.5rem;
 
     @media (max-width: 480px) { gap: 0.35rem; }
+
+    &--fields {
+      display: grid;
+      grid-template-columns: 1fr 160px 160px 44px 1fr;
+      gap: 0.5rem;
+
+      @media (max-width: 600px) {
+        grid-template-columns: 1fr 1fr 80px 64px;
+        // chip wraps to its own full row on small screens
+        .dog-form__field:last-child { grid-column: 1 / -1; }
+      }
+
+      @media (max-width: 480px) { gap: 0.35rem; }
+    }
   }
 
   &__field {
@@ -25,7 +39,10 @@
 
     &--sm {
       flex: 0 1 100px;
+      overflow: hidden;
       @media (max-width: 480px) { flex: 0 1 72px; }
+
+      label { white-space: nowrap; overflow: hidden;  display: block; }
     }
 
     label {

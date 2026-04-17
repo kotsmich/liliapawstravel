@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, computed, input, output, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed, input, output, Input } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -18,7 +18,14 @@ type RequestRow = TripRequest & { dogsCount: number };
   styleUrl: './requests-table.component.scss',
 })
 export class RequestsTableComponent {
-  readonly requests = input<RequestRow[]>([]);
+  private _requests: RequestRow[] = [];
+  get requests(): RequestRow[] { return this._requests; }
+  @Input() set requests(value: RequestRow[]) {
+    this._requests = value;
+    if (value.length === 0 && this.selection().length > 0) {
+      this.selectionChange.emit([]);
+    }
+  }
   readonly loading = input(false);
   readonly selection = input<TripRequest[]>([]);
 
@@ -31,15 +38,6 @@ export class RequestsTableComponent {
 
   private readonly transloco = inject(TranslocoService);
   private readonly langChange = toSignal(this.transloco.selectTranslation(), { initialValue: null });
-
-  constructor() {
-    // Emit empty selection when requests are cleared while items were selected
-    effect(() => {
-      if (this.selection().length > 0 && this.requests().length === 0) {
-        this.selectionChange.emit([]);
-      }
-    });
-  }
 
   readonly tableConfig = computed((): TableConfig => {
     this.langChange();

@@ -94,7 +94,7 @@ export class TripRequestComponent {
       size:           [RandomUtil.pick(RandomProperty.sizes),           Validators.required],
       gender:         [RandomUtil.pick(RandomProperty.genders),         Validators.required],
       age:            [RandomUtil.pick(RandomProperty.ages),            [Validators.required, Validators.min(0)]],
-      chipId:         [RandomUtil.pick(RandomProperty.chipIds),         [Validators.required, Validators.pattern(/^\d{15}$/)]],
+      chipId:         [RandomUtil.pick(RandomProperty.chipIds),         ],
       pickupLocation: [RandomUtil.pick(RandomProperty.pickupLocations), Validators.required],
       dropLocation:   [RandomUtil.pick(RandomProperty.dropLocations),   Validators.required],
       notes:          [RandomUtil.pick(RandomProperty.notes)],
