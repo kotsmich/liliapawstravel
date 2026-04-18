@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { DecimalPipe, ViewportScroller } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -16,6 +16,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs/operators';
+import { TripDestination } from '@models/lib/trip.model';
 import { firstValueFrom } from 'rxjs';
 import { DogFormComponent } from '@ui/lib/dog-form/dog-form.component';
 import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
@@ -58,6 +59,11 @@ export class TripRequestComponent {
   readonly calendarEvents  = toSignal(this.store.select(selectTripsAsCalendarEvents), { initialValue: [] as CalendarEvent[] });
   readonly selectedDateLocal = toSignal(this.store.select(selectCalendarSelectedDate), { initialValue: null as string | null });
   readonly selectedTrip    = toSignal(this.store.select(selectTripForSelectedDate),   { initialValue: null });
+  readonly pickupDestinations = computed((): TripDestination[] => {
+    const trip = this.selectedTrip();
+    if (!trip) return [];
+    return trip.pickupLocations ?? [];
+  });
   readonly loading         = toSignal(this.store.select(selectTripsIsLoading),         { initialValue: false });
   readonly submitting      = toSignal(this.store.select(selectTripRequestIsLoading),   { initialValue: false });
   readonly success         = toSignal(this.store.select(selectTripRequestIsSuccess),   { initialValue: false });
@@ -90,15 +96,16 @@ export class TripRequestComponent {
 
   dogGroup() {
     return this.fb.group({
-      name:           [RandomUtil.pick(RandomProperty.dogNames),        Validators.required],
-      size:           [RandomUtil.pick(RandomProperty.sizes),           Validators.required],
-      gender:         [RandomUtil.pick(RandomProperty.genders),         Validators.required],
-      age:            [RandomUtil.pick(RandomProperty.ages),            [Validators.required, Validators.min(0)]],
-      chipId:         [RandomUtil.pick(RandomProperty.chipIds),         ],
-      pickupLocation: [RandomUtil.pick(RandomProperty.pickupLocations), Validators.required],
-      dropLocation:   [RandomUtil.pick(RandomProperty.dropLocations),   Validators.required],
-      notes:          [RandomUtil.pick(RandomProperty.notes)],
-      receiver:       [null],
+      name:             [RandomUtil.pick(RandomProperty.dogNames),        Validators.required],
+      size:             [RandomUtil.pick(RandomProperty.sizes),           Validators.required],
+      gender:           [RandomUtil.pick(RandomProperty.genders),         Validators.required],
+      age:              [RandomUtil.pick(RandomProperty.ages),            [Validators.required, Validators.min(0)]],
+      chipId:           [RandomUtil.pick(RandomProperty.chipIds),         ],
+      pickupLocation:   [null, Validators.required],
+      pickupLocationId: [null],
+      dropLocation:     [RandomUtil.pick(RandomProperty.dropLocations),   Validators.required],
+      notes:            [RandomUtil.pick(RandomProperty.notes)],
+      receiver:         [null],
     });
   }
 
@@ -167,7 +174,7 @@ export class TripRequestComponent {
   async onSubmit(): Promise<void> {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const { requesterName, requesterEmail, requesterPhone } = this.form.value;
-    const rawDogs = this.form.value.dogs as Record<string, unknown>[];
+    const rawDogs = this.resolveDogsPickup(this.form.value.dogs as Record<string, unknown>[]);
     const dogs = await this.uploadDogFiles(rawDogs);
     this.store.dispatch(submitRequest({
       dogs,
@@ -176,6 +183,15 @@ export class TripRequestComponent {
       requesterEmail: requesterEmail!,
       requesterPhone: requesterPhone!,
     }));
+  }
+
+  private resolveDogsPickup(dogs: Record<string, unknown>[]): Record<string, unknown>[] {
+    const pickupLocations = this.selectedTrip()?.pickupLocations ?? [];
+    return dogs.map(({ pickupLocationId, ...dog }) => {
+      if (!pickupLocations.length) return dog;
+      const name = pickupLocations.find(d => d.id === pickupLocationId)?.name ?? 'Other';
+      return { ...dog, pickupLocation: name };
+    });
   }
 
   private async uploadDogFiles(dogs: Record<string, unknown>[]): Promise<Record<string, unknown>[]> {

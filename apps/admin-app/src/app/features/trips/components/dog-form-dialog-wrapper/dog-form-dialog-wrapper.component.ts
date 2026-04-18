@@ -22,6 +22,7 @@ import { TripDestination } from '@models/lib/trip.model';
       [dog]="dogManager.dialog.selectedDog()"
       [requestors]="dogManager.tripRequestors()"
       [tripDestinations]="tripDestinations()"
+      [tripPickupLocations]="tripPickupLocations()"
       (dogSaved)="dogManager.onDogSaved($event)"
       (photoFileChange)="dogManager.dialog.setPendingPhotoFile($event)"
       (documentFileChange)="dogManager.dialog.setPendingDocumentFile($event)"
@@ -32,4 +33,5 @@ export class DogFormDialogWrapperComponent {
   readonly dogManager = inject(DogManagerService);
   readonly tripId = input<string | null>(null);
   readonly tripDestinations = input<TripDestination[]>([]);
+  readonly tripPickupLocations = input<TripDestination[]>([]);
 }

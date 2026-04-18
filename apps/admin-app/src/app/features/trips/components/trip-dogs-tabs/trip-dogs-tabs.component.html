@@ -25,6 +25,7 @@
     <p-tab value="all">{{ 'trips.allDogsTab' | transloco: { count: dogManager.dogsData().length } }}</p-tab>
     <p-tab value="byRequestor">{{ 'trips.byRequestorTab' | transloco: { count: dogManager.tripRequestors().length } }}</p-tab>
     <p-tab value="byDestination">{{ 'trips.byDestinationTab' | transloco: { count: dogManager.tripDestinations().length } }}</p-tab>
+    <p-tab value="byPickup">{{ 'trips.byPickupTab' | transloco: { count: dogManager.tripPickupLocations().length } }}</p-tab>
   </p-tablist>
 </p-tabs>
 
@@ -50,47 +51,38 @@
 }
 
 @if (activeTab() === 'byRequestor') {
-  <app-dogs-by-requestor
-    [requestors]="dogManager.tripRequestors()"
-    [dogsPerRequestor]="dogManager.dogsPerRequestor()"
+  <app-dogs-grouped
+    [groups]="dogManager.requestorGroups()"
     [dogColumns]="dogManager.dogColumns()"
     [dogActions]="dogManager.dogActions()"
     [tableConfig]="tableConfig()"
-    [requests]="requests()"
+    [emptyMessage]="'trips.noRequestorsLinked' | transloco"
     (selectionChange)="dogManager.onSelectionChange($event.dogs, $event.groupKey)"
     (rowClicked)="rowClicked.emit($event)" />
 }
 
 @if (activeTab() === 'byDestination') {
-  @if (dogManager.tripDestinations().length === 0) {
-    <app-empty-state icon="pi pi-map-marker" [title]="'trips.detail.noDestinations' | transloco" />
-  } @else {
-    <p-accordion [multiple]="true" [value]="[]">
-      @for (entry of dogManager.dogsPerDestination(); track entry.destination.id) {
-        <p-accordion-panel [value]="entry.destination.id">
-          <p-accordion-header>
-            <div class="destination-header">
-              <i class="pi pi-map-marker"></i>
-              <span class="destination-header__name">{{ entry.destination.name }}</span>
-              <span class="destination-header__count">{{ entry.dogs.length }} {{ 'trips.dogs' | transloco }}</span>
-            </div>
-          </p-accordion-header>
-          <p-accordion-content>
-            @if (entry.dogs.length === 0) {
-              <span class="text-color-secondary text-sm">{{ 'trips.detail.noDogsForDestination' | transloco }}</span>
-            } @else {
-              <app-dogs-table
-                [dogs]="entry.dogs"
-                [columns]="dogManager.dogColumns()"
-                [actions]="dogManager.dogActions()"
-                [config]="tableConfig()"
-                (rowClicked)="rowClicked.emit($event)" />
-            }
-          </p-accordion-content>
-        </p-accordion-panel>
-      }
-    </p-accordion>
-  }
+  <app-dogs-grouped
+    [groups]="dogManager.destinationGroups()"
+    [dogColumns]="dogManager.dogColumns()"
+    [dogActions]="dogManager.dogActions()"
+    [tableConfig]="tableConfig()"
+    emptyStateIcon="pi pi-map-marker"
+    [emptyMessage]="'trips.detail.noDestinations' | transloco"
+    [emptyGroupMessage]="'trips.detail.noDogsForDestination' | transloco"
+    (rowClicked)="rowClicked.emit($event)" />
 }
 
-<app-dog-form-dialog-wrapper [tripId]="tripId()" [tripDestinations]="dogManager.tripDestinations()" />
+@if (activeTab() === 'byPickup') {
+  <app-dogs-grouped
+    [groups]="dogManager.pickupGroups()"
+    [dogColumns]="dogManager.dogColumns()"
+    [dogActions]="dogManager.dogActions()"
+    [tableConfig]="tableConfig()"
+    emptyStateIcon="pi pi-map-marker"
+    [emptyMessage]="'trips.detail.noDestinations' | transloco"
+    [emptyGroupMessage]="'trips.detail.noDogsForPickup' | transloco"
+    (rowClicked)="rowClicked.emit($event)" />
+}
+
+<app-dog-form-dialog-wrapper [tripId]="tripId()" [tripDestinations]="dogManager.tripDestinations()" [tripPickupLocations]="dogManager.tripPickupLocations()" />

@@ -5,6 +5,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { TextareaModule } from 'primeng/textarea';
+import { TooltipModule } from 'primeng/tooltip';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TripDestination, TripRequester } from '@models/lib/trip.model';
@@ -19,7 +20,7 @@ import { DogDocumentsUploaderComponent } from './dog-documents-uploader/dog-docu
   imports: [
     ReactiveFormsModule,
     InputNumberModule, InputTextModule, SelectModule, IftaLabelModule, TextareaModule,
-    TranslocoModule,
+    TooltipModule, TranslocoModule,
     FormFieldComponent,
     DogRequestorSelectorComponent,
     DogDocumentsUploaderComponent,
@@ -34,6 +35,7 @@ export class DogFieldsComponent {
   readonly existingDocumentUrl = input<string | null>(null);
   readonly requestors = input<TripRequester[]>([]);
   readonly tripDestinations = input<TripDestination[]>([]);
+  readonly tripPickupLocations = input<TripDestination[]>([]);
 
   readonly photoFileChange = output<File | null>();
   readonly documentFileChange = output<File | null>();
@@ -41,20 +43,35 @@ export class DogFieldsComponent {
   private readonly transloco = inject(TranslocoService);
   private readonly langChange = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
-  readonly sizes = computed((): { value: string; label: string }[] => {
+  readonly PICKUP_OTHER_ID = '__other__';
+
+  readonly pickupOptions = computed((): { id: string | null; name: string }[] => {
     this.langChange();
     return [
+      ...this.tripPickupLocations(),
+      { id: null, name: this.transloco.translate('dogs.fields.pickupOther') },
+    ];
+  });
+
+  onPickupSelect(id: string | null): void {
+    const fg = this.form();
+    if (id === null) {
+      fg.get('pickupLocation')?.setValue('Other', { emitEvent: false });
+      fg.get('pickupLocationId')?.setValue(null, { emitEvent: false });
+    } else {
+      const dest = this.tripPickupLocations().find(d => d.id === id);
+      fg.get('pickupLocation')?.setValue(dest?.name ?? '', { emitEvent: false });
+    }
+  }
+
+  public sizes = [
       { value: 'small',  label: this.transloco.translate('dogs.fields.sizeSmall') },
       { value: 'medium', label: this.transloco.translate('dogs.fields.sizeMedium') },
       { value: 'large',  label: this.transloco.translate('dogs.fields.sizeLarge') },
     ];
-  });
 
-  readonly genders = computed((): { value: string; label: string }[] => {
-    this.langChange();
-    return [
+      public genders = [
       { value: 'male',   label: this.transloco.translate('dogs.fields.genderMale') },
       { value: 'female', label: this.transloco.translate('dogs.fields.genderFemale') },
     ];
-  });
 }

@@ -9,6 +9,7 @@ import { TranslocoModule } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
 import { TripDestination, TripRequester } from '@models/lib/trip.model';
 import { DogFieldsComponent } from './dog-fields.component';
+import { RandomProperty, RandomUtil } from '@models/index';
 
 
 @Component({
@@ -25,6 +26,7 @@ import { DogFieldsComponent } from './dog-fields.component';
 export class DogFormDialogComponent implements OnChanges {
   readonly tripId = input<string | null>(null);
   readonly tripDestinations = input<TripDestination[]>([]);
+  readonly tripPickupLocations = input<TripDestination[]>([]);
   /** Dog to edit. Null opens in add mode (accordion, multiple dogs). */
   readonly dog = input<Dog | null>(null);
   @Input() visible = false;
@@ -92,20 +94,21 @@ export class DogFormDialogComponent implements OnChanges {
 
   private buildDogGroup(d?: Dog | null): FormGroup {
     return this.fb.group({
-      name:             [d?.name             ?? '',   Validators.required],
-      size:             [d?.size             ?? '',   Validators.required],
-      gender:           [d?.gender           ?? '',   Validators.required],
-      age:              [d?.age              ?? null, [Validators.required, Validators.min(0)]],
-      chipId:           [d?.chipId           ?? '',   [Validators.required, Validators.pattern(/^\d{15}$/)]],
-      pickupLocation:   [d?.pickupLocation   ?? '',   Validators.required],
-      dropLocation:     [d?.dropLocation     ?? '',   ],
-      notes:            [d?.notes            ?? ''],
-      requesterName:    [d?.requesterName    ?? ''],
-      requestId:        [d?.requestId        ?? null],
-      requesterKey:     [DogFormDialogComponent.requesterKey(d)],
-      newRequesterName: [null],
-      destinationId: [d?.destinationId ?? null],
-      receiver:      [d?.receiver      ?? null],
+      name:              [d?.name              ?? RandomUtil.pick(RandomProperty.dogNames),   Validators.required],
+      size:              [d?.size              ?? RandomUtil.pick(RandomProperty.sizes),   Validators.required],
+      gender:            [d?.gender            ?? RandomUtil.pick(RandomProperty.genders),   Validators.required],
+      age:               [d?.age               ?? RandomUtil.pick(RandomProperty.ages), [Validators.required, Validators.min(0)]],
+      chipId:            [d?.chipId            ?? RandomUtil.pick(RandomProperty.chipIds),   [Validators.required, Validators.pattern(/^\d{15}$/)]],
+      pickupLocation:    [d?.pickupLocation    ?? ''],
+      pickupLocationId:  [d?.pickupLocationId  ?? null, Validators.required],
+      dropLocation:      [d?.dropLocation      ?? ''],
+      notes:             [d?.notes             ?? ''],
+      requesterName:     [d?.requesterName     ?? ''],
+      requestId:         [d?.requestId         ?? null],
+      requesterKey:      [DogFormDialogComponent.requesterKey(d)],
+      newRequesterName:  [RandomUtil.pick(RandomProperty.requesterNames)],
+      destinationId:     [d?.destinationId     ?? null, Validators.required],
+      receiver:          [d?.receiver          ?? null],
     }, { validators: DogFormDialogComponent.requesterValidator });
   }
 
@@ -127,21 +130,33 @@ export class DogFormDialogComponent implements OnChanges {
     if (this.isNewDog) {
       this.addForms.markAllAsTouched();
       if (this.addForms.invalid) return;
-      this.dogSaved.emit(this.addForms.value.map((v: any) => this.stripInternalFields(v)));
+      this.dogSaved.emit(this.addForms.value.map((v: any) => this.toDogPayload(v)));
     } else {
       this.editForm.markAllAsTouched();
       if (this.editForm.invalid) return;
-      this.dogSaved.emit([{ id: this.dog()!.id, ...this.stripInternalFields(this.editForm.value) } as Dog]);
+      this.dogSaved.emit([{ id: this.dog()!.id, ...this.toDogPayload(this.editForm.value) } as Dog]);
     }
     this.visibleChange.emit(false);
   }
 
-  private resolveRequesterName(raw: { newRequesterName: string | null; requesterName: string | null }): string | null {
-    return raw.newRequesterName?.trim() || raw.requesterName;
-  }
+  private toDogPayload({ newRequesterName, requesterKey: _rk, ...dogData }: any): Omit<Dog, 'id'> {
+    const requesterName = newRequesterName?.trim() || dogData.requesterName;
 
-  private stripInternalFields({ newRequesterName, requesterKey: _rk, ...rest }: any): Omit<Dog, 'id'> {
-    return { ...rest, requesterName: this.resolveRequesterName({ newRequesterName, requesterName: rest.requesterName }) };
+    const destinations = this.tripDestinations();
+    const pickupLocations = this.tripPickupLocations();
+    const findDest = (id: string | null) => destinations.find((d: TripDestination) => d.id === id) ?? null;
+    const findPickup = (id: string | null) => pickupLocations.find((d: TripDestination) => d.id === id) ?? null;
+
+    // Resolve pickupLocation text from the selected pickup location ID (or 'Other' when none chosen).
+    const pickupDest = findPickup(dogData.pickupLocationId);
+    const pickupLocation = pickupLocations.length > 0 ? (pickupDest?.name ?? 'Other') : (dogData.pickupLocation || '');
+    const pickupLocationId = pickupDest ? dogData.pickupLocationId : null;
+
+    // Keep dropLocation in sync with the selected delivery stop when one is chosen.
+    const dropDest = findDest(dogData.destinationId);
+    const dropLocation = dropDest ? dropDest.name : dogData.dropLocation;
+
+    return { ...dogData, pickupLocation, pickupLocationId, dropLocation, requesterName };
   }
 
   onCancel(): void {

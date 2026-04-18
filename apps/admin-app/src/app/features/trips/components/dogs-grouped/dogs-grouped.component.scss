@@ -1,27 +1,34 @@
-.no-requestors {
+.no-groups {
   padding: 2rem 1rem;
   text-align: center;
   color: var(--p-text-muted-color);
   font-size: 0.875rem;
 }
 
-.requestor-header {
+.group-header {
   display: flex;
   align-items: center;
   width: 100%;
   gap: 0.5rem;
 
-  &__name { flex: 1; }
+  &__spacer { flex: 1; }
 
   &__count {
-    margin-left: auto;
     background: var(--p-primary-color);
     color: #fff;
     border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 600;
-    padding: 0.15rem 0.6rem;
-    line-height: 1.4;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.4rem;
     white-space: nowrap;
+  }
+
+  &__warn {
+    color: var(--p-yellow-500);
   }
 }

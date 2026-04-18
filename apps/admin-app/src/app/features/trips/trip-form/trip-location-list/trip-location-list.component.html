@@ -1,0 +1,40 @@
+<div class="destinations-card">
+  <div class="destinations-card__header">
+    <span>📍 {{ config().titleKey | transloco }}</span>
+    <small class="destinations-card__hint">{{ config().hintKey | transloco }}</small>
+  </div>
+
+  <div class="destination-chips">
+    @for (item of items(); track item.id) {
+      <p-chip
+        [label]="item.name"
+        [removable]="true"
+        (onRemove)="removeItem.emit($index)"
+        class="destination-chip" />
+    }
+    @if (items().length === 0) {
+      <span class="destinations-empty">{{ config().emptyKey | transloco }}</span>
+    }
+  </div>
+
+  <div class="add-destination-row">
+    <input
+      pInputText
+      [formControl]="inputCtrl()"
+      [placeholder]="config().placeholderKey | transloco"
+      class="destination-input"
+      (keydown.enter)="addItem.emit(); $event.preventDefault()" />
+    <p-button
+      icon="pi pi-plus"
+      [label]="config().addButtonKey | transloco"
+      severity="secondary"
+      [outlined]="true"
+      size="small"
+      type="button"
+      (onClick)="addItem.emit()" />
+  </div>
+
+  @if (hasError()) {
+    <small class="p-error">{{ config().errorKey | transloco }}</small>
+  }
+</div>

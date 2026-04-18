@@ -24,7 +24,6 @@ export function buildDogColumns<T extends Dog>(
     },
     { field: 'age', header: t('trips.table.age'), formatter: (value) => value != null ? `${value} yr` : '—' },
     { field: 'pickupLocation', header: t('trips.table.pickup') },
-    { field: 'dropLocation', header: t('trips.table.drop') },
     {
       field: 'destinationId', header: t('trips.table.deliveryStop'), type: 'badge',
       badgeConfig: {

@@ -16,6 +16,7 @@ export interface Dog {
   requesterPhone?: string | null;
   requestId?: string | null;
   destinationId?: string | null;
+  pickupLocationId?: string | null;
   receiver?: string | null;
   /** Transient — used only when creating a dog with a new admin requester. Not stored on the dog entity. */
   newRequesterName?: string | null;

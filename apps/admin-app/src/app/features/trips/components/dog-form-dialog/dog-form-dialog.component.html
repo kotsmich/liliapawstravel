@@ -27,7 +27,7 @@
             }
           </p-accordion-header>
           <p-accordion-content>
-            <app-dog-fields [form]="panel" [idx]="$index" [requestors]="requestors()" [tripDestinations]="tripDestinations()" />
+            <app-dog-fields [form]="panel" [idx]="$index" [requestors]="requestors()" [tripDestinations]="tripDestinations()" [tripPickupLocations]="tripPickupLocations()" />
           </p-accordion-content>
         </p-accordion-panel>
       }
@@ -52,6 +52,7 @@
       idx="edit"
       [requestors]="requestors()"
       [tripDestinations]="tripDestinations()"
+      [tripPickupLocations]="tripPickupLocations()"
       [existingPhotoUrl]="dog()?.photoUrl ?? null"
       [existingDocumentUrl]="dog()?.documentUrl ?? null"
       (photoFileChange)="photoFileChange.emit($event)"

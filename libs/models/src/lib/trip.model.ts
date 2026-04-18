@@ -25,6 +25,7 @@ export interface Trip {
   spotsAvailable: number;
   notes: string;
   destinations?: TripDestination[];
+  pickupLocations?: TripDestination[];
   dogs: Dog[] | undefined;
   requesters?: TripRequester[];
   isFull: boolean;

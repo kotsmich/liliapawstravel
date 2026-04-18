@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, Input, input, output, signal } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DogDialogService } from '../../trip-form/dog-dialog.service';
 import { Trip } from '@models/lib/trip.model';
 import { Dog } from '@models/lib/dog.model';
@@ -17,7 +16,6 @@ import { TripDogsTabsComponent } from '../trip-dogs-tabs/trip-dogs-tabs.componen
   providers: [DogDialogService, DogManagerService],
   imports: [
     DialogModule,
-    ConfirmDialogModule,
     DogDetailDialogComponent,
     TripDogsTabsComponent,
   ],

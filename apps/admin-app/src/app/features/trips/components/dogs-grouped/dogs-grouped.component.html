@@ -1,0 +1,42 @@
+@if (groups().length === 0) {
+  @if (emptyStateIcon()) {
+    <app-empty-state [icon]="emptyStateIcon()" [title]="emptyMessage()" />
+  } @else {
+    <div class="no-groups">{{ emptyMessage() }}</div>
+  }
+} @else {
+  <p-accordion [multiple]="true" [value]="[]">
+    @for (group of groups(); track group.key) {
+      <p-accordion-panel [value]="group.key">
+        <p-accordion-header>
+          <div class="group-header">
+            @if (group.icon) {
+              <i [class]="group.icon"></i>
+            }
+            <span class="group-header__name">{{ group.label }}</span>
+            <span class="group-header__count">{{ group.dogs.length }}</span>
+            <span class="group-header__spacer"></span>
+            @if (group.hasWarning) {
+              <i class="pi pi-exclamation-triangle group-header__warn"
+                 [pTooltip]="group.warningTooltip ?? ''"
+                 tooltipPosition="top"></i>
+            }
+          </div>
+        </p-accordion-header>
+        <p-accordion-content>
+          @if (group.dogs.length === 0 && emptyGroupMessage()) {
+            <span class="text-color-secondary text-sm">{{ emptyGroupMessage() }}</span>
+          } @else {
+            <app-dogs-table
+              [dogs]="group.dogs"
+              [columns]="dogColumns()"
+              [actions]="dogActions()"
+              [config]="tableConfig()"
+              (selectionChange)="selectionChange.emit({ dogs: $event, groupKey: group.key })"
+              (rowClicked)="rowClicked.emit($event)" />
+          }
+        </p-accordion-content>
+      </p-accordion-panel>
+    }
+  </p-accordion>
+}

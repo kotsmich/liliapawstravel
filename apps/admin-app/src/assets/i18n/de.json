@@ -109,6 +109,7 @@
     "allDogsTab": "Alle Hunde ({{ count }})",
     "byRequestorTab": "Nach Antragsteller ({{ count }})",
     "byDestinationTab": "Nach Zielort ({{ count }})",
+    "byPickupTab": "Nach Abholort ({{ count }})",
     "noRequestorsLinked": "Noch keine Antragsteller mit dieser Reise verknüpft.",
     "form": {
       "title": "Reisedetails",
@@ -151,7 +152,13 @@
       "noDestinations": "Noch keine Reiseziele hinzugefügt.",
       "destinationPlaceholder": "z.B. Athen, Griechenland",
       "addDestination": "Hinzufügen",
-      "destinationsRequired": "Mindestens ein Reiseziel ist erforderlich."
+      "destinationsRequired": "Mindestens ein Reiseziel ist erforderlich.",
+      "pickupLocations": "Abholorte",
+      "pickupLocationsHint": "Städte, in denen Hunde abgeholt werden",
+      "noPickupLocations": "Noch keine Abholorte hinzugefügt.",
+      "pickupLocationPlaceholder": "z.B. Thessaloniki, Griechenland",
+      "addPickupLocation": "Hinzufügen",
+      "pickupLocationsRequired": "Mindestens ein Abholort ist erforderlich."
     },
     "table": {
       "date": "Datum",
@@ -166,6 +173,9 @@
       "gender": "Geschlecht",
       "age": "Alter",
       "chipId": "Chip-ID",
+      "deliveryStop": "Lieferstopp",
+      "receiver": "Empfänger",
+      "notAssigned": "Nicht zugewiesen",
       "requester": "Antragsteller",
       "pickup": "Abholung",
       "drop": "Abgabe",
@@ -188,6 +198,8 @@
       "requestersTab": "Antragsteller ({{ count }})",
       "destinationsTab": "Zielorte ({{ count }})",
       "noDogsForDestination": "Keine Hunde diesem Zielort zugewiesen.",
+      "noDogsForPickup": "Keine Hunde diesem Abholort zugewiesen.",
+      "noDestinations": "Für diese Reise wurden keine Zielorte konfiguriert.",
       "exportPdf": "PDF exportieren",
       "noDogsYet": "Noch keine Hunde auf dieser Reise.",
       "noRequests": "Keine Anfragen für diese Reise.",
@@ -242,7 +254,10 @@
       "documentFormats": "PDF, JPG, PNG — max 10MB",
       "removePhoto": "Foto entfernen",
       "removeDocument": "Dokument entfernen",
-      "adminDestination": "Lieferort"
+      "adminDestination": "Lieferort",
+      "pickupOther": "Sonstiges (in Notizen angeben)",
+      "pickupOtherHint": "Bitte beschreiben Sie den Abholort im Feld Besondere Hinweise.",
+      "receiver": "Empfänger (optional)"
     },
     "errors": {
       "required": "Pflichtfeld.",

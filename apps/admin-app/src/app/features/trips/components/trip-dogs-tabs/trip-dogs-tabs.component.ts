@@ -2,15 +2,13 @@ import { Component, ChangeDetectionStrategy, inject, input, output, model, compu
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
 import { TagModule } from 'primeng/tag';
-import { AccordionModule } from 'primeng/accordion';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { TableConfig } from '@models/lib/table-column.interface';
 import { DogsTableComponent } from '@admin/features/trips/components/dogs-table.component';
-import { DogsByRequestorComponent } from '@admin/features/trips/components/dogs-by-requestor/dogs-by-requestor.component';
+import { DogsByGroupComponent } from '@admin/features/trips/components/dogs-grouped/dogs-grouped.component';
 import { DogFormDialogWrapperComponent } from '@admin/features/trips/components/dog-form-dialog-wrapper/dog-form-dialog-wrapper.component';
-import { EmptyStateComponent } from '@ui/lib/components/empty-state/empty-state.component';
 import { DogManagerService } from '@admin/features/trips/trip-form/dog-manager.service';
 
 @Component({
@@ -18,9 +16,9 @@ import { DogManagerService } from '@admin/features/trips/trip-form/dog-manager.s
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ButtonModule, TabsModule, TagModule, AccordionModule, TranslocoModule,
-    DogsTableComponent, DogsByRequestorComponent,
-    DogFormDialogWrapperComponent, EmptyStateComponent,
+    ButtonModule, TabsModule, TagModule, TranslocoModule,
+    DogsTableComponent, DogsByGroupComponent,
+    DogFormDialogWrapperComponent,
   ],
   templateUrl: './trip-dogs-tabs.component.html',
   styleUrl: './trip-dogs-tabs.component.scss',

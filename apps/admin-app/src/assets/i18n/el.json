@@ -109,6 +109,7 @@
     "allDogsTab": "Όλοι οι Σκύλοι ({{ count }})",
     "byRequestorTab": "Ανά Αιτούντα ({{ count }})",
     "byDestinationTab": "Ανά Προορισμό ({{ count }})",
+    "byPickupTab": "Ανά Παραλαβή ({{ count }})",
     "noRequestorsLinked": "Δεν υπάρχουν αιτούντες συνδεδεμένοι με αυτό το ταξίδι ακόμα.",
     "form": {
       "title": "Στοιχεία Ταξιδιού",
@@ -151,7 +152,13 @@
       "noDestinations": "Δεν έχουν προστεθεί προορισμοί ακόμα.",
       "destinationPlaceholder": "π.χ. Αθήνα, Ελλάδα",
       "addDestination": "Προσθήκη",
-      "destinationsRequired": "Απαιτείται τουλάχιστον ένας προορισμός."
+      "destinationsRequired": "Απαιτείται τουλάχιστον ένας προορισμός.",
+      "pickupLocations": "Σημεία Παραλαβής",
+      "pickupLocationsHint": "Πόλεις από όπου παραλαμβάνονται σκύλοι",
+      "noPickupLocations": "Δεν έχουν προστεθεί σημεία παραλαβής ακόμα.",
+      "pickupLocationPlaceholder": "π.χ. Θεσσαλονίκη, Ελλάδα",
+      "addPickupLocation": "Προσθήκη",
+      "pickupLocationsRequired": "Απαιτείται τουλάχιστον ένα σημείο παραλαβής."
     },
     "table": {
       "date": "Ημερομηνία",
@@ -191,6 +198,8 @@
       "requestersTab": "Αιτούντες ({{ count }})",
       "destinationsTab": "Προορισμοί ({{ count }})",
       "noDogsForDestination": "Δεν έχουν ανατεθεί σκύλοι σε αυτόν τον προορισμό.",
+      "noDogsForPickup": "Δεν έχουν ανατεθεί σκύλοι σε αυτό το σημείο παραλαβής.",
+      "noDestinations": "Δεν έχουν ρυθμιστεί προορισμοί για αυτό το ταξίδι.",
       "exportPdf": "Εξαγωγή PDF",
       "noDogsYet": "Δεν υπάρχουν σκύλοι σε αυτό το ταξίδι ακόμα.",
       "noRequests": "Δεν υπάρχουν αιτήματα για αυτό το ταξίδι.",
@@ -246,6 +255,8 @@
       "removePhoto": "Αφαίρεση φωτογραφίας",
       "removeDocument": "Αφαίρεση εγγράφου",
       "adminDestination": "Σταθμός Παράδοσης",
+      "pickupOther": "Άλλο (καθορίστε στις σημειώσεις)",
+      "pickupOtherHint": "Περιγράψτε το σημείο παραλαβής στο πεδίο Ειδικές Σημειώσεις.",
       "receiver": "Παραλήπτης (προαιρετικό)"
     },
     "errors": {

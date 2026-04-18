@@ -37,6 +37,21 @@
     // 2 fields per row on mobile instead of stacking to full width
     @media (max-width: 480px) { flex: 1 1 calc(50% - 0.175rem); }
 
+    &--full {
+      flex: 1 1 100%;
+      width: 100%;
+
+      textarea {
+        width: 100%;
+        font-size: 0.875rem;
+        padding: 0.4rem 0.6rem;
+        resize: none;
+        line-height: 1.5;
+
+        @media (max-width: 480px) { font-size: 0.8rem; }
+      }
+    }
+
     &--sm {
       flex: 0 1 100px;
       overflow: hidden;

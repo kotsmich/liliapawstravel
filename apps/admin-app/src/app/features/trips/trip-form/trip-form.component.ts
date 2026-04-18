@@ -20,23 +20,25 @@ import { DogDialogService } from './dog-dialog.service';
 import { TripFormHeaderComponent } from './trip-form-header/trip-form-header.component';
 import { TripInfoFormComponent } from './trip-info-form/trip-info-form.component';
 import { TripDogsManagerComponent } from './trip-dogs-manager/trip-dogs-manager.component';
-import { TripDestinationsComponent } from './trip-destinations/trip-destinations.component';
+import { TripLocationListComponent, type LocationListConfig } from './trip-location-list/trip-location-list.component';
 
 const DEFAULT_DESTINATIONS: TripDestination[] = [
-  { id: 'def-dest-01', name: 'Αθήνα, Ελλάδα' },
-  { id: 'def-dest-02', name: 'Θεσσαλονίκη, Ελλάδα' },
-  { id: 'def-dest-03', name: 'Βερολίνο, Γερμανία' },
-  { id: 'def-dest-04', name: 'Μόναχο, Γερμανία' },
-  { id: 'def-dest-05', name: 'Αμβούργο, Γερμανία' },
-  { id: 'def-dest-06', name: 'Παρίσι, Γαλλία' },
-  { id: 'def-dest-07', name: 'Άμστερνταμ, Ολλανδία' },
-  { id: 'def-dest-08', name: 'Ρώμη, Ιταλία' },
-  { id: 'def-dest-09', name: 'Βαρκελώνη, Ισπανία' },
-  { id: 'def-dest-10', name: 'Βιέννη, Αυστρία' },
-  { id: 'def-dest-11', name: 'Βρυξέλλες, Βέλγιο' },
-  { id: 'def-dest-12', name: 'Ζυρίχη, Ελβετία' },
+  { id: 'def-dest-04', name: 'Μόναχο' },
+  { id: 'def-dest-05', name: 'Αμβούργο' },
+  { id: 'def-dest-01', name: 'Στουγκαρδη' },
+  { id: 'def-dest-06', name: 'Παρίσι' },
+  { id: 'def-dest-07', name: 'Άμστερνταμ' },
+  { id: 'def-dest-10', name: 'Βιέννη' },
+  { id: 'def-dest-11', name: 'Βρυξέλλες' },
 ];
 
+const DEFAULT_PICKUP_LOCATIONS: TripDestination[] = [
+  { id: 'def-pick-03', name: 'Λάρισα' },
+  { id: 'def-pick-01', name: 'Κατερινη' },
+  { id: 'def-pick-02', name: 'Θεσσαλονίκη' },
+  { id: 'def-pick-04', name: 'Βεροια' },
+  { id: 'def-pick-05', name: 'Ιωάννινα, Ελλάδα' },
+];
 @Component({
   selector: 'app-trip-form',
   standalone: true,
@@ -50,7 +52,7 @@ const DEFAULT_DESTINATIONS: TripDestination[] = [
     TripFormHeaderComponent,
     TripInfoFormComponent,
     TripDogsManagerComponent,
-    TripDestinationsComponent,
+    TripLocationListComponent,
   ],
   templateUrl: './trip-form.component.html',
   styleUrls: ['./trip-form.component.scss'],
@@ -70,27 +72,54 @@ export class TripFormComponent implements OnInit {
 
   readonly today = new Date();
 
+
   readonly form = this.fb.group({
-    date: [null as Date | null, Validators.required],
-    departureCountry: ['', Validators.required],
-    departureCity: ['', Validators.required],
-    arrivalCountry: ['', Validators.required],
-    arrivalCity: ['', Validators.required],
+    date: [new Date(), Validators.required],
+    departureCountry: ['Greece', Validators.required],
+    departureCity: ['Larisa', Validators.required],
+    arrivalCountry: ['Calais', Validators.required],
+    arrivalCity: ['France', Validators.required],
     status: ['upcoming', Validators.required],
-    totalCapacity: [null as number | null, [Validators.required, Validators.min(1)]],
+    totalCapacity: [40, [Validators.required, Validators.min(1)]],
     notes: [''],
     isFull: [false],
     acceptingRequests: [true],
     destinations: new FormControl<TripDestination[]>(DEFAULT_DESTINATIONS, {
       validators: (c) => (c.value as TripDestination[])?.length > 0 ? null : { destinationsRequired: true },
     }),
+    pickupLocations: new FormControl<TripDestination[]>(DEFAULT_PICKUP_LOCATIONS, {
+      validators: (c) => (c.value as TripDestination[])?.length > 0 ? null : { pickupLocationsRequired: true },
+    }),
     dogs: this.dogManager.dogsArray,
   });
 
   readonly destinationInputCtrl = new FormControl('');
+  readonly pickupLocationInputCtrl = new FormControl('');
+
+  readonly destinationsConfig: LocationListConfig = {
+    titleKey: 'trips.form.destinations',
+    hintKey: 'trips.form.destinationsHint',
+    placeholderKey: 'trips.form.destinationPlaceholder',
+    addButtonKey: 'trips.form.addDestination',
+    emptyKey: 'trips.form.noDestinations',
+    errorKey: 'trips.form.destinationsRequired',
+  };
+
+  readonly pickupLocationsConfig: LocationListConfig = {
+    titleKey: 'trips.form.pickupLocations',
+    hintKey: 'trips.form.pickupLocationsHint',
+    placeholderKey: 'trips.form.pickupLocationPlaceholder',
+    addButtonKey: 'trips.form.addPickupLocation',
+    emptyKey: 'trips.form.noPickupLocations',
+    errorKey: 'trips.form.pickupLocationsRequired',
+  };
 
   get destinationsValue(): TripDestination[] {
     return (this.form.get('destinations')!.value as TripDestination[]) ?? [];
+  }
+
+  get pickupLocationsValue(): TripDestination[] {
+    return (this.form.get('pickupLocations')!.value as TripDestination[]) ?? [];
   }
 
   addDestination(): void {
@@ -106,6 +135,21 @@ export class TripFormComponent implements OnInit {
     updated.splice(index, 1);
     this.form.get('destinations')!.setValue(updated);
     this.form.get('destinations')!.markAsTouched();
+  }
+
+  addPickupLocation(): void {
+    const val = (this.pickupLocationInputCtrl.value ?? '').trim();
+    if (!val) return;
+    const newLoc: TripDestination = { id: crypto.randomUUID(), name: val };
+    this.form.get('pickupLocations')!.setValue([...this.pickupLocationsValue, newLoc]);
+    this.pickupLocationInputCtrl.setValue('');
+  }
+
+  removePickupLocation(index: number): void {
+    const updated = [...this.pickupLocationsValue];
+    updated.splice(index, 1);
+    this.form.get('pickupLocations')!.setValue(updated);
+    this.form.get('pickupLocations')!.markAsTouched();
   }
 
   readonly mutating = toSignal(this.store.select(selectTripsMutating), { initialValue: false });
@@ -169,6 +213,7 @@ export class TripFormComponent implements OnInit {
         this.form.patchValue({
           ...trip,
           destinations: trip.destinations?.length ? trip.destinations : DEFAULT_DESTINATIONS,
+          pickupLocations: trip.pickupLocations?.length ? trip.pickupLocations : DEFAULT_PICKUP_LOCATIONS,
           date: trip.date ? new Date(trip.date + 'T00:00:00') : null,
         });
         this.formPatched = true;
@@ -196,6 +241,7 @@ export class TripFormComponent implements OnInit {
 
   onSubmit(): void {
     this.form.get('destinations')!.markAsTouched();
+    this.form.get('pickupLocations')!.markAsTouched();
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

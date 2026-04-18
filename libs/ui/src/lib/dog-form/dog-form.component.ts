@@ -13,13 +13,16 @@ import {
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, AbstractControl } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
+import { TextareaModule } from 'primeng/textarea';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
+import { IftaLabelModule } from 'primeng/iftalabel';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageModule } from 'primeng/message';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { TripDestination } from '@models/lib/trip.model';
 
 @Component({
   selector: 'ui-dog-form',
@@ -28,8 +31,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
     CommonModule,
     ReactiveFormsModule,
     InputTextModule,
+    TextareaModule,
     InputNumberModule,
     SelectModule,
+    IftaLabelModule,
     ButtonModule,
     TooltipModule,
     MessageModule,
@@ -42,6 +47,7 @@ export class DogFormComponent {
   @Input() formGroup!: FormGroup;
   @Input() index!: number;
   @Input() canRemove = false;
+  @Input() tripDestinations: TripDestination[] = [];
   @Output() removeClicked = new EventEmitter<void>();
   @Output() photoFileChange = new EventEmitter<File | null>();
   @Output() documentFileChange = new EventEmitter<File | null>();
@@ -72,6 +78,19 @@ export class DogFormComponent {
       { value: 'female', label: this.transloco.translate('dogs.genderFemale') },
     ];
   });
+
+  get pickupOptions(): { id: string | null; name: string }[] {
+    return [
+      ...this.tripDestinations,
+      { id: null, name: this.transloco.translate('dogs.pickupOther') },
+    ];
+  }
+
+  onPickupSelect(id: string | null): void {
+    const dest = this.tripDestinations.find(d => d.id === id);
+    this.formGroup.get('pickupLocation')?.setValue(dest?.name ?? 'Other', { emitEvent: false });
+    this.formGroup.get('pickupLocationId')?.setValue(id, { emitEvent: false });
+  }
 
   ctrl(field: string): AbstractControl {
     return this.formGroup.get(field)!;

@@ -46,11 +46,32 @@
 
   <div class="dog-form__row flex flex-wrap gap-2">
     <div class="dog-form__field flex flex-column">
-      <label [for]="'pickup-' + index">{{ 'dogs.pickupLocation' | transloco }}</label>
-      <input pInputText [id]="'pickup-' + index" formControlName="pickupLocation"
-        placeholder="e.g. Bucharest, Romania" />
-      @if (ctrl('pickupLocation').touched && errorFor('pickupLocation')) {
-        <small class="p-error">{{ errorFor('pickupLocation') }}</small>
+      @if (tripDestinations.length > 0) {
+        <label [for]="'pickup-' + index">{{ 'dogs.pickupLocation' | transloco }}</label>
+        <p-select
+          [inputId]="'pickup-' + index"
+          formControlName="pickupLocationId"
+          [options]="pickupOptions"
+          optionLabel="name"
+          optionValue="id"
+          styleClass="w-full"
+          (onChange)="onPickupSelect($event.value)" />
+        @if (ctrl('pickupLocationId').touched && !ctrl('pickupLocationId').value && ctrl('pickupLocationId').value !== null) {
+          <small class="p-error">{{ 'dogs.pickupRequired' | transloco }}</small>
+        }
+        @if (ctrl('pickupLocationId').value === null && ctrl('pickupLocationId').dirty) {
+          <small class="text-color-secondary text-xs flex align-items-center gap-1 mt-1">
+            <i class="pi pi-info-circle"></i>
+            {{ 'dogs.pickupOtherHint' | transloco }}
+          </small>
+        }
+      } @else {
+        <label [for]="'pickup-' + index">{{ 'dogs.pickupLocation' | transloco }}</label>
+        <input pInputText [id]="'pickup-' + index" formControlName="pickupLocation"
+          placeholder="e.g. Bucharest, Romania" />
+        @if (ctrl('pickupLocation').touched && errorFor('pickupLocation')) {
+          <small class="p-error">{{ errorFor('pickupLocation') }}</small>
+        }
       }
     </div>
     <div class="dog-form__field flex flex-column">
@@ -71,10 +92,15 @@
       <input pInputText [id]="'receiver-' + index" formControlName="receiver"
         placeholder="e.g. Maria Papadopoulou" />
     </div>
-    <div class="dog-form__field flex flex-column">
+  </div>
+
+  <!-- Notes -->
+  <div class="dog-form__row dog-form__row--notes flex">
+    <div class="dog-form__field dog-form__field--full flex flex-column">
       <label [for]="'notes-' + index">{{ 'dogs.notes' | transloco }}</label>
-      <input pInputText [id]="'notes-' + index" formControlName="notes"
-        placeholder="Allergies, behaviour... (optional)" />
+      <textarea pTextarea [id]="'notes-' + index" formControlName="notes"
+        placeholder="Allergies, behaviour... (optional)"
+        [autoResize]="true" rows="2"></textarea>
     </div>
   </div>
 

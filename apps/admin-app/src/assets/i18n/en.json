@@ -109,6 +109,7 @@
     "allDogsTab": "All Dogs ({{ count }})",
     "byRequestorTab": "By Requestor ({{ count }})",
     "byDestinationTab": "By Destination ({{ count }})",
+    "byPickupTab": "By Pickup ({{ count }})",
     "noRequestorsLinked": "No requestors linked to this trip yet.",
     "form": {
       "title": "Trip Details",
@@ -151,7 +152,13 @@
       "noDestinations": "No destinations added yet.",
       "destinationPlaceholder": "e.g. Athens, Greece",
       "addDestination": "Add",
-      "destinationsRequired": "At least one destination is required."
+      "destinationsRequired": "At least one destination is required.",
+      "pickupLocations": "Pickup Locations",
+      "pickupLocationsHint": "Cities where dogs are collected",
+      "noPickupLocations": "No pickup locations added yet.",
+      "pickupLocationPlaceholder": "e.g. Thessaloniki, Greece",
+      "addPickupLocation": "Add",
+      "pickupLocationsRequired": "At least one pickup location is required."
     },
     "table": {
       "date": "Date",
@@ -191,6 +198,8 @@
       "requestersTab": "Requesters ({{ count }})",
       "destinationsTab": "Destinations ({{ count }})",
       "noDogsForDestination": "No dogs assigned to this destination.",
+      "noDogsForPickup": "No dogs assigned to this pickup location.",
+      "noDestinations": "No destinations configured for this trip.",
       "exportPdf": "Export PDF",
       "noDogsYet": "No dogs on this trip yet.",
       "noRequests": "No requests for this trip.",
@@ -246,6 +255,8 @@
       "removePhoto": "Remove photo",
       "removeDocument": "Remove document",
       "adminDestination": "Delivery Stop",
+      "pickupOther": "Other (specify in notes)",
+      "pickupOtherHint": "Please describe the pickup location in the Special Notes field below.",
       "receiver": "Receiver (optional)"
     },
     "errors": {

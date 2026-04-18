@@ -9,6 +9,7 @@ import { Trip, TripDestination, TripRequester } from '@models/lib/trip.model';
 import { TableAction, TableConfig } from '@models/lib/table-column.interface';
 import { addDog, addDogs, updateDog, deleteDog, deleteDogs, loadTripById } from '@admin/features/trips/store';
 import { buildDogColumns } from '@admin/features/trips/shared/dog-columns';
+import { DogGroup } from '@admin/features/trips/shared/dog-group.model';
 import { DogsService } from '@admin/services/dogs.service';
 import { ConfirmActionService } from '@admin/shared/services/confirm-action.service';
 import { DogDialogService } from './dog-dialog.service';
@@ -27,10 +28,11 @@ export class DogManagerService {
 
   readonly dogsArray: FormArray = this.fb.array([]);
 
-  private readonly _lang = toSignal(this.transloco.langChanges$, { initialValue: '' });
+  private readonly _lang = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
   readonly tripRequestors = signal<TripRequester[]>([]);
   readonly tripDestinations = signal<TripDestination[]>([]);
+  readonly tripPickupLocations = signal<TripDestination[]>([]);
   readonly selectedDogs = signal<(Dog & { _idx: number })[]>([]);
 
   readonly dogsData = toSignal(
@@ -53,6 +55,53 @@ export class DogManagerService {
     this.tripDestinations().map(dest => ({
       destination: dest,
       dogs: this.dogsData().filter(d => d.destinationId === dest.id),
+    }))
+  );
+
+  readonly dogsPerPickupLocation = computed((): { destination: TripDestination; dogs: (Dog & { _idx: number })[] }[] => {
+    const destinations = this.tripPickupLocations();
+    const allDogs = this.dogsData();
+    const groups = destinations.map(dest => ({
+      destination: dest,
+      dogs: allDogs.filter(d => d.pickupLocationId === dest.id),
+    }));
+    const otherDogs = allDogs.filter(d => !d.pickupLocationId);
+    if (otherDogs.length > 0) {
+      groups.push({ destination: { id: '__other__', name: 'Other' }, dogs: otherDogs });
+    }
+    return groups;
+  });
+
+  readonly requestorGroups = computed((): DogGroup[] => {
+    this._lang();
+    return this.tripRequestors().map(req => {
+      const groupKey = req.requestId ?? req.name;
+      const dogs = this.dogsPerRequestor().get(groupKey) ?? [];
+      return {
+        key: groupKey,
+        label: req.name,
+        dogs,
+        hasWarning: dogs.some(d => !d.destinationId),
+        warningTooltip: this.transloco.translate('dogs.warnings.noDestination'),
+      };
+    });
+  });
+
+  readonly destinationGroups = computed((): DogGroup[] =>
+    this.dogsPerDestination().map(entry => ({
+      key: entry.destination.id,
+      label: entry.destination.name,
+      icon: 'pi pi-map-marker',
+      dogs: entry.dogs,
+    }))
+  );
+
+  readonly pickupGroups = computed((): DogGroup[] =>
+    this.dogsPerPickupLocation().map(entry => ({
+      key: entry.destination.id,
+      label: entry.destination.name,
+      icon: 'pi pi-map-marker',
+      dogs: entry.dogs,
     }))
   );
 
@@ -93,6 +142,7 @@ export class DogManagerService {
   initFromTrip(trip: Trip): void {
     this.init(true, trip.id);
     this.tripDestinations.set(trip.destinations ?? []);
+    this.tripPickupLocations.set(trip.pickupLocations ?? []);
     this.setDogs(trip.dogs ?? [], trip.requesters ?? []);
   }
 
@@ -134,8 +184,9 @@ export class DogManagerService {
       gender:         [dog?.gender         ?? ''],
       age:            [dog?.age            ??  1],
       chipId:         [dog?.chipId         ?? ''],
-      pickupLocation: [dog?.pickupLocation ?? ''],
-      dropLocation:   [dog?.dropLocation   ?? ''],
+      pickupLocation:   [dog?.pickupLocation   ?? ''],
+      pickupLocationId: [dog?.pickupLocationId ?? null],
+      dropLocation:     [dog?.dropLocation     ?? ''],
       notes:          [dog?.notes          ?? ''],
       requesterName:  [dog?.requesterName  ?? ''],
       requestId:      [dog?.requestId      ?? null],

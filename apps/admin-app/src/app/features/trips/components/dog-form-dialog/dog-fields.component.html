@@ -7,7 +7,7 @@
       [idSuffix]="idx()" />
     <div class="field fw">
       <p-ifta-label>
-        <p-select [inputId]="'size-' + idx()" formControlName="size" [options]="sizes()"
+        <p-select [inputId]="'size-' + idx()" formControlName="size" [options]="sizes"
           optionLabel="label" optionValue="value" styleClass="w-full" />
         <label [for]="'size-' + idx()">{{ 'dogs.fields.size' | transloco }}</label>
       </p-ifta-label>
@@ -20,7 +20,7 @@
   <div class="row row-chip">
     <div class="field fw">
       <p-ifta-label>
-        <p-select [inputId]="'gender-' + idx()" formControlName="gender" [options]="genders()"
+        <p-select [inputId]="'gender-' + idx()" formControlName="gender" [options]="genders"
           optionLabel="label" optionValue="value" styleClass="w-full" />
         <label [for]="'gender-' + idx()">{{ 'dogs.fields.gender' | transloco }}</label>
       </p-ifta-label>
@@ -47,11 +47,39 @@
   </div>
 
   <div class="row">
-    <app-form-field
-      controlName="pickupLocation"
-      labelKey="dogs.fields.pickupLocation"
-      errorKey="dogs.errors.required"
-      [idSuffix]="idx()" />
+    @if (tripPickupLocations().length > 0) {
+      <div class="field fw">
+        <p-ifta-label>
+          <p-select
+            [inputId]="'pickupId-' + idx()"
+            formControlName="pickupLocationId"
+            [options]="pickupOptions()"
+            optionLabel="name"
+            optionValue="id"
+            [showClear]="false"
+            styleClass="w-full"
+            (onChange)="onPickupSelect($event.value)" />
+          <label [for]="'pickupId-' + idx()">
+            {{ 'dogs.fields.pickupLocation' | transloco }}
+          </label>
+        </p-ifta-label>
+        @if (form().get('pickupLocationId')?.value === null && form().get('pickupLocationId')?.touched) {
+          <small class="p-error">{{ 'dogs.errors.required' | transloco }}</small>
+        }
+        @if (form().get('pickupLocationId')?.value === null && form().get('pickupLocationId')?.dirty) {
+          <small class="text-color-secondary text-xs flex align-items-center gap-1">
+            <i class="pi pi-info-circle"></i>
+            {{ 'dogs.fields.pickupOtherHint' | transloco }}
+          </small>
+        }
+      </div>
+    } @else {
+      <app-form-field
+        controlName="pickupLocation"
+        labelKey="dogs.fields.pickupLocation"
+        errorKey="dogs.errors.required"
+        [idSuffix]="idx()" />
+    }
     <app-form-field
       controlName="dropLocation"
       labelKey="dogs.fields.dropLocation"

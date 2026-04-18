@@ -19,12 +19,23 @@
       [capacityWarning]="capacityWarning()"
       [dogsCount]="dogManager.dogsData().length" />
 
-    <app-trip-destinations
-      [destinations]="destinationsValue"
-      [inputCtrl]="destinationInputCtrl"
-      [hasError]="!!(form.get('destinations')?.touched && form.get('destinations')?.invalid)"
-      (addDestination)="addDestination()"
-      (removeDestination)="removeDestination($event)" />
+    <div class="locations-row">
+      <app-trip-location-list
+        [items]="pickupLocationsValue"
+        [inputCtrl]="pickupLocationInputCtrl"
+        [config]="pickupLocationsConfig"
+        [hasError]="!!(form.get('pickupLocations')?.touched && form.get('pickupLocations')?.invalid)"
+        (addItem)="addPickupLocation()"
+        (removeItem)="removePickupLocation($event)" />
+
+      <app-trip-location-list
+        [items]="destinationsValue"
+        [inputCtrl]="destinationInputCtrl"
+        [config]="destinationsConfig"
+        [hasError]="!!(form.get('destinations')?.touched && form.get('destinations')?.invalid)"
+        (addItem)="addDestination()"
+        (removeItem)="removeDestination($event)" />
+    </div>
 
     @if (isEdit) {
       <app-trip-dogs-manager

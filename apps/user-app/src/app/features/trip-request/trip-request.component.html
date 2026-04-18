@@ -211,6 +211,7 @@
                             [formGroup]="$any(dogs.at(i))"
                             [index]="i"
                             [canRemove]="false"
+                            [tripDestinations]="pickupDestinations()"
                             (photoFileChange)="onDogPhotoChange(i, $event)"
                             (documentFileChange)="onDogDocumentChange(i, $event)" />
                           @if (dogs.length > 1) {
