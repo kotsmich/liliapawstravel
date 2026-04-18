@@ -37,6 +37,25 @@ export const APP_ROUTES: Routes = [
         path: 'messages',
         loadComponent: () => import('./features/messages/messages-page.component').then((m) => m.MessagesPageComponent),
       },
+      {
+        path: 'settings',
+        loadComponent: () => import('./features/settings/settings.component').then((m) => m.SettingsComponent),
+        children: [
+          { path: '', redirectTo: 'profile', pathMatch: 'full' },
+          {
+            path: 'profile',
+            loadComponent: () => import('./features/settings/profile/profile.component').then((m) => m.ProfileComponent),
+          },
+          {
+            path: 'invitation',
+            loadComponent: () => import('./features/settings/invitation/invitation.component').then((m) => m.InvitationComponent),
+          },
+          {
+            path: 'users',
+            loadComponent: () => import('./features/settings/users/users.component').then((m) => m.UsersComponent),
+          },
+        ],
+      },
     ],
   },
   { path: '**', redirectTo: 'admin/login' },

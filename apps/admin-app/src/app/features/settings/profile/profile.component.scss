@@ -1,0 +1,103 @@
+/* ── Header ── */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.profile-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #e07b54;
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profile-header__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.profile-header__email {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  &--admin {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+
+  &--operator {
+    background: #f1f5f9;
+    color: #475569;
+  }
+}
+
+/* ── Grid ── */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* ── Card ── */
+.profile-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f1f5f9;
+
+    i {
+      font-size: 1.1rem;
+      color: #e07b54;
+    }
+
+    h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0;
+    }
+  }
+}
+
+/* ── Form fields ── */
+.field {
+  margin-bottom: 1rem;
+}
+
+.p-error {
+  font-size: 0.75rem;
+  color: #dc2626;
+  margin-top: 0.25rem;
+  display: block;
+}

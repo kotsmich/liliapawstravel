@@ -1,0 +1,69 @@
+<div class="invitation-page">
+
+  <div class="invitation-header">
+    <h1 class="invitation-header__title">{{ 'settings.invitation' | transloco }}</h1>
+    <p class="invitation-header__sub">{{ 'settings.invitationDescription' | transloco }}</p>
+  </div>
+
+  <section class="invitation-card">
+    <div class="invitation-card__header">
+      <i class="pi pi-user-plus"></i>
+      <h2>{{ 'account.addUser' | transloco }}</h2>
+    </div>
+
+    @if (userError()) {
+      <p-message severity="error" [text]="userError()!" styleClass="mb-3 w-full" />
+    }
+
+    <form [formGroup]="newUserForm" (ngSubmit)="submitCreateUser()" novalidate>
+      <div class="field">
+        <p-ifta-label>
+          <input pInputText id="user-email" formControlName="email" type="email" class="w-full" />
+          <label for="user-email">{{ 'account.userEmail' | transloco }}</label>
+        </p-ifta-label>
+        @if (newUserForm.get('email')?.touched && newUserForm.get('email')?.invalid) {
+          <small class="p-error">{{ 'account.emailRequired' | transloco }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <p-ifta-label>
+          <p-password
+            inputId="user-pwd"
+            formControlName="password"
+            [toggleMask]="true"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+          />
+          <label for="user-pwd">{{ 'login.password' | transloco }}</label>
+        </p-ifta-label>
+        @if (newUserForm.get('password')?.touched && newUserForm.get('password')?.invalid) {
+          <small class="p-error">{{ 'account.passwordMinLength' | transloco }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <p-ifta-label>
+          <p-select
+            inputId="user-role"
+            formControlName="role"
+            [options]="roleOptions"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="w-full"
+          />
+          <label for="user-role">{{ 'account.role' | transloco }}</label>
+        </p-ifta-label>
+      </div>
+
+      <p-button
+        type="submit"
+        icon="pi pi-user-plus"
+        [label]="userSaving() ? ('common.saving' | transloco) : ('account.createUser' | transloco)"
+        [loading]="userSaving()"
+        [disabled]="userSaving()"
+      />
+    </form>
+  </section>
+
+</div>

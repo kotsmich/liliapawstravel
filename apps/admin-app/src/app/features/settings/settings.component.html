@@ -1,0 +1,27 @@
+<div class="settings-page">
+
+  <nav class="settings-nav">
+    <p class="settings-nav__title">{{ 'settings.title' | transloco }}</p>
+
+    <a routerLink="profile" routerLinkActive="active" class="settings-nav__link">
+      <i class="pi pi-user"></i>
+      <span>{{ 'settings.profile' | transloco }}</span>
+    </a>
+
+    @if ((user$ | async)?.role === 'admin') {
+      <a routerLink="invitation" routerLinkActive="active" class="settings-nav__link">
+        <i class="pi pi-send"></i>
+        <span>{{ 'settings.invitation' | transloco }}</span>
+      </a>
+      <a routerLink="users" routerLinkActive="active" class="settings-nav__link">
+        <i class="pi pi-users"></i>
+        <span>{{ 'settings.users' | transloco }}</span>
+      </a>
+    }
+  </nav>
+
+  <div class="settings-content">
+    <router-outlet />
+  </div>
+
+</div>

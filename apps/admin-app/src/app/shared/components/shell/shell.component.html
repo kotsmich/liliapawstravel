@@ -32,6 +32,19 @@
     <div class="topbar__end flex align-items-center gap-2">
       <app-font-size-control />
       <!-- <app-language-switcher /> -->
+      @if (user$ | async; as user) {
+        <button
+          type="button"
+          class="account-btn flex align-items-center gap-2"
+          [class.active]="isActive('/admin/settings')"
+          [pTooltip]="user.email"
+          tooltipPosition="bottom"
+          (click)="navigateTo('/admin/settings')"
+        >
+          <span class="account-btn__avatar">{{ user.email[0].toUpperCase() }}</span>
+          <span class="account-btn__role account-btn__role--{{ user.role }}">{{ user.role }}</span>
+        </button>
+      }
       <p-button
         icon="pi pi-sign-out"
         [text]="true"

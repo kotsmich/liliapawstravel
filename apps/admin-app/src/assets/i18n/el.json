@@ -331,6 +331,39 @@
       "documentPreviewHeader": "Έγγραφο σκύλου"
     }
   },
+  "settings": {
+    "title": "Ρυθμίσεις",
+    "profile": "Προφίλ",
+    "invitation": "Πρόσκληση",
+    "invitationDescription": "Δημιουργία νέου λογαριασμού διαχειριστή ή χειριστή.",
+    "users": "Χρήστες",
+    "usersDescription": "Διαχείριση όλων των λογαριασμών διαχειριστή και χειριστή.",
+    "colEmail": "Email",
+    "colRole": "Ρόλος",
+    "noUsers": "Δεν βρέθηκαν χρήστες.",
+    "editUser": "Επεξεργασία Χρήστη"
+  },
+  "account": {
+    "title": "Λογαριασμός",
+    "changeEmail": "Αλλαγή Email",
+    "changePassword": "Αλλαγή Κωδικού",
+    "addUser": "Προσθήκη Χρήστη",
+    "currentPassword": "Τρέχων Κωδικός",
+    "newEmail": "Νέο Email",
+    "newPassword": "Νέος Κωδικός",
+    "confirmPassword": "Επιβεβαίωση Νέου Κωδικού",
+    "updateEmail": "Ενημέρωση Email",
+    "updatePassword": "Ενημέρωση Κωδικού",
+    "createUser": "Δημιουργία Χρήστη",
+    "userEmail": "Email Χρήστη",
+    "role": "Ρόλος",
+    "role_admin": "Διαχειριστής",
+    "role_operator": "Χειριστής",
+    "emailRequired": "Απαιτείται έγκυρο email.",
+    "passwordRequired": "Τουλάχιστον 6 χαρακτήρες.",
+    "passwordMinLength": "Τουλάχιστον 6 χαρακτήρες.",
+    "passwordMismatch": "Οι κωδικοί δεν ταιριάζουν."
+  },
   "messages": {
     "title": "Μηνύματα",
     "unread": "Αδιάβαστα",

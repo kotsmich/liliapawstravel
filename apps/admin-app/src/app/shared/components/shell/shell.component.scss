@@ -107,6 +107,52 @@
 
 .logout-btn { color: #94a3b8 !important; }
 
+/* ── Account button ── */
+.account-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0.5rem;
+  height: 36px;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover { background: rgba(255, 255, 255, 0.07); border-color: rgba(255,255,255,0.25); }
+
+  &.active { border-color: #e07b54; }
+
+  &__avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #e07b54;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__role {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 8px;
+
+    &--admin { background: #1d4ed820; color: #93c5fd; }
+    &--operator { background: rgba(255,255,255,0.08); color: #94a3b8; }
+
+    @media (max-width: 480px) { display: none; }
+  }
+}
+
 /* ── Page content ── */
 .content {
   flex: 1;

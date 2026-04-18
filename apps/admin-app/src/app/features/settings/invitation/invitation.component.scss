@@ -1,0 +1,59 @@
+/* ── Header ── */
+.invitation-header {
+  margin-bottom: 2rem;
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 0.25rem;
+  }
+
+  &__sub {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+  }
+}
+
+/* ── Card ── */
+.invitation-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  max-width: 420px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f1f5f9;
+
+    i {
+      font-size: 1.1rem;
+      color: #e07b54;
+    }
+
+    h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0;
+    }
+  }
+}
+
+/* ── Form fields ── */
+.field {
+  margin-bottom: 1rem;
+}
+
+.p-error {
+  font-size: 0.75rem;
+  color: #dc2626;
+  margin-top: 0.25rem;
+  display: block;
+}

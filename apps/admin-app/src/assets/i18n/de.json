@@ -327,6 +327,39 @@
       "documentPreviewHeader": "Hundedokument"
     }
   },
+  "settings": {
+    "title": "Einstellungen",
+    "profile": "Profil",
+    "invitation": "Einladung",
+    "invitationDescription": "Erstellen Sie ein neues Admin- oder Operator-Konto.",
+    "users": "Benutzer",
+    "usersDescription": "Alle Admin- und Operator-Konten verwalten.",
+    "colEmail": "E-Mail",
+    "colRole": "Rolle",
+    "noUsers": "Keine Benutzer gefunden.",
+    "editUser": "Benutzer bearbeiten"
+  },
+  "account": {
+    "title": "Konto",
+    "changeEmail": "E-Mail ändern",
+    "changePassword": "Passwort ändern",
+    "addUser": "Benutzer hinzufügen",
+    "currentPassword": "Aktuelles Passwort",
+    "newEmail": "Neue E-Mail",
+    "newPassword": "Neues Passwort",
+    "confirmPassword": "Neues Passwort bestätigen",
+    "updateEmail": "E-Mail aktualisieren",
+    "updatePassword": "Passwort aktualisieren",
+    "createUser": "Benutzer erstellen",
+    "userEmail": "Benutzer-E-Mail",
+    "role": "Rolle",
+    "role_admin": "Administrator",
+    "role_operator": "Operator",
+    "emailRequired": "Gültige E-Mail erforderlich.",
+    "passwordRequired": "Mindestens 6 Zeichen.",
+    "passwordMinLength": "Mindestens 6 Zeichen.",
+    "passwordMismatch": "Passwörter stimmen nicht überein."
+  },
   "messages": {
     "title": "Nachrichten",
     "unread": "Ungelesen",

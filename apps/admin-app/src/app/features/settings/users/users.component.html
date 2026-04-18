@@ -1,0 +1,106 @@
+<div class="users-page">
+
+  <div class="users-header">
+    <h1 class="users-header__title">{{ 'settings.users' | transloco }}</h1>
+    <p class="users-header__sub">{{ 'settings.usersDescription' | transloco }}</p>
+  </div>
+
+  <p-table
+    [value]="users()"
+    [loading]="loading()"
+    styleClass="users-table"
+    [rowHover]="true"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{ 'settings.colEmail' | transloco }}</th>
+        <th>{{ 'settings.colRole' | transloco }}</th>
+        <th style="width: 5rem"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-user>
+      <tr>
+        <td>{{ user.email }}</td>
+        <td>
+          <span class="role-badge" [class]="'role-badge--' + user.role">
+            {{ 'account.role_' + user.role | transloco }}
+          </span>
+        </td>
+        <td>
+          <p-button
+            icon="pi pi-pencil"
+            [text]="true"
+            [rounded]="true"
+            severity="secondary"
+            (onClick)="openEdit(user)"
+          />
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="3" class="empty-msg">{{ 'settings.noUsers' | transloco }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+</div>
+
+<!-- Edit dialog -->
+<p-dialog
+  [(visible)]="editDialogVisible"
+  [modal]="true"
+  [style]="{ width: '380px' }"
+  [header]="'settings.editUser' | transloco"
+  [closable]="true"
+  [draggable]="false"
+>
+  @if (error()) {
+    <p-message severity="error" [text]="error()!" styleClass="mb-3 w-full" />
+  }
+
+  <form [formGroup]="editForm" (ngSubmit)="saveUser()" novalidate class="edit-form">
+    <div class="field">
+      <p-ifta-label>
+        <input pInputText id="edit-email" formControlName="email" type="email" class="w-full" />
+        <label for="edit-email">{{ 'account.userEmail' | transloco }}</label>
+      </p-ifta-label>
+      @if (editForm.get('email')?.touched && editForm.get('email')?.invalid) {
+        <small class="p-error">{{ 'account.emailRequired' | transloco }}</small>
+      }
+    </div>
+
+    <div class="field">
+      <p-ifta-label>
+        <p-select
+          inputId="edit-role"
+          formControlName="role"
+          [options]="roleOptions"
+          optionLabel="label"
+          optionValue="value"
+          styleClass="w-full"
+        />
+        <label for="edit-role">{{ 'account.role' | transloco }}</label>
+      </p-ifta-label>
+    </div>
+
+    <div class="edit-form__actions">
+      <p-button
+        type="button"
+        [label]="'common.cancel' | transloco"
+        severity="secondary"
+        [text]="true"
+        (onClick)="editDialogVisible.set(false)"
+      />
+      <p-button
+        type="submit"
+        icon="pi pi-check"
+        [label]="saving() ? ('common.saving' | transloco) : ('common.save' | transloco)"
+        [loading]="saving()"
+        [disabled]="saving()"
+      />
+    </div>
+  </form>
+</p-dialog>

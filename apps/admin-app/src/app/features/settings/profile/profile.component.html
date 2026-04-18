@@ -1,0 +1,132 @@
+@if (user$ | async; as user) {
+  <div class="profile-page">
+
+    <div class="profile-header">
+      <div class="profile-avatar">{{ user.email[0].toUpperCase() }}</div>
+      <div class="profile-header__info">
+        <h1 class="profile-header__email">{{ user.email }}</h1>
+        <span class="role-badge" [class]="'role-badge--' + user.role">
+          {{ 'account.role_' + user.role | transloco }}
+        </span>
+      </div>
+    </div>
+
+    <div class="profile-grid">
+
+      <!-- Change Email -->
+      <section class="profile-card">
+        <div class="profile-card__header">
+          <i class="pi pi-envelope"></i>
+          <h2>{{ 'account.changeEmail' | transloco }}</h2>
+        </div>
+        @if (emailError()) {
+          <p-message severity="error" [text]="emailError()!" styleClass="mb-3 w-full" />
+        }
+        <form [formGroup]="emailForm" (ngSubmit)="submitEmailChange(user)" novalidate>
+          <div class="field">
+            <p-ifta-label>
+              <p-password
+                inputId="email-cur-pwd"
+                formControlName="currentPassword"
+                [feedback]="false"
+                [toggleMask]="true"
+                styleClass="w-full"
+                inputStyleClass="w-full"
+              />
+              <label for="email-cur-pwd">{{ 'account.currentPassword' | transloco }}</label>
+            </p-ifta-label>
+            @if (emailForm.get('currentPassword')?.touched && emailForm.get('currentPassword')?.invalid) {
+              <small class="p-error">{{ 'account.passwordRequired' | transloco }}</small>
+            }
+          </div>
+          <div class="field">
+            <p-ifta-label>
+              <input pInputText id="new-email" formControlName="newEmail" type="email" class="w-full" />
+              <label for="new-email">{{ 'account.newEmail' | transloco }}</label>
+            </p-ifta-label>
+            @if (emailForm.get('newEmail')?.touched && emailForm.get('newEmail')?.invalid) {
+              <small class="p-error">{{ 'account.emailRequired' | transloco }}</small>
+            }
+          </div>
+          <p-button
+            type="submit"
+            styleClass="w-full"
+            icon="pi pi-check"
+            [label]="emailSaving() ? ('common.saving' | transloco) : ('account.updateEmail' | transloco)"
+            [loading]="emailSaving()"
+            [disabled]="emailSaving()"
+          />
+        </form>
+      </section>
+
+      <!-- Change Password -->
+      <section class="profile-card">
+        <div class="profile-card__header">
+          <i class="pi pi-lock"></i>
+          <h2>{{ 'account.changePassword' | transloco }}</h2>
+        </div>
+        @if (passwordError()) {
+          <p-message severity="error" [text]="passwordError()!" styleClass="mb-3 w-full" />
+        }
+        <form [formGroup]="passwordForm" (ngSubmit)="submitPasswordChange()" novalidate>
+          <div class="field">
+            <p-ifta-label>
+              <p-password
+                inputId="pwd-current"
+                formControlName="currentPassword"
+                [feedback]="false"
+                [toggleMask]="true"
+                styleClass="w-full"
+                inputStyleClass="w-full"
+              />
+              <label for="pwd-current">{{ 'account.currentPassword' | transloco }}</label>
+            </p-ifta-label>
+            @if (passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.invalid) {
+              <small class="p-error">{{ 'account.passwordRequired' | transloco }}</small>
+            }
+          </div>
+          <div class="field">
+            <p-ifta-label>
+              <p-password
+                inputId="pwd-new"
+                formControlName="newPassword"
+                [toggleMask]="true"
+                styleClass="w-full"
+                inputStyleClass="w-full"
+              />
+              <label for="pwd-new">{{ 'account.newPassword' | transloco }}</label>
+            </p-ifta-label>
+            @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.invalid) {
+              <small class="p-error">{{ 'account.passwordMinLength' | transloco }}</small>
+            }
+          </div>
+          <div class="field">
+            <p-ifta-label>
+              <p-password
+                inputId="pwd-confirm"
+                formControlName="confirmPassword"
+                [feedback]="false"
+                [toggleMask]="true"
+                styleClass="w-full"
+                inputStyleClass="w-full"
+              />
+              <label for="pwd-confirm">{{ 'account.confirmPassword' | transloco }}</label>
+            </p-ifta-label>
+            @if (passwordForm.get('confirmPassword')?.touched && passwordForm.errors?.['mismatch']) {
+              <small class="p-error">{{ 'account.passwordMismatch' | transloco }}</small>
+            }
+          </div>
+          <p-button
+            type="submit"
+            styleClass="w-full"
+            icon="pi pi-check"
+            [label]="passwordSaving() ? ('common.saving' | transloco) : ('account.updatePassword' | transloco)"
+            [loading]="passwordSaving()"
+            [disabled]="passwordSaving()"
+          />
+        </form>
+      </section>
+
+    </div>
+  </div>
+}

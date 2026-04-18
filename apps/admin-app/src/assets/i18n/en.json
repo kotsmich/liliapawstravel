@@ -331,6 +331,39 @@
       "documentPreviewHeader": "Dog Document"
     }
   },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "invitation": "Invitation",
+    "invitationDescription": "Create a new admin or operator account.",
+    "users": "Users",
+    "usersDescription": "Manage all admin and operator accounts.",
+    "colEmail": "Email",
+    "colRole": "Role",
+    "noUsers": "No users found.",
+    "editUser": "Edit User"
+  },
+  "account": {
+    "title": "Account",
+    "changeEmail": "Change Email",
+    "changePassword": "Change Password",
+    "addUser": "Add User",
+    "currentPassword": "Current Password",
+    "newEmail": "New Email",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "updateEmail": "Update Email",
+    "updatePassword": "Update Password",
+    "createUser": "Create User",
+    "userEmail": "User Email",
+    "role": "Role",
+    "role_admin": "Admin",
+    "role_operator": "Operator",
+    "emailRequired": "Valid email required.",
+    "passwordRequired": "Min 6 characters.",
+    "passwordMinLength": "Min 6 characters.",
+    "passwordMismatch": "Passwords do not match."
+  },
   "messages": {
     "title": "Messages",
     "unread": "Unread",
