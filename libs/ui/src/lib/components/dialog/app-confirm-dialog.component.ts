@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, model, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GenericDialogComponent } from './generic-dialog.component';
 
@@ -10,13 +10,12 @@ import { GenericDialogComponent } from './generic-dialog.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppConfirmDialogComponent {
-  @Input() visible = false;
-  @Input() title = 'Confirm Action';
-  @Input() message = 'Are you sure?';
-  @Input() confirmLabel = 'Confirm';
-  @Input() severity: 'danger' | 'warning' = 'danger';
-  @Input() loading = false;
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() confirmed = new EventEmitter<void>();
-  @Output() cancelled = new EventEmitter<void>();
+  readonly visible = model(false);
+  readonly title = input('Confirm Action');
+  readonly message = input('Are you sure?');
+  readonly confirmLabel = input('Confirm');
+  readonly severity = input<'danger' | 'warning'>('danger');
+  readonly loading = input(false);
+  readonly confirmed = output<void>();
+  readonly cancelled = output<void>();
 }

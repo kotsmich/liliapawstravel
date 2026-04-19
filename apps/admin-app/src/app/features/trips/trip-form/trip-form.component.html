@@ -21,7 +21,7 @@
 
     <div class="locations-row">
       <app-trip-location-list
-        [items]="pickupLocationsValue"
+        [items]="pickupLocationsValue() ?? []"
         [inputCtrl]="pickupLocationInputCtrl"
         [config]="pickupLocationsConfig"
         [hasError]="!!(form.get('pickupLocations')?.touched && form.get('pickupLocations')?.invalid)"
@@ -29,7 +29,7 @@
         (removeItem)="removePickupLocation($event)" />
 
       <app-trip-location-list
-        [items]="destinationsValue"
+        [items]="destinationsValue() ?? []"
         [inputCtrl]="destinationInputCtrl"
         [config]="destinationsConfig"
         [hasError]="!!(form.get('destinations')?.touched && form.get('destinations')?.invalid)"

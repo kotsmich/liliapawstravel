@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
@@ -11,7 +11,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
   styleUrls: ['./loading-spinner.component.scss'],
 })
 export class LoadingSpinnerComponent {
-  @Input() diameter = 40;
-  @Input() message = '';
-  @Input() overlay = false;
+  readonly diameter = input(40);
+  readonly message = input('');
+  readonly overlay = input(false);
 }

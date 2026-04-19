@@ -1,23 +1,23 @@
 <p-table
-  [value]="tableData"
-  [loading]="loading"
-  [paginator]="config.paginator ?? false"
-  [rows]="config.rowsPerPage ?? 10"
-  [sortField]="config.sortField"
-  [sortOrder]="config.sortOrder ?? -1"
+  [value]="tableData()"
+  [loading]="loading()"
+  [paginator]="config().paginator ?? false"
+  [rows]="config().rowsPerPage ?? 10"
+  [sortField]="config().sortField"
+  [sortOrder]="config().sortOrder ?? -1"
   [rowHover]="true"
-  [stripedRows]="config.striped ?? false"
-  [selectionMode]="config.selectable ? 'multiple' : undefined"
-  [selection]="selection"
-  (selectionChange)="selectionChange.emit($any($event))"
+  [stripedRows]="config().striped ?? false"
+  [selectionMode]="config().selectable ? 'multiple' : undefined"
+  [selection]="selection()"
+  (selectionChange)="selection.set($any($event))"
   [metaKeySelection]="false">
 
   <ng-template pTemplate="header">
     <tr>
-      @if (config.selectable) {
+      @if (config().selectable) {
         <th style="width: 3rem"><p-tableHeaderCheckbox /></th>
       }
-      @for (col of columns; track col.field) {
+      @for (col of columns(); track col.field) {
         <th
           [pSortableColumn]="col.sortable ? col.field : ''"
           [style.width]="col.width ?? ''">
@@ -27,7 +27,7 @@
           }
         </th>
       }
-      @if (actions.length) {
+      @if (actions().length) {
         <th>Actions</th>
       }
     </tr>
@@ -36,11 +36,11 @@
   <ng-template pTemplate="body" let-row>
     <tr
       (click)="rowClicked.emit(row)"
-      [class.cursor-pointer]="isRowClickable()">
-      @if (config.selectable) {
-        <td (click)="$event.stopPropagation()"><p-tableCheckbox [value]="row" [disabled]="rowSelectable ? !rowSelectable(row) : false" /></td>
+      [class.cursor-pointer]="rowClickable()">
+      @if (config().selectable) {
+        <td (click)="$event.stopPropagation()"><p-tableCheckbox [value]="row" [disabled]="rowSelectable() ? !rowSelectable()!(row) : false" /></td>
       }
-      @for (col of columns; track col.field) {
+      @for (col of columns(); track col.field) {
         <td [class.icon-btn-cell]="col.type === 'icon-button'">
           @switch (col.type) {
             @case ('badge') {
@@ -85,10 +85,10 @@
         </td>
       }
 
-      @if (actions.length) {
+      @if (actions().length) {
         <td (click)="$event.stopPropagation()">
           <div class="flex gap-2">
-            @for (act of actions; track act.icon) {
+            @for (act of actions(); track act.icon) {
               <p-button
                 [icon]="act.icon"
                 [label]="act.label ?? ''"
@@ -109,8 +109,8 @@
 
   <ng-template pTemplate="emptymessage">
     <tr>
-      <td [attr.colspan]="columns.length + (actions.length ? 1 : 0) + (config.selectable ? 1 : 0)" style="text-align:center;padding:2rem">
-        {{ config.emptyMessage ?? 'No records found' }}
+      <td [attr.colspan]="columns().length + (actions().length ? 1 : 0) + (config().selectable ? 1 : 0)" style="text-align:center;padding:2rem">
+        {{ config().emptyMessage ?? 'No records found' }}
       </td>
     </tr>
   </ng-template>

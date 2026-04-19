@@ -11,6 +11,7 @@
     }
   ],
   "compilerOptions": {
+    // "baseUrl": "../../",
     "module": "preserve",
     "moduleResolution": "bundler"
   }

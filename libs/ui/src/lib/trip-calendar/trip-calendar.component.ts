@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output, computed } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -13,31 +13,26 @@ import { CalendarEvent } from '@models/lib/calendar-event.model';
   styleUrls: ['./trip-calendar.component.scss'],
 })
 export class TripCalendarComponent {
-  @Input() set events(value: CalendarEvent[]) {
-    this._events = value;
-    this.eventMap = new Map(value.map((e) => [e.date, e.color]));
-    this.eventDataMap = new Map(value.map((e) => [e.date, e]));
-    // New reference forces p-datepicker (OnPush) to re-evaluate date-cell templates.
-    this.minDate = new Date();
-  }
-  get events(): CalendarEvent[] { return this._events; }
+  readonly events = input<CalendarEvent[]>([]);
+  readonly selectedDate = input<string | null>(null);
 
-  @Input() set selectedDate(value: string | null) {
-    this._selectedDate = value;
-    this.selectedDateObj = value ? new Date(value + 'T00:00:00') : null;
-    this.minDate = new Date();
-  }
-  get selectedDate(): string | null { return this._selectedDate; }
+  readonly dateSelected = output<string>();
+  readonly dateDblClicked = output<string>();
 
-  @Output() dateSelected = new EventEmitter<string>();
-  @Output() dateDblClicked = new EventEmitter<string>();
+  readonly selectedDateObj = computed(() => {
+    const d = this.selectedDate();
+    return d ? new Date(d + 'T00:00:00') : null;
+  });
 
-  selectedDateObj: Date | null = null;
-  minDate = new Date();
-  private _events: CalendarEvent[] = [];
-  private _selectedDate: string | null = null;
-  private eventMap = new Map<string, string>();
-  private eventDataMap = new Map<string, CalendarEvent>();
+  readonly minDate = new Date();
+
+  private readonly eventMap = computed(() =>
+    new Map(this.events().map(e => [e.date, e.color]))
+  );
+
+  private readonly eventDataMap = computed(() =>
+    new Map(this.events().map(e => [e.date, e]))
+  );
 
   onSelect(date: Date): void {
     this.dateSelected.emit(this.toDateStr(date));
@@ -47,18 +42,17 @@ export class TripCalendarComponent {
     this.dateDblClicked.emit(this.partsToDateStr(date));
   }
 
-  // p-calendar date template passes { year, month (0-based), day }
   hasEvent(date: { year: number; month: number; day: number }): boolean {
-    return this.eventMap.has(this.partsToDateStr(date));
+    return this.eventMap().has(this.partsToDateStr(date));
   }
 
   eventColor(date: { year: number; month: number; day: number }): string {
-    return this.eventMap.get(this.partsToDateStr(date)) ?? '#e07b54';
+    return this.eventMap().get(this.partsToDateStr(date)) ?? '#e07b54';
   }
 
   getEventTooltip(date: { year: number; month: number; day: number }): string {
     const key = this.partsToDateStr(date);
-    const event = this.eventDataMap.get(key);
+    const event = this.eventDataMap().get(key);
     if (!event) return '';
     const lines: string[] = [event.title, event.date];
     if (event.isFull) {

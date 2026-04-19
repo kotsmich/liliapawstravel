@@ -7,16 +7,16 @@
   [draggable]="false"
   [resizable]="false"
   [closable]="false"
-  [header]="isNewDog ? ('dogs.addDogs' | transloco) : ('dogs.editDog' | transloco)">
+  [header]="isNewDog() ? ('dogs.addDogs' | transloco) : ('dogs.editDog' | transloco)">
 
   <!-- ── ADD MODE: accordion of dog panels ── -->
-  @if (isNewDog) {
+  @if (isNewDog()) {
     <p-accordion [multiple]="true" [(value)]="activeAccordionPanels">
-      @for (panel of panelForms; track $index) {
+      @for (panel of panelForms(); track $index) {
         <p-accordion-panel [value]="$index.toString()">
           <p-accordion-header>
             <span class="panel-label">{{ panelLabel($index) }}</span>
-            @if (panelForms.length > 1) {
+            @if (panelForms().length > 1) {
               <p-button
                 icon="pi pi-trash"
                 severity="danger"
@@ -46,7 +46,7 @@
   }
 
   <!-- ── EDIT MODE: single form ── -->
-  @if (!isNewDog) {
+  @if (!isNewDog()) {
     <app-dog-fields
       [form]="editForm"
       idx="edit"
@@ -62,7 +62,7 @@
   <ng-template pTemplate="footer">
     <p-button [label]="'dogs.cancel' | transloco" [outlined]="true" type="button" (onClick)="onCancel()" />
     <p-button
-      [label]="saving() ? ('dogs.saving' | transloco) : (isNewDog ? ('dogs.addDogsAction' | transloco) : ('dogs.update' | transloco))"
+      [label]="saving() ? ('dogs.saving' | transloco) : (isNewDog() ? ('dogs.addDogsAction' | transloco) : ('dogs.update' | transloco))"
       icon="pi pi-check"
       type="button"
       [loading]="saving()"

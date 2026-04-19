@@ -102,7 +102,6 @@ export class TripRequestComponent {
       age:              [RandomUtil.pick(RandomProperty.ages),            [Validators.required, Validators.min(0)]],
       chipId:           [RandomUtil.pick(RandomProperty.chipIds),         ],
       pickupLocation:   [null, Validators.required],
-      pickupLocationId: [null],
       dropLocation:     [RandomUtil.pick(RandomProperty.dropLocations),   Validators.required],
       notes:            [RandomUtil.pick(RandomProperty.notes)],
       receiver:         [null],
@@ -174,8 +173,7 @@ export class TripRequestComponent {
   async onSubmit(): Promise<void> {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const { requesterName, requesterEmail, requesterPhone } = this.form.value;
-    const rawDogs = this.resolveDogsPickup(this.form.value.dogs as Record<string, unknown>[]);
-    const dogs = await this.uploadDogFiles(rawDogs);
+    const dogs = await this.uploadDogFiles(this.form.value.dogs as Record<string, unknown>[]);
     this.store.dispatch(submitRequest({
       dogs,
       tripId: this.selectedTrip()!.id,
@@ -183,15 +181,6 @@ export class TripRequestComponent {
       requesterEmail: requesterEmail!,
       requesterPhone: requesterPhone!,
     }));
-  }
-
-  private resolveDogsPickup(dogs: Record<string, unknown>[]): Record<string, unknown>[] {
-    const pickupLocations = this.selectedTrip()?.pickupLocations ?? [];
-    return dogs.map(({ pickupLocationId, ...dog }) => {
-      if (!pickupLocations.length) return dog;
-      const name = pickupLocations.find(d => d.id === pickupLocationId)?.name ?? 'Other';
-      return { ...dog, pickupLocation: name };
-    });
   }
 
   private async uploadDogFiles(dogs: Record<string, unknown>[]): Promise<Record<string, unknown>[]> {

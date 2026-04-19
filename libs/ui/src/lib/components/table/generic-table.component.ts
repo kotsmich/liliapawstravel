@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, computed, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -16,23 +16,24 @@ import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GenericTableComponent<T extends object> {
-  tableData: T[] = [];
+  readonly data = input<T[]>([]);
+  readonly columns = input<TableColumn<T>[]>([]);
+  readonly actions = input<TableAction<T>[]>([]);
+  readonly config = input<TableConfig>({});
+  readonly loading = input(false);
+  readonly selection = model<T[]>([]);
+  readonly rowSelectable = input<(row: T) => boolean>();
+  readonly rowClickable = input(false);
 
-  @Input() set data(val: T[]) {
-    this.tableData = val ? [...val] : [];
-  }
+  readonly rowClicked = output<T>();
 
-  @Input() columns: TableColumn<T>[] = [];
-  @Input() actions: TableAction<T>[] = [];
-  @Input() config: TableConfig = {};
-  @Input() loading = false;
-  @Input() selection: T[] = [];
-  @Input() rowSelectable?: (row: T) => boolean;
-  @Output() rowClicked = new EventEmitter<T>();
-  @Output() selectionChange = new EventEmitter<T[]>();
+  readonly tableData = computed(() => {
+    const d = this.data();
+    return d ? [...d] : [];
+  });
 
   trackByFn = (index: number, item: T): unknown => {
-    const field = this.config.trackByField ?? 'id';
+    const field = this.config().trackByField ?? 'id';
     return (item as Record<string, unknown>)[field] ?? index;
   };
 
@@ -63,9 +64,5 @@ export class GenericTableComponent<T extends object> {
   getBadgeTooltip(col: TableColumn<T>, row: T): string {
     const value = this.getCellValue(row, col.field);
     return col.badgeConfig?.tooltip?.(value, row) ?? '';
-  }
-
-  isRowClickable(): boolean {
-    return this.rowClicked.observed;
   }
 }

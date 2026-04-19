@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, input, output, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input, output, Input, OnChanges, SimpleChanges, computed, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject, switchMap, startWith, map } from 'rxjs';
@@ -62,16 +62,18 @@ export class DogFormDialogComponent implements OnChanges {
     { initialValue: false },
   );
 
-  get isNewDog(): boolean { return this.dog() === null; }
-  get panelForms(): FormGroup[] { return (this.addForms?.controls ?? []) as FormGroup[]; }
+  readonly isNewDog = computed(() => this.dog() === null);
+  private readonly _panelCount = signal(0);
+  readonly panelForms = computed(() => { this._panelCount(); return (this.addForms?.controls ?? []) as FormGroup[]; });
 
   activeAccordionPanels: string[] = ['0'];
 
   private readonly fb = inject(FormBuilder);
 
   private buildForms(): void {
-    if (this.isNewDog) {
+    if (this.isNewDog()) {
       this.addForms = this.fb.array([this.buildDogGroup()]);
+      this._panelCount.set(1);
       this.activeAccordionPanels = ['0'];
       this.activeForm$.next(this.addForms);
     } else {
@@ -119,15 +121,17 @@ export class DogFormDialogComponent implements OnChanges {
 
   addPanel(): void {
     this.addForms.push(this.buildDogGroup());
+    this._panelCount.update(v => v + 1);
     this.activeAccordionPanels = [(this.addForms.length - 1).toString()];
   }
 
   removePanel(i: number): void {
     this.addForms.removeAt(i);
+    this._panelCount.update(v => v - 1);
   }
 
   onSave(): void {
-    if (this.isNewDog) {
+    if (this.isNewDog()) {
       this.addForms.markAllAsTouched();
       if (this.addForms.invalid) return;
       this.dogSaved.emit(this.addForms.value.map((v: any) => this.toDogPayload(v)));

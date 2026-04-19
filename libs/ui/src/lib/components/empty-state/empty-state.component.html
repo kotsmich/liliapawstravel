@@ -1,10 +1,10 @@
 <div class="flex flex-column align-items-center justify-content-center gap-3 py-6">
   <i [class]="icon + ' text-4xl'" style="color: var(--color-text-muted)"></i>
-  <span class="font-semibold text-xl">{{ title }}</span>
-  <span *ngIf="message" class="text-center" style="color: var(--color-text-muted)">{{ message }}</span>
+  <span class="font-semibold text-xl">{{ title() }}</span>
+  <span *ngIf="message()" class="text-center" style="color: var(--color-text-muted)">{{ message() }}</span>
   <p-button
     *ngIf="actionLabel"
-    [label]="actionLabel"
+    [label]="actionLabel()!"
     (onClick)="action.emit()">
   </p-button>
 </div>

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, model, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -13,15 +13,14 @@ import { DialogConfig } from '@models/lib/dialog-config.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GenericDialogComponent {
-  @Input() visible = false;
-  @Input() config: DialogConfig = { title: '' };
-  @Input() loading = false;
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() confirmed = new EventEmitter<void>();
-  @Output() cancelled = new EventEmitter<void>();
+  readonly visible = model(false);
+  readonly config = input<DialogConfig>({ title: '' });
+  readonly loading = input(false);
+  readonly confirmed = output<void>();
+  readonly cancelled = output<void>();
 
   onHide(): void {
-    this.visibleChange.emit(false);
+    this.visible.set(false);
     this.cancelled.emit();
   }
 

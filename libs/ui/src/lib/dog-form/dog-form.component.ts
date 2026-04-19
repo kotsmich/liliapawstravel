@@ -1,11 +1,10 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
   inject,
   computed,
-  ViewChild,
+  input,
+  output,
+  viewChild,
   ElementRef,
   ChangeDetectorRef,
 } from '@angular/core';
@@ -16,7 +15,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
-import { IftaLabelModule } from 'primeng/iftalabel';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageModule } from 'primeng/message';
@@ -34,7 +32,6 @@ import { TripDestination } from '@models/lib/trip.model';
     TextareaModule,
     InputNumberModule,
     SelectModule,
-    IftaLabelModule,
     ButtonModule,
     TooltipModule,
     MessageModule,
@@ -44,16 +41,17 @@ import { TripDestination } from '@models/lib/trip.model';
   styleUrls: ['./dog-form.component.scss'],
 })
 export class DogFormComponent {
-  @Input() formGroup!: FormGroup;
-  @Input() index!: number;
-  @Input() canRemove = false;
-  @Input() tripDestinations: TripDestination[] = [];
-  @Output() removeClicked = new EventEmitter<void>();
-  @Output() photoFileChange = new EventEmitter<File | null>();
-  @Output() documentFileChange = new EventEmitter<File | null>();
+  readonly formGroup = input.required<FormGroup>();
+  readonly index = input.required<number>();
+  readonly canRemove = input(false);
+  readonly tripDestinations = input<TripDestination[]>([]);
 
-  @ViewChild('photoInput') photoInput!: ElementRef<HTMLInputElement>;
-  @ViewChild('documentInput') documentInput!: ElementRef<HTMLInputElement>;
+  readonly removeClicked = output<void>();
+  readonly photoFileChange = output<File | null>();
+  readonly documentFileChange = output<File | null>();
+
+  readonly photoInput = viewChild.required<ElementRef<HTMLInputElement>>('photoInput');
+  readonly documentInput = viewChild.required<ElementRef<HTMLInputElement>>('documentInput');
 
   photoPreview: string | null = null;
   documentName: string | null = null;
@@ -79,21 +77,16 @@ export class DogFormComponent {
     ];
   });
 
-  get pickupOptions(): { id: string | null; name: string }[] {
+  readonly pickupOptions = computed((): { value: string; label: string }[] => {
+    this._t();
     return [
-      ...this.tripDestinations,
-      { id: null, name: this.transloco.translate('dogs.pickupOther') },
+      ...this.tripDestinations().map(d => ({ value: d.name, label: d.name })),
+      { value: 'Other', label: this.transloco.translate('dogs.pickupOther') },
     ];
-  }
-
-  onPickupSelect(id: string | null): void {
-    const dest = this.tripDestinations.find(d => d.id === id);
-    this.formGroup.get('pickupLocation')?.setValue(dest?.name ?? 'Other', { emitEvent: false });
-    this.formGroup.get('pickupLocationId')?.setValue(id, { emitEvent: false });
-  }
+  });
 
   ctrl(field: string): AbstractControl {
-    return this.formGroup.get(field)!;
+    return this.formGroup().get(field)!;
   }
 
   errorFor(field: string): string {
@@ -116,7 +109,7 @@ export class DogFormComponent {
     };
     reader.readAsDataURL(file);
     this.photoFileChange.emit(file);
-    this.photoInput.nativeElement.value = '';
+    this.photoInput().nativeElement.value = '';
   }
 
   onDocumentSelected(event: Event): void {
@@ -124,7 +117,7 @@ export class DogFormComponent {
     if (!file) return;
     this.documentName = file.name;
     this.documentFileChange.emit(file);
-    this.documentInput.nativeElement.value = '';
+    this.documentInput().nativeElement.value = '';
   }
 
   onPhotoDrop(event: DragEvent): void {

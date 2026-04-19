@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { IftaLabelModule } from 'primeng/iftalabel';
@@ -29,31 +29,32 @@ export interface FormFieldOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormFieldComponent {
-  @Input() control!: AbstractControl;
-  @Input() label!: string;
-  @Input() fieldId!: string;
-  @Input() type: 'text' | 'email' | 'tel' | 'number' | 'textarea' | 'dropdown' | 'datepicker' = 'text';
-  @Input() options?: FormFieldOption[];
-  @Input() placeholder?: string;
-  @Input() rows = 3;
-  @Input() minDate?: Date;
-  @Input() maxDate?: Date;
+  readonly control = input.required<AbstractControl>();
+  readonly label = input.required<string>();
+  readonly fieldId = input.required<string>();
+  readonly type = input<'text' | 'email' | 'tel' | 'number' | 'textarea' | 'dropdown' | 'datepicker'>('text');
+  readonly options = input<FormFieldOption[]>();
+  readonly placeholder = input<string>();
+  readonly rows = input(3);
+  readonly minDate = input<Date>();
+  readonly maxDate = input<Date>();
 
-  get isInvalid(): boolean {
-    return this.control?.invalid && (this.control.dirty || this.control.touched);
-  }
+  readonly isInvalid = computed(() => {
+    const c = this.control();
+    return c?.invalid && (c.dirty || c.touched);
+  });
 
-  get errorMessage(): string {
-    const errors = this.control?.errors;
+  readonly errorMessage = computed(() => {
+    const errors = this.control()?.errors;
     if (!errors) return '';
-    if (errors['required']) return `${this.label} is required`;
+    if (errors['required']) return `${this.label()} is required`;
     if (errors['email']) return 'Invalid email address';
     if (errors['minlength']) return `Minimum ${(errors['minlength'] as { requiredLength: number }).requiredLength} characters`;
-    if (errors['pattern']) return `Invalid ${this.label.toLowerCase()} format`;
+    if (errors['pattern']) return `Invalid ${this.label().toLowerCase()} format`;
     return 'Invalid value';
-  }
+  });
 
-  get inputId(): string {
-    return this.fieldId ?? this.label.toLowerCase().replace(/\s+/g, '-');
-  }
+  readonly inputId = computed(() =>
+    this.fieldId() ?? this.label().toLowerCase().replace(/\s+/g, '-')
+  );
 }

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -12,11 +12,9 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoadingOverlayComponent {
-  @Input() loading = false;
-  @Input() rows = 5;
-  @Input() type: 'spinner' | 'skeleton' = 'skeleton';
+  readonly loading = input(false);
+  readonly rows = input(5);
+  readonly type = input<'spinner' | 'skeleton'>('skeleton');
 
-  get rowsArray(): number[] {
-    return Array.from({ length: this.rows }, (_, i) => i);
-  }
+  readonly rowsArray = computed(() => Array.from({ length: this.rows() }, (_, i) => i));
 }

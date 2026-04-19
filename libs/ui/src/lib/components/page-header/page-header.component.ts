@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PageHeaderComponent {
-  @Input() title!: string;
-  @Input() subtitle?: string;
-  @Input() icon?: string;
+  readonly title = input.required<string>();
+  readonly subtitle = input<string>();
+  readonly icon = input<string>();
 }

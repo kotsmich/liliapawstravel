@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 
@@ -11,9 +11,9 @@ import { ButtonModule } from 'primeng/button';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmptyStateComponent {
-  @Input() icon = 'pi pi-inbox';
-  @Input() title = 'No data found';
-  @Input() message?: string;
-  @Input() actionLabel?: string;
-  @Output() action = new EventEmitter<void>();
+  readonly icon = input('pi pi-inbox');
+  readonly title = input('No data found');
+  readonly message = input<string>();
+  readonly actionLabel = input<string>();
+  readonly action = output<void>();
 }

@@ -114,24 +114,26 @@ export class TripFormComponent implements OnInit {
     errorKey: 'trips.form.pickupLocationsRequired',
   };
 
-  get destinationsValue(): TripDestination[] {
-    return (this.form.get('destinations')!.value as TripDestination[]) ?? [];
-  }
+  readonly destinationsValue = toSignal(
+    this.form.get('destinations')!.valueChanges,
+    { initialValue: (this.form.get('destinations')!.value ?? []) as TripDestination[] },
+  );
 
-  get pickupLocationsValue(): TripDestination[] {
-    return (this.form.get('pickupLocations')!.value as TripDestination[]) ?? [];
-  }
+  readonly pickupLocationsValue = toSignal(
+    this.form.get('pickupLocations')!.valueChanges,
+    { initialValue: (this.form.get('pickupLocations')!.value ?? []) as TripDestination[] },
+  );
 
   addDestination(): void {
     const val = (this.destinationInputCtrl.value ?? '').trim();
     if (!val) return;
     const newDest: TripDestination = { id: crypto.randomUUID(), name: val };
-    this.form.get('destinations')!.setValue([...this.destinationsValue, newDest]);
+    this.form.get('destinations')!.setValue([...(this.destinationsValue() ?? []), newDest]);
     this.destinationInputCtrl.setValue('');
   }
 
   removeDestination(index: number): void {
-    const updated = [...this.destinationsValue];
+    const updated = [...(this.destinationsValue() ?? [])];
     updated.splice(index, 1);
     this.form.get('destinations')!.setValue(updated);
     this.form.get('destinations')!.markAsTouched();
@@ -141,12 +143,12 @@ export class TripFormComponent implements OnInit {
     const val = (this.pickupLocationInputCtrl.value ?? '').trim();
     if (!val) return;
     const newLoc: TripDestination = { id: crypto.randomUUID(), name: val };
-    this.form.get('pickupLocations')!.setValue([...this.pickupLocationsValue, newLoc]);
+    this.form.get('pickupLocations')!.setValue([...(this.pickupLocationsValue() ?? []), newLoc]);
     this.pickupLocationInputCtrl.setValue('');
   }
 
   removePickupLocation(index: number): void {
-    const updated = [...this.pickupLocationsValue];
+    const updated = [...(this.pickupLocationsValue() ?? [])];
     updated.splice(index, 1);
     this.form.get('pickupLocations')!.setValue(updated);
     this.form.get('pickupLocations')!.markAsTouched();

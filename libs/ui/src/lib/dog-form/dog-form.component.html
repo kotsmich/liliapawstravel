@@ -1,4 +1,4 @@
-<div class="dog-form flex flex-column gap-2" [formGroup]="formGroup">
+<div class="dog-form flex flex-column gap-2" [formGroup]="formGroup()">
 
   <div class="dog-form__row dog-form__row--fields">
     <div class="dog-form__field flex flex-column">
@@ -46,20 +46,19 @@
 
   <div class="dog-form__row flex flex-wrap gap-2">
     <div class="dog-form__field flex flex-column">
-      @if (tripDestinations.length > 0) {
+      @if (tripDestinations().length > 0) {
         <label [for]="'pickup-' + index">{{ 'dogs.pickupLocation' | transloco }}</label>
         <p-select
           [inputId]="'pickup-' + index"
-          formControlName="pickupLocationId"
-          [options]="pickupOptions"
-          optionLabel="name"
-          optionValue="id"
-          styleClass="w-full"
-          (onChange)="onPickupSelect($event.value)" />
-        @if (ctrl('pickupLocationId').touched && !ctrl('pickupLocationId').value && ctrl('pickupLocationId').value !== null) {
-          <small class="p-error">{{ 'dogs.pickupRequired' | transloco }}</small>
+          formControlName="pickupLocation"
+          [options]="pickupOptions()"
+          optionLabel="label"
+          optionValue="value"
+          styleClass="w-full" />
+        @if (ctrl('pickupLocation').touched && errorFor('pickupLocation')) {
+          <small class="p-error">{{ errorFor('pickupLocation') }}</small>
         }
-        @if (ctrl('pickupLocationId').value === null && ctrl('pickupLocationId').dirty) {
+        @if (ctrl('pickupLocation').value === 'Other' && ctrl('pickupLocation').dirty) {
           <small class="text-color-secondary text-xs flex align-items-center gap-1 mt-1">
             <i class="pi pi-info-circle"></i>
             {{ 'dogs.pickupOtherHint' | transloco }}
