@@ -23,21 +23,21 @@ import { TripDogsManagerComponent } from './trip-dogs-manager/trip-dogs-manager.
 import { TripLocationListComponent, type LocationListConfig } from './trip-location-list/trip-location-list.component';
 
 const DEFAULT_DESTINATIONS: TripDestination[] = [
-  { id: 'def-dest-04', name: 'Μόναχο' },
-  { id: 'def-dest-05', name: 'Αμβούργο' },
-  { id: 'def-dest-01', name: 'Στουγκαρδη' },
-  { id: 'def-dest-06', name: 'Παρίσι' },
-  { id: 'def-dest-07', name: 'Άμστερνταμ' },
-  { id: 'def-dest-10', name: 'Βιέννη' },
-  { id: 'def-dest-11', name: 'Βρυξέλλες' },
+  { name: 'Μόναχο' },
+  { name: 'Αμβούργο' },
+  { name: 'Στουγκαρδη' },
+  { name: 'Παρίσι' },
+  { name: 'Άμστερνταμ' },
+  { name: 'Βιέννη' },
+  { name: 'Βρυξέλλες' },
 ];
 
 const DEFAULT_PICKUP_LOCATIONS: TripDestination[] = [
-  { id: 'def-pick-03', name: 'Λάρισα' },
-  { id: 'def-pick-01', name: 'Κατερινη' },
-  { id: 'def-pick-02', name: 'Θεσσαλονίκη' },
-  { id: 'def-pick-04', name: 'Βεροια' },
-  { id: 'def-pick-05', name: 'Ιωάννινα, Ελλάδα' },
+  { name: 'Λάρισα' },
+  { name: 'Κατερινη' },
+  { name: 'Θεσσαλονίκη' },
+  { name: 'Βεροια' },
+  { name: 'Ιωάννινα, Ελλάδα' },
 ];
 @Component({
   selector: 'app-trip-form',
@@ -127,7 +127,7 @@ export class TripFormComponent implements OnInit {
   addDestination(): void {
     const val = (this.destinationInputCtrl.value ?? '').trim();
     if (!val) return;
-    const newDest: TripDestination = { id: crypto.randomUUID(), name: val };
+    const newDest: TripDestination = { name: val };
     this.form.get('destinations')!.setValue([...(this.destinationsValue() ?? []), newDest]);
     this.destinationInputCtrl.setValue('');
   }
@@ -142,7 +142,7 @@ export class TripFormComponent implements OnInit {
   addPickupLocation(): void {
     const val = (this.pickupLocationInputCtrl.value ?? '').trim();
     if (!val) return;
-    const newLoc: TripDestination = { id: crypto.randomUUID(), name: val };
+    const newLoc: TripDestination = { name: val };
     this.form.get('pickupLocations')!.setValue([...(this.pickupLocationsValue() ?? []), newLoc]);
     this.pickupLocationInputCtrl.setValue('');
   }

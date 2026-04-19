@@ -42,6 +42,8 @@ export class TripDogsTabsComponent {
     trackByField: '_idx',
     selectable: this.tableSelectable(),
     emptyMessage: this.tableSelectable() ? 'No dogs added yet. Use the "Add Dog" button above.' : undefined,
+    sortField: 'name',
+    sortOrder: 1,
   }));
 
   onTabChange(tab: string | undefined): void {

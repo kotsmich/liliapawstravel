@@ -331,6 +331,27 @@
   @media (max-width: 480px) { flex-direction: column; align-items: stretch; gap: .75rem; }
 }
 
+.submit-btn-wrap--disabled {
+  cursor: not-allowed;
+  display: inline-flex;
+  @media (max-width: 480px) { width: 100%; }
+}
+
+.submit-btn {
+  background: var(--color-primary, #e07b54) !important;
+  border-color: var(--color-primary, #e07b54) !important;
+
+  &:enabled:hover {
+    background: #c96a44 !important;
+    border-color: #c96a44 !important;
+  }
+
+  &.p-disabled {
+    pointer-events: none;
+    opacity: 0.55;
+  }
+}
+
 /* No trip hint */
 .no-trip-hint {
   display: flex; flex-direction: column; align-items: center;

@@ -3,7 +3,7 @@ import { Dog } from './dog.model';
 export type TripStatus = 'upcoming' | 'in-progress' | 'completed';
 
 export interface TripDestination {
-  id: string;
+  id?: string;
   name: string;
 }
 

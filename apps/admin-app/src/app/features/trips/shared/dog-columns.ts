@@ -14,16 +14,16 @@ export function buildDogColumns<T extends Dog>(
 ): TableColumn<T>[] {
   return [
     { field: 'name', header: t('trips.table.name'), sortable: true },
-    { field: 'gender', header: t('trips.table.gender'), formatter: (value) => String(value ?? '—') },
+    { field: 'gender', header: t('trips.table.gender'), sortable: true, formatter: (value) => String(value ?? '—') },
     {
-      field: 'size', header: t('trips.table.size'), type: 'badge',
+      field: 'size', header: t('trips.table.size'), sortable: true, type: 'badge',
       badgeConfig: {
         severity: (value) => value === 'small' ? 'success' : value === 'medium' ? 'warn' : 'danger',
         label: (value) => String(value ?? ''),
       },
     },
-    { field: 'age', header: t('trips.table.age'), formatter: (value) => value != null ? `${value} yr` : '—' },
-    { field: 'pickupLocation', header: t('trips.table.pickup') },
+    { field: 'age', header: t('trips.table.age'), sortable: true, formatter: (value) => value != null ? `${value} yr` : '—' },
+    { field: 'pickupLocation', header: t('trips.table.pickup'), sortable: true },
     {
       field: 'destinationId', header: t('trips.table.deliveryStop'), type: 'badge',
       badgeConfig: {
@@ -36,7 +36,7 @@ export function buildDogColumns<T extends Dog>(
         tooltip: (value) => (value && destinations.some(d => d.id === value)) ? '' : t('dogs.warnings.noDestination'),
       },
     },
-    { field: 'receiver', header: t('trips.table.receiver'), formatter: (value) => String(value ?? '—') },
-    { field: 'requesterName', header: t('trips.table.requester'), formatter: (value) => String(value ?? '—') },
+    { field: 'receiver', header: t('trips.table.receiver'), sortable: true, formatter: (value) => String(value ?? '—') },
+    { field: 'requesterName', header: t('trips.table.requester'), sortable: true, formatter: (value) => String(value ?? '—') },
   ] as TableColumn<T>[];
 }

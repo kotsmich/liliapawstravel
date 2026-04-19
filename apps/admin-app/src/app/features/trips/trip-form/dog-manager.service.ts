@@ -89,7 +89,7 @@ export class DogManagerService {
 
   readonly destinationGroups = computed((): DogGroup[] =>
     this.dogsPerDestination().map(entry => ({
-      key: entry.destination.id,
+      key: entry.destination.id ?? entry.destination.name,
       label: entry.destination.name,
       icon: 'pi pi-map-marker',
       dogs: entry.dogs,
@@ -98,7 +98,7 @@ export class DogManagerService {
 
   readonly pickupGroups = computed((): DogGroup[] =>
     this.dogsPerPickupLocation().map(entry => ({
-      key: entry.destination.id,
+      key: entry.destination.id ?? entry.destination.name,
       label: entry.destination.name,
       icon: 'pi pi-map-marker',
       dogs: entry.dogs,

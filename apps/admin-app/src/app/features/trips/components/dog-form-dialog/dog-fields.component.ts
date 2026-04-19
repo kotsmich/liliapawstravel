@@ -48,7 +48,7 @@ export class DogFieldsComponent {
   readonly pickupOptions = computed((): { id: string | null; name: string }[] => {
     this.langChange();
     return [
-      ...this.tripPickupLocations(),
+      ...this.tripPickupLocations().map(d => ({ id: d.id ?? null, name: d.name })),
       { id: null, name: this.transloco.translate('dogs.fields.pickupOther') },
     ];
   });
