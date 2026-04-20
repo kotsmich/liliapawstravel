@@ -20,7 +20,7 @@ import { DogDialogService } from './dog-dialog.service';
 import { TripFormHeaderComponent } from './trip-form-header/trip-form-header.component';
 import { TripInfoFormComponent } from './trip-info-form/trip-info-form.component';
 import { TripDogsManagerComponent } from './trip-dogs-manager/trip-dogs-manager.component';
-import { TripLocationListComponent, type LocationListConfig } from './trip-location-list/trip-location-list.component';
+import { type LocationListConfig } from './trip-location-list/trip-location-list.component';
 
 const DEFAULT_DESTINATIONS: TripDestination[] = [
   { name: 'Μόναχο' },
@@ -52,7 +52,6 @@ const DEFAULT_PICKUP_LOCATIONS: TripDestination[] = [
     TripFormHeaderComponent,
     TripInfoFormComponent,
     TripDogsManagerComponent,
-    TripLocationListComponent,
   ],
   templateUrl: './trip-form.component.html',
   styleUrls: ['./trip-form.component.scss'],

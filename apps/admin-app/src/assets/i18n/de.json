@@ -113,6 +113,8 @@
     "noRequestorsLinked": "Noch keine Antragsteller mit dieser Reise verknüpft.",
     "form": {
       "title": "Reisedetails",
+      "tabDetails": "Reisedetails",
+      "tabLocations": "Abholpunkte & Ziele",
       "editTrip": "Reise bearbeiten",
       "newTrip": "Neue Reise",
       "cancel": "Abbrechen",

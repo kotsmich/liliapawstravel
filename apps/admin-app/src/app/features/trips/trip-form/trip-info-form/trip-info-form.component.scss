@@ -58,6 +58,14 @@
 .p-error { font-size: 0.75rem; color: var(--color-error-alt); }
 .p-warn  { font-size: 0.75rem; color: #b45309; }
 
+.locations-tab-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  padding: 0.75rem 1rem;
+  @media (max-width: 768px) { grid-template-columns: 1fr; }
+}
+
 .dogs-counter {
   margin-left: 0.75rem;
   font-size: 0.8rem;

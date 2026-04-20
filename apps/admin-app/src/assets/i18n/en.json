@@ -113,6 +113,8 @@
     "noRequestorsLinked": "No requestors linked to this trip yet.",
     "form": {
       "title": "Trip Details",
+      "tabDetails": "Trip Details",
+      "tabLocations": "Pick-ups & Destinations",
       "editTrip": "Edit Trip",
       "newTrip": "New Trip",
       "cancel": "Cancel",
