@@ -1,4 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, input, output } from '@angular/core';
+import { ValidationErrorDirective } from '@ui/lib/directives/validation-error.directive';
+import { AsyncButtonDirective } from '@ui/lib/directives/async-button.directive';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
@@ -19,6 +21,8 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
     IftaLabelModule,
     MessageModule,
     TranslocoModule,
+    ValidationErrorDirective,
+    AsyncButtonDirective,
   ],
   templateUrl: './contact-form.component.html',
   styleUrls: ['./contact-form.component.scss'],

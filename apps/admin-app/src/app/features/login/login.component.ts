@@ -10,6 +10,7 @@ import { MessageModule } from 'primeng/message';
 import { Store } from '@ngrx/store';
 import { TranslocoModule } from '@jsverse/transloco';
 import { login, selectAuthIsLoading, selectAuthError } from '@admin/core/store/auth';
+import { ValidationErrorDirective } from '@ui/lib/directives/validation-error.directive';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +20,7 @@ import { login, selectAuthIsLoading, selectAuthError } from '@admin/core/store/a
     AsyncPipe, ReactiveFormsModule,
     InputTextModule, PasswordModule, ButtonModule, CardModule,
     IftaLabelModule, MessageModule, TranslocoModule,
+    ValidationErrorDirective,
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],

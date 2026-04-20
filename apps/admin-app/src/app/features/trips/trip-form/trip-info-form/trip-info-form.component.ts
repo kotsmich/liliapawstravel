@@ -8,6 +8,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { AccordionModule } from 'primeng/accordion';
 import { TranslocoModule } from '@jsverse/transloco';
 import { FormFieldComponent } from '@admin/shared/components/form-field/form-field.component';
+import { ValidationErrorDirective } from '@ui/lib/directives/validation-error.directive';
 import { TripStatusChecksComponent } from '../trip-status-checks/trip-status-checks.component';
 
 /**
@@ -24,7 +25,7 @@ import { TripStatusChecksComponent } from '../trip-status-checks/trip-status-che
     InputNumberModule, SelectModule, IftaLabelModule, TextareaModule, DatePickerModule,
     AccordionModule,
     TranslocoModule,
-    FormFieldComponent,
+    FormFieldComponent, ValidationErrorDirective,
     TripStatusChecksComponent,
   ],
   templateUrl: './trip-info-form.component.html',

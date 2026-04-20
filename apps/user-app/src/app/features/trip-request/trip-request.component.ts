@@ -27,7 +27,6 @@ import { clearSelectedTrip, selectTripsAsCalendarEvents, selectTripsIsLoading } 
 import { selectDate, clearDate, selectCalendarSelectedDate, selectTripForSelectedDate } from '@user/core/store/calendar';
 import { submitRequest, resetRequest, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError } from '@user/features/trip-request/store';
 import { TripsService } from '@user/services/trips.service';
-
 @Component({
   selector: 'app-trip-request',
   standalone: true,

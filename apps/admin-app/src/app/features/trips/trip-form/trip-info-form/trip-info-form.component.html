@@ -15,9 +15,7 @@
                   dateFormat="dd/mm/yy" [showTime]="false" [showIcon]="true" styleClass="w-full" appendTo="body" />
                 <label for="date">{{ 'trips.form.date' | transloco }}</label>
               </p-ifta-label>
-              @if (form().get('date')?.touched && form().get('date')?.invalid) {
-                <small class="p-error">{{ 'trips.form.invalidDate' | transloco }}</small>
-              }
+              <small class="p-error" *appValidationError="form().get('date')">{{ 'trips.form.invalidDate' | transloco }}</small>
             </div>
             <div class="row">
               <app-form-field

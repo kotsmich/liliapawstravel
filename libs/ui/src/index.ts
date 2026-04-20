@@ -23,3 +23,7 @@ export * from './lib/components/loading/loading-overlay.component';
 
 // Page Header
 export * from './lib/components/page-header/page-header.component';
+
+// Directives
+export * from './lib/directives/validation-error.directive';
+export * from './lib/directives/async-button.directive';

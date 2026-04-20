@@ -337,17 +337,20 @@
   @media (max-width: 480px) { width: 100%; }
 }
 
-.submit-btn {
+::ng-deep .submit-btn {
   background: var(--color-primary, #e07b54) !important;
   border-color: var(--color-primary, #e07b54) !important;
+  color: #fff !important;
 
   &:enabled:hover {
     background: #c96a44 !important;
     border-color: #c96a44 !important;
   }
 
-  &.p-disabled {
-    pointer-events: none;
+  &.p-disabled,
+  &[data-p-disabled="true"],
+  &:disabled {
+    cursor: not-allowed !important;
     opacity: 0.55;
   }
 }

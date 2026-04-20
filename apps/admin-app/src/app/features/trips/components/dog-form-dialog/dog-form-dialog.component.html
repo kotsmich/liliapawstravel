@@ -62,11 +62,12 @@
   <ng-template pTemplate="footer">
     <p-button [label]="'dogs.cancel' | transloco" [outlined]="true" type="button" (onClick)="onCancel()" />
     <p-button
+      appAsyncButton
+      [asyncLoading]="saving()"
+      [asyncInvalid]="formInvalid()"
       [label]="saving() ? ('dogs.saving' | transloco) : (isNewDog() ? ('dogs.addDogsAction' | transloco) : ('dogs.update' | transloco))"
       icon="pi pi-check"
       type="button"
-      [loading]="saving()"
-      [disabled]="saving() || formInvalid()"
       (onClick)="onSave()" />
   </ng-template>
 </p-dialog>

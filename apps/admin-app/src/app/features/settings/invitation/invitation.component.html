@@ -21,9 +21,7 @@
           <input pInputText id="user-email" formControlName="email" type="email" class="w-full" />
           <label for="user-email">{{ 'account.userEmail' | transloco }}</label>
         </p-ifta-label>
-        @if (newUserForm.get('email')?.touched && newUserForm.get('email')?.invalid) {
-          <small class="p-error">{{ 'account.emailRequired' | transloco }}</small>
-        }
+        <small class="p-error" *appValidationError="newUserForm.get('email')">{{ 'account.emailRequired' | transloco }}</small>
       </div>
 
       <div class="field">
@@ -37,9 +35,7 @@
           />
           <label for="user-pwd">{{ 'login.password' | transloco }}</label>
         </p-ifta-label>
-        @if (newUserForm.get('password')?.touched && newUserForm.get('password')?.invalid) {
-          <small class="p-error">{{ 'account.passwordMinLength' | transloco }}</small>
-        }
+        <small class="p-error" *appValidationError="newUserForm.get('password')">{{ 'account.passwordMinLength' | transloco }}</small>
       </div>
 
       <div class="field">
@@ -57,11 +53,11 @@
       </div>
 
       <p-button
+        appAsyncButton
+        [asyncLoading]="userSaving()"
         type="submit"
         icon="pi pi-user-plus"
         [label]="userSaving() ? ('common.saving' | transloco) : ('account.createUser' | transloco)"
-        [loading]="userSaving()"
-        [disabled]="userSaving()"
       />
     </form>
   </section>

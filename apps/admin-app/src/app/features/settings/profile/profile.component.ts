@@ -13,6 +13,8 @@ import { catchError, EMPTY } from 'rxjs';
 import { AuthService } from '@admin/services/auth.service';
 import { selectCurrentUser, restoreSession } from '@admin/core/store/auth';
 import { AdminUser } from '@models/lib/admin-user.model';
+import { ValidationErrorDirective } from '@ui/lib/directives/validation-error.directive';
+import { AsyncButtonDirective } from '@ui/lib/directives/async-button.directive';
 
 function passwordsMatch(group: AbstractControl) {
   const newPwd = group.get('newPassword')?.value as string;
@@ -29,6 +31,7 @@ function passwordsMatch(group: AbstractControl) {
     AsyncPipe, ReactiveFormsModule, TranslocoModule,
     InputTextModule, PasswordModule, ButtonModule,
     IftaLabelModule, MessageModule,
+    ValidationErrorDirective, AsyncButtonDirective,
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],

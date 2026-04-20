@@ -10,6 +10,7 @@ import { Dog } from '@models/lib/dog.model';
 import { TripDestination, TripRequester } from '@models/lib/trip.model';
 import { DogFieldsComponent } from './dog-fields.component';
 import { RandomProperty, RandomUtil } from '@models/index';
+import { AsyncButtonDirective } from '@ui/lib/directives/async-button.directive';
 
 
 @Component({
@@ -18,7 +19,7 @@ import { RandomProperty, RandomUtil } from '@models/index';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DialogModule, ButtonModule, AccordionModule,
-    DogFieldsComponent, TranslocoModule,
+    DogFieldsComponent, TranslocoModule, AsyncButtonDirective,
   ],
   templateUrl: './dog-form-dialog.component.html',
   styleUrls: ['./dog-form-dialog.component.scss'],
@@ -108,7 +109,7 @@ export class DogFormDialogComponent implements OnChanges {
       requesterName:     [d?.requesterName     ?? ''],
       requestId:         [d?.requestId         ?? null],
       requesterKey:      [DogFormDialogComponent.requesterKey(d)],
-      newRequesterName:  [RandomUtil.pick(RandomProperty.requesterNames)],
+      newRequesterName:  [d ? null : RandomUtil.pick(RandomProperty.requesterNames)],
       destinationId:     [d?.destinationId     ?? null, Validators.required],
       receiver:          [d?.receiver          ?? null],
     }, { validators: DogFormDialogComponent.requesterValidator });

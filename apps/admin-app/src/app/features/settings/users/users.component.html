@@ -67,9 +67,7 @@
         <input pInputText id="edit-email" formControlName="email" type="email" class="w-full" />
         <label for="edit-email">{{ 'account.userEmail' | transloco }}</label>
       </p-ifta-label>
-      @if (editForm.get('email')?.touched && editForm.get('email')?.invalid) {
-        <small class="p-error">{{ 'account.emailRequired' | transloco }}</small>
-      }
+      <small class="p-error" *appValidationError="editForm.get('email')">{{ 'account.emailRequired' | transloco }}</small>
     </div>
 
     <div class="field">
@@ -95,11 +93,11 @@
         (onClick)="editDialogVisible.set(false)"
       />
       <p-button
+        appAsyncButton
+        [asyncLoading]="saving()"
         type="submit"
         icon="pi pi-check"
         [label]="saving() ? ('common.saving' | transloco) : ('common.save' | transloco)"
-        [loading]="saving()"
-        [disabled]="saving()"
       />
     </div>
   </form>

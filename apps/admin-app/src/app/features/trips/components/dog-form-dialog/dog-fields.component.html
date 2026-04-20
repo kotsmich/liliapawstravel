@@ -11,9 +11,7 @@
           optionLabel="label" optionValue="value" styleClass="w-full" />
         <label [for]="'size-' + idx()">{{ 'dogs.fields.size' | transloco }}</label>
       </p-ifta-label>
-      @if (form().get('size')?.touched && form().get('size')?.invalid) {
-        <small class="p-error">{{ 'dogs.errors.required' | transloco }}</small>
-      }
+      <small class="p-error" *appValidationError="form().get('size')">{{ 'dogs.errors.required' | transloco }}</small>
     </div>
   </div>
 
@@ -24,9 +22,7 @@
           optionLabel="label" optionValue="value" styleClass="w-full" />
         <label [for]="'gender-' + idx()">{{ 'dogs.fields.gender' | transloco }}</label>
       </p-ifta-label>
-      @if (form().get('gender')?.touched && form().get('gender')?.invalid) {
-        <small class="p-error">{{ 'dogs.errors.required' | transloco }}</small>
-      }
+      <small class="p-error" *appValidationError="form().get('gender')">{{ 'dogs.errors.required' | transloco }}</small>
     </div>
     <div class="field fw">
       <p-ifta-label>
@@ -34,9 +30,7 @@
           [showButtons]="false" styleClass="w-full" />
         <label [for]="'age-' + idx()">{{ 'dogs.fields.ageYears' | transloco }}</label>
       </p-ifta-label>
-      @if (form().get('age')?.touched && form().get('age')?.invalid) {
-        <small class="p-error">{{ 'dogs.errors.ageMinimum' | transloco }}</small>
-      }
+      <small class="p-error" *appValidationError="form().get('age')">{{ 'dogs.errors.ageMinimum' | transloco }}</small>
     </div>
     <app-form-field
       controlName="chipId"

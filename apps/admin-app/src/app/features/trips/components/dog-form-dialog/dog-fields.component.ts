@@ -10,6 +10,7 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TripDestination, TripRequester } from '@models/lib/trip.model';
 import { FormFieldComponent } from '@admin/shared/components/form-field/form-field.component';
+import { ValidationErrorDirective } from '@ui/lib/directives/validation-error.directive';
 import { DogRequestorSelectorComponent } from './dog-requestor-selector/dog-requestor-selector.component';
 import { DogDocumentsUploaderComponent } from './dog-documents-uploader/dog-documents-uploader.component';
 
@@ -21,7 +22,7 @@ import { DogDocumentsUploaderComponent } from './dog-documents-uploader/dog-docu
     ReactiveFormsModule,
     InputNumberModule, InputTextModule, SelectModule, IftaLabelModule, TextareaModule,
     TooltipModule, TranslocoModule,
-    FormFieldComponent,
+    FormFieldComponent, ValidationErrorDirective,
     DogRequestorSelectorComponent,
     DogDocumentsUploaderComponent,
   ],

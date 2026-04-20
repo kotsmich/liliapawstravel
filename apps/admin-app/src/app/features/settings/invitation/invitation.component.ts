@@ -11,6 +11,8 @@ import { MessageService } from 'primeng/api';
 import { catchError, EMPTY } from 'rxjs';
 import { AuthService } from '@admin/services/auth.service';
 import { AdminRole } from '@models/lib/admin-user.model';
+import { ValidationErrorDirective } from '@ui/lib/directives/validation-error.directive';
+import { AsyncButtonDirective } from '@ui/lib/directives/async-button.directive';
 
 @Component({
   selector: 'app-invitation',
@@ -20,6 +22,7 @@ import { AdminRole } from '@models/lib/admin-user.model';
     ReactiveFormsModule, TranslocoModule,
     InputTextModule, PasswordModule, ButtonModule,
     SelectModule, IftaLabelModule, MessageModule,
+    ValidationErrorDirective, AsyncButtonDirective,
   ],
   templateUrl: './invitation.component.html',
   styleUrls: ['./invitation.component.scss'],
