@@ -1,12 +1,11 @@
 import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-loading-overlay',
   standalone: true,
-  imports: [CommonModule, SkeletonModule, ProgressSpinnerModule],
+  imports: [SkeletonModule, ProgressSpinnerModule],
   templateUrl: './loading-overlay.component.html',
   styleUrl: './loading-overlay.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
