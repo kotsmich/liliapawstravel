@@ -21,6 +21,7 @@ import { TripFormHeaderComponent } from './trip-form-header/trip-form-header.com
 import { TripInfoFormComponent } from './trip-info-form/trip-info-form.component';
 import { TripDogsManagerComponent } from './trip-dogs-manager/trip-dogs-manager.component';
 import { type LocationListConfig } from './trip-location-list/trip-location-list.component';
+import { TripDogsTabsComponent } from '../components/trip-dogs-tabs/trip-dogs-tabs.component';
 
 const DEFAULT_DESTINATIONS: TripDestination[] = [
   { name: 'Μόναχο' },
@@ -52,6 +53,7 @@ const DEFAULT_PICKUP_LOCATIONS: TripDestination[] = [
     TripFormHeaderComponent,
     TripInfoFormComponent,
     TripDogsManagerComponent,
+    TripDogsTabsComponent
   ],
   templateUrl: './trip-form.component.html',
   styleUrls: ['./trip-form.component.scss'],

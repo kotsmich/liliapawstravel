@@ -1,5 +1,6 @@
 <p-table
   [value]="tableData()"
+  [dataKey]="config().trackByField ?? 'id'"
   [loading]="loading()"
   [paginator]="config().paginator ?? false"
   [rows]="config().rowsPerPage ?? 10"

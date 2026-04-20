@@ -30,6 +30,7 @@ export class DogManagerService {
 
   private readonly _lang = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
+  readonly currentTrip = signal<Trip | null>(null);
   readonly tripRequestors = signal<TripRequester[]>([]);
   readonly tripDestinations = signal<TripDestination[]>([]);
   readonly tripPickupLocations = signal<TripDestination[]>([]);
@@ -46,7 +47,7 @@ export class DogManagerService {
     const data = this.dogsData();
     const result = new Map<string, (Dog & { _idx: number })[]>();
     this.tripRequestors().forEach(req => {
-      result.set(req.requestId ?? req.name, data.filter(dog => req.dogs.some(requestDog => requestDog.id === dog.id)));
+      result.set(req.requestId || req.name, data.filter(dog => req.dogs.some(requestDog => requestDog.id === dog.id)));
     });
     return result;
   });
@@ -75,7 +76,7 @@ export class DogManagerService {
   readonly requestorGroups = computed((): DogGroup[] => {
     this._lang();
     return this.tripRequestors().map(req => {
-      const groupKey = req.requestId ?? req.name;
+      const groupKey = req.requestId || req.name;
       const dogs = this.dogsPerRequestor().get(groupKey) ?? [];
       return {
         key: groupKey,
@@ -89,7 +90,7 @@ export class DogManagerService {
 
   readonly destinationGroups = computed((): DogGroup[] =>
     this.dogsPerDestination().map(entry => ({
-      key: entry.destination.id ?? entry.destination.name,
+      key: entry.destination.id || entry.destination.name,
       label: entry.destination.name,
       icon: 'pi pi-map-marker',
       dogs: entry.dogs,
@@ -98,7 +99,7 @@ export class DogManagerService {
 
   readonly pickupGroups = computed((): DogGroup[] =>
     this.dogsPerPickupLocation().map(entry => ({
-      key: entry.destination.id ?? entry.destination.name,
+      key: entry.destination.id || entry.destination.name,
       label: entry.destination.name,
       icon: 'pi pi-map-marker',
       dogs: entry.dogs,
@@ -140,6 +141,7 @@ export class DogManagerService {
   }
 
   initFromTrip(trip: Trip): void {
+    this.currentTrip.set(trip);
     this.init(true, trip.id);
     this.tripDestinations.set(trip.destinations ?? []);
     this.tripPickupLocations.set(trip.pickupLocations ?? []);

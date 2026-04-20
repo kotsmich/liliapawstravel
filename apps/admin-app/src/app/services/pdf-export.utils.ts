@@ -3,6 +3,40 @@
 export const BRAND_COLOR: [number, number, number] = [224, 123, 84];
 export const BRAND_HEADER_HEIGHT = 12;
 export const PAGE_MARGIN = 14;
+export const UNICODE_FONT = 'NotoSans';
+
+let fontCache: string | null = null;
+
+/**
+ * Loads NotoSans-Regular from /assets/fonts/ into the jsPDF document so that
+ * non-Latin characters (e.g. Greek) render correctly. Returns the registered
+ * font name, or 'helvetica' if the font file is not found.
+ */
+export async function loadUnicodeFontIntoDoc(doc: import('jspdf').jsPDF): Promise<string> {
+  try {
+    if (!fontCache) {
+      const response = await fetch('/assets/fonts/NotoSans-Regular.ttf');
+      if (!response.ok) {
+        console.warn(`[PDF] Font not found at /assets/fonts/NotoSans-Regular.ttf (${response.status}) — falling back to helvetica`);
+        return 'helvetica';
+      }
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      fontCache = btoa(binary);
+    }
+    doc.addFileToVFS('NotoSans-Regular.ttf', fontCache);
+    doc.addFont('NotoSans-Regular.ttf', UNICODE_FONT, 'normal');
+    doc.setFont(UNICODE_FONT, 'normal');
+    return UNICODE_FONT;
+  } catch (err) {
+    console.warn('[PDF] Font loading failed — falling back to helvetica', err);
+    return 'helvetica';
+  }
+}
 
 export async function fetchImageAsBase64(
   url: string,

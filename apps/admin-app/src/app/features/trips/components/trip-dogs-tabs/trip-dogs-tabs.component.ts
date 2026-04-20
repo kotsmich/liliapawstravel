@@ -10,6 +10,7 @@ import { DogsTableComponent } from '@admin/features/trips/components/dogs-table.
 import { DogsByGroupComponent } from '@admin/features/trips/components/dogs-grouped/dogs-grouped.component';
 import { DogFormDialogWrapperComponent } from '@admin/features/trips/components/dog-form-dialog-wrapper/dog-form-dialog-wrapper.component';
 import { DogManagerService } from '@admin/features/trips/trip-form/dog-manager.service';
+import { TripDogsExportPdfComponent } from './trip-dogs-export-pdf/trip-dogs-export-pdf.component';
 
 @Component({
   selector: 'app-trip-dogs-tabs',
@@ -18,7 +19,7 @@ import { DogManagerService } from '@admin/features/trips/trip-form/dog-manager.s
   imports: [
     ButtonModule, TabsModule, TagModule, TranslocoModule,
     DogsTableComponent, DogsByGroupComponent,
-    DogFormDialogWrapperComponent,
+    DogFormDialogWrapperComponent, TripDogsExportPdfComponent,
   ],
   templateUrl: './trip-dogs-tabs.component.html',
   styleUrl: './trip-dogs-tabs.component.scss',
@@ -34,7 +35,6 @@ export class TripDogsTabsComponent {
   readonly requests = input<TripRequest[]>([]);
 
   readonly rowClicked = output<Dog>();
-  readonly exportPdf = output<void>();
 
   readonly tableConfig = computed((): TableConfig => ({
     paginator: false,

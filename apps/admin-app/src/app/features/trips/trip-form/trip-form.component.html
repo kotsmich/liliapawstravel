@@ -32,8 +32,11 @@
       (removeDestination)="removeDestination($event)" />
 
     @if (isEdit) {
-      <app-trip-dogs-manager
+       <app-trip-dogs-tabs
         [tripId]="editId"
+        [showAddButton]="true"
+        [tableSelectable]="true"
+        [showExportPdf]="true"
         (rowClicked)="openDogDetail($event)" />
     }
   </form>

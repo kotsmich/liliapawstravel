@@ -4,7 +4,6 @@ import { DogDialogService } from '../../trip-form/dog-dialog.service';
 import { Trip } from '@models/lib/trip.model';
 import { Dog } from '@models/lib/dog.model';
 import { TripRequest } from '@models/lib/trip-request.model';
-import { TripManifestExportService } from '../../../../services/trip-manifest-export.service';
 import { DogDetailDialogComponent } from '../dog-detail-dialog/dog-detail-dialog.component';
 import { DogManagerService } from '../../trip-form/dog-manager.service';
 import { TripDogsTabsComponent } from '../trip-dogs-tabs/trip-dogs-tabs.component';
@@ -23,7 +22,6 @@ import { TripDogsTabsComponent } from '../trip-dogs-tabs/trip-dogs-tabs.componen
   styleUrls: ['./trip-detail-dialog.component.scss'],
 })
 export class TripDetailDialogComponent {
-  private readonly exportService = inject(TripManifestExportService);
   readonly dogManager = inject(DogManagerService);
 
   readonly visible = input(false);
@@ -49,11 +47,6 @@ export class TripDetailDialogComponent {
   openDogDetail(dog: Dog): void {
     this.selectedDog.set(dog);
     this.dogDetailVisible.set(true);
-  }
-
-  onExportPdf(): void {
-    const trip = this.trip();
-    if (trip) this.exportService.exportTripManifestPdf(trip);
   }
 
   onHide(): void {

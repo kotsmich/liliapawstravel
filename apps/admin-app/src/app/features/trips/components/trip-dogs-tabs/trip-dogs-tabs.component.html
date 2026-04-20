@@ -29,18 +29,10 @@
   </p-tablist>
 </p-tabs>
 
+@if (showExportPdf()) {
+  <app-trip-dogs-export-pdf [activeTab]="activeTab()" />
+}
 @if (activeTab() === 'all') {
-  @if (showExportPdf()) {
-    <div class="flex justify-content-end mb-3">
-      <p-button
-        [label]="'trips.detail.exportPdf' | transloco"
-        icon="pi pi-file-pdf"
-        severity="secondary"
-        [outlined]="true"
-        [disabled]="!dogManager.dogsData().length"
-        (onClick)="exportPdf.emit()" />
-    </div>
-  }
   <app-dogs-table
     [dogs]="dogManager.dogsData()"
     [columns]="dogManager.dogColumns()"
