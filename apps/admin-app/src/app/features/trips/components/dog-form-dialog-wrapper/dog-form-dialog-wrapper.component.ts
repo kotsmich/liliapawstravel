@@ -14,20 +14,7 @@ import { TripDestination } from '@models/lib/trip.model';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DogFormDialogComponent],
-  template: `
-    <app-dog-form-dialog
-      [visible]="dogManager.dialog.dialogVisible()"
-      (visibleChange)="dogManager.dialog.dialogVisible.set($event)"
-      [tripId]="tripId()"
-      [dog]="dogManager.dialog.selectedDog()"
-      [requestors]="dogManager.tripRequestors()"
-      [tripDestinations]="tripDestinations()"
-      [tripPickupLocations]="tripPickupLocations()"
-      (dogSaved)="dogManager.onDogSaved($event)"
-      (photoFileChange)="dogManager.dialog.setPendingPhotoFile($event)"
-      (documentFileChange)="dogManager.dialog.setPendingDocumentFile($event)"
-      (cancelled)="dogManager.dialog.cancel()" />
-  `,
+  templateUrl: './dog-form-dialog-wrapper.component.html',
 })
 export class DogFormDialogWrapperComponent {
   readonly dogManager = inject(DogManagerService);

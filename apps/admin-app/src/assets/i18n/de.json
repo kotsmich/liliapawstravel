@@ -257,6 +257,7 @@
       "removePhoto": "Foto entfernen",
       "removeDocument": "Dokument entfernen",
       "adminDestination": "Lieferort",
+      "adminPickupLocation": "Abholstation",
       "pickupOther": "Sonstiges (in Notizen angeben)",
       "pickupOtherHint": "Bitte beschreiben Sie den Abholort im Feld Besondere Hinweise.",
       "receiver": "Empfänger (optional)"

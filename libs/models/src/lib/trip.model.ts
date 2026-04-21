@@ -8,8 +8,11 @@ export interface TripDestination {
 }
 
 export interface TripRequester {
-  requestId: string | null;
+  requesterId: string;
   name: string;
+  email: string | null;
+  phone: string | null;
+  sourceRequestId: string | null;
   dogs: Dog[];
 }
 

@@ -35,8 +35,10 @@ export class DogFieldsComponent {
   readonly existingPhotoUrl = input<string | null>(null);
   readonly existingDocumentUrl = input<string | null>(null);
   readonly requestors = input<TripRequester[]>([]);
+  readonly hideRequester = input(false);
   readonly tripDestinations = input<TripDestination[]>([]);
   readonly tripPickupLocations = input<TripDestination[]>([]);
+  readonly isEditMode = input(false);
 
   readonly photoFileChange = output<File | null>();
   readonly documentFileChange = output<File | null>();
@@ -48,10 +50,7 @@ export class DogFieldsComponent {
 
   readonly pickupOptions = computed((): { id: string | null; name: string }[] => {
     this.langChange();
-    return [
-      ...this.tripPickupLocations().map(d => ({ id: d.id ?? null, name: d.name })),
-      { id: null, name: this.transloco.translate('dogs.fields.pickupOther') },
-    ];
+    return this.tripPickupLocations().map(d => ({ id: d.id ?? null, name: d.name }));
   });
 
   onPickupSelect(id: string | null): void {

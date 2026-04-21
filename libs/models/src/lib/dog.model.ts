@@ -11,13 +11,10 @@ export interface Dog {
   photoUrl?: string | null;
   documentUrl?: string | null;
   documentType?: string | null;
-  requesterName?: string | null;
-  requesterEmail?: string | null;
-  requesterPhone?: string | null;
-  requestId?: string | null;
+  requesterId?: string | null;
   destinationId?: string | null;
   pickupLocationId?: string | null;
   receiver?: string | null;
-  /** Transient — used only when creating a dog with a new admin requester. Not stored on the dog entity. */
+  /** Transient — used only when creating a dog with a brand-new requester. Not stored on the dog. */
   newRequesterName?: string | null;
 }

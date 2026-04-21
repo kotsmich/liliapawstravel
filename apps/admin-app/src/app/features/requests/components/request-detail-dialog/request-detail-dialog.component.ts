@@ -15,7 +15,7 @@ import { InternalNoteEditorComponent } from './internal-note-editor/internal-not
 import { RequestInfoGridComponent } from './request-info-grid/request-info-grid.component';
 import { RequestDetailFooterComponent } from './request-detail-footer/request-detail-footer.component';
 
-type RequestDog = TripRequest['dogs'][number];
+type RequestDog = NonNullable<TripRequest['dogs']>[number];
 
 @Component({
   selector: 'app-request-detail-dialog',

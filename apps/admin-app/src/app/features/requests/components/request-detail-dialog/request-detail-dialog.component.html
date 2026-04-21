@@ -15,10 +15,10 @@
     <app-request-info-grid [req]="req" [tripDateLabel]="tripDate(req.tripId)" />
 
     <div class="dogs-section">
-      <h3>{{ 'requests.detail.dogsSection' | transloco: { count: req.dogs.length } }}</h3>
+      <h3>{{ 'requests.detail.dogsSection' | transloco: { count: (req.dogs?.length ?? 0) } }}</h3>
       <div class="table-wrapper">
         <app-generic-table
-          [data]="req.dogs"
+          [data]="req.dogs ?? []"
           [columns]="dogColumns()"
           [config]="dogConfig()">
         </app-generic-table>

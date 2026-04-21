@@ -13,16 +13,16 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class DogBioExportService {
-  async exportDogBioPdf(dog: Dog): Promise<void> {
+  async exportDogBioPdf(dog: Dog, requesterName?: string | null): Promise<void> {
     try {
-      await this._buildAndDownload(dog);
+      await this._buildAndDownload(dog, requesterName);
     } catch (err) {
       console.error('Dog bio PDF export failed', err);
       throw new Error(`Failed to export PDF for "${dog.name ?? 'dog'}". Please try again.`);
     }
   }
 
-  private async _buildAndDownload(dog: Dog): Promise<void> {
+  private async _buildAndDownload(dog: Dog, requesterName?: string | null): Promise<void> {
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const pageWidth  = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
@@ -55,7 +55,7 @@ export class DogBioExportService {
         ['Microchip ID', dog.chipId        ?? '—'],
         ['Pickup',       dog.pickupLocation ?? '—'],
         ['Drop',         dog.dropLocation  ?? '—'],
-        ['Requester',    dog.requesterName ?? '—'],
+        ['Requester',    requesterName ?? '—'],
         ['Notes',        dog.notes         || '—'],
       ],
       headStyles:         { fillColor: BRAND_COLOR, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 8 },

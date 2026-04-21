@@ -59,15 +59,9 @@ export class TripsEffects {
   addTrip$ = createEffect(() =>
     this.actions$.pipe(
       ofType(addTrip),
-      switchMap(({ trip, dogs }) =>
+      switchMap(({ trip, dogs, requesterId, newRequesterName }) =>
         this.tripsService.createTrip(trip).pipe(
           switchMap((saved) => {
-            if (dogs && dogs.length > 0) {
-              return this.dogsService.createDogs(saved.id, dogs as Dog[]).pipe(
-                map((savedDogs) => addTripSuccess({ trip: { ...saved, dogs: savedDogs } })),
-                catchError((error) => of(addTripFailure({ error: extractError(error) })))
-              );
-            }
             return of(addTripSuccess({ trip: saved }));
           }),
           catchError((error) => of(addTripFailure({ error: extractError(error) })))
@@ -133,12 +127,15 @@ export class TripsEffects {
   addDogs$ = createEffect(() =>
     this.actions$.pipe(
       ofType(addDogs),
-      switchMap(({ tripId, dogs }) =>
-        this.dogsService.createDogs(tripId, dogs).pipe(
+      switchMap(({ tripId, dogs, requesterId, newRequesterName }) => {
+        const body: { dogs: typeof dogs; requesterId?: string; newRequesterName?: string } = { dogs };
+        if (requesterId) body.requesterId = requesterId;
+        if (newRequesterName?.trim()) body.newRequesterName = newRequesterName.trim();
+        return this.dogsService.createDogs(tripId, body).pipe(
           mergeMap((saved) => [addDogsSuccess({ tripId, dogs: saved }), loadTripById({ id: tripId })]),
           catchError((error) => of(addDogsFailure({ error: extractError(error) })))
-        )
-      )
+        );
+      })
     )
   );
 

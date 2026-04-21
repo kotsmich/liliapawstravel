@@ -15,6 +15,82 @@
     </div>
   </div>
 
+
+    <!-- Row 1: Requested Pickup | Admin Pickup -->
+  <div class="row">
+    <div class="field fw">
+      <p-ifta-label class="w-full">
+        <input pInputText [id]="'pickupLocation-' + idx()" formControlName="pickupLocation" class="w-full" [readonly]="isEditMode()" />
+        <label [for]="'pickupLocation-' + idx()">{{ 'dogs.fields.pickupLocation' | transloco }}</label>
+      </p-ifta-label>
+    </div>
+    @if (tripPickupLocations().length > 0) {
+      <div class="field fw">
+        <p-ifta-label>
+          <p-select
+            [inputId]="'pickupId-' + idx()"
+            formControlName="pickupLocationId"
+            [options]="pickupOptions()"
+            optionLabel="name"
+            optionValue="id"
+            [showClear]="false"
+            styleClass="w-full"
+            (onChange)="onPickupSelect($event.value)" />
+          <label [for]="'pickupId-' + idx()">
+            {{ 'dogs.fields.adminPickupLocation' | transloco }}
+          </label>
+        </p-ifta-label>
+        @if (form().get('pickupLocationId')?.value === null && form().get('pickupLocationId')?.touched) {
+          <small class="p-error">{{ 'dogs.errors.required' | transloco }}</small>
+        }
+        @if (form().get('pickupLocationId')?.value === null && form().get('pickupLocationId')?.dirty) {
+          <small class="text-color-secondary text-xs flex align-items-center gap-1">
+            <i class="pi pi-info-circle"></i>
+            {{ 'dogs.fields.pickupOtherHint' | transloco }}
+          </small>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Row 2: Requested Destination | Admin Destination -->
+  <div class="row">
+    <div class="field fw">
+      <p-ifta-label class="w-full">
+        <input pInputText [id]="'dropLocation-' + idx()" formControlName="dropLocation" class="w-full" [readonly]="isEditMode()" />
+        <label [for]="'dropLocation-' + idx()">{{ 'dogs.fields.dropLocation' | transloco }}</label>
+      </p-ifta-label>
+    </div>
+    @if (tripDestinations().length > 0) {
+      <div class="field fw">
+        <p-ifta-label>
+          <p-select
+            [inputId]="'adminDest-' + idx()"
+            formControlName="destinationId"
+            [options]="tripDestinations()"
+            optionLabel="name"
+            optionValue="id"
+            [showClear]="true"
+            styleClass="w-full" />
+          <label [for]="'adminDest-' + idx()">{{ 'dogs.fields.adminDestination' | transloco }}</label>
+        </p-ifta-label>
+      </div>
+    }
+  </div>
+
+
+
+  <div class="field fw">
+    <p-ifta-label class="w-full">
+      <input pInputText [id]="'receiver-' + idx()" formControlName="receiver" class="w-full" />
+      <label [for]="'receiver-' + idx()">{{ 'dogs.fields.receiver' | transloco }}</label>
+    </p-ifta-label>
+  </div>
+
+  @if (!hideRequester()) {
+    <app-dog-requestor-selector [requestors]="requestors()" [idx]="idx()" />
+  }
+  
   <div class="row row-chip">
     <div class="field fw">
       <p-ifta-label>
@@ -39,72 +115,6 @@
       [maxlength]="15"
       [idSuffix]="idx()" />
   </div>
-
-  <div class="row">
-    @if (tripPickupLocations().length > 0) {
-      <div class="field fw">
-        <p-ifta-label>
-          <p-select
-            [inputId]="'pickupId-' + idx()"
-            formControlName="pickupLocationId"
-            [options]="pickupOptions()"
-            optionLabel="name"
-            optionValue="id"
-            [showClear]="false"
-            styleClass="w-full"
-            (onChange)="onPickupSelect($event.value)" />
-          <label [for]="'pickupId-' + idx()">
-            {{ 'dogs.fields.pickupLocation' | transloco }}
-          </label>
-        </p-ifta-label>
-        @if (form().get('pickupLocationId')?.value === null && form().get('pickupLocationId')?.touched) {
-          <small class="p-error">{{ 'dogs.errors.required' | transloco }}</small>
-        }
-        @if (form().get('pickupLocationId')?.value === null && form().get('pickupLocationId')?.dirty) {
-          <small class="text-color-secondary text-xs flex align-items-center gap-1">
-            <i class="pi pi-info-circle"></i>
-            {{ 'dogs.fields.pickupOtherHint' | transloco }}
-          </small>
-        }
-      </div>
-    } @else {
-      <app-form-field
-        controlName="pickupLocation"
-        labelKey="dogs.fields.pickupLocation"
-        errorKey="dogs.errors.required"
-        [idSuffix]="idx()" />
-    }
-    <app-form-field
-      controlName="dropLocation"
-      labelKey="dogs.fields.dropLocation"
-      errorKey="dogs.errors.required"
-      [idSuffix]="idx()" />
-  </div>
-
-  @if (tripDestinations().length > 0) {
-    <div class="field fw">
-      <p-ifta-label>
-        <p-select
-          [inputId]="'adminDest-' + idx()"
-          formControlName="destinationId"
-          [options]="tripDestinations()"
-          optionLabel="name"
-          optionValue="id"
-          [showClear]="true"
-          styleClass="w-full" />
-        <label [for]="'adminDest-' + idx()">{{ 'dogs.fields.adminDestination' | transloco }}</label>
-      </p-ifta-label>
-    </div>
-  }
-
-  <div class="field fw">
-    <p-ifta-label class="w-full">
-      <input pInputText [id]="'receiver-' + idx()" formControlName="receiver" class="w-full" />
-      <label [for]="'receiver-' + idx()">{{ 'dogs.fields.receiver' | transloco }}</label>
-    </p-ifta-label>
-  </div>
-
-  <app-dog-requestor-selector [requestors]="requestors()" [idx]="idx()" />
 
   <div class="field fw">
     <p-ifta-label>

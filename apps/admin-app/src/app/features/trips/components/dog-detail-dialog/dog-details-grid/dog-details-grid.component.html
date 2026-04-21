@@ -22,11 +22,6 @@
   <dt>{{ 'trips.table.drop' | transloco }}</dt>
   <dd>{{ dog().dropLocation }}</dd>
 
-  @if (dog().requesterName) {
-    <dt>{{ 'trips.table.requester' | transloco }}</dt>
-    <dd>{{ dog().requesterName }}</dd>
-  }
-
   @if (dog().notes) {
     <dt>{{ 'trips.table.notes' | transloco }}</dt>
     <dd>{{ dog().notes }}</dd>

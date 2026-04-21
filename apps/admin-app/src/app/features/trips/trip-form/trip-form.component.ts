@@ -19,7 +19,6 @@ import { DogManagerService } from './dog-manager.service';
 import { DogDialogService } from './dog-dialog.service';
 import { TripFormHeaderComponent } from './trip-form-header/trip-form-header.component';
 import { TripInfoFormComponent } from './trip-info-form/trip-info-form.component';
-import { TripDogsManagerComponent } from './trip-dogs-manager/trip-dogs-manager.component';
 import { type LocationListConfig } from './trip-location-list/trip-location-list.component';
 import { TripDogsTabsComponent } from '../components/trip-dogs-tabs/trip-dogs-tabs.component';
 
@@ -52,7 +51,6 @@ const DEFAULT_PICKUP_LOCATIONS: TripDestination[] = [
     DogDetailDialogComponent,
     TripFormHeaderComponent,
     TripInfoFormComponent,
-    TripDogsManagerComponent,
     TripDogsTabsComponent
   ],
   templateUrl: './trip-form.component.html',
@@ -259,7 +257,8 @@ export class TripFormComponent implements OnInit {
       this.store.dispatch(updateTrip({ id: this.editId, trip: payload }));
     } else {
       const dogs = (this.dogManager.dogsArray.value as Dog[]).map(({ id: _id, ...rest }) => rest);
-      this.store.dispatch(addTrip({ trip: payload, dogs: dogs.length ? dogs : undefined }));
+      const requester = this.dogManager.topLevelRequester();
+      this.store.dispatch(addTrip({ trip: payload, dogs: dogs.length ? dogs : undefined, ...requester }));
     }
   }
 }

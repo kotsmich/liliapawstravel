@@ -257,6 +257,7 @@
       "removePhoto": "Remove photo",
       "removeDocument": "Remove document",
       "adminDestination": "Delivery Stop",
+      "adminPickupLocation": "Pickup Stop",
       "pickupOther": "Other (specify in notes)",
       "pickupOtherHint": "Please describe the pickup location in the Special Notes field below.",
       "receiver": "Receiver (optional)"

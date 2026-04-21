@@ -31,18 +31,17 @@ export class DogRequestorSelectorComponent {
   readonly requestorOptions = computed(() =>
     this.requestors().map((requestor) => ({
       ...requestor,
-      _key: requestor.requestId ?? `__m__${requestor.name}`,
+      _key: requestor.requesterId,
     }))
   );
 
   onRequestorChange(key: string | null): void {
     if (!key) {
-      this.form.patchValue({ requestId: null, requesterName: null, requesterKey: null });
+      this.form.patchValue({ requesterId: null, requesterKey: null });
     } else {
-      const option = this.requestorOptions().find((option) => option._key === key) ?? null;
+      const option = this.requestorOptions().find((o) => o._key === key) ?? null;
       this.form.patchValue({
-        requestId: option?.requestId ?? null,
-        requesterName: option?.name ?? '',
+        requesterId: option?.requesterId ?? null,
         newRequesterName: null,
         requesterKey: key,
       });
@@ -52,7 +51,7 @@ export class DogRequestorSelectorComponent {
   onNewRequesterNameInput(): void {
     const val = this.form.get('newRequesterName')?.value;
     if (val) {
-      this.form.patchValue({ requestId: null, requesterName: null, requesterKey: null });
+      this.form.patchValue({ requesterId: null, requesterKey: null });
     }
   }
 }

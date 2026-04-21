@@ -1,7 +1,7 @@
 import { Injectable, DestroyRef, inject, signal, computed } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
-import { FormBuilder, FormArray, FormGroup } from '@angular/forms';
+import { map, startWith } from 'rxjs';
+import { FormBuilder, FormArray, FormGroup, AbstractControl } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslocoService } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
@@ -28,6 +28,31 @@ export class DogManagerService {
 
   readonly dogsArray: FormArray = this.fb.array([]);
 
+  /** Holds the single requester applied to every dog in a bulk-add batch. */
+  readonly requesterForm: FormGroup = this.fb.group({
+    requesterId:      [null as string | null],
+    requesterKey:     [null as string | null],
+    newRequesterName: [null as string | null],
+  }, {
+    validators: (group: AbstractControl) => {
+      const hasExisting = !!group.get('requesterId')?.value;
+      const hasNew = !!group.get('newRequesterName')?.value?.trim();
+      return hasExisting || hasNew ? null : { requesterRequired: true };
+    },
+  });
+
+  private readonly _requesterFormValue = toSignal(
+    this.requesterForm.valueChanges.pipe(startWith(this.requesterForm.value)),
+    { initialValue: this.requesterForm.value as { requesterId: string | null; requesterKey: string | null; newRequesterName: string | null } },
+  );
+
+  readonly topLevelRequester = computed((): { requesterId?: string; newRequesterName?: string } => {
+    const v = this._requesterFormValue();
+    if (v.requesterId) return { requesterId: v.requesterId };
+    if (v.newRequesterName?.trim()) return { newRequesterName: v.newRequesterName.trim() };
+    return {};
+  });
+
   private readonly _lang = toSignal(this.transloco.selectTranslation(), { initialValue: null });
 
   readonly currentTrip = signal<Trip | null>(null);
@@ -47,7 +72,7 @@ export class DogManagerService {
     const data = this.dogsData();
     const result = new Map<string, (Dog & { _idx: number })[]>();
     this.tripRequestors().forEach(req => {
-      result.set(req.requestId || req.name, data.filter(dog => req.dogs.some(requestDog => requestDog.id === dog.id)));
+      result.set(req.requesterId, data.filter(dog => req.dogs.some(requestDog => requestDog.id === dog.id)));
     });
     return result;
   });
@@ -76,7 +101,7 @@ export class DogManagerService {
   readonly requestorGroups = computed((): DogGroup[] => {
     this._lang();
     return this.tripRequestors().map(req => {
-      const groupKey = req.requestId || req.name;
+      const groupKey = req.requesterId;
       const dogs = this.dogsPerRequestor().get(groupKey) ?? [];
       return {
         key: groupKey,
@@ -135,6 +160,11 @@ export class DogManagerService {
   private isEdit = false;
   private editId: string | null = null;
 
+  openAdd(): void {
+    this.requesterForm.reset({ requesterId: null, requesterKey: null, newRequesterName: null });
+    this.dialog.openAdd();
+  }
+
   init(isEdit: boolean, editId: string | null): void {
     this.isEdit = isEdit;
     this.editId = editId;
@@ -190,8 +220,7 @@ export class DogManagerService {
       pickupLocationId: [dog?.pickupLocationId ?? null],
       dropLocation:     [dog?.dropLocation     ?? ''],
       notes:          [dog?.notes          ?? ''],
-      requesterName:  [dog?.requesterName  ?? ''],
-      requestId:      [dog?.requestId      ?? null],
+      requesterId:    [dog?.requesterId     ?? null],
       photoUrl:         [dog?.photoUrl         ?? null],
       documentUrl:      [dog?.documentUrl      ?? null],
       destinationId: [dog?.destinationId ?? null],
@@ -224,12 +253,13 @@ export class DogManagerService {
   }
 
   private addNewDogs(dogs: Dog[]): void {
+    const requester = this.topLevelRequester();
     if (this.editId) {
       const payload = dogs.map(({ id: _id, ...rest }) => rest);
       if (payload.length === 1) {
-        this.store.dispatch(addDog({ tripId: this.editId, dog: payload[0] }));
+        this.store.dispatch(addDog({ tripId: this.editId, dog: { ...payload[0], ...requester } }));
       } else {
-        this.store.dispatch(addDogs({ tripId: this.editId, dogs: payload }));
+        this.store.dispatch(addDogs({ tripId: this.editId, dogs: payload, ...requester }));
       }
     } else {
       dogs.forEach(dog => this.dogsArray.push(this.dogGroup(dog)));

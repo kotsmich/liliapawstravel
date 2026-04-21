@@ -21,8 +21,8 @@ export class DogsService {
     return this.http.post<Dog>(`${environment.apiUrl}/trips/${tripId}/dogs`, dog);
   }
 
-  createDogs(tripId: string, dogs: Partial<Dog>[]): Observable<Dog[]> {
-    return this.http.post<Dog[]>(`${environment.apiUrl}/trips/${tripId}/dogs/bulk`, { dogs });
+  createDogs(tripId: string, body: { dogs: Partial<Dog>[]; requesterId?: string; newRequesterName?: string }): Observable<Dog[]> {
+    return this.http.post<Dog[]>(`${environment.apiUrl}/trips/${tripId}/dogs/bulk`, body);
   }
 
   updateDog(id: string, dog: Partial<Dog>): Observable<Dog> {

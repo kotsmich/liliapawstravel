@@ -1,7 +1,7 @@
-import { Component, ChangeDetectionStrategy, inject, input, output, Input, OnChanges, SimpleChanges, computed, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Subject, switchMap, startWith, map } from 'rxjs';
+import { Component, ChangeDetectionStrategy, inject, input, output, OnInit, computed, signal } from '@angular/core';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop';
+import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
+import { Subject, switchMap, startWith, map, of } from 'rxjs';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { AccordionModule } from 'primeng/accordion';
@@ -9,6 +9,7 @@ import { TranslocoModule } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
 import { TripDestination, TripRequester } from '@models/lib/trip.model';
 import { DogFieldsComponent } from './dog-fields.component';
+import { DogRequestorSelectorComponent } from './dog-requestor-selector/dog-requestor-selector.component';
 import { RandomProperty, RandomUtil } from '@models/index';
 import { AsyncButtonDirective } from '@ui/lib/directives/async-button.directive';
 
@@ -18,31 +19,31 @@ import { AsyncButtonDirective } from '@ui/lib/directives/async-button.directive'
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    ReactiveFormsModule,
     DialogModule, ButtonModule, AccordionModule,
-    DogFieldsComponent, TranslocoModule, AsyncButtonDirective,
+    DogFieldsComponent, DogRequestorSelectorComponent, TranslocoModule, AsyncButtonDirective,
   ],
   templateUrl: './dog-form-dialog.component.html',
   styleUrls: ['./dog-form-dialog.component.scss'],
 })
-export class DogFormDialogComponent implements OnChanges {
+export class DogFormDialogComponent implements OnInit {
   readonly tripId = input<string | null>(null);
   readonly tripDestinations = input<TripDestination[]>([]);
   readonly tripPickupLocations = input<TripDestination[]>([]);
   /** Dog to edit. Null opens in add mode (accordion, multiple dogs). */
   readonly dog = input<Dog | null>(null);
-  @Input() visible = false;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['visible']?.currentValue === true) {
-      this.buildForms();
-    }
+  ngOnInit(): void {
+    this.buildForms();
   }
+
   /** Set by parent while dispatching so the save button shows a spinner. */
   readonly saving = input(false);
   /** Requestors from trip.requesters — used to populate the requestor dropdown. */
   readonly requestors = input<TripRequester[]>([]);
+  /** Requester form owned by DogManagerService — shown at the top of add mode so the admin picks one requester for the whole batch. */
+  readonly addModeRequesterForm = input<FormGroup | null>(null);
 
-  readonly visibleChange = output<boolean>();
   /** Edit mode emits a single-element array; add mode emits all dogs. */
   readonly dogSaved = output<Dog[]>();
   readonly cancelled = output<void>();
@@ -55,13 +56,23 @@ export class DogFormDialogComponent implements OnChanges {
   addForms!: FormArray;
 
   private readonly activeForm$ = new Subject<AbstractControl>();
-  readonly formInvalid = toSignal(
+  private readonly _mainFormInvalid = toSignal(
     this.activeForm$.pipe(
       switchMap(form => form.statusChanges.pipe(startWith(form.status))),
       map(status => status === 'INVALID'),
     ),
     { initialValue: false },
   );
+  private readonly _addModeFormInvalid = toSignal(
+    toObservable(this.addModeRequesterForm).pipe(
+      switchMap(form => form
+        ? form.statusChanges.pipe(startWith(form.status))
+        : of('VALID')),
+      map(status => status === 'INVALID'),
+    ),
+    { initialValue: false },
+  );
+  readonly formInvalid = computed(() => this._mainFormInvalid() || (this.isNewDog() && this._addModeFormInvalid()));
 
   readonly isNewDog = computed(() => this.dog() === null);
   private readonly _panelCount = signal(0);
@@ -73,45 +84,61 @@ export class DogFormDialogComponent implements OnChanges {
 
   private buildForms(): void {
     if (this.isNewDog()) {
-      this.addForms = this.fb.array([this.buildDogGroup()]);
+      this.addForms = this.fb.array([this.buildAddDogGroup()]);
       this._panelCount.set(1);
       this.activeAccordionPanels = ['0'];
       this.activeForm$.next(this.addForms);
     } else {
-      this.editForm = this.buildDogGroup(this.dog()!);
+      this.editForm = this.buildEditDogGroup(this.dog()!);
+      if (this.editForm.invalid) this.editForm.markAllAsTouched();
       this.activeForm$.next(this.editForm);
     }
   }
 
   private static requesterValidator(group: AbstractControl): ValidationErrors | null {
-    const hasExisting = !!group.get('requestId')?.value || !!group.get('requesterName')?.value?.trim();
+    const hasExisting = !!group.get('requesterId')?.value;
     const hasNew = !!group.get('newRequesterName')?.value?.trim();
     return hasExisting || hasNew ? null : { requesterRequired: true };
   }
 
   static requesterKey(d?: Dog | null): string | null {
-    if (d?.requestId) return d.requestId;
-    if (d?.requesterName) return `__m__${d.requesterName}`;
-    return null;
+    return d?.requesterId ?? null;
   }
 
-  private buildDogGroup(d?: Dog | null): FormGroup {
+  /** Form group for add mode — no requester fields (requester is set at the group level). */
+  private buildAddDogGroup(): FormGroup {
     return this.fb.group({
-      name:              [d?.name              ?? RandomUtil.pick(RandomProperty.dogNames),   Validators.required],
-      size:              [d?.size              ?? RandomUtil.pick(RandomProperty.sizes),   Validators.required],
-      gender:            [d?.gender            ?? RandomUtil.pick(RandomProperty.genders),   Validators.required],
-      age:               [d?.age               ?? RandomUtil.pick(RandomProperty.ages), [Validators.required, Validators.min(0)]],
-      chipId:            [d?.chipId            ?? RandomUtil.pick(RandomProperty.chipIds),   [Validators.required, Validators.pattern(/^\d{15}$/)]],
-      pickupLocation:    [d?.pickupLocation    ?? ''],
-      pickupLocationId:  [d?.pickupLocationId  ?? null, Validators.required],
-      dropLocation:      [d?.dropLocation      ?? ''],
-      notes:             [d?.notes             ?? ''],
-      requesterName:     [d?.requesterName     ?? ''],
-      requestId:         [d?.requestId         ?? null],
-      requesterKey:      [DogFormDialogComponent.requesterKey(d)],
-      newRequesterName:  [d ? null : RandomUtil.pick(RandomProperty.requesterNames)],
-      destinationId:     [d?.destinationId     ?? null, Validators.required],
-      receiver:          [d?.receiver          ?? null],
+      name:             [RandomUtil.pick(RandomProperty.dogNames),  Validators.required],
+      size:             [null],
+      gender:           [null],
+      age:              [null,   Validators.min(0)],
+      chipId:           [null],
+      pickupLocation:   [''],
+      pickupLocationId: [null],
+      dropLocation:     [''],
+      notes:            [''],
+      destinationId:    [null],
+      receiver:         [null],
+    });
+  }
+
+  /** Form group for edit mode — includes requester fields and the requester validator. */
+  private buildEditDogGroup(d: Dog): FormGroup {
+    return this.fb.group({
+      name:             [d.name,              Validators.required],
+      size:             [d.size],
+      gender:           [d.gender],
+      age:              [d.age,               Validators.min(0)],
+      chipId:           [d.chipId],
+      pickupLocation:   [d.pickupLocation    ?? ''],
+      pickupLocationId: [d.pickupLocationId  ?? null],
+      dropLocation:     [d.dropLocation      ?? ''],
+      notes:            [d.notes             ?? ''],
+      requesterId:      [d.requesterId       ?? null],
+      requesterKey:     [DogFormDialogComponent.requesterKey(d)],
+      newRequesterName: [null],
+      destinationId:    [d.destinationId     ?? null],
+      receiver:         [d.receiver          ?? null],
     }, { validators: DogFormDialogComponent.requesterValidator });
   }
 
@@ -121,7 +148,7 @@ export class DogFormDialogComponent implements OnChanges {
   }
 
   addPanel(): void {
-    this.addForms.push(this.buildDogGroup());
+    this.addForms.push(this.buildAddDogGroup());
     this._panelCount.update(v => v + 1);
     this.activeAccordionPanels = [(this.addForms.length - 1).toString()];
   }
@@ -134,19 +161,17 @@ export class DogFormDialogComponent implements OnChanges {
   onSave(): void {
     if (this.isNewDog()) {
       this.addForms.markAllAsTouched();
-      if (this.addForms.invalid) return;
+      this.addModeRequesterForm()?.markAllAsTouched();
+      if (this.addForms.invalid || this.addModeRequesterForm()?.invalid) return;
       this.dogSaved.emit(this.addForms.value.map((v: any) => this.toDogPayload(v)));
     } else {
       this.editForm.markAllAsTouched();
       if (this.editForm.invalid) return;
       this.dogSaved.emit([{ id: this.dog()!.id, ...this.toDogPayload(this.editForm.value) } as Dog]);
     }
-    this.visibleChange.emit(false);
   }
 
   private toDogPayload({ newRequesterName, requesterKey: _rk, ...dogData }: any): Omit<Dog, 'id'> {
-    const requesterName = newRequesterName?.trim() || dogData.requesterName;
-
     const destinations = this.tripDestinations();
     const pickupLocations = this.tripPickupLocations();
     const findDest = (id: string | null) => destinations.find((d: TripDestination) => d.id === id) ?? null;
@@ -161,11 +186,16 @@ export class DogFormDialogComponent implements OnChanges {
     const dropDest = findDest(dogData.destinationId);
     const dropLocation = dropDest ? dropDest.name : dogData.dropLocation;
 
-    return { ...dogData, pickupLocation, pickupLocationId, dropLocation, requesterName };
+    return {
+      ...dogData,
+      pickupLocation,
+      pickupLocationId,
+      dropLocation,
+...(newRequesterName?.trim() ? { newRequesterName: newRequesterName.trim() } : {}),
+    };
   }
 
   onCancel(): void {
     this.cancelled.emit();
-    this.visibleChange.emit(false);
   }
 }

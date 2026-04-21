@@ -1,0 +1,13 @@
+@if (dogManager.dialog.dialogVisible()) {
+  <app-dog-form-dialog
+    [tripId]="tripId()"
+    [dog]="dogManager.dialog.selectedDog()"
+    [requestors]="dogManager.tripRequestors()"
+    [addModeRequesterForm]="dogManager.requesterForm"
+    [tripDestinations]="tripDestinations()"
+    [tripPickupLocations]="tripPickupLocations()"
+    (dogSaved)="dogManager.onDogSaved($event)"
+    (photoFileChange)="dogManager.dialog.setPendingPhotoFile($event)"
+    (documentFileChange)="dogManager.dialog.setPendingDocumentFile($event)"
+    (cancelled)="dogManager.dialog.cancel()" />
+}

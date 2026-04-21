@@ -129,7 +129,7 @@ export class TripsListComponent implements OnInit {
       header:      this.transloco.translate('trips.confirm.approveRequest.header'),
       message:     this.transloco.translate('trips.confirm.approveRequest.message', {
         name:  sanitizeHtml(req.requesterName),
-        count: req.dogs.length,
+        count: req.dogs?.length ?? 0,
       }),
       acceptLabel: this.transloco.translate('common.approve'),
       rejectLabel: this.transloco.translate('common.back'),

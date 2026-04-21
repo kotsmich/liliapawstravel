@@ -1,6 +1,5 @@
 <p-dialog
-  [visible]="visible"
-  (visibleChange)="visibleChange.emit($event)"
+  [visible]="true"
   [modal]="true"
   [style]="{ width: '860px', maxWidth: '96vw', height: '70vh' }"
   [contentStyle]="{ 'overflow-y': 'auto', 'flex': '1', padding: '1.25rem 1.5rem' }"
@@ -11,6 +10,11 @@
 
   <!-- ── ADD MODE: accordion of dog panels ── -->
   @if (isNewDog()) {
+    @if (addModeRequesterForm()) {
+      <div class="batch-requester mb-3" [formGroup]="addModeRequesterForm()!">
+        <app-dog-requestor-selector [requestors]="requestors()" idx="batch" />
+      </div>
+    }
     <p-accordion [multiple]="true" [(value)]="activeAccordionPanels">
       @for (panel of panelForms(); track $index) {
         <p-accordion-panel [value]="$index.toString()">
@@ -27,7 +31,7 @@
             }
           </p-accordion-header>
           <p-accordion-content>
-            <app-dog-fields [form]="panel" [idx]="$index" [requestors]="requestors()" [tripDestinations]="tripDestinations()" [tripPickupLocations]="tripPickupLocations()" />
+            <app-dog-fields [form]="panel" [idx]="$index" [hideRequester]="true" [requestors]="requestors()" [tripDestinations]="tripDestinations()" [tripPickupLocations]="tripPickupLocations()" />
           </p-accordion-content>
         </p-accordion-panel>
       }
@@ -50,6 +54,7 @@
     <app-dog-fields
       [form]="editForm"
       idx="edit"
+      [isEditMode]="true"
       [requestors]="requestors()"
       [tripDestinations]="tripDestinations()"
       [tripPickupLocations]="tripPickupLocations()"

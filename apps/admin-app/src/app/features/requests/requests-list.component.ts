@@ -88,7 +88,7 @@ export class RequestsListComponent implements OnInit {
     const requests = this.filteredByTrip();
     const tab = this.activeTab();
     const filtered = tab !== 'all' ? requests.filter((request) => request.status === tab) : requests;
-    return filtered.map((request) => ({ ...request, dogsCount: request.dogs.length }));
+    return filtered.map((request) => ({ ...request, dogsCount: request.dogs?.length ?? 0 }));
   });
 
   ngOnInit(): void {

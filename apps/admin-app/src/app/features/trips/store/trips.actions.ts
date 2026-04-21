@@ -20,7 +20,7 @@ export const clearSelectedTrip = createAction('[Trips] Clear Selected Trip');
 
 export const addTrip = createAction(
   '[Trips] Add Trip',
-  props<{ trip: Omit<Trip, 'id'>; dogs?: Omit<Dog, 'id'>[] }>()
+  props<{ trip: Omit<Trip, 'id'>; dogs?: Omit<Dog, 'id'>[]; requesterId?: string; newRequesterName?: string }>()
 );
 
 export const addTripSuccess = createAction(
@@ -95,7 +95,7 @@ export const addDogFailure = createAction(
 
 export const addDogs = createAction(
   '[Trips] Add Dogs',
-  props<{ tripId: string; dogs: Omit<Dog, 'id'>[] }>()
+  props<{ tripId: string; dogs: Omit<Dog, 'id'>[]; requesterId?: string; newRequesterName?: string }>()
 );
 
 export const addDogsSuccess = createAction(
