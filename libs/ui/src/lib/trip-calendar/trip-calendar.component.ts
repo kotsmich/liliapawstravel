@@ -1,4 +1,4 @@
-import { Component, input, output, computed } from '@angular/core';
+import { Component, Input, input, output, computed } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -14,46 +14,39 @@ import { CalendarEvent } from '@models/lib/calendar-event.model';
 })
 export class TripCalendarComponent {
   readonly events = input<CalendarEvent[]>([]);
-  readonly selectedDate = input<string | null>(null);
+
+  @Input() set selectedDate(val: string | null) {
+    this.selectedDateObj = val ? new Date(val + 'T00:00:00') : null;
+  }
 
   readonly dateSelected = output<string>();
   readonly dateDblClicked = output<string>();
 
-  readonly selectedDateObj = computed(() => {
-    const d = this.selectedDate();
-    return d ? new Date(d + 'T00:00:00') : null;
-  });
+  selectedDateObj: Date | null = null;
 
   readonly minDate = new Date();
 
-  private readonly eventMap = computed(() =>
+  readonly eventMap = computed(() =>
     new Map(this.events().map(e => [e.date, e.color]))
   );
 
-  private readonly eventDataMap = computed(() =>
-    new Map(this.events().map(e => [e.date, e]))
+  readonly tooltipMap = computed(() =>
+    new Map(this.events().map(e => [e.date, this.buildTooltip(e)]))
   );
+
+  dateKey(d: { year: number; month: number; day: number }): string {
+    return `${d.year}-${String(d.month + 1).padStart(2, '0')}-${String(d.day).padStart(2, '0')}`;
+  }
 
   onSelect(date: Date): void {
     this.dateSelected.emit(this.toDateStr(date));
   }
 
   onDblClick(date: { year: number; month: number; day: number }): void {
-    this.dateDblClicked.emit(this.partsToDateStr(date));
+    this.dateDblClicked.emit(this.dateKey(date));
   }
 
-  hasEvent(date: { year: number; month: number; day: number }): boolean {
-    return this.eventMap().has(this.partsToDateStr(date));
-  }
-
-  eventColor(date: { year: number; month: number; day: number }): string {
-    return this.eventMap().get(this.partsToDateStr(date)) ?? '#e07b54';
-  }
-
-  getEventTooltip(date: { year: number; month: number; day: number }): string {
-    const key = this.partsToDateStr(date);
-    const event = this.eventDataMap().get(key);
-    if (!event) return '';
+  private buildTooltip(event: CalendarEvent): string {
     const lines: string[] = [event.title, event.date];
     if (event.isFull) {
       lines.push('Status: Full');
@@ -73,14 +66,10 @@ export class TripCalendarComponent {
     return lines.join('\n');
   }
 
-  spotsLabel(spots: number): string {
+  private spotsLabel(spots: number): string {
     if (spots >= 5) return 'Less than 10 spots left';
     if (spots > 3) return 'Less than 5 spots left';
     return `${spots} spot${spots === 1 ? '' : 's'} left`;
-  }
-
-  private partsToDateStr(d: { year: number; month: number; day: number }): string {
-    return `${d.year}-${String(d.month + 1).padStart(2, '0')}-${String(d.day).padStart(2, '0')}`;
   }
 
   private toDateStr(date: Date): string {

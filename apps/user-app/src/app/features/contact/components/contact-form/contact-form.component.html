@@ -14,7 +14,7 @@
   }
 
   @if (!success()) {
-    <form [formGroup]="form()" (ngSubmit)="formSubmit.emit()" novalidate>
+    <form focusInvalidInput [formGroup]="form()" (ngSubmit)="formSubmit.emit()" novalidate>
       <div class="fields-row">
         <div class="field fw">
           <p-ifta-label>

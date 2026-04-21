@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, inject, computed } from '@angular/core';
 import { DecimalPipe, ViewportScroller } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -27,6 +27,7 @@ import { clearSelectedTrip, selectTripsAsCalendarEvents, selectTripsIsLoading } 
 import { selectDate, clearDate, selectCalendarSelectedDate, selectTripForSelectedDate } from '@user/core/store/calendar';
 import { submitRequest, resetRequest, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError } from '@user/features/trip-request/store';
 import { TripsService } from '@user/services/trips.service';
+import { FocusInvalidInputDirective } from '@ui/lib/directives/focus-invalid-input.directive';
 @Component({
   selector: 'app-trip-request',
   standalone: true,
@@ -36,6 +37,7 @@ import { TripsService } from '@user/services/trips.service';
     ButtonModule, CardModule, DividerModule, MessageModule, ConfirmDialogModule,
     InputTextModule, IftaLabelModule, ProgressSpinnerModule, TagModule,
     DogFormComponent, TripCalendarComponent, ToastNotificationComponent, TranslocoModule, TooltipModule,
+    FocusInvalidInputDirective,
   ],
   templateUrl: './trip-request.component.html',
   styleUrls: ['./trip-request.component.scss'],
@@ -48,6 +50,7 @@ export class TripRequestComponent {
   private readonly viewportScroller = inject(ViewportScroller);
   private readonly transloco = inject(TranslocoService);
   private readonly tripsService = inject(TripsService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   showSummary = false;
   expandedIndex: number | null = 0;
@@ -170,7 +173,14 @@ export class TripRequestComponent {
   }
 
   async onSubmit(): Promise<void> {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      for (let i = 0; i < this.dogs.length; i++) {
+        if (this.dogs.at(i).invalid) { this.expandedIndex = i; break; }
+      }
+      this.cdr.detectChanges();
+      return;
+    }
     const { requesterName, requesterEmail, requesterPhone } = this.form.value;
     const dogs = await this.uploadDogFiles(this.form.value.dogs as Record<string, unknown>[]);
     this.store.dispatch(submitRequest({

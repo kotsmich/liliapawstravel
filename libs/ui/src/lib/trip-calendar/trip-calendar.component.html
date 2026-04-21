@@ -11,17 +11,12 @@
   <ng-template pTemplate="date" let-date>
     <span
       class="date-cell flex flex-column align-items-center justify-content-center"
-      [pTooltip]="getEventTooltip(date)"
+      [class.has-event]="eventMap().has(dateKey(date))"
+      [pTooltip]="tooltipMap().get(dateKey(date)) ?? ''"
       tooltipPosition="top"
-      (dblclick)="hasEvent(date) && onDblClick(date)"
+      (dblclick)="eventMap().has(dateKey(date)) && onDblClick(date)"
       >
-      {{ date.day }}
-      @if (hasEvent(date)) {
-        <span
-          class="dot"
-          [style.background]="eventColor(date)"
-        ></span>
-      }
+      <span class="day-number">{{ date.day }}</span>
     </span>
   </ng-template>
 </p-datepicker>
