@@ -16,6 +16,25 @@ export const selectPendingRequestsCount = createSelector(
   (requests) => requests.filter((request) => request.status === 'pending').length
 );
 
+export const selectFilteredBySelectedTrip = createSelector(
+  selectAllRequests,
+  selectSelectedTripId,
+  (requests, tripId) => (tripId ? requests.filter((r) => r.tripId === tripId) : requests)
+);
+
+const selectStatusCounts = createSelector(selectFilteredBySelectedTrip, (requests) => {
+  const counts = { pending: 0, approved: 0, rejected: 0, cancelled: 0 };
+  for (const r of requests) {
+    if (r.status in counts) counts[r.status as keyof typeof counts]++;
+  }
+  return counts;
+});
+
+export const selectPendingCount   = createSelector(selectStatusCounts, (c) => c.pending);
+export const selectApprovedCount  = createSelector(selectStatusCounts, (c) => c.approved);
+export const selectRejectedCount  = createSelector(selectStatusCounts, (c) => c.rejected);
+export const selectCancelledCount = createSelector(selectStatusCounts, (c) => c.cancelled);
+
 /**
  * Factory selector — instances are cached per tripId to preserve memoization.
  * Always call `selectRequestsByTripId(id)` at the class level (field or constructor),

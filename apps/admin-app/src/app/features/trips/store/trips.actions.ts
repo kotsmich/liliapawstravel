@@ -152,3 +152,6 @@ export const updateDogFailure = createAction(
   '[Trips] Update Dog Failure',
   props<{ error: string }>()
 );
+
+// Dispatched on initial load; selects the nearest upcoming trip date.
+export const autoSelectNearestTripDate = createAction('[Trips] Auto Select Nearest Trip Date');

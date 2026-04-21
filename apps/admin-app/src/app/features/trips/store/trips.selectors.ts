@@ -2,13 +2,16 @@ import { createSelector, MemoizedSelector } from '@ngrx/store';
 import { CalendarEvent } from '@models/lib/calendar-event.model';
 import { Trip } from '@models/lib/trip.model';
 import { selectCalendarSelectedDate } from '@admin/core/store/calendar';
-import { selectTripsState } from './trips.reducer';
+import { adapter, selectTripsState } from './trips.reducer';
 
-export const selectAllTrips = createSelector(selectTripsState, (state) => state.trips);
+const { selectAll: selectAllTrips, selectEntities: selectTripEntities } = adapter.getSelectors(selectTripsState);
+
+export { selectAllTrips };
+
 export const selectSelectedTripId = createSelector(selectTripsState, (state) => state.selectedTripId);
 export const selectSelectedTrip = createSelector(
-  selectAllTrips, selectSelectedTripId,
-  (trips, id) => trips.find((trip) => trip.id === id) ?? null
+  selectTripEntities, selectSelectedTripId,
+  (entities, id) => (id ? entities[id] ?? null : null)
 );
 export const selectTripsIsLoading = createSelector(selectTripsState, (state) => state.loading);
 export const selectTripsIsMutating = createSelector(selectTripsState, (state) => state.mutating);
@@ -25,7 +28,7 @@ export const selectTripById = (id: string): MemoizedSelector<object, Trip | null
   if (!_tripByIdCache.has(id)) {
     _tripByIdCache.set(
       id,
-      createSelector(selectAllTrips, (trips) => trips.find((trip) => trip.id === id) ?? null)
+      createSelector(selectTripEntities, (entities) => entities[id] ?? null)
     );
   }
   return _tripByIdCache.get(id)!;

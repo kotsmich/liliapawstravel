@@ -10,19 +10,20 @@
   @if (dog(); as d) {
     <div class="dog-layout">
 
+      <!-- ── Details ───────────────────────────────────────── -->
+      <section class="panel details-panel">
+        <h3 class="panel-title">{{ 'trips.detail.dog.detailsSection' | transloco }}</h3>
+        <app-dog-details-grid [dog]="d" />
+      </section>
+
       <!-- ── Photo ──────────────────────────────────────────── -->
       <section class="panel photo-panel">
         <h3 class="panel-title">{{ 'trips.detail.dog.photoSection' | transloco }}</h3>
         <app-media-viewer
           [url]="d.photoUrl ?? null"
           noMediaIcon="pi-image"
-          noMediaLabel="trips.detail.dog.noPhoto" />
-      </section>
-
-      <!-- ── Details ───────────────────────────────────────── -->
-      <section class="panel details-panel">
-        <h3 class="panel-title">{{ 'trips.detail.dog.detailsSection' | transloco }}</h3>
-        <app-dog-details-grid [dog]="d" />
+          noMediaLabel="trips.detail.dog.noPhoto"
+          imgMaxHeight="420px" />
       </section>
 
       <!-- ── Document ──────────────────────────────────────── -->

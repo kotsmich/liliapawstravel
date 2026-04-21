@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto auto;
-  gap: 1.25rem;
+  gap: 2rem;
 
   @media (max-width: 600px) {
     grid-template-columns: 1fr;
@@ -10,20 +10,20 @@
 }
 
 .panel-title {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--text-color-secondary);
-  margin: 0 0 0.75rem;
+  margin: 0 0 1.25rem;
 }
 
-.photo-panel {
+.details-panel {
   grid-column: 1;
   grid-row: 1;
 }
 
-.details-panel {
+.photo-panel {
   grid-column: 2;
   grid-row: 1;
 

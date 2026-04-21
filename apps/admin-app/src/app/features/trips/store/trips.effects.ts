@@ -19,7 +19,9 @@ import {
   updateDog, updateDogSuccess, updateDogFailure,
   loadTripById, loadTripByIdSuccess, loadTripByIdFailure,
   deleteDogs, deleteDogsSuccess, deleteDogsFailure,
+  autoSelectNearestTripDate,
 } from './trips.actions';
+import { selectAllTrips } from './trips.selectors';
 
 @Injectable()
 export class TripsEffects {
@@ -29,12 +31,20 @@ export class TripsEffects {
   private readonly dogsService = inject(DogsService);
   private readonly router = inject(Router);
 
-  autoSelectNearestDate$ = createEffect(() =>
+  triggerAutoSelectNearestDate$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loadTripsSuccess),
       withLatestFrom(this.store.select(selectCalendarSelectedDate)),
       filter(([, date]) => date === null),
-      map(([{ trips }]) => {
+      map(() => autoSelectNearestTripDate())
+    )
+  );
+
+  autoSelectNearestDate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(autoSelectNearestTripDate),
+      withLatestFrom(this.store.select(selectAllTrips)),
+      map(([, trips]) => {
         const today = new Date().toISOString().slice(0, 10);
         const nearestFuture = trips.map((trip) => trip.date).filter((date) => date >= today).sort()[0];
         const mostRecentPast = [...trips.map((trip) => trip.date)].sort().at(-1);

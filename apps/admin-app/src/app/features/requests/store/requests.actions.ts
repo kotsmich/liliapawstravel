@@ -108,3 +108,6 @@ export const setSelectedTripId = createAction(
   '[TripRequest] Set Selected Trip Id',
   props<{ tripId: string | null }>()
 );
+
+// Dispatched on initial load; selects the nearest upcoming trip for request filtering.
+export const autoSelectNearestTripId = createAction('[TripRequest] Auto Select Nearest Trip Id');

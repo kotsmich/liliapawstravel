@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, filter, map, mergeMap, of, switchMap, withLatestFrom } from 'rxjs';
+import { catchError, EMPTY, filter, map, mergeMap, of, switchMap, withLatestFrom } from 'rxjs';
 import { extractError } from '@admin/shared/utils/extract-error';
 import { Store } from '@ngrx/store';
 import { RequestsService } from '@admin/services/requests.service';
@@ -12,10 +12,11 @@ import {
   bulkApproveRequests, bulkApproveRequestsSuccess, bulkApproveRequestsFailure,
   bulkRejectRequests, bulkRejectRequestsSuccess, bulkRejectRequestsFailure,
   updateRequestNote, updateRequestNoteSuccess, updateRequestNoteFailure,
-  setSelectedTripId,
+  addRequestFromSocket, requestUpdatedFromSocket,
+  setSelectedTripId, autoSelectNearestTripId,
 } from './requests.actions';
 import { selectSelectedTripId } from './requests.selectors';
-import { deleteTripSuccess, loadTripByIdSuccess, loadTrips, loadTripsSuccess } from '@admin/features/trips/store';
+import { deleteTripSuccess, loadTripByIdSuccess, loadTrips, loadTripsSuccess, selectAllTrips } from '@admin/features/trips/store';
 
 @Injectable()
 export class RequestsEffects {
@@ -50,13 +51,6 @@ export class RequestsEffects {
     )
   );
 
-  reloadAfterApprove$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(approveRequestSuccess),
-      map(() => loadRequests())
-    )
-  );
-
   rejectRequest$ = createEffect(() =>
     this.actions$.pipe(
       ofType(rejectRequest),
@@ -66,13 +60,6 @@ export class RequestsEffects {
           catchError((error) => of(rejectRequestFailure({ error: extractError(error) })))
         )
       )
-    )
-  );
-
-  reloadAfterReject$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(rejectRequestSuccess),
-      map(() => loadRequests())
     )
   );
 
@@ -100,13 +87,6 @@ export class RequestsEffects {
     )
   );
 
-  reloadAfterBulkApprove$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(bulkApproveRequestsSuccess),
-      mergeMap(() => [loadRequests(), loadTrips()])
-    )
-  );
-
   bulkRejectRequests$ = createEffect(() =>
     this.actions$.pipe(
       ofType(bulkRejectRequests),
@@ -119,31 +99,54 @@ export class RequestsEffects {
     )
   );
 
-  reloadAfterBulkReject$ = createEffect(() =>
+  reloadAfterMutation$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(bulkRejectRequestsSuccess),
-      map(() => loadRequests())
+      ofType(
+        approveRequestSuccess,
+        rejectRequestSuccess,
+        bulkApproveRequestsSuccess,
+        bulkRejectRequestsSuccess,
+        deleteTripSuccess,
+      ),
+      mergeMap((action) =>
+        action.type === bulkApproveRequestsSuccess.type
+          ? [loadRequests(), loadTrips()]
+          : [loadRequests()]
+      )
     )
   );
 
-  reloadAfterDeleteTrip$ = createEffect(() =>
+  triggerAutoSelectTripId$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(deleteTripSuccess),
-      map(() => loadRequests())
+      ofType(loadTripsSuccess),
+      withLatestFrom(this.store.select(selectSelectedTripId)),
+      filter(([, current]) => current === null),
+      map(() => autoSelectNearestTripId())
     )
   );
 
   autoSelectTripId$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(loadTripsSuccess),
-      withLatestFrom(this.store.select(selectSelectedTripId)),
-      filter(([, current]) => current === null),
-      map(([{ trips }]) => {
+      ofType(autoSelectNearestTripId),
+      withLatestFrom(this.store.select(selectAllTrips)),
+      map(([, trips]) => {
         const nearest = [...trips]
           .filter((trip) => trip.status === 'upcoming')
           .sort((a, b) => a.date.localeCompare(b.date))[0];
         return setSelectedTripId({ tripId: nearest?.id ?? null });
       })
+    )
+  );
+
+  enrichRequestFromSocket$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(addRequestFromSocket),
+      switchMap(({ request }) =>
+        this.requestsService.getRequestById(request.id).pipe(
+          map((full) => requestUpdatedFromSocket({ request: full })),
+          catchError(() => EMPTY)
+        )
+      )
     )
   );
 

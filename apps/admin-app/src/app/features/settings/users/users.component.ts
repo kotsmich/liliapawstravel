@@ -9,11 +9,15 @@ import { InputTextModule } from 'primeng/inputtext';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { MessageModule } from 'primeng/message';
 import { MessageService } from 'primeng/api';
-import { catchError, EMPTY } from 'rxjs';
-import { AuthService } from '@admin/services/auth.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Actions, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { take } from 'rxjs';
 import { AdminUser, AdminRole } from '@models/lib/admin-user.model';
 import { ValidationErrorDirective } from '@ui/lib/directives/validation-error.directive';
 import { AsyncButtonDirective } from '@ui/lib/directives/async-button.directive';
+import { loadUsers, updateUser, updateUserSuccess, updateUserFailure } from './store/users.actions';
+import { selectUsers, selectUsersLoading } from './store/users.selectors';
 
 @Component({
   selector: 'app-users',
@@ -29,12 +33,13 @@ import { AsyncButtonDirective } from '@ui/lib/directives/async-button.directive'
   styleUrls: ['./users.component.scss'],
 })
 export class UsersComponent implements OnInit {
-  private readonly authService = inject(AuthService);
+  private readonly store = inject(Store);
+  private readonly actions$ = inject(Actions);
   private readonly messageService = inject(MessageService);
   private readonly fb = inject(FormBuilder);
 
-  users = signal<AdminUser[]>([]);
-  loading = signal(true);
+  users = toSignal(this.store.select(selectUsers), { initialValue: [] as AdminUser[] });
+  loading = toSignal(this.store.select(selectUsersLoading), { initialValue: false });
   saving = signal(false);
   error = signal<string | null>(null);
   editDialogVisible = signal(false);
@@ -51,20 +56,7 @@ export class UsersComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.loadUsers();
-  }
-
-  loadUsers(): void {
-    this.loading.set(true);
-    this.authService.getUsers().pipe(
-      catchError(() => {
-        this.loading.set(false);
-        return EMPTY;
-      })
-    ).subscribe((users) => {
-      this.users.set(users);
-      this.loading.set(false);
-    });
+    this.store.dispatch(loadUsers());
   }
 
   openEdit(user: AdminUser): void {
@@ -81,17 +73,15 @@ export class UsersComponent implements OnInit {
     const { email, role } = this.editForm.value;
     this.saving.set(true);
     this.error.set(null);
-    this.authService.updateUser(user.id, { email: email!, role: role as AdminRole }).pipe(
-      catchError((err: { error?: { message?: string } }) => {
-        this.error.set(err?.error?.message ?? 'Failed to update user');
-        this.saving.set(false);
-        return EMPTY;
-      })
-    ).subscribe((updated) => {
-      this.users.update((list) => list.map((u) => u.id === updated.id ? updated : u));
+    this.store.dispatch(updateUser({ id: user.id, changes: { email: email!, role: role as AdminRole } }));
+    this.actions$.pipe(ofType(updateUserSuccess, updateUserFailure), take(1)).subscribe((action) => {
+      if (action.type === updateUserSuccess.type) {
+        this.editDialogVisible.set(false);
+        this.messageService.add({ severity: 'success', summary: 'User updated successfully' });
+      } else {
+        this.error.set((action as ReturnType<typeof updateUserFailure>).error ?? 'Failed to update user');
+      }
       this.saving.set(false);
-      this.editDialogVisible.set(false);
-      this.messageService.add({ severity: 'success', summary: 'User updated successfully' });
     });
   }
 }

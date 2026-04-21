@@ -30,6 +30,7 @@
     "@angular/ssr": "^21.2.5",
     "@jsverse/transloco": "^8.2.1",
     "@ngrx/effects": "21.0.0",
+    "@ngrx/entity": "^21.0.0",
     "@ngrx/store": "21.0.0",
     "@ngrx/store-devtools": "21.0.0",
     "@photo-sphere-viewer/core": "^5.14.1",
