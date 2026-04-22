@@ -188,6 +188,10 @@ export class TripFormComponent implements OnInit {
   selectedDog: Dog | null = null;
   dogDetailVisible = false;
 
+  get selectedRequester() {
+    return this.selectedDog ? this.dogManager.getRequesterForDog(this.selectedDog) : null;
+  }
+
   ngOnInit(): void {
     this.resolveRouteContext();
     this.store.dispatch(clearSelectedTrip());

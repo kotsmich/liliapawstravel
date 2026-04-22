@@ -19,5 +19,5 @@ export const RandomProperty = {
   notes:           ['Friendly dog', 'Needs medication', 'Shy around strangers', 'Good with kids', 'Loves car rides', ''],
   requesterNames:  ['Maria', 'Dimitra', 'Nikos', 'Elena', 'Kostas', 'Anna', 'Giorgos', 'Sofia', 'Petros', 'Ioanna', 'Thanasis', 'Christina', 'Vasilis', 'Katerina', 'Alexandros'],
   requesterEmails: ['brobislas@gmail.com'],
-  requesterPhones: ['+30 6901234567', '+30 6912345678', '+30 6923456789', '+40 7123456789'],
+  requesterPhones: ['6901234567', '6912345678', '6923456789', '7123456789'],
 };

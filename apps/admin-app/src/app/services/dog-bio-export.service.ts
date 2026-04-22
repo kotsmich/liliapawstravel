@@ -9,6 +9,7 @@ import {
   fetchImageAsBase64,
   fitDimensions,
   drawBrandedHeader,
+  loadUnicodeFontIntoDoc,
 } from './pdf-export.utils';
 
 @Injectable({ providedIn: 'root' })
@@ -28,11 +29,13 @@ export class DogBioExportService {
     const pageHeight = doc.internal.pageSize.getHeight();
     const contentWidth = pageWidth - PAGE_MARGIN * 2;
 
+    const font = await loadUnicodeFontIntoDoc(doc);
+
     drawBrandedHeader(doc, 'Dog Bio');
 
     doc.setTextColor(60, 60, 60);
     doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
+    doc.setFont(font, 'bold');
     doc.text(dog.name ?? 'Dog Bio', PAGE_MARGIN, 24);
     doc.setDrawColor(...BRAND_COLOR);
     doc.setLineWidth(0.5);
@@ -58,8 +61,8 @@ export class DogBioExportService {
         ['Requester',    requesterName ?? '—'],
         ['Notes',        dog.notes         || '—'],
       ],
-      headStyles:         { fillColor: BRAND_COLOR, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 8 },
-      bodyStyles:         { fontSize: 9, textColor: [50, 50, 50] },
+      headStyles:         { font, fillColor: BRAND_COLOR, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 8 },
+      bodyStyles:         { font, fontSize: 9, textColor: [50, 50, 50] },
       alternateRowStyles: { fillColor: [255, 248, 240] },
       columnStyles:       { 0: { cellWidth: 28, fontStyle: 'bold' }, 1: { cellWidth: 'auto' } },
       margin:             { left: PAGE_MARGIN, right: pageWidth - PAGE_MARGIN - detailsWidth },

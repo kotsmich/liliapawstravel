@@ -8,6 +8,13 @@
   padding: 1.5rem 2rem;
 }
 
+.content-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
 :host ::ng-deep .p-dialog-footer {
   padding: 1rem 2rem 1.5rem;
   display: flex;

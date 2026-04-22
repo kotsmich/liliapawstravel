@@ -49,6 +49,11 @@ export class TripDetailDialogComponent {
     this.dogDetailVisible.set(true);
   }
 
+  readonly selectedRequester = () => {
+    const dog = this.selectedDog();
+    return dog ? this.dogManager.getRequesterForDog(dog) : null;
+  };
+
   onHide(): void {
     this.visibleChange.emit(false);
     this.closed.emit();

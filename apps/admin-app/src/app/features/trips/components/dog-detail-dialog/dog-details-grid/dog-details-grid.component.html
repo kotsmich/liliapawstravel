@@ -27,3 +27,15 @@
   <dd>{{ dog().notes }}</dd>
   }
 </dl>
+
+@if (requester(); as r) {
+  <h4 class="requester-title">{{ 'trips.detail.dog.requesterSection' | transloco }}</h4>
+  <dl class="detail-grid">
+    <dt>{{ 'trips.detail.dog.requesterName' | transloco }}</dt>
+    <dd>{{ r.name }}</dd>
+    <dt>{{ 'trips.detail.dog.requesterEmail' | transloco }}</dt>
+    <dd>{{ r.email }}</dd>
+    <dt>{{ 'trips.detail.dog.requesterPhone' | transloco }}</dt>
+    <dd>{{ r.phone }}</dd>
+  </dl>
+}

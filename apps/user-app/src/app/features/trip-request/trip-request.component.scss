@@ -109,10 +109,57 @@
 }
 
 .requester-fields {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: .5rem .85rem;
-  .field { flex: 1 1 180px; margin-bottom: 0; }
+
+  .field {
+    margin-bottom: 0;
+    min-width: 0;
+
+    p-ifta-label, ::ng-deep p-ifta-label {
+      display: block;
+      width: 100%;
+    }
+
+    ::ng-deep .p-iftalabel,
+    ::ng-deep input.p-inputtext {
+      width: 100%;
+    }
+  }
+
+  .field:nth-child(3) { grid-column: 1 / -1; width: fit-content; }
+}
+
+.phone-input-row {
+  display: flex;
+  align-items: stretch;
+
+  .phone-code-select .p-select {
+    width: 90px;
+    border-right: none;
+    border-radius: var(--p-border-radius, 6px) 0 0 var(--p-border-radius, 6px);
+    height: 100%;
+  }
+
+  p-ifta-label {
+    flex: 1;
+
+    input.p-inputtext {
+      border-radius: 0 var(--p-border-radius, 6px) var(--p-border-radius, 6px) 0;
+    }
+  }
+}
+
+.flag-option {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+      position: relative;
+    top: 8px;
+    left: 10px;
+
+  img { display: block; }
 }
 
 /* ══════════════════════════════════════════
@@ -237,4 +284,6 @@
     opacity: 0.55;
   }
 }
+
+
 

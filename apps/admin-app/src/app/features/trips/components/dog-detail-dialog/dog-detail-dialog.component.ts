@@ -4,7 +4,7 @@ import { ButtonModule } from 'primeng/button';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
 import { DogBioExportService } from '../../../../services/dog-bio-export.service';
-import { DogDetailsGridComponent } from './dog-details-grid/dog-details-grid.component';
+import { DogDetailsGridComponent, DogRequester } from './dog-details-grid/dog-details-grid.component';
 import { MediaViewerComponent } from '../../../../shared/components/media-viewer/media-viewer.component';
 
 @Component({
@@ -20,12 +20,13 @@ export class DogDetailDialogComponent {
 
   readonly visible = input(false);
   readonly dog = input<Dog | null>(null);
+  readonly requester = input<DogRequester | null>(null);
   readonly visibleChange = output<boolean>();
 
   readonly header = computed(() => this.dog()?.name ?? '');
 
   onDownloadBio(): void {
     const dog = this.dog();
-    if (dog) this.exportService.exportDogBioPdf(dog);  // returns Promise, fire-and-forget is fine
+    if (dog) this.exportService.exportDogBioPdf(dog, this.requester()?.name);  // returns Promise, fire-and-forget is fine
   }
 }

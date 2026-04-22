@@ -13,7 +13,7 @@
       <!-- ── Details ───────────────────────────────────────── -->
       <section class="panel details-panel">
         <h3 class="panel-title">{{ 'trips.detail.dog.detailsSection' | transloco }}</h3>
-        <app-dog-details-grid [dog]="d" />
+        <app-dog-details-grid [dog]="d" [requester]="requester()" />
       </section>
 
       <!-- ── Photo ──────────────────────────────────────────── -->

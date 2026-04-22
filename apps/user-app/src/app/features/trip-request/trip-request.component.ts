@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, inject, computed, signal } from '@angular/core';
 import { DecimalPipe, ViewportScroller } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
@@ -8,6 +8,7 @@ import { MessageModule } from 'primeng/message';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { IftaLabelModule } from 'primeng/iftalabel';
+import { SelectModule } from 'primeng/select';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
@@ -37,9 +38,9 @@ import { NoTripHintComponent } from './components/no-trip-hint/no-trip-hint.comp
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    DecimalPipe, ReactiveFormsModule,
+    DecimalPipe, ReactiveFormsModule, FormsModule,
     AccordionModule, ButtonModule, DividerModule, MessageModule, ConfirmDialogModule,
-    InputTextModule, IftaLabelModule, ProgressSpinnerModule, TagModule,
+    InputTextModule, IftaLabelModule, SelectModule, ProgressSpinnerModule, TagModule,
     DogFormComponent, TripCalendarComponent, ToastNotificationComponent, TranslocoModule, TooltipModule,
     FocusInvalidInputDirective,
     TripRequestHeroComponent, TripRequestSidebarComponent, TripDetailsCardComponent, NoTripHintComponent,
@@ -48,6 +49,27 @@ import { NoTripHintComponent } from './components/no-trip-hint/no-trip-hint.comp
   styleUrls: ['./trip-request.component.scss'],
 })
 export class TripRequestComponent {
+  readonly phoneCountryCodes = [
+    { label: 'Greece +30',      code: 'gr', value: '+30'  },
+    { label: 'USA +1',          code: 'us', value: '+1'   },
+    { label: 'UK +44',          code: 'gb', value: '+44'  },
+    { label: 'Germany +49',     code: 'de', value: '+49'  },
+    { label: 'France +33',      code: 'fr', value: '+33'  },
+    { label: 'Italy +39',       code: 'it', value: '+39'  },
+    { label: 'Spain +34',       code: 'es', value: '+34'  },
+    { label: 'Netherlands +31', code: 'nl', value: '+31'  },
+    { label: 'Belgium +32',     code: 'be', value: '+32'  },
+    { label: 'Switzerland +41', code: 'ch', value: '+41'  },
+    { label: 'Austria +43',     code: 'at', value: '+43'  },
+    { label: 'Portugal +351',   code: 'pt', value: '+351' },
+    { label: 'Poland +48',      code: 'pl', value: '+48'  },
+    { label: 'Romania +40',     code: 'ro', value: '+40'  },
+    { label: 'Bulgaria +359',   code: 'bg', value: '+359' },
+    { label: 'Cyprus +357',     code: 'cy', value: '+357' },
+    { label: 'Australia +61',   code: 'au', value: '+61'  },
+  ];
+  phoneCountryCode = '+30';
+
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store);
   private readonly confirmationService = inject(ConfirmationService);
@@ -120,13 +142,13 @@ export class TripRequestComponent {
   dogGroup() {
     return this.fb.group({
       name:             [RandomUtil.pick(RandomProperty.dogNames),        Validators.required],
-      size:             [RandomUtil.pick(RandomProperty.sizes),           Validators.required],
-      gender:           [RandomUtil.pick(RandomProperty.genders),         Validators.required],
-      age:              [RandomUtil.pick(RandomProperty.ages),            [Validators.required, Validators.min(0)]],
-      chipId:           [RandomUtil.pick(RandomProperty.chipIds),         ],
+      size:             ['small',           Validators.required],
+      gender:           ['male',         Validators.required],
+      age:              [1,            [Validators.required, Validators.min(0)]],
+      chipId:           [''],
       pickupLocation:   [null, Validators.required],
-      dropLocation:     [RandomUtil.pick(RandomProperty.dropLocations),   Validators.required],
-      notes:            [RandomUtil.pick(RandomProperty.notes)],
+      dropLocation:     [null,   Validators.required],
+      notes:            [null],
       receiver:         [null],
     });
   }
@@ -248,7 +270,7 @@ export class TripRequestComponent {
         tripId: this.selectedTrip()!.id,
         requesterName: requesterName!,
         requesterEmail: requesterEmail!,
-        requesterPhone: requesterPhone!,
+        requesterPhone: `${this.phoneCountryCode} ${requesterPhone!}`.trim(),
       }));
     } finally {
       this.uploading.set(false);

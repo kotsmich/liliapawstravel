@@ -75,10 +75,32 @@
                     }
                   </div>
                   <div class="field">
-                    <p-ifta-label>
-                      <input pInputText id="reqPhone" formControlName="requesterPhone" size="small" />
-                      <label for="reqPhone">{{ 'tripRequest.phone' | transloco }}</label>
-                    </p-ifta-label>
+                    <div class="phone-input-row">
+                      <p-select
+                        class="phone-code-select"
+                        [options]="phoneCountryCodes"
+                        [(ngModel)]="phoneCountryCode"
+                        [ngModelOptions]="{standalone: true}"
+                        optionValue="value"
+                        appendTo="body">
+                        <ng-template #selectedItem let-item>
+                          <div class="flag-option">
+                            <img [src]="'https://flagcdn.com/20x15/' + item.code + '.png'" [alt]="item.code" />
+                            <span>{{ item.value }}</span>
+                          </div>
+                        </ng-template>
+                        <ng-template #item let-item>
+                          <div class="flag-option">
+                            <img [src]="'https://flagcdn.com/20x15/' + item.code + '.png'" [alt]="item.code" />
+                            <span>{{ item.label }}</span>
+                          </div>
+                        </ng-template>
+                      </p-select>
+                      <p-ifta-label class="flex-1">
+                        <input pInputText id="reqPhone" formControlName="requesterPhone" size="small" />
+                        <label for="reqPhone">{{ 'tripRequest.phone' | transloco }}</label>
+                      </p-ifta-label>
+                    </div>
                     @if (form.get('requesterPhone')?.touched && form.get('requesterPhone')?.invalid) {
                       <small class="p-error">{{ 'tripRequest.required' | transloco }}</small>
                     }

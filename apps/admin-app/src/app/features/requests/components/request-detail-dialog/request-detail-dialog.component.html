@@ -8,6 +8,21 @@
   [draggable]="false">
 
   @if (request(); as req) {
+    <div class="content-actions">
+      <p-button
+        [label]="'requests.detail.approve' | transloco"
+        icon="pi pi-check"
+        severity="success"
+        [disabled]="req.status !== 'pending'"
+        (onClick)="approve.emit()" />
+      <p-button
+        [label]="'requests.detail.reject' | transloco"
+        icon="pi pi-times"
+        severity="danger"
+        [outlined]="true"
+        [disabled]="req.status !== 'pending'"
+        (onClick)="reject.emit()" />
+    </div>
     <p class="request-summary">
       {{ 'requests.detail.requestFor' | transloco: { trip: tripDate(req.tripId), requester: req.requesterName } }}
     </p>
@@ -44,10 +59,10 @@
   </p-dialog>
 
   <ng-template pTemplate="footer">
-    <app-request-detail-footer
-      [status]="request()?.status"
-      (approve)="approve.emit()"
-      (reject)="reject.emit()"
-      (cancel)="cancel.emit()" />
+    <p-button
+      [label]="'requests.detail.cancel' | transloco"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="cancel.emit()" />
   </ng-template>
 </p-dialog>

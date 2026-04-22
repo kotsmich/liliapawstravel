@@ -3,6 +3,12 @@ import { TagModule } from 'primeng/tag';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
 
+export interface DogRequester {
+  name: string;
+  email: string;
+  phone: string;
+}
+
 @Component({
   selector: 'app-dog-details-grid',
   standalone: true,
@@ -13,6 +19,7 @@ import { Dog } from '@models/lib/dog.model';
 })
 export class DogDetailsGridComponent {
   readonly dog = input.required<Dog>();
+  readonly requester = input<DogRequester | null>(null);
 
   sizeSeverity(size: Dog['size']): 'success' | 'warn' | 'danger' {
     if (size === 'small') return 'success';

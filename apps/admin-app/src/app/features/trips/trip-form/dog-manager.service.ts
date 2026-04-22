@@ -6,6 +6,7 @@ import { Store } from '@ngrx/store';
 import { TranslocoService } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
 import { Trip, TripDestination, TripRequester } from '@models/lib/trip.model';
+import { DogRequester } from '@admin/features/trips/components/dog-detail-dialog/dog-details-grid/dog-details-grid.component';
 import { TableAction, TableConfig } from '@models/lib/table-column.interface';
 import { addDog, addDogs, updateDog, deleteDog, deleteDogs, loadTripById } from '@admin/features/trips/store';
 import { buildDogColumns } from '@admin/features/trips/shared/dog-columns';
@@ -300,6 +301,11 @@ export class DogManagerService {
       this.selectedDogs.set(dogs);
       this.selectionsByGroup.clear();
     }
+  }
+
+  getRequesterForDog(dog: Dog): DogRequester | null {
+    const requester = this.tripRequestors().find(r => r.requesterId === dog.requesterId);
+    return requester ? { name: requester.name, email: requester.email ?? '', phone: requester.phone ?? '' } : null;
   }
 
   clearGroupSelections(): void {
