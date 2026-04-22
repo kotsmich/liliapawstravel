@@ -1,40 +1,28 @@
 <div class="page trip-request-page">
 
-  <!-- ── Page hero ── -->
-  <div class="page-intro">
-    <!-- Full-width photo background -->
-    <div class="page-intro__bg" aria-hidden="true">
-      <img
-        src="assets/images/request-hero.jpeg"
-        alt=""
-        loading="eager"
-      />
-      <div class="page-intro__bg-overlay"></div>
-    </div>
-
-    <div class="page-intro__inner">
-      <span class="page-eyebrow">{{ 'tripRequest.tag' | transloco }}</span>
-      <h1>{{ 'tripRequest.title' | transloco }}</h1>
-      <p>{{ 'tripRequest.subtitle' | transloco }}</p>
-    </div>
-    <div class="page-intro__rule" aria-hidden="true"></div>
-  </div>
+  <app-trip-request-hero />
 
   <!-- ── 2-col layout ── -->
   <div class="page-layout">
     <ui-toast />
-    <p-confirmdialog />
+    <p-confirmdialog [style]="{ 'max-width': '480px', width: '90vw' }" />
 
     <!-- ── Main column ── -->
     <main class="main-col">
 
-      <!-- Calendar card -->
+      <!-- Step 1: Calendar card -->
       <section class="card">
-        <div class="card__header">
-          <span class="card__header-icon" aria-hidden="true">🗓️</span>
+        <div class="step-head">
+          <div class="step-num" [class.done]="calendarDone()">
+            @if (calendarDone()) {
+              <i class="pi pi-check"></i>
+            } @else {
+              1
+            }
+          </div>
           <div>
             <h2>{{ 'tripRequest.selectDate' | transloco }}</h2>
-            <p class="card__hint">{{ 'tripRequest.clickHint' | transloco }}</p>
+            <p class="step-sub">{{ 'tripRequest.clickHint' | transloco }}</p>
           </div>
         </div>
         <ui-trip-calendar
@@ -45,87 +33,27 @@
         </ui-trip-calendar>
       </section>
 
-      <!-- Trip details card -->
       @if (selectedTrip(); as trip) {
-        <section class="card trip-details">
-          <div class="trip-details__eyebrow">
-            <i class="pi pi-check-circle" aria-hidden="true"></i>
-            {{ 'tripRequest.selectedTrip' | transloco }}
-          </div>
-          <div class="trip-details__route">
-            <div class="trip-details__city">
-              <span class="trip-details__city-label">{{ 'tripRequest.from' | transloco }}</span>
-              <strong>{{ trip.departureCity }}</strong>
-              <span class="trip-details__country">{{ trip.departureCountry }}</span>
-            </div>
-            <div class="trip-details__arrow" aria-hidden="true">
-              <i class="pi pi-arrow-right"></i>
-            </div>
-            <div class="trip-details__city">
-              <span class="trip-details__city-label">{{ 'tripRequest.to' | transloco }}</span>
-              <strong>{{ trip.arrivalCity }}</strong>
-              <span class="trip-details__country">{{ trip.arrivalCountry }}</span>
-            </div>
-          </div>
-          <div class="trip-details__meta">
-            <span class="trip-details__date">
-              <i class="pi pi-calendar" aria-hidden="true"></i>
-              {{ trip.date }}
-            </span>
-            @if (!trip.isFull && trip.spotsAvailable > 0 && trip.acceptingRequests) {
-              <span class="trip-details__spots" [class.low]="trip.spotsAvailable < 10">
-                @if (trip.spotsAvailable >= 10) {
-                  🐾 {{ 'tripRequest.booked' | transloco: { percent: ((trip.totalCapacity - trip.spotsAvailable) / trip.totalCapacity * 100) | number:'1.0-0' } }}
-                } @else if (trip.spotsAvailable >= 5) {
-                  ⚠ {{ 'tripRequest.lessThan10' | transloco }}
-                } @else if (trip.spotsAvailable > 3) {
-                  ⚠ {{ 'tripRequest.lessThan5' | transloco }}
-                } @else {
-                  ⚠ {{ 'tripRequest.spotsLeft' | transloco: { count: trip.spotsAvailable } }}
-                }
-              </span>
-            }
-          </div>
-          @if (trip.notes) {
-            <p class="trip-details__notes">
-              <i class="pi pi-info-circle" aria-hidden="true"></i>
-              {{ trip.notes }}
-            </p>
-          }
-        </section>
-
-        <!-- Alert: trip full -->
-        @if (trip.isFull || trip.spotsAvailable <= 0) {
-          <div class="alert alert--danger">
-            <span class="alert__icon" aria-hidden="true">🚫</span>
-            <div>
-              <strong>{{ 'tripRequest.tripFull' | transloco }}</strong>
-              <p>{{ 'tripRequest.tripFullMsg' | transloco }}</p>
-            </div>
-          </div>
-        }
-
-        <!-- Alert: requests closed -->
-        @if (!trip.isFull && trip.spotsAvailable > 0 && !trip.acceptingRequests) {
-          <div class="alert alert--warning">
-            <span class="alert__icon" aria-hidden="true">⏳</span>
-            <div>
-              <strong>{{ 'tripRequest.requestsClosed' | transloco }}</strong>
-              <p>{{ 'tripRequest.requestsClosedMsg' | transloco }}</p>
-            </div>
-          </div>
-        }
+        <app-trip-details-card [trip]="trip" />
 
         <!-- Form card -->
         @if (!success() && !trip.isFull && trip.spotsAvailable > 0 && trip.acceptingRequests) {
           <section class="card form-card">
             <form focusInvalidInput [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
-              <!-- Your details -->
+              <!-- Step 2: Your details -->
               <div class="form-section">
-                <div class="form-section__header">
-                  <span class="form-section__icon" aria-hidden="true">👤</span>
-                  <h2>{{ 'tripRequest.yourDetails' | transloco }}</h2>
+                <div class="step-head">
+                  <div class="step-num" [class.done]="contactDone()">
+                    @if (contactDone()) {
+                      <i class="pi pi-check"></i>
+                    } @else {
+                      2
+                    }
+                  </div>
+                  <div>
+                    <h2>{{ 'tripRequest.yourDetails' | transloco }}</h2>
+                  </div>
                 </div>
                 <div class="requester-fields">
                   <div class="field">
@@ -160,53 +88,49 @@
 
               <div class="form-divider" aria-hidden="true"></div>
 
-              <!-- Dogs -->
+              <!-- Step 3: Dogs -->
               <div class="form-section">
-                <div class="form-section__header">
-                  <span class="form-section__icon" aria-hidden="true">🐕</span>
-                  <h2>{{ 'tripRequest.addDogs' | transloco }} 
-                  <i class="pi pi-info-circle" [pTooltip]="'dogs.dropLocationInfo' | transloco" tooltipPosition="top"></i>
-                  </h2>
+                <div class="step-head">
+                  <div class="step-num" [class.done]="dogsDone()">
+                    @if (dogsDone()) {
+                      <i class="pi pi-check"></i>
+                    } @else {
+                      3
+                    }
+                  </div>
+                  <div>
+                    <h2>
+                      {{ 'tripRequest.addDogs' | transloco }}
+                      <i class="pi pi-info-circle" [pTooltip]="'dogs.dropLocationInfo' | transloco" tooltipPosition="top"></i>
+                    </h2>
+                  </div>
                 </div>
-                <div formArrayName="dogs" class="dogs-list flex flex-column gap-2">
-                  @for (dog of dogs.controls; track dog; let i = $index) {
-                    <div>
-                      @if (expandedIndex !== i) {
-                        <div
-                          class="dog-row-collapsed flex align-items-center"
-                          [class.has-error]="dog.invalid && dog.touched"
-                          (click)="expandedIndex = i"
-                          role="button" tabindex="0"
-                          [attr.aria-label]="'Edit dog ' + (i + 1)"
-                        >
-                          <i class="pi pi-chevron-right collapse-icon" aria-hidden="true"></i>
-                          <span class="dog-label">{{ 'tripRequest.dogNum' | transloco: { num: i + 1 } }}</span>
-                          <span class="dog-name">{{ dog.get('name')?.value || ('tripRequest.unnamed' | transloco) }}</span>
-                          @if (dog.get('size')?.value) {
-                            <p-tag [value]="dog.get('size')?.value" severity="secondary" />
-                          }
-                          @if (dog.get('receiver')?.value) {
-                            <span class="receiver-label">{{ 'tripRequest.receiver' | transloco }}: {{ dog.get('receiver')?.value }}</span>
-                          }
-                          <div class="dog-row-actions flex align-items-center flex-shrink-0" (click)="$event.stopPropagation()">
-                            <p-button icon="pi pi-pencil" [text]="true" size="small"
-                              [pTooltip]="'tripRequest.edit' | transloco" tooltipPosition="top"
-                              (onClick)="expandedIndex = i" />
-                            <p-button icon="pi pi-trash" [text]="true" size="small" severity="danger"
-                              [pTooltip]="'tripRequest.remove' | transloco" tooltipPosition="top"
-                              (onClick)="removeDog(i)" />
+
+                <div formArrayName="dogs" class="dogs-list">
+                  <p-accordion
+                    [value]="openDogs()"
+                    (valueChange)="openDogs.set($any($event))"
+                    [multiple]="true">
+                    @for (dog of dogs.controls; track dog; let i = $index) {
+                      <p-accordion-panel
+                        [value]="i.toString()"
+                        [class.has-error]="dog.invalid && dog.touched">
+                        <p-accordion-header>
+                          <div class="dog-accordion-header">
+                            <span class="dog-card-label">{{ ('tripRequest.dogNum' | transloco: { num: i + 1 }) }} - {{ dogs.at(i).get('name')?.value }}</span>
+                            @if (dogs.length > 1) {
+                              <p-button
+                                icon="pi pi-trash"
+                                [text]="true"
+                                size="small"
+                                severity="danger"
+                                [pTooltip]="'tripRequest.remove' | transloco"
+                                tooltipPosition="top"
+                                (onClick)="onRemoveDogClick($event, i)" />
+                            }
                           </div>
-                        </div>
-                      }
-                      @if (expandedIndex === i) {
-                        <p-card class="dog-card-expanded">
-                          <ng-template pTemplate="header">
-                            <div class="dog-card-header flex justify-content-between align-items-center">
-                              <span class="dog-card-title">{{ 'tripRequest.dogNum' | transloco: { num: i + 1 } }}</span>
-                              <p-button icon="pi pi-chevron-up" [label]="'tripRequest.collapse' | transloco"
-                                [text]="true" size="small" (onClick)="expandedIndex = null" />
-                            </div>
-                          </ng-template>
+                        </p-accordion-header>
+                        <p-accordion-content>
                           <ui-dog-form
                             [formGroup]="$any(dogs.at(i))"
                             [index]="i"
@@ -214,20 +138,19 @@
                             [tripDestinations]="pickupDestinations()"
                             (photoFileChange)="onDogPhotoChange(i, $event)"
                             (documentFileChange)="onDogDocumentChange(i, $event)" />
-                          @if (dogs.length > 1) {
-                            <ng-template pTemplate="footer">
-                              <p-button icon="pi pi-trash" [label]="'tripRequest.removeDog' | transloco"
-                                severity="danger" [text]="true" size="small" (onClick)="removeDog(i)" />
-                            </ng-template>
-                          }
-                        </p-card>
-                      }
-                    </div>
-                  }
-                </div>
+                        </p-accordion-content>
+                      </p-accordion-panel>
+                    }
+                  </p-accordion>
 
-                <p-button type="button" [label]="'tripRequest.addAnotherDog' | transloco"
-                  icon="pi pi-plus" [outlined]="true" styleClass="add-btn" (onClick)="addDog()" />
+                  <p-button
+                    type="button"
+                    [label]="'tripRequest.addAnotherDog' | transloco"
+                    icon="pi pi-plus"
+                    [outlined]="true"
+                    styleClass="add-btn"
+                    (onClick)="addDog()" />
+                </div>
               </div>
 
               <div class="form-divider" aria-hidden="true"></div>
@@ -254,102 +177,38 @@
                 </div>
               }
 
-              <div class="actions flex align-items-center flex-wrap gap-3">
-                <p-button type="button" [label]="'tripRequest.preview' | transloco"
-                  icon="pi pi-eye" [outlined]="true" [disabled]="formInvalid()" (onClick)="preview()" />
-                <span [class.submit-btn-wrap--disabled]="submitting()">
-                  <p-button type="submit"
-                    [label]="submitting() ? ('tripRequest.submitting' | transloco) : ('tripRequest.submit' | transloco)"
-                    [icon]="submitting() ? '' : 'pi pi-send'"
-                    styleClass="submit-btn"
-                    [loading]="submitting()" [disabled]="submitting()" />
-                </span>
+              <div class="actions">
+                <div class="actions__notice">
+                  <span class="actions__notice-title">
+                    <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+                    {{ 'tripRequest.submitNoticeTitle' | transloco }}
+                  </span>
+                  <span class="actions__notice-body">{{ 'tripRequest.submitNoticeBody' | transloco }}</span>
+                </div>
+                <div class="actions__buttons">
+                  <p-button type="button" [label]="'tripRequest.preview' | transloco"
+                    icon="pi pi-eye" [outlined]="true" [disabled]="formInvalid()" (onClick)="preview()" />
+                  <span [class.submit-btn-wrap--disabled]="submitting()">
+                    <p-button type="submit"
+                      [label]="submitting() ? ('tripRequest.submitting' | transloco) : ('tripRequest.submit' | transloco)"
+                      [icon]="submitting() ? '' : 'pi pi-send'"
+                      styleClass="submit-btn"
+                      [loading]="submitting()" [disabled]="submitting()" />
+                  </span>
+                </div>
               </div>
             </form>
           </section>
         }
       }
 
-      <!-- No trip hint -->
       @if (!selectedTrip() && !loading()) {
-        <div class="no-trip-hint">
-          <div class="no-trip-hint__icon" aria-hidden="true">🗓️</div>
-          <h3>{{ 'tripRequest.pickDateTitle' | transloco }}</h3>
-          <p>{{ 'tripRequest.noTripHint' | transloco }}</p>
-        </div>
+        <app-no-trip-hint />
       }
 
     </main>
 
-    <!-- ── Sidebar ── -->
-    <aside class="sidebar" aria-label="Booking information">
-
-      <!-- Mini process steps -->
-      <div class="sidebar-card">
-        <div class="sidebar-card__header">
-          <span class="sidebar-card__icon" aria-hidden="true">🗺️</span>
-          <h3>{{ 'tripRequest.howItWorksTitle' | transloco }}</h3>
-        </div>
-        <ol class="mini-steps">
-          <li class="mini-step">
-            <span class="mini-step__num">1</span>
-            <div class="mini-step__body">
-              <strong>{{ 'tripRequest.sidebarStep1Title' | transloco }}</strong>
-              <p>{{ 'tripRequest.sidebarStep1Desc' | transloco }}</p>
-            </div>
-          </li>
-          <li class="mini-step">
-            <span class="mini-step__num">2</span>
-            <div class="mini-step__body">
-              <strong>{{ 'tripRequest.sidebarStep2Title' | transloco }}</strong>
-              <p>{{ 'tripRequest.sidebarStep2Desc' | transloco }}</p>
-            </div>
-          </li>
-          <li class="mini-step">
-            <span class="mini-step__num">3</span>
-            <div class="mini-step__body">
-              <strong>{{ 'tripRequest.sidebarStep3Title' | transloco }}</strong>
-              <p>{{ 'tripRequest.sidebarStep3Desc' | transloco }}</p>
-            </div>
-          </li>
-          <li class="mini-step">
-            <span class="mini-step__num">4</span>
-            <div class="mini-step__body">
-              <strong>{{ 'tripRequest.sidebarStep4Title' | transloco }}</strong>
-              <p>{{ 'tripRequest.sidebarStep4Desc' | transloco }}</p>
-            </div>
-          </li>
-        </ol>
-      </div>
-
-      <!-- Questions? card -->
-      <div class="sidebar-card sidebar-card--help">
-        <div class="sidebar-card__header">
-          <span class="sidebar-card__icon" aria-hidden="true">💬</span>
-          <h3>{{ 'tripRequest.questionsTitle' | transloco }}</h3>
-        </div>
-        <p class="sidebar-help-text">{{ 'tripRequest.questionsDesc' | transloco }}</p>
-        <ul class="help-links">
-          <li>
-            <a href="tel:+306907288150" class="help-link">
-              <i class="pi pi-phone" aria-hidden="true"></i>
-              +30 690 728 8150
-            </a>
-                 <a href="tel:+306907288150" class="help-link">
-              <i class="pi pi-phone" aria-hidden="true"></i>
-              +30 694 822 5016
-            </a>
-          </li>
-          <li>
-            <a href="mailto:liliapawstravel@gmail.com" class="help-link">
-              <i class="pi pi-envelope" aria-hidden="true"></i>
-              liliapawstravel&#64;gmail.com
-            </a>
-          </li>
-        </ul>
-      </div>
-
-    </aside>
+    <app-trip-request-sidebar />
 
   </div>
 </div>

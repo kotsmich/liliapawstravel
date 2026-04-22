@@ -16,16 +16,24 @@
 
     &--fields {
       display: grid;
-      grid-template-columns: 1fr 160px 160px 44px 1fr;
+      grid-template-columns: 1fr 160px 44px 1fr;
       gap: 0.5rem;
 
+      .dog-form__field--size { grid-column: 1 / -1; }
+
       @media (max-width: 600px) {
-        grid-template-columns: 1fr 1fr 80px 64px;
-        // chip wraps to its own full row on small screens
-        .dog-form__field:last-child { grid-column: 1 / -1; }
+        grid-template-columns: 1fr 80px 64px;
       }
 
       @media (max-width: 480px) { gap: 0.35rem; }
+    }
+
+    &--name-receiver {
+      flex-wrap: nowrap;
+
+      @media (max-width: 1000px) {
+        flex-wrap: wrap;
+      }
     }
   }
 
@@ -58,6 +66,15 @@
       @media (max-width: 480px) { flex: 0 1 72px; }
 
       label { white-space: nowrap; overflow: hidden;  display: block; }
+    }
+
+    &--receiver {
+      flex: 0 1 220px;
+      min-width: 0;
+
+      @media (max-width: 1000px) {
+        flex: 1 1 100%;
+      }
     }
 
     label {
@@ -202,4 +219,41 @@
   font-size: 0.7rem;
   color: #dc2626;
   margin-top: 0.15rem;
+}
+
+/* ── Size chips ── */
+.size-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.1rem;
+}
+
+.size-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: 20px;
+  border: 1.5px solid var(--color-border, #e2d5d0);
+  background: var(--color-surface, #faf8f7);
+  color: var(--color-text-muted, #7a6358);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--color-primary, #e07b54);
+    color: var(--color-primary, #e07b54);
+    background: #fff5f0;
+  }
+
+  &.active {
+    border-color: var(--color-primary, #e07b54);
+    background: var(--color-primary, #e07b54);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(224, 123, 84, 0.25);
+  }
 }

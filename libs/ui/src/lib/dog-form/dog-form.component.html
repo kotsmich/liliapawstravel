@@ -1,6 +1,7 @@
 <div class="dog-form flex flex-column gap-2" [formGroup]="formGroup()">
 
-  <div class="dog-form__row dog-form__row--fields">
+  <!-- Row 1: Name - Receiver -->
+  <div class="dog-form__row dog-form__row--name-receiver flex gap-2">
     <div class="dog-form__field flex flex-column">
       <label [for]="'name-' + index">{{ 'dogs.dogName' | transloco }}</label>
       <input pInputText [id]="'name-' + index" formControlName="name" placeholder="Buddy" />
@@ -8,42 +9,14 @@
         <small class="p-error">{{ errorFor('name') }}</small>
       }
     </div>
-    <div class="dog-form__field flex flex-column">
-      <label [for]="'size-' + index">{{ 'dogs.size' | transloco }}</label>
-      <p-select [inputId]="'size-' + index" formControlName="size"
-        [options]="sizes()" optionLabel="label" optionValue="value"
-        placeholder="Select" styleClass="w-full" />
-      @if (ctrl('size').touched && errorFor('size')) {
-        <small class="p-error">{{ errorFor('size') }}</small>
-      }
-    </div>
-    <div class="dog-form__field flex flex-column">
-      <label [for]="'gender-' + index">{{ 'dogs.gender' | transloco }}</label>
-      <p-select [inputId]="'gender-' + index" formControlName="gender"
-        [options]="genders()" optionLabel="label" optionValue="value"
-        placeholder="Select" styleClass="w-full" />
-      @if (ctrl('gender').touched && errorFor('gender')) {
-        <small class="p-error">{{ errorFor('gender') }}</small>
-      }
-    </div>
-    <div class="dog-form__field dog-form__field--sm flex flex-column">
-      <label [for]="'age-' + index">{{ 'dogs.ageYears' | transloco }}</label>
-      <p-inputnumber [inputId]="'age-' + index" formControlName="age"
-        [min]="0" [showButtons]="false" styleClass="w-full" />
-      @if (ctrl('age').touched && errorFor('age')) {
-        <small class="p-error">{{ errorFor('age') }}</small>
-      }
-    </div>
-    <div class="dog-form__field flex flex-column">
-      <label [for]="'chip-' + index">{{ 'dogs.microchipId' | transloco }}</label>
-      <input pInputText [id]="'chip-' + index" formControlName="chipId"
-        placeholder="123456789012345" maxlength="15" />
-      @if (ctrl('chipId').touched && errorFor('chipId')) {
-        <small class="p-error">{{ errorFor('chipId') }}</small>
-      }
+    <div class="dog-form__field dog-form__field--receiver flex flex-column">
+      <label [for]="'receiver-' + index">{{ 'dogs.receiver' | transloco }}</label>
+      <input pInputText [id]="'receiver-' + index" formControlName="receiver"
+        placeholder="e.g. Maria Papadopoulou" />
     </div>
   </div>
 
+  <!-- Row 2: Pick Up - Drop Location -->
   <div class="dog-form__row flex flex-wrap gap-2">
     <div class="dog-form__field flex flex-column">
       @if (tripDestinations().length > 0) {
@@ -86,14 +59,59 @@
         <small class="p-error">{{ errorFor('dropLocation') }}</small>
       }
     </div>
+  </div>
+
+  <!-- Row 3: Chip ID - Age - Gender -->
+  <div class="dog-form__row flex flex-wrap gap-2">
     <div class="dog-form__field flex flex-column">
-      <label [for]="'receiver-' + index">{{ 'dogs.receiver' | transloco }}</label>
-      <input pInputText [id]="'receiver-' + index" formControlName="receiver"
-        placeholder="e.g. Maria Papadopoulou" />
+      <label [for]="'chip-' + index">{{ 'dogs.microchipId' | transloco }}</label>
+      <input pInputText [id]="'chip-' + index" formControlName="chipId"
+        placeholder="123456789012345" maxlength="15" />
+      @if (ctrl('chipId').touched && errorFor('chipId')) {
+        <small class="p-error">{{ errorFor('chipId') }}</small>
+      }
+    </div>
+    <div class="dog-form__field dog-form__field--sm flex flex-column">
+      <label [for]="'age-' + index">{{ 'dogs.ageYears' | transloco }}</label>
+      <p-inputnumber [inputId]="'age-' + index" formControlName="age"
+        [min]="0" [showButtons]="false" styleClass="w-full" />
+      @if (ctrl('age').touched && errorFor('age')) {
+        <small class="p-error">{{ errorFor('age') }}</small>
+      }
+    </div>
+    <div class="dog-form__field flex flex-column">
+      <label [for]="'gender-' + index">{{ 'dogs.gender' | transloco }}</label>
+      <p-select [inputId]="'gender-' + index" formControlName="gender"
+        [options]="genders()" optionLabel="label" optionValue="value"
+        placeholder="Select" styleClass="w-full" />
+      @if (ctrl('gender').touched && errorFor('gender')) {
+        <small class="p-error">{{ errorFor('gender') }}</small>
+      }
     </div>
   </div>
 
-  <!-- Notes -->
+  <!-- Row 4: Size chips -->
+  <div class="dog-form__row dog-form__row--fields">
+    <div class="dog-form__field dog-form__field--size flex flex-column">
+      <label>{{ 'dogs.size' | transloco }}</label>
+      <div class="size-chips">
+        @for (s of sizes(); track s.value) {
+          <button
+            type="button"
+            class="size-chip"
+            [class.active]="ctrl('size').value === s.value"
+            (click)="ctrl('size').setValue(s.value); ctrl('size').markAsTouched()">
+            {{ s.label }}
+          </button>
+        }
+      </div>
+      @if (ctrl('size').touched && errorFor('size')) {
+        <small class="p-error">{{ errorFor('size') }}</small>
+      }
+    </div>
+  </div>
+
+  <!-- Row 5: Notes -->
   <div class="dog-form__row dog-form__row--notes flex">
     <div class="dog-form__field dog-form__field--full flex flex-column">
       <label [for]="'notes-' + index">{{ 'dogs.notes' | transloco }}</label>
@@ -103,7 +121,7 @@
     </div>
   </div>
 
-  <!-- File uploads -->
+  <!-- Row 6: File uploads -->
   <div class="dog-form__row flex flex-wrap gap-2">
 
     <!-- Photo Upload -->

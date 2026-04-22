@@ -16,12 +16,14 @@ export class TripCalendarComponent {
   readonly events = input<CalendarEvent[]>([]);
 
   @Input() set selectedDate(val: string | null) {
-    this.selectedDateObj = val ? new Date(val + 'T00:00:00') : null;
+    this._confirmedDate = val ? new Date(val + 'T00:00:00') : null;
+    this.selectedDateObj = this._confirmedDate ? new Date(this._confirmedDate.getTime()) : null;
   }
 
   readonly dateSelected = output<string>();
   readonly dateDblClicked = output<string>();
 
+  private _confirmedDate: Date | null = null;
   selectedDateObj: Date | null = null;
 
   readonly minDate = new Date();
@@ -39,7 +41,11 @@ export class TripCalendarComponent {
   }
 
   onSelect(date: Date): void {
-    this.dateSelected.emit(this.toDateStr(date));
+    const candidate = this.toDateStr(date);
+    // Always revert selectedDateObj so Angular CD calls writeValue on PrimeNG,
+    // resetting its visual state. The parent confirms the selection via @Input().
+    this.selectedDateObj = this._confirmedDate ? new Date(this._confirmedDate.getTime()) : null;
+    this.dateSelected.emit(candidate);
   }
 
   onDblClick(date: { year: number; month: number; day: number }): void {

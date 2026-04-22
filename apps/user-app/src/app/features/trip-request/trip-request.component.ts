@@ -1,8 +1,8 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, inject, computed, signal } from '@angular/core';
 import { DecimalPipe, ViewportScroller } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
 import { MessageModule } from 'primeng/message';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -28,16 +28,21 @@ import { selectDate, clearDate, selectCalendarSelectedDate, selectTripForSelecte
 import { submitRequest, resetRequest, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError } from '@user/features/trip-request/store';
 import { TripsService } from '@user/services/trips.service';
 import { FocusInvalidInputDirective } from '@ui/lib/directives/focus-invalid-input.directive';
+import { TripRequestHeroComponent } from './components/trip-request-hero/trip-request-hero.component';
+import { TripRequestSidebarComponent } from './components/trip-request-sidebar/trip-request-sidebar.component';
+import { TripDetailsCardComponent } from './components/trip-details-card/trip-details-card.component';
+import { NoTripHintComponent } from './components/no-trip-hint/no-trip-hint.component';
 @Component({
   selector: 'app-trip-request',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DecimalPipe, ReactiveFormsModule,
-    ButtonModule, CardModule, DividerModule, MessageModule, ConfirmDialogModule,
+    AccordionModule, ButtonModule, DividerModule, MessageModule, ConfirmDialogModule,
     InputTextModule, IftaLabelModule, ProgressSpinnerModule, TagModule,
     DogFormComponent, TripCalendarComponent, ToastNotificationComponent, TranslocoModule, TooltipModule,
     FocusInvalidInputDirective,
+    TripRequestHeroComponent, TripRequestSidebarComponent, TripDetailsCardComponent, NoTripHintComponent,
   ],
   templateUrl: './trip-request.component.html',
   styleUrls: ['./trip-request.component.scss'],
@@ -53,7 +58,8 @@ export class TripRequestComponent {
   private readonly cdr = inject(ChangeDetectorRef);
 
   showSummary = false;
-  expandedIndex: number | null = 0;
+  readonly openDogs = signal<string[]>(['0']);
+  private readonly uploading = signal(false);
 
   readonly dogPhotoFiles = new Map<number, File>();
   readonly dogDocumentFiles = new Map<number, File>();
@@ -67,7 +73,8 @@ export class TripRequestComponent {
     return trip.pickupLocations ?? [];
   });
   readonly loading         = toSignal(this.store.select(selectTripsIsLoading),         { initialValue: false });
-  readonly submitting      = toSignal(this.store.select(selectTripRequestIsLoading),   { initialValue: false });
+  private readonly storeSubmitting = toSignal(this.store.select(selectTripRequestIsLoading), { initialValue: false });
+  readonly submitting      = computed(() => this.uploading() || this.storeSubmitting());
   readonly success         = toSignal(this.store.select(selectTripRequestIsSuccess),   { initialValue: false });
   readonly error           = toSignal(this.store.select(selectTripRequestError),       { initialValue: null as string | null });
 
@@ -82,6 +89,20 @@ export class TripRequestComponent {
     this.form.statusChanges.pipe(map(() => this.form.invalid)),
     { initialValue: this.form.invalid },
   );
+
+  readonly calendarDone = computed(() => !!this.selectedTrip());
+  readonly dogsDone = computed(() => {
+    this.formInvalid();
+    return this.dogs.valid;
+  });
+  readonly contactDone = computed(() => {
+    this.formInvalid();
+    return (
+      (this.form.get('requesterName')?.valid ?? false) &&
+      (this.form.get('requesterEmail')?.valid ?? false) &&
+      (this.form.get('requesterPhone')?.valid ?? false)
+    );
+  });
 
   constructor() {
     // Toast handled by NotificationEffects — reset form and scroll on success
@@ -128,7 +149,8 @@ export class TripRequestComponent {
 
   addDog(): void {
     this.dogs.push(this.dogGroup());
-    this.expandedIndex = this.dogs.length - 1;
+    const newIndex = (this.dogs.length - 1).toString();
+    this.openDogs.update(prev => [...prev, newIndex]);
     this.showSummary = false;
   }
 
@@ -142,6 +164,11 @@ export class TripRequestComponent {
       accept: () => {
         this.dogs.removeAt(index);
         this.showSummary = false;
+        this.openDogs.update(prev =>
+          prev
+            .filter(v => v !== index.toString())
+            .map(v => +v > index ? (+v - 1).toString() : v),
+        );
         // Shift file maps: remove index, move higher indices down
         this.dogPhotoFiles.delete(index);
         this.dogDocumentFiles.delete(index);
@@ -154,42 +181,78 @@ export class TripRequestComponent {
         }
         this.dogPhotoFiles.delete(totalDogs);
         this.dogDocumentFiles.delete(totalDogs);
-        if (this.expandedIndex === index) {
-          this.expandedIndex = null;
-        } else if (this.expandedIndex !== null && this.expandedIndex > index) {
-          this.expandedIndex -= 1;
-        }
       },
     });
   }
 
+  onRemoveDogClick(event: MouseEvent, index: number): void {
+    event.stopPropagation();
+    this.removeDog(index);
+  }
+
   onDateSelected(date: string): void {
-    this.store.dispatch(selectDate({ date }));
+    const hasDogWork =
+      this.dogs.dirty ||
+      this.dogPhotoFiles.size > 0 ||
+      this.dogDocumentFiles.size > 0;
+
+    if (hasDogWork && date !== this.selectedDateLocal()) {
+      this.confirmationService.confirm({
+        header: this.transloco.translate('tripRequest.changeDateTitle'),
+        message: this.transloco.translate('tripRequest.changeDateMessage'),
+        acceptLabel: this.transloco.translate('tripRequest.changeDateConfirm'),
+        rejectLabel: this.transloco.translate('tripRequest.changeDateCancel'),
+        acceptButtonStyleClass: 'p-button-danger',
+        accept: () => {
+          this.resetDogs();
+          this.store.dispatch(selectDate({ date }));
+        },
+      });
+    } else {
+      this.store.dispatch(selectDate({ date }));
+    }
+  }
+
+  private resetDogs(): void {
+    this.dogs.clear();
+    this.dogs.push(this.dogGroup());
+    this.dogs.markAsPristine();
+    this.openDogs.set(['0']);
+    this.dogPhotoFiles.clear();
+    this.dogDocumentFiles.clear();
+    this.showSummary = false;
   }
 
   preview(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.openInvalidDogPanels();
+      return;
+    }
     this.showSummary = true;
   }
 
   async onSubmit(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      for (let i = 0; i < this.dogs.length; i++) {
-        if (this.dogs.at(i).invalid) { this.expandedIndex = i; break; }
-      }
+      this.openInvalidDogPanels();
       this.cdr.detectChanges();
       return;
     }
-    const { requesterName, requesterEmail, requesterPhone } = this.form.value;
-    const dogs = await this.uploadDogFiles(this.form.value.dogs as Record<string, unknown>[]);
-    this.store.dispatch(submitRequest({
-      dogs,
-      tripId: this.selectedTrip()!.id,
-      requesterName: requesterName!,
-      requesterEmail: requesterEmail!,
-      requesterPhone: requesterPhone!,
-    }));
+    this.uploading.set(true);
+    try {
+      const { requesterName, requesterEmail, requesterPhone } = this.form.value;
+      const dogs = await this.uploadDogFiles(this.form.value.dogs as Record<string, unknown>[]);
+      this.store.dispatch(submitRequest({
+        dogs,
+        tripId: this.selectedTrip()!.id,
+        requesterName: requesterName!,
+        requesterEmail: requesterEmail!,
+        requesterPhone: requesterPhone!,
+      }));
+    } finally {
+      this.uploading.set(false);
+    }
   }
 
   private async uploadDogFiles(dogs: Record<string, unknown>[]): Promise<Record<string, unknown>[]> {
@@ -222,12 +285,20 @@ export class TripRequestComponent {
     );
   }
 
+  private openInvalidDogPanels(): void {
+    const open = new Set(this.openDogs());
+    this.dogs.controls.forEach((ctrl, i) => {
+      if (ctrl.invalid) open.add(i.toString());
+    });
+    this.openDogs.set([...open]);
+  }
+
   onReset(): void {
     this.form.reset();
     this.dogs.clear();
     this.dogs.push(this.dogGroup());
-    this.expandedIndex = 0;
     this.showSummary = false;
+    this.openDogs.set(['0']);
     this.dogPhotoFiles.clear();
     this.dogDocumentFiles.clear();
     this.store.dispatch(resetRequest());

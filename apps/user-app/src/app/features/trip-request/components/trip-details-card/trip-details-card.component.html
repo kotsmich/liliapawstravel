@@ -1,0 +1,66 @@
+<section class="card trip-details">
+  <div class="trip-details__eyebrow">
+    <span class="trip-details__eyebrow-label">
+      <i class="pi pi-check-circle" aria-hidden="true"></i>
+      {{ 'tripRequest.selectedTrip' | transloco }}
+      @if (!trip.isFull && trip.spotsAvailable > 0 && trip.acceptingRequests) {
+        <span class="trip-details__spots" [class.low]="trip.spotsAvailable < 10">
+          @if (trip.spotsAvailable >= 10) {
+            🐾 {{ 'tripRequest.booked' | transloco: { percent: ((trip.totalCapacity - trip.spotsAvailable) / trip.totalCapacity * 100) | number:'1.0-0' } }}
+          } @else if (trip.spotsAvailable >= 5) {
+            ⚠ {{ 'tripRequest.lessThan10' | transloco }}
+          } @else if (trip.spotsAvailable > 3) {
+            ⚠ {{ 'tripRequest.lessThan5' | transloco }}
+          } @else {
+            ⚠ {{ 'tripRequest.spotsLeft' | transloco: { count: trip.spotsAvailable } }}
+          }
+        </span>
+      }
+    </span>
+    <span class="trip-details__eyebrow-date">
+      <i class="pi pi-calendar" aria-hidden="true"></i>
+      {{ trip.date | localDate }}
+    </span>
+  </div>
+  <div class="trip-details__route">
+    <div class="trip-details__city">
+      <span class="trip-details__city-label">{{ 'tripRequest.from' | transloco }}</span>
+      <strong>{{ trip.departureCity }}</strong>
+      <span class="trip-details__country">{{ trip.departureCountry }}</span>
+    </div>
+    <div class="trip-details__arrow" aria-hidden="true">
+      <i class="pi pi-arrow-right"></i>
+    </div>
+    <div class="trip-details__city">
+      <span class="trip-details__city-label">{{ 'tripRequest.to' | transloco }}</span>
+      <strong>{{ trip.arrivalCity }}</strong>
+      <span class="trip-details__country">{{ trip.arrivalCountry }}</span>
+    </div>
+  </div>
+  @if (trip.notes) {
+    <p class="trip-details__notes">
+      <i class="pi pi-info-circle" aria-hidden="true"></i>
+      {{ trip.notes }}
+    </p>
+  }
+</section>
+
+@if (trip.isFull || trip.spotsAvailable <= 0) {
+  <div class="alert alert--danger">
+    <span class="alert__icon" aria-hidden="true">🚫</span>
+    <div>
+      <strong>{{ 'tripRequest.tripFull' | transloco }}</strong>
+      <p>{{ 'tripRequest.tripFullMsg' | transloco }}</p>
+    </div>
+  </div>
+}
+
+@if (!trip.isFull && trip.spotsAvailable > 0 && !trip.acceptingRequests) {
+  <div class="alert alert--warning">
+    <span class="alert__icon" aria-hidden="true">⏳</span>
+    <div>
+      <strong>{{ 'tripRequest.requestsClosed' | transloco }}</strong>
+      <p>{{ 'tripRequest.requestsClosedMsg' | transloco }}</p>
+    </div>
+  </div>
+}
