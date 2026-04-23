@@ -5,12 +5,16 @@
   </div>
 
   <div class="destination-chips">
-    @for (item of items(); track item.id) {
-      <p-chip
-        [label]="item.name"
-        [removable]="true"
-        (onRemove)="removeItem.emit($index)"
-        class="destination-chip" />
+    @for (item of items(); track $index) {
+      <p-chip [label]="item.name" class="destination-chip">
+        <i
+          class="pi pi-times-circle chip-remove"
+          role="button"
+          tabindex="0"
+          (click)="removeItem.emit($index)"
+          (keydown.enter)="removeItem.emit($index)"
+          (keydown.space)="removeItem.emit($index); $event.preventDefault()"></i>
+      </p-chip>
     }
     @if (items().length === 0) {
       <span class="destinations-empty">{{ config().emptyKey | transloco }}</span>

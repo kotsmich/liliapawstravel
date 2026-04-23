@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import autoTable, { RowInput } from 'jspdf-autotable';
 import { Trip } from '@models/lib/trip.model';
+import { Dog } from '@models/lib/dog.model';
 import { DogGroup } from '@admin/features/trips/shared/dog-group.model';
 import { BRAND_COLOR, PAGE_MARGIN, drawBrandedHeader, loadUnicodeFontIntoDoc } from './pdf-export.utils';
 
@@ -17,6 +18,16 @@ const DOG_TABLE_COLUMN_STYLES = {
   7: { cellWidth: 40 },
 };
 
+const DOG_PR_TABLE_HEAD = [['#', 'Requester Name', 'Receiver Name', 'Destination', 'ChipId']];
+const DOG_PR_TABLE_COLUMN_STYLES = {
+  0: { cellWidth: 10, halign: 'center' as const },
+  1: { cellWidth: 45 },
+  2: { cellWidth: 45 },
+  3: { cellWidth: 42 },
+  4: { cellWidth: 40 },
+};
+const DOG_PR_TABLE_SPAN = DOG_PR_TABLE_HEAD[0].length;
+
 function dogRow(dog: { name?: string; size?: string; age?: number; chipId?: string; pickupLocation?: string; dropLocation?: string; notes?: string }, index: number): (string | number)[] {
   return [
     index + 1,
@@ -30,16 +41,65 @@ function dogRow(dog: { name?: string; size?: string; age?: number; chipId?: stri
   ];
 }
 
-function tripMetaLines(doc: jsPDF, trip: Trip, pageWidth: number): { tripDate: string; route: string } {
+function dogPrRow(dog: Dog, index: number, trip: Trip): (string | number)[] {
+  const requester = trip.requesters?.find(r => r.requesterId === dog.requesterId);
+  const requesterName = requester?.name ?? dog.newRequesterName ?? '';
+  const destination =
+    trip.destinations?.find(d => d.id === dog.destinationId)?.name ?? dog.dropLocation ?? '';
+  return [
+    index + 1,
+    requesterName,
+    dog.receiver ?? '',
+    destination,
+    dog.chipId ?? '',
+  ];
+}
+
+function buildGroupedBody(groups: DogGroup[], trip: Trip): RowInput[] {
+  const body: RowInput[] = [];
+  for (const group of groups) {
+    body.push([{
+      content: group.label,
+      colSpan: DOG_PR_TABLE_SPAN,
+      styles: {
+        fillColor: BRAND_COLOR,
+        textColor: [255, 255, 255],
+        fontSize: 9,
+        halign: 'left',
+      },
+    }]);
+    if (!group.dogs.length) {
+      body.push([{
+        content: 'No dogs in this group',
+        colSpan: DOG_PR_TABLE_SPAN,
+        styles: {
+          textColor: [150, 150, 150],
+          fontSize: 8,
+          halign: 'left',
+        },
+      }]);
+      continue;
+    }
+    group.dogs.forEach((dog, i) => body.push(dogPrRow(dog, i, trip)));
+  }
+  return body;
+}
+
+function tripMetaValues(trip: Trip): { tripDate: string; route: string } {
   const tripDate = new Date(trip.date).toLocaleDateString('el-GR');
   const route =
     `${trip.departureCity}, ${trip.departureCountry}` +
     ` → ` +
     `${trip.arrivalCity}, ${trip.arrivalCountry}`;
+  return { tripDate, route };
+}
+
+function tripMetaLines(doc: jsPDF, trip: Trip, pageWidth: number): { tripDate: string; route: string } {
+  const meta = tripMetaValues(trip);
 
   doc.setTextColor(60, 60, 60);
   doc.setFontSize(7.5);
-  doc.text(`Date: ${tripDate}   Route: ${route}`, PAGE_MARGIN, 17);
+  doc.text(`Date: ${meta.tripDate}   Route: ${meta.route}`, PAGE_MARGIN, 17);
   doc.text(
     `Dogs: ${trip.dogs?.length ?? 0}/${trip.totalCapacity}   Status: ${trip.status.toUpperCase()}   Generated: ${new Date().toLocaleDateString('el-GR')}`,
     PAGE_MARGIN, 22
@@ -48,7 +108,7 @@ function tripMetaLines(doc: jsPDF, trip: Trip, pageWidth: number): { tripDate: s
   doc.setLineWidth(0.5);
   doc.line(PAGE_MARGIN, 25, pageWidth - PAGE_MARGIN, 25);
 
-  return { tripDate, route };
+  return meta;
 }
 
 function pageFooterFn(doc: jsPDF, pageWidth: number) {
@@ -106,40 +166,59 @@ export class TripManifestExportService {
     const font = await loadUnicodeFontIntoDoc(doc);
 
     drawBrandedHeader(doc, `Trip Dog Manifest — By ${groupingType}`);
-    const { tripDate, route } = tripMetaLines(doc, trip, pageWidth);
+
+    const usePrLayout = groupingType === 'Pickup' || groupingType === 'Destination';
+    const { tripDate, route } = usePrLayout
+      ? tripMetaValues(trip)
+      : tripMetaLines(doc, trip, pageWidth);
 
     doc.setFont(font, 'normal');
 
-    let startY = 28;
-
-    for (const group of groups) {
-      doc.setFontSize(9);
-      doc.setFont(font, 'normal');
-      doc.setTextColor(...BRAND_COLOR);
-      doc.text(group.label, PAGE_MARGIN, startY + 5);
-
-      if (!group.dogs.length) {
-        doc.setFontSize(8);
-        doc.setTextColor(150, 150, 150);
-        doc.text('No dogs in this group', PAGE_MARGIN + 2, startY + 12);
-        startY += 18;
-        continue;
-      }
-
+    if (usePrLayout) {
       autoTable(doc, {
-        startY: startY + 8,
-        head: DOG_TABLE_HEAD,
-        body: group.dogs.map((dog, i) => dogRow(dog, i)),
+        startY: 18,
+        head: DOG_PR_TABLE_HEAD,
+        body: buildGroupedBody(groups, trip),
         styles:             { font },
         headStyles:         { font, fillColor: BRAND_COLOR, textColor: [255, 255, 255], fontSize: 8, halign: 'left' },
         bodyStyles:         { font, fontSize: 8, textColor: [50, 50, 50], valign: 'middle' },
         alternateRowStyles: { fillColor: [255, 248, 240] },
-        columnStyles:       DOG_TABLE_COLUMN_STYLES,
+        columnStyles:       DOG_PR_TABLE_COLUMN_STYLES,
         margin: { left: PAGE_MARGIN, right: PAGE_MARGIN },
         didDrawPage: pageFooterFn(doc, pageWidth),
       });
+    } else {
+      let startY = 28;
 
-      startY = (doc as any).lastAutoTable.finalY + 8;
+      for (const group of groups) {
+        doc.setFontSize(9);
+        doc.setFont(font, 'normal');
+        doc.setTextColor(...BRAND_COLOR);
+        doc.text(group.label, PAGE_MARGIN, startY + 5);
+
+        if (!group.dogs.length) {
+          doc.setFontSize(8);
+          doc.setTextColor(150, 150, 150);
+          doc.text('No dogs in this group', PAGE_MARGIN + 2, startY + 12);
+          startY += 18;
+          continue;
+        }
+
+        autoTable(doc, {
+          startY: startY + 8,
+          head: DOG_TABLE_HEAD,
+          body: group.dogs.map((dog, i) => dogRow(dog, i)),
+          styles:             { font },
+          headStyles:         { font, fillColor: BRAND_COLOR, textColor: [255, 255, 255], fontSize: 8, halign: 'left' },
+          bodyStyles:         { font, fontSize: 8, textColor: [50, 50, 50], valign: 'middle' },
+          alternateRowStyles: { fillColor: [255, 248, 240] },
+          columnStyles:       DOG_TABLE_COLUMN_STYLES,
+          margin: { left: PAGE_MARGIN, right: PAGE_MARGIN },
+          didDrawPage: pageFooterFn(doc, pageWidth),
+        });
+
+        startY = (doc as any).lastAutoTable.finalY + 8;
+      }
     }
 
     const safeName = route.replace(/[^a-z0-9]/gi, '-').toLowerCase();
