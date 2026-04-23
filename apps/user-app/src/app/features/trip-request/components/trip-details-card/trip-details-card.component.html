@@ -3,24 +3,24 @@
     <span class="trip-details__eyebrow-label">
       <i class="pi pi-check-circle" aria-hidden="true"></i>
       {{ 'tripRequest.selectedTrip' | transloco }}
-      @if (!trip.isFull && trip.spotsAvailable > 0 && trip.acceptingRequests) {
-        <span class="trip-details__spots" [class.low]="trip.spotsAvailable < 10">
-          @if (trip.spotsAvailable >= 10) {
-            🐾 {{ 'tripRequest.booked' | transloco: { percent: ((trip.totalCapacity - trip.spotsAvailable) / trip.totalCapacity * 100) | number:'1.0-0' } }}
-          } @else if (trip.spotsAvailable >= 5) {
-            ⚠ {{ 'tripRequest.lessThan10' | transloco }}
-          } @else if (trip.spotsAvailable > 3) {
-            ⚠ {{ 'tripRequest.lessThan5' | transloco }}
-          } @else {
-            ⚠ {{ 'tripRequest.spotsLeft' | transloco: { count: trip.spotsAvailable } }}
-          }
-        </span>
-      }
     </span>
     <span class="trip-details__eyebrow-date">
       <i class="pi pi-calendar" aria-hidden="true"></i>
       {{ trip.date | localDate }}
     </span>
+    @if (!trip.isFull && trip.spotsAvailable > 0 && trip.acceptingRequests) {
+      <span class="trip-details__spots" [class.low]="trip.spotsAvailable < 10">
+        @if (trip.spotsAvailable >= 10) {
+          🐾 {{ 'tripRequest.booked' | transloco: { percent: ((trip.totalCapacity - trip.spotsAvailable) / trip.totalCapacity * 100) | number:'1.0-0' } }}
+        } @else if (trip.spotsAvailable >= 5) {
+          ⚠ {{ 'tripRequest.lessThan10' | transloco }}
+        } @else if (trip.spotsAvailable > 3) {
+          ⚠ {{ 'tripRequest.lessThan5' | transloco }}
+        } @else {
+          ⚠ {{ 'tripRequest.spotsLeft' | transloco: { count: trip.spotsAvailable } }}
+        }
+      </span>
+    }
   </div>
   <div class="trip-details__route">
     <div class="trip-details__city">

@@ -256,7 +256,7 @@ export class TripRequestComponent {
   }
 
   private scrollToDogForm(): void {
-    setTimeout(() => this.dogsSection?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    setTimeout(() => this.dogsSection?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 50);
   }
 
   private resetDogs(): void {
