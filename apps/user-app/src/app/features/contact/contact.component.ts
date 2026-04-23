@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, isDevMode } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ContactForm } from '@models/lib/contact-form.model';
 import { CardModule } from 'primeng/card';
@@ -22,11 +22,11 @@ export class ContactComponent {
   private readonly store = inject(Store);
 
   readonly contactForm = this.fb.group({
-    name:    ['Kots', [Validators.required, Validators.minLength(2)]],
-    email:   ['testgg123@gmail.com', [Validators.required, Validators.email]],
-    phone:   ['6948226016', [Validators.pattern(/^\+?[\d\s\-().]{7,20}$/)]],
-    subject: ['Transportation pick up italy', [Validators.required, Validators.minLength(2)]],
-    message: ['Gabislaya Gabislaya Gabislaya Gabislaya Gabislaya ', [Validators.required, Validators.minLength(20)]],
+    name:    [isDevMode() ? 'Kots' : '',                                                              [Validators.required, Validators.minLength(2)]],
+    email:   [isDevMode() ? 'testgg123@gmail.com' : '',                                               [Validators.required, Validators.email]],
+    phone:   [isDevMode() ? '6948226016' : '',                                                        [Validators.pattern(/^\+?[\d\s\-().]{7,20}$/)]],
+    subject: [isDevMode() ? 'Transportation pick up italy' : '',                                      [Validators.required, Validators.minLength(2)]],
+    message: [isDevMode() ? 'Gabislaya Gabislaya Gabislaya Gabislaya Gabislaya ' : '',                [Validators.required, Validators.minLength(20)]],
   });
 
   readonly loading = toSignal(this.store.select(selectContactIsLoading), { initialValue: false });

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, inject, computed, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, inject, computed, signal, ViewChild, ElementRef, isDevMode } from '@angular/core';
 import { DatePipe, DecimalPipe, ViewportScroller } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
@@ -104,9 +104,9 @@ export class TripRequestComponent {
   readonly error           = toSignal(this.store.select(selectTripRequestError),       { initialValue: null as string | null });
 
   readonly form = this.fb.group({
-    requesterName:  [RandomUtil.pick(RandomProperty.requesterNames),  Validators.required],
-    requesterEmail: [RandomUtil.pick(RandomProperty.requesterEmails), [Validators.required, Validators.email]],
-    requesterPhone: [RandomUtil.pick(RandomProperty.requesterPhones), Validators.required],
+    requesterName:  [isDevMode() ? RandomUtil.pick(RandomProperty.requesterNames)  : '', Validators.required],
+    requesterEmail: [isDevMode() ? RandomUtil.pick(RandomProperty.requesterEmails) : '', [Validators.required, Validators.email]],
+    requesterPhone: [isDevMode() ? RandomUtil.pick(RandomProperty.requesterPhones) : '', Validators.required],
     dogs: this.fb.array([this.dogGroup()]),
   });
 
@@ -152,15 +152,15 @@ export class TripRequestComponent {
 
   dogGroup() {
     return this.fb.group({
-      name:             [RandomUtil.pick(RandomProperty.dogNames),        Validators.required],
-      size:             ['small',           Validators.required],
-      gender:           ['male',         Validators.required],
-      age:              [1,            [Validators.required, Validators.min(0)]],
-      chipId:           [''],
-      pickupLocation:   [null, Validators.required],
-      dropLocation:     [null,   Validators.required],
-      notes:            [null],
-      receiver:         [null],
+      name:           [isDevMode() ? RandomUtil.pick(RandomProperty.dogNames) : null, Validators.required],
+      size:           [isDevMode() ? 'small'  : null,                                 Validators.required],
+      gender:         [isDevMode() ? 'male'   : null,                                 Validators.required],
+      age:            [isDevMode() ? 1        : null,                                 [Validators.required, Validators.min(0)]],
+      chipId:         [''],
+      pickupLocation: [null, Validators.required],
+      dropLocation:   [null, Validators.required],
+      notes:          [null],
+      receiver:       [null],
     });
   }
 
