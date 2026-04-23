@@ -24,20 +24,25 @@ import { TripDogsTabsComponent } from '../components/trip-dogs-tabs/trip-dogs-ta
 
 const DEFAULT_DESTINATIONS: TripDestination[] = [
   { name: 'Μόναχο' },
-  { name: 'Αμβούργο' },
   { name: 'Στουγκαρδη' },
-  { name: 'Παρίσι' },
-  { name: 'Άμστερνταμ' },
-  { name: 'Βιέννη' },
-  { name: 'Βρυξέλλες' },
+  { name: 'Καρσλουη' },
+  { name: 'Φρανκφούρτη' },
+  { name: 'Κολωνια' },
+  { name: 'Ντίσελντορφ' },
+  { name: 'Ντορτμουντ' },
+  { name: 'Ολλανδια' },
+  { name: 'Καλαις' },
 ];
 
 const DEFAULT_PICKUP_LOCATIONS: TripDestination[] = [
+  { name: 'Αγιοκαμπος' },
   { name: 'Λάρισα' },
+  { name: 'Λιτοχωρο' },
   { name: 'Κατερινη' },
   { name: 'Θεσσαλονίκη' },
-  { name: 'Βεροια' },
-  { name: 'Ιωάννινα, Ελλάδα' },
+  { name: 'Κοζανι' },
+  { name: 'Ιωάννινα' },
+  { name: 'Ηγουμενιτσα' },
 ];
 @Component({
   selector: 'app-trip-form',
