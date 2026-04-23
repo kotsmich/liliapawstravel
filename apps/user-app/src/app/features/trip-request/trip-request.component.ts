@@ -80,6 +80,7 @@ export class TripRequestComponent {
   private readonly cdr = inject(ChangeDetectorRef);
 
   @ViewChild('dogsSection') private dogsSection?: ElementRef<HTMLElement>;
+  @ViewChild(TripCalendarComponent) private tripCalendar?: TripCalendarComponent;
 
   showSummary = false;
   readonly openDogs = signal<string[]>(['0']);
@@ -89,8 +90,7 @@ export class TripRequestComponent {
   readonly dogDocumentFiles = new Map<number, File>();
 
   readonly calendarEvents  = toSignal(this.store.select(selectTripsAsCalendarEvents), { initialValue: [] as CalendarEvent[] });
-  readonly calendarNavigateTo = signal<string | null>(null);
-  readonly selectedDateLocal = toSignal(this.store.select(selectCalendarSelectedDate), { initialValue: null as string | null });
+readonly selectedDateLocal = toSignal(this.store.select(selectCalendarSelectedDate), { initialValue: null as string | null });
   readonly selectedTrip    = toSignal(this.store.select(selectTripForSelectedDate),   { initialValue: null });
   readonly pickupDestinations = computed((): TripDestination[] => {
     const trip = this.selectedTrip();
@@ -226,7 +226,7 @@ export class TripRequestComponent {
   onJumpToNextTrip(): void {
     const next = this.nextAvailableTrip();
     if (!next) return;
-    this.calendarNavigateTo.set(next.date);
+    this.tripCalendar?.navigateTo(next.date);
     this.onDateSelected(next.date);
   }
 

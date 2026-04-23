@@ -27,12 +27,17 @@ export class TripCalendarComponent implements AfterViewInit {
     this._doNavigate();
   }
 
-  private _doNavigate(): void {
-    if (!this._pendingNavigate || !this.dp) return;
-    const d = new Date(this._pendingNavigate + 'T00:00:00');
+  navigateTo(dateStr: string): void {
+    if (!this.dp) return;
+    const d = new Date(dateStr + 'T00:00:00');
     this.dp.currentMonth = d.getMonth();
     this.dp.currentYear = d.getFullYear();
     this.dp.createMonths(d.getMonth(), d.getFullYear());
+  }
+
+  private _doNavigate(): void {
+    if (!this._pendingNavigate || !this.dp) return;
+    this.navigateTo(this._pendingNavigate);
     this._pendingNavigate = null;
   }
 
