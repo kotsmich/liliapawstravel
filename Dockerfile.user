@@ -3,6 +3,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+RUN BUILD_VERSION=$(date +%Y%m%d%H%M%S) && \
+    sed -i "s/INJECT_VERSION/${BUILD_VERSION}/" apps/user-app/src/environments/environment.ts
 RUN npx nx build user-app --configuration=production --skip-nx-cache
 
 FROM node:20-alpine AS runner
