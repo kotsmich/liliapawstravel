@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, inject, computed, signal } from '@angular/core';
-import { DecimalPipe, ViewportScroller } from '@angular/common';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, inject, computed, signal, ViewChild, ElementRef } from '@angular/core';
+import { DatePipe, DecimalPipe, ViewportScroller } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
@@ -38,7 +38,7 @@ import { NoTripHintComponent } from './components/no-trip-hint/no-trip-hint.comp
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    DecimalPipe, ReactiveFormsModule, FormsModule,
+    DatePipe, DecimalPipe, ReactiveFormsModule, FormsModule,
     AccordionModule, ButtonModule, DividerModule, MessageModule, ConfirmDialogModule,
     InputTextModule, IftaLabelModule, SelectModule, ProgressSpinnerModule, TagModule,
     DogFormComponent, TripCalendarComponent, ToastNotificationComponent, TranslocoModule, TooltipModule,
@@ -79,6 +79,8 @@ export class TripRequestComponent {
   private readonly tripsService = inject(TripsService);
   private readonly cdr = inject(ChangeDetectorRef);
 
+  @ViewChild('dogsSection') private dogsSection?: ElementRef<HTMLElement>;
+
   showSummary = false;
   readonly openDogs = signal<string[]>(['0']);
   private readonly uploading = signal(false);
@@ -87,6 +89,7 @@ export class TripRequestComponent {
   readonly dogDocumentFiles = new Map<number, File>();
 
   readonly calendarEvents  = toSignal(this.store.select(selectTripsAsCalendarEvents), { initialValue: [] as CalendarEvent[] });
+  readonly calendarNavigateTo = signal<string | null>(null);
   readonly selectedDateLocal = toSignal(this.store.select(selectCalendarSelectedDate), { initialValue: null as string | null });
   readonly selectedTrip    = toSignal(this.store.select(selectTripForSelectedDate),   { initialValue: null });
   readonly pickupDestinations = computed((): TripDestination[] => {
@@ -111,6 +114,14 @@ export class TripRequestComponent {
     this.form.statusChanges.pipe(map(() => this.form.invalid)),
     { initialValue: this.form.invalid },
   );
+
+  readonly nextAvailableTrip = computed(() => {
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    return this.calendarEvents()
+      .filter(e => !e.isFull && e.acceptingRequests !== false && e.date >= todayStr)
+      .sort((a, b) => a.date.localeCompare(b.date))[0] ?? null;
+  });
 
   readonly calendarDone = computed(() => !!this.selectedTrip());
   readonly dogsDone = computed(() => {
@@ -212,6 +223,13 @@ export class TripRequestComponent {
     this.removeDog(index);
   }
 
+  onJumpToNextTrip(): void {
+    const next = this.nextAvailableTrip();
+    if (!next) return;
+    this.calendarNavigateTo.set(next.date);
+    this.onDateSelected(next.date);
+  }
+
   onDateSelected(date: string): void {
     const hasDogWork =
       this.dogs.dirty ||
@@ -228,11 +246,17 @@ export class TripRequestComponent {
         accept: () => {
           this.resetDogs();
           this.store.dispatch(selectDate({ date }));
+          this.scrollToDogForm();
         },
       });
     } else {
       this.store.dispatch(selectDate({ date }));
+      this.scrollToDogForm();
     }
+  }
+
+  private scrollToDogForm(): void {
+    setTimeout(() => this.dogsSection?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
   private resetDogs(): void {

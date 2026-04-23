@@ -1,7 +1,7 @@
-import { Component, Input, input, output, computed } from '@angular/core';
+import { Component, Input, input, output, computed, ViewChild, AfterViewInit } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
-import { DatePickerModule } from 'primeng/datepicker';
+import { DatePicker, DatePickerModule } from 'primeng/datepicker';
 import { TooltipModule } from 'primeng/tooltip';
 import { CalendarEvent } from '@models/lib/calendar-event.model';
 
@@ -12,8 +12,29 @@ import { CalendarEvent } from '@models/lib/calendar-event.model';
   templateUrl: './trip-calendar.component.html',
   styleUrls: ['./trip-calendar.component.scss'],
 })
-export class TripCalendarComponent {
+export class TripCalendarComponent implements AfterViewInit {
   readonly events = input<CalendarEvent[]>([]);
+
+  @ViewChild(DatePicker) private dp?: DatePicker;
+  private _pendingNavigate: string | null = null;
+
+  @Input() set navigateToDate(val: string | null) {
+    this._pendingNavigate = val;
+    this._doNavigate();
+  }
+
+  ngAfterViewInit(): void {
+    this._doNavigate();
+  }
+
+  private _doNavigate(): void {
+    if (!this._pendingNavigate || !this.dp) return;
+    const d = new Date(this._pendingNavigate + 'T00:00:00');
+    this.dp.currentMonth = d.getMonth();
+    this.dp.currentYear = d.getFullYear();
+    this.dp.createMonths(d.getMonth(), d.getFullYear());
+    this._pendingNavigate = null;
+  }
 
   @Input() set selectedDate(val: string | null) {
     this._confirmedDate = val ? new Date(val + 'T00:00:00') : null;

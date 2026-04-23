@@ -25,10 +25,39 @@
             <p class="step-sub">{{ 'tripRequest.clickHint' | transloco }}</p>
           </div>
         </div>
+        @if (nextAvailableTrip(); as next) {
+          <button
+            type="button"
+            class="next-trip-banner"
+            [class.is-selected]="selectedDateLocal() === next.date"
+            (click)="onJumpToNextTrip()">
+            <span class="next-trip-banner__icon">
+              <i class="pi pi-send"></i>
+            </span>
+            <span class="next-trip-banner__body">
+              <span class="next-trip-banner__label">{{ 'tripRequest.nextTripLabel' | transloco }}</span>
+              <span class="next-trip-banner__info">
+                {{ next.title }}
+                <span class="next-trip-banner__dot">·</span>
+                {{ next.date | date:'MMM d, y' }}
+                @if ((next.spotsAvailable ?? 99) < 10) {
+                  <span class="next-trip-banner__spots">
+                    {{ 'tripRequest.nextTripSpotsLeft' | transloco: { count: next.spotsAvailable } }}
+                  </span>
+                }
+              </span>
+            </span>
+            <span class="next-trip-banner__arrow">
+              <i class="pi pi-arrow-right"></i>
+            </span>
+          </button>
+        }
+
         <ui-trip-calendar
           ngSkipHydration
           [events]="calendarEvents()"
           [selectedDate]="selectedDateLocal()"
+          [navigateToDate]="calendarNavigateTo()"
           (dateSelected)="onDateSelected($event)">
         </ui-trip-calendar>
       </section>
@@ -42,7 +71,7 @@
             <form focusInvalidInput [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
               <!-- Step 2: Your details -->
-              <div class="form-section">
+              <div class="form-section" #dogsSection  >
                 <div class="step-head">
                   <div class="step-num" [class.done]="contactDone()">
                     @if (contactDone()) {
@@ -111,7 +140,7 @@
               <div class="form-divider" aria-hidden="true"></div>
 
               <!-- Step 3: Dogs -->
-              <div class="form-section">
+              <div class="form-section" >
                 <div class="step-head">
                   <div class="step-num" [class.done]="dogsDone()">
                     @if (dogsDone()) {

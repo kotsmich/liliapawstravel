@@ -104,6 +104,8 @@
     "subtitle": "Select a travel date, fill in your details, add your dogs, and submit.",
     "selectDate": "Select a Travel Date",
     "clickHint": "Click a highlighted date to select a trip.",
+    "nextTripLabel": "Next available trip",
+    "nextTripSpotsLeft": "· {{ count }} spot(s) left",
     "selectedTrip": "Selected Trip",
     "booked": "{{ percent }}% booked",
     "lessThan10": "Less than 10 spots left",

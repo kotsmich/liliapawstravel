@@ -104,6 +104,8 @@
     "subtitle": "Wählen Sie ein Reisedatum, füllen Sie Ihre Daten aus, fügen Sie Ihre Hunde hinzu und senden Sie ab.",
     "selectDate": "Reisedatum auswählen",
     "clickHint": "Klicken Sie auf ein hervorgehobenes Datum, um eine Reise auszuwählen.",
+    "nextTripLabel": "Nächste verfügbare Reise",
+    "nextTripSpotsLeft": "· {{ count }} Platz/Plätze übrig",
     "selectedTrip": "Ausgewählte Reise",
     "booked": "{{ percent }}% gebucht",
     "lessThan10": "Weniger als 10 Plätze übrig",
