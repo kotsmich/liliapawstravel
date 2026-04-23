@@ -153,9 +153,9 @@ readonly selectedDateLocal = toSignal(this.store.select(selectCalendarSelectedDa
   dogGroup() {
     return this.fb.group({
       name:           [isDevMode() ? RandomUtil.pick(RandomProperty.dogNames) : null, Validators.required],
-      size:           [isDevMode() ? 'small'  : null,                                 Validators.required],
-      gender:         [isDevMode() ? 'male'   : null,                                 Validators.required],
-      age:            [isDevMode() ? 1        : null,                                 [Validators.required, Validators.min(0)]],
+      size:           ['small',                                 Validators.required],
+      gender:         ['male',                                 Validators.required],
+      age:            [ 1 ,                                 [Validators.required, Validators.min(0)]],
       chipId:         [''],
       pickupLocation: [null, Validators.required],
       dropLocation:   [null, Validators.required],
