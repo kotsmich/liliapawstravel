@@ -63,7 +63,9 @@
       </section>
 
       @if (selectedTrip(); as trip) {
-        <app-trip-details-card [trip]="trip" />
+        <div #dogsSection>
+          <app-trip-details-card [trip]="trip" />
+        </div>
 
         <!-- Form card -->
         @if (!success() && !trip.isFull && trip.spotsAvailable > 0 && trip.acceptingRequests) {
@@ -71,7 +73,7 @@
             <form focusInvalidInput [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
               <!-- Step 2: Your details -->
-              <div class="form-section" #dogsSection  >
+              <div class="form-section" >
                 <div class="step-head">
                   <div class="step-num" [class.done]="contactDone()">
                     @if (contactDone()) {
