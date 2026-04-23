@@ -19,6 +19,5 @@ jobs:
             git fetch origin
             git reset --hard origin/main
             cd /var/www/lilia-paws-back
-            docker compose stop user-app admin-app
-            docker compose rm -f user-app admin-app
-            docker compose up -d --build user-app admin-app
+            docker compose build user-app admin-app
+            docker compose up -d --no-build --force-recreate user-app admin-app
