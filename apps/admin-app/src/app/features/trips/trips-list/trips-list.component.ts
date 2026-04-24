@@ -7,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { Store } from '@ngrx/store';
-import { filter, firstValueFrom, map, of, switchMap } from 'rxjs';
+import { of, switchMap } from 'rxjs';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { loadTrips, loadTripById, deleteTrip, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents, selectTripsForSelectedDate, selectTripById } from '@admin/features/trips/store';
 import { selectDate, selectCalendarSelectedDate } from '@admin/core/store/calendar';
@@ -20,7 +20,6 @@ import { ConfirmActionService } from '@admin/shared/services/confirm-action.serv
 import { TripCalendarViewComponent } from '../components/trip-calendar-view/trip-calendar-view.component';
 import { AllTripsTabComponent } from '../components/all-trips-tab/all-trips-tab.component';
 import { TripDetailDialogComponent } from '../components/trip-detail-dialog/trip-detail-dialog.component';
-import { TripManifestExportService } from '../../../services/trip-manifest-export.service';
 
 @Component({
   selector: 'app-trip-list-page',
@@ -43,7 +42,6 @@ export class TripsListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly confirm = inject(ConfirmActionService);
   private readonly transloco = inject(TranslocoService);
-  private readonly exportService = inject(TripManifestExportService);
   private readonly localDate = inject(LocalDatePipe);
 
   readonly trips = toSignal(this.store.select(selectAllTrips), { initialValue: [] as Trip[] });
@@ -107,17 +105,6 @@ export class TripsListComponent implements OnInit {
     this.store.dispatch(loadTripById({ id: trip.id }));
     this.store.dispatch(loadRequests());
     this.detailDialogVisible.set(true);
-  }
-
-  async onExportPdfFromCard(trip: Trip): Promise<void> {
-    this.store.dispatch(loadTripById({ id: trip.id }));
-    const loaded = await firstValueFrom(
-      this.store.select(selectAllTrips).pipe(
-        map((trips) => trips.find((existing) => existing.id === trip.id)),
-        filter((existing): existing is Trip => existing?.dogs !== undefined),
-      )
-    );
-    this.exportService.exportTripManifestPdf(loaded);
   }
 
   closeDetail(): void {

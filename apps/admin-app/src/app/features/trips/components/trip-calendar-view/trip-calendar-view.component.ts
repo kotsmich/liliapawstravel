@@ -26,7 +26,6 @@ export class TripCalendarViewComponent {
   readonly editTrip = output<Trip>();
   readonly deleteTrip = output<Trip>();
   readonly viewDetails = output<Trip>();
-  readonly exportPdf = output<Trip>();
 
   trackByTripId(_: number, trip: Trip): string { return trip.id; }
 

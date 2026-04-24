@@ -1,3 +1,19 @@
+:host ::ng-deep .trip-detail-dialog {
+  > .p-dialog-header {
+    padding: 0.25rem 0.75rem;
+    min-height: 0;
+
+    .p-dialog-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+  }
+
+  > .p-dialog-content {
+    padding: 0.25rem 1rem 1rem;
+  }
+}
+
 .tab-content {
   margin-top: 1rem;
   overflow-x: auto;

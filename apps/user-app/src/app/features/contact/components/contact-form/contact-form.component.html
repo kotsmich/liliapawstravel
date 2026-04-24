@@ -27,10 +27,7 @@
           <p-ifta-label>
             <input pInputText id="email" formControlName="email" type="email" />
             <label for="email">{{ 'contact.form.email' | transloco }}</label>
-          </p-ifta-label>
-          @if (emailHint) {
-            <small class="hint">{{ emailHint }}</small>
-          }
+          </p-ifta-label> 
           <small class="p-error" *appValidationError="form().get('email')">{{ err('email') }}</small>
         </div>
       </div>
@@ -52,14 +49,14 @@
       </div>
       <div class="field fw message-field">
         <p-ifta-label>
-          <textarea pTextarea id="message" formControlName="message" rows="3"></textarea>
+          <textarea pTextarea id="message" formControlName="message" rows="6"></textarea>
           <label for="message">{{ 'contact.form.message' | transloco }}</label>
         </p-ifta-label>
         <small class="p-error" *appValidationError="form().get('message')">{{ err('message') }}</small>
       </div>
       <div class="submit-row">
         <p-button
-          appAsyncButton
+          appAsyncButton 
           [asyncLoading]="loading()"
           type="submit"
           [label]="loading() ? ('contact.form.sending' | transloco) : ('contact.form.send' | transloco)"

@@ -52,7 +52,7 @@ export const selectTripsAsCalendarEvents = createSelector(selectAllTrips, (trips
             : trip.spotsAvailable <= 2
               ? '#f59e0b'
               : '#4caf50',
-      dogsCount: trip.dogs?.length ?? 0,
+      dogsCount: trip.totalCapacity - trip.spotsAvailable,
       totalCapacity: trip.totalCapacity,
       spotsAvailable: trip.spotsAvailable,
       isFull: trip.isFull,

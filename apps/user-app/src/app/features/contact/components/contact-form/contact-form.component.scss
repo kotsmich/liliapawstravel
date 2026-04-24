@@ -1,7 +1,8 @@
-:host { display: block; }
+:host { display: block; width: 100%; }
 
 /* ── Card wrapper ── */
 .form-wrapper {
+  width: 100%;
   background: #fff;
   border-radius: 20px;
   border: 1px solid #f0e0d0;
@@ -23,15 +24,23 @@ form {
 
 .fields-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 0 1rem;
-  @media (max-width: 600px) { grid-template-columns: 1fr; }
+  @media (max-width: 600px) { grid-template-columns: minmax(0, 1fr); }
 }
 
 .fw {
   width: 100%;
+  min-width: 0;
   margin-bottom: .5rem;
   p-ifta-label { display: block; width: 100%; }
+
+  small.hint,
+  small.p-error {
+    display: block;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 }
 
 .field.fw.message-field {
@@ -39,6 +48,13 @@ form {
   display: flex;
   flex-direction: column;
   min-height: 140px;
+
+  textarea {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    resize: none;
+  }
 }
 
 /* ── Submit row ── */
@@ -48,6 +64,22 @@ form {
   margin-top: .75rem;
   padding-top: 1rem;
   border-top: 1px solid #f5ede4;
+
+  ::ng-deep .p-button {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+    transition: background .2s, border-color .2s, box-shadow .2s;
+
+    &:not(:disabled):hover {
+      background: var(--color-primary-dark);
+      border-color: var(--color-primary-dark);
+    }
+
+    &:not(:disabled):focus-visible {
+      box-shadow: 0 0 0 3px var(--color-primary-hover);
+    }
+  }
 }
 
 /* ── Hint ── */

@@ -229,7 +229,7 @@ readonly selectedDateLocal = toSignal(this.store.select(selectCalendarSelectedDa
     const next = this.nextAvailableTrip();
     if (!next) return;
     this.tripCalendar?.navigateTo(next.date);
-    this.onDateSelected(next.date);
+    requestAnimationFrame(() => this.onDateSelected(next.date));
   }
 
   onDateSelected(date: string): void {

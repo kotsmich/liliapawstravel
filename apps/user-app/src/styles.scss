@@ -301,6 +301,8 @@ a { color: inherit; text-decoration: none; }
     border: none !important;
     color: #fff;
     box-shadow: 0 3px 12px rgba(224, 123, 84, 0.45);
+    animation: tripCalHeartbeat 3.5s ease-in-out infinite;
+    --pulse-color: 224, 123, 84;
     .day-number { color: #fff !important; font-weight: 700; }
     .date-cell.has-event {
       background: #eaf5e8 !important;
@@ -309,8 +311,8 @@ a { color: inherit; text-decoration: none; }
     .date-cell.has-event .day-number { color: #1a6638 !important; }
   }
   .p-datepicker-day.p-datepicker-day-selected:has(.date-cell.has-event) {
-    box-shadow: 0 3px 12px rgba(72, 187, 120, 0.4) !important;
-    }
+    --pulse-color: 72, 187, 120;
+  }
   @media (max-width: 767px) {
     .p-datepicker-header .p-datepicker-month,
     .p-datepicker-header button.p-datepicker-month,
@@ -323,4 +325,19 @@ a { color: inherit; text-decoration: none; }
     .p-datepicker-weekday { font-size: .6rem; }
     .p-datepicker-day { height: 46px !important; }
   }
+}
+
+@keyframes tripCalHeartbeat {
+  0%, 100% {
+    box-shadow: 0 3px 12px rgba(var(--pulse-color, 72, 187, 120), 0.4),
+                0 0 0 0 rgba(var(--pulse-color, 72, 187, 120), 0.45);
+  }
+  50% {
+    box-shadow: 0 3px 16px rgba(var(--pulse-color, 72, 187, 120), 0.55),
+                0 0 0 8px rgba(var(--pulse-color, 72, 187, 120), 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trip-cal .p-datepicker-day.p-datepicker-day-selected { animation: none; }
 }

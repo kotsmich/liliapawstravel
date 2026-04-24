@@ -42,6 +42,7 @@
               optionValue="id"
               [showClear]="false"
               styleClass="w-full"
+              appendTo="body"
               (onChange)="onPickupSelect($event.value)" />
             <label [for]="'pickupId-' + idx()">
               {{ 'dogs.fields.adminPickupLocation' | transloco }}
@@ -70,7 +71,8 @@
               optionLabel="name"
               optionValue="id"
               [showClear]="true"
-              styleClass="w-full" />
+              styleClass="w-full"
+              appendTo="body" />
             <label [for]="'adminDest-' + idx()">{{ 'dogs.fields.adminDestination' | transloco }}</label>
           </p-ifta-label>
         </div>
@@ -141,7 +143,7 @@
     <div class="field fw">
       <p-ifta-label>
         <p-select [inputId]="'gender-' + idx()" formControlName="gender" [options]="genders()"
-          optionLabel="label" optionValue="value" styleClass="w-full" />
+          optionLabel="label" optionValue="value" styleClass="w-full" appendTo="body" />
         <label [for]="'gender-' + idx()">{{ 'dogs.fields.gender' | transloco }}</label>
       </p-ifta-label>
       <!-- <small class="p-error" *appValidationError="form().get('gender')">{{ 'dogs.errors.required' | transloco }}</small> -->

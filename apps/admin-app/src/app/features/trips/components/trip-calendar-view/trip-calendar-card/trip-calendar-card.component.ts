@@ -18,6 +18,5 @@ export class TripCalendarCardComponent {
   readonly trip = input.required<Trip>();
   readonly viewDetails = output<Trip>();
   readonly edit = output<Trip>();
-  readonly exportPdf = output<Trip>();
   readonly delete = output<Trip>();
 }

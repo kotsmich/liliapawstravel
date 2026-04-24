@@ -34,6 +34,11 @@ body { font-family: 'Inter', sans-serif; background: var(--color-bg-light); colo
 
 /* PrimeNG global overrides */
 .p-button { font-family: 'Inter', sans-serif; font-weight: 600; }
+.p-select-list-container,
+.p-select-overlay .p-select-list-container { max-height: 360px !important; }
+
+/* Dialog size utilities — opt-in via styleClass */
+.p-dialog.dialog-tall { max-height: 98vh; }
 
 /* PrimeFlex-style utilities we use inline */
 .w-full { width: 100% !important; }
@@ -71,18 +76,18 @@ body { font-family: 'Inter', sans-serif; background: var(--color-bg-light); colo
     background: linear-gradient(135deg, #e07b54 0%, #cc6540 100%);
     color: #fff;
     border-bottom: none;
-    padding: 1rem 1.25rem;
+    padding: 0.75rem 0.95rem;
 
     .p-datepicker-title {
       display: flex;
       align-items: baseline;
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
 
     .p-datepicker-month,
     button.p-datepicker-month {
       font-family: 'Georgia', 'Times New Roman', serif !important;
-      font-size: 1.75rem !important;
+      font-size: 1.3rem !important;
       font-weight: 700 !important;
       letter-spacing: -0.01em !important;
       color: #fff !important;
@@ -96,7 +101,7 @@ body { font-family: 'Inter', sans-serif; background: var(--color-bg-light); colo
     .p-datepicker-year,
     button.p-datepicker-year {
       font-family: 'Inter', sans-serif !important;
-      font-size: 1.3rem !important;
+      font-size: 1rem !important;
       font-weight: 300 !important;
       letter-spacing: 0.12em !important;
       color: rgba(255, 240, 230, 0.85) !important;
@@ -108,8 +113,8 @@ body { font-family: 'Inter', sans-serif; background: var(--color-bg-light); colo
 
     .p-datepicker-prev-button,
     .p-datepicker-next-button {
-      width: 34px;
-      height: 34px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -126,11 +131,11 @@ body { font-family: 'Inter', sans-serif; background: var(--color-bg-light); colo
   .p-datepicker-weekday {
     background: #fdf6ee;
     color: #b07050;
-    font-size: 0.68rem;
+    font-size: 0.58rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    padding: 0.6rem 0 0.3rem;
+    padding: 0.45rem 0 0.22rem;
     border: none !important;
   }
 
@@ -138,22 +143,25 @@ body { font-family: 'Inter', sans-serif; background: var(--color-bg-light); colo
   .p-datepicker-calendar {
     background: #fdf6ee;
     width: 100%;
-    padding: 0 0.5rem 0.6rem;
+    padding: 0 0.35rem 0.45rem;
     border-collapse: separate;
-    border-spacing: 4px;
+    border-spacing: 3px;
   }
 
   .p-datepicker-day-cell {
-    padding: 2px;
+    padding: 1px;
   }
+
+  .day-number { font-size: 0.8rem; }
+  .date-cell { border-radius: 6px; }
 
   .p-datepicker-day {
     color: #4a3728;
-    border-radius: 8px;
+    border-radius: 6px;
     transition: background 0.15s, box-shadow 0.15s;
     padding: 0 !important;
     width: 100% !important;
-    height: 62px !important;
+    height: 46px !important;
     display: flex !important;
     align-items: stretch !important;
     overflow: hidden;
@@ -178,6 +186,8 @@ body { font-family: 'Inter', sans-serif; background: var(--color-bg-light); colo
     border: none !important;
     color: #fff;
     box-shadow: 0 3px 12px rgba(224, 123, 84, 0.45);
+    animation: tripCalHeartbeat 3.5s ease-in-out infinite;
+    --pulse-color: 224, 123, 84;
     .day-number { color: #fff !important; font-weight: 700; }
     .date-cell.has-event {
       background: #eaf5e8 !important;
@@ -186,14 +196,29 @@ body { font-family: 'Inter', sans-serif; background: var(--color-bg-light); colo
     .date-cell.has-event .day-number { color: #1a6638 !important; }
   }
   .p-datepicker-day.p-datepicker-day-selected:has(.date-cell.has-event) {
-    box-shadow: 0 3px 12px rgba(72, 187, 120, 0.4) !important;
+    --pulse-color: 72, 187, 120;
   }
 
   @media (max-width: 767px) {
-    .p-datepicker-header .p-datepicker-title { font-size: 0.875rem; }
-    .p-datepicker-weekday { font-size: 0.6rem; }
-    .p-datepicker-day { height: 46px !important; }
+    .p-datepicker-header .p-datepicker-title { font-size: 0.78rem; }
+    .p-datepicker-weekday { font-size: 0.52rem; }
+    .p-datepicker-day { height: 34px !important; }
   }
+}
+
+@keyframes tripCalHeartbeat {
+  0%, 100% {
+    box-shadow: 0 3px 12px rgba(var(--pulse-color, 72, 187, 120), 0.4),
+                0 0 0 0 rgba(var(--pulse-color, 72, 187, 120), 0.45);
+  }
+  50% {
+    box-shadow: 0 3px 16px rgba(var(--pulse-color, 72, 187, 120), 0.55),
+                0 0 0 8px rgba(var(--pulse-color, 72, 187, 120), 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trip-cal .p-datepicker-day.p-datepicker-day-selected { animation: none; }
 }
 
 /* ============================================================

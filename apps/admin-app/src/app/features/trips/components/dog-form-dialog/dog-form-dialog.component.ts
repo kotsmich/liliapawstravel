@@ -84,7 +84,7 @@ export class DogFormDialogComponent implements OnInit {
 
   private buildForms(): void {
     if (this.isNewDog()) {
-      this.addForms = this.fb.array([this.buildAddDogGroup()]);
+      this.addForms = this.fb.array([this.buildAddDogGroup(1)]);
       this._panelCount.set(1);
       this.activeAccordionPanels = ['0'];
       this.activeForm$.next(this.addForms);
@@ -106,9 +106,9 @@ export class DogFormDialogComponent implements OnInit {
   }
 
   /** Form group for add mode — no requester fields (requester is set at the group level). */
-  private buildAddDogGroup(): FormGroup {
+  private buildAddDogGroup(index: number): FormGroup {
     return this.fb.group({
-      name:             [RandomUtil.pick(RandomProperty.dogNames),  Validators.required],
+      name:             [`Dog ${index}`,  Validators.required],
       size:             [null],
       height:           [null],
       behaviors:        [[] as string[]],
@@ -154,7 +154,7 @@ export class DogFormDialogComponent implements OnInit {
   }
 
   addPanel(): void {
-    this.addForms.push(this.buildAddDogGroup());
+    this.addForms.push(this.buildAddDogGroup(this.addForms.length + 1));
     this._panelCount.update(v => v + 1);
     this.activeAccordionPanels = [(this.addForms.length - 1).toString()];
   }

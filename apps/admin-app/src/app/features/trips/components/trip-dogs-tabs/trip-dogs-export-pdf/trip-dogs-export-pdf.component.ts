@@ -10,15 +10,13 @@ import { TripManifestExportService } from '@admin/services/trip-manifest-export.
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ButtonModule, TranslocoModule],
   template: `
-    <div class="flex justify-content-end mb-3">
-      <p-button
-        [label]="'trips.detail.exportPdf' | transloco"
-        icon="pi pi-file-pdf"
-        severity="secondary"
-        [outlined]="true"
-        [disabled]="disabled()"
-        (click)="onExport()" />
-    </div>
+    <p-button
+      [label]="'trips.detail.exportPdf' | transloco"
+      icon="pi pi-file-pdf"
+      severity="secondary"
+      [outlined]="true"
+      [disabled]="disabled()"
+      (click)="onExport()" />
   `,
 })
 export class TripDogsExportPdfComponent {

@@ -163,7 +163,7 @@
                     [value]="openDogs()"
                     (valueChange)="openDogs.set($any($event))"
                     [multiple]="true">
-                    @for (dog of dogs.controls; track dog; let i = $index) {
+                    @for (dog of dogs.controls; track i; let i = $index) {
                       <p-accordion-panel
                         [value]="i.toString()"
                         [class.has-error]="dog.invalid && dog.touched">
@@ -216,7 +216,7 @@
                 <div class="summary">
                   <h3>📋 {{ 'tripRequest.summary' | transloco }}</h3>
                   <p><strong>{{ form.value.requesterName }}</strong> · {{ form.value.requesterEmail }} · {{ form.value.requesterPhone }}</p>
-                  @for (d of form.value.dogs; track d; let i = $index) {
+                  @for (d of form.value.dogs; track i; let i = $index) {
                     <div class="summary-row flex flex-column">
                       <strong>{{ 'tripRequest.dogNum' | transloco: { num: i + 1 } }}: {{ d.name }}</strong>
                       <span>{{ d.size }} | {{ d.gender }} | {{ d.age }} yr</span>

@@ -1,4 +1,4 @@
-import { Component, Input, input, output, computed, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Input, input, output, computed, ViewChild, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { DatePicker, DatePickerModule } from 'primeng/datepicker';
@@ -8,6 +8,7 @@ import { CalendarEvent } from '@models/lib/calendar-event.model';
 @Component({
   selector: 'ui-trip-calendar',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, DatePickerModule, TooltipModule],
   templateUrl: './trip-calendar.component.html',
   styleUrls: ['./trip-calendar.component.scss'],
@@ -68,9 +69,16 @@ export class TripCalendarComponent implements AfterViewInit {
 
   onSelect(date: Date): void {
     const candidate = this.toDateStr(date);
-    // Always revert selectedDateObj so Angular CD calls writeValue on PrimeNG,
-    // resetting its visual state. The parent confirms the selection via @Input().
-    this.selectedDateObj = this._confirmedDate ? new Date(this._confirmedDate.getTime()) : null;
+    // Revert PrimeNG's visual selection to the confirmed date without
+    // round-tripping through ngModel. The standard path (writeValue →
+    // updateUI → createMonths) rebuilds the months array and replaces
+    // every date DOM node, which kills native dblclick. Mutating
+    // dp.value directly only re-evaluates dayClass(date) bindings, so
+    // DOM nodes survive and a following dblclick lands on the same node.
+    if (this.dp) {
+      this.dp.value = this._confirmedDate;
+      this.dp.cd.markForCheck();
+    }
     this.dateSelected.emit(candidate);
   }
 

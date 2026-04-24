@@ -27,7 +27,6 @@
       (editTrip)="onEditTrip($event)"
       (deleteTrip)="deleteTrip($event)"
       (viewDetails)="openDetail($event)"
-      (exportPdf)="onExportPdfFromCard($event)"
       />
   }
   <!-- All Trips Tab -->
@@ -50,7 +49,7 @@
   [activeTab]="detailActiveTab()"
   (visibleChange)="detailDialogVisible.set($event)"
   (tabChanged)="detailActiveTab.set($event)"
-(approveRequest)="approveRequestInDetail($event)"
+  (approveRequest)="approveRequestInDetail($event)"
   (rejectRequest)="rejectRequestInDetail($event)"
   (deleteRequest)="deleteRequestInDetail($event)"
   (closed)="closeDetail()"
