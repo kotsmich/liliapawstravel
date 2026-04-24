@@ -8,6 +8,11 @@
   <dt>{{ 'trips.table.drop' | transloco }}</dt>
   <dd>{{ dog().dropLocation }}</dd>
 
+  
+  <dt>{{ 'trips.table.receiver' | transloco }}</dt>
+  <dd>{{ dog().receiver || '—' }}</dd>
+
+
   <dt>{{ 'trips.table.chipId' | transloco }}</dt>
   <dd class="mono">{{ dog().chipId }}</dd>
 
@@ -18,6 +23,12 @@
   <dd>
     <p-tag [value]="dog().size" [severity]="sizeSeverity(dog().size)" />
   </dd>
+
+  <dt>{{ 'trips.table.height' | transloco }}</dt>
+  <dd>{{ heightLabel(dog().height) }}</dd>
+
+  <dt>{{ 'trips.table.behaviors' | transloco }}</dt>
+  <dd>{{ behaviorsLabel(dog().behaviors) }}</dd>
 
   <dt>{{ 'trips.table.age' | transloco }}</dt>
   <dd>{{ dog().age }} yr</dd>
@@ -33,6 +44,10 @@
   <dl class="detail-grid">
     <dt>{{ 'trips.detail.dog.requesterName' | transloco }}</dt>
     <dd>{{ r.name }}</dd>
+      
+    <dt>{{ 'trips.table.receiverPhone' | transloco }}</dt>
+    <dd>{{ dog().receiverPhone || '—' }}</dd>
+
     <dt>{{ 'trips.detail.dog.requesterEmail' | transloco }}</dt>
     <dd>{{ r.email }}</dd>
     <dt>{{ 'trips.detail.dog.requesterPhone' | transloco }}</dt>

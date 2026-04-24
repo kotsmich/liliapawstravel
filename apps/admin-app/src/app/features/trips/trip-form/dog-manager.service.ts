@@ -64,9 +64,13 @@ export class DogManagerService {
 
   readonly dogsData = toSignal(
     this.dogsArray.valueChanges.pipe(
-      map((values: Dog[]) => values.map((v, i) => ({ ...v, _idx: i }))),
+      map((values: Dog[]) => values.map((v, i) => ({
+        ...v,
+        _idx: i,
+        _destinationName: this.tripDestinations().find(d => d.id === v.destinationId)?.name ?? '',
+      }))),
     ),
-    { initialValue: [] as (Dog & { _idx: number })[] },
+    { initialValue: [] as (Dog & { _idx: number; _destinationName: string })[] },
   );
 
   readonly dogsPerRequestor = computed(() => {
@@ -137,6 +141,7 @@ export class DogManagerService {
     return buildDogColumns<Dog & { _idx: number }>(
       this.tripDestinations(),
       (key) => this.transloco.translate(key),
+      this.tripRequestors(),
     );
   });
 
@@ -228,6 +233,7 @@ export class DogManagerService {
       documentUrl:      [dog?.documentUrl      ?? null],
       destinationId: [dog?.destinationId ?? null],
       receiver:      [dog?.receiver      ?? null],
+      receiverPhone: [dog?.receiverPhone ?? null],
     });
   }
 

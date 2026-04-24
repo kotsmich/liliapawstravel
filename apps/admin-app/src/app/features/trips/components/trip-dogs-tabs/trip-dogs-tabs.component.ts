@@ -28,7 +28,7 @@ export class TripDogsTabsComponent {
   readonly dogManager = inject(DogManagerService);
 
   readonly tripId = input<string | null>(null);
-  readonly activeTab = model('all');
+  readonly activeTab = model('byPickup');
   readonly showAddButton = input(false);
   readonly showExportPdf = input(false);
   readonly tableSelectable = input(false);
@@ -47,7 +47,7 @@ export class TripDogsTabsComponent {
   }));
 
   onTabChange(tab: string | undefined): void {
-    this.activeTab.set(tab ?? 'all');
+    this.activeTab.set(tab ?? 'byPickup');
     this.dogManager.clearGroupSelections();
   }
 }

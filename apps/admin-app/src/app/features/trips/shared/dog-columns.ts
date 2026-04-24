@@ -1,26 +1,24 @@
 import { Dog } from '@models/lib/dog.model';
-import { TripDestination } from '@models/lib/trip.model';
+import { TripDestination, TripRequester } from '@models/lib/trip.model';
 import { TableColumn } from '@models/lib/table-column.interface';
 
 /**
  * Shared dog column definitions used in both the trip-form and the trip-detail dialog.
  * Generic over T so callers can narrow to Dog & { _idx: number } or any other Dog subtype.
  * Pass destinations so the Delivery Stop column can resolve the destination name from its ID.
+ * Pass requesters so the Requester column can resolve the requester name from its ID.
  * Pass t() to translate column headers; falls back to the key itself if omitted.
  */
 export function buildDogColumns<T extends Dog>(
   destinations: TripDestination[] = [],
   t: (key: string) => string = (key) => key,
+  requesters: TripRequester[] = [],
 ): TableColumn<T>[] {
   return [
     { field: 'name', header: t('trips.table.name'), sortable: true },
-        // { field: 'gender', header: t('trips.table.gender'), sortable: true, formatter: (value) => String(value ?? '—') },
     {
-      field: 'size', header: t('trips.table.size'), sortable: true, type: 'badge',
-      badgeConfig: {
-        severity: (value) => value === 'small' ? 'success' : value === 'medium' ? 'warn' : 'danger',
-        label: (value) => String(value ?? ''),
-      },
+      field: 'requesterId', header: t('trips.table.requester'), sortable: true,
+      formatter: (value) => requesters.find(r => r.requesterId === value)?.name ?? '—',
     },
     // { field: 'age', header: t('trips.table.age'), sortable: true, formatter: (value) => value != null ? `${value} yr` : '—' },
     {
@@ -33,6 +31,7 @@ export function buildDogColumns<T extends Dog>(
     },
     {
       field: 'destinationId', header: t('trips.table.deliveryStop'), type: 'badge',
+      sortable: true, sortField: '_destinationName',
       badgeConfig: {
         severity: (value) => (value && destinations.some(d => d.id === value)) ? 'success' : 'warn',
         label: (value) => {

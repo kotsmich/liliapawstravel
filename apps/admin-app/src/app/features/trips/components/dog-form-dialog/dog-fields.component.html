@@ -14,9 +14,9 @@
       [idSuffix]="idx()" />
   </div>
 
-  <!-- Row 2: Requested Pickup + Requested Destination -->
-  <div class="row">
-    @if (isEditMode()) {
+  <!-- Row 2: Requested Pickup + Requested Destination (edit mode display only) -->
+  @if (isEditMode()) {
+    <div class="row">
       <div class="field fw requested-display">
         <span class="requested-label">{{ 'dogs.fields.pickupLocation' | transloco }}</span>
         <span class="requested-value">{{ form().get('pickupLocation')?.value || '—' }}</span>
@@ -25,21 +25,8 @@
         <span class="requested-label">{{ 'dogs.fields.dropLocation' | transloco }}</span>
         <span class="requested-value">{{ form().get('dropLocation')?.value || '—' }}</span>
       </div>
-    } @else {
-      <div class="field fw">
-        <p-ifta-label class="w-full">
-          <input pInputText [id]="'pickupLocation-' + idx()" formControlName="pickupLocation" class="w-full" />
-          <label [for]="'pickupLocation-' + idx()">{{ 'dogs.fields.pickupLocation' | transloco }}</label>
-        </p-ifta-label>
-      </div>
-      <div class="field fw">
-        <p-ifta-label class="w-full">
-          <input pInputText [id]="'dropLocation-' + idx()" formControlName="dropLocation" class="w-full" />
-          <label [for]="'dropLocation-' + idx()">{{ 'dogs.fields.dropLocation' | transloco }}</label>
-        </p-ifta-label>
-      </div>
-    }
-  </div>
+    </div>
+  }
 
   <!-- Row 3: Actual Pickup + Actual Destination -->
   @if (tripPickupLocations().length > 0 || tripDestinations().length > 0) {
@@ -96,12 +83,20 @@
     <app-dog-requestor-selector [requestors]="requestors()" [idx]="idx()" />
   }
 
-  <!-- Row 5: Receiver -->
-  <div class="field fw">
-    <p-ifta-label class="w-full">
-      <input pInputText [id]="'receiver-' + idx()" formControlName="receiver" class="w-full" />
-      <label [for]="'receiver-' + idx()">{{ 'dogs.fields.receiver' | transloco }}</label>
-    </p-ifta-label>
+  <!-- Row 5: Receiver + Receiver phone -->
+  <div class="row">
+    <div class="field fw">
+      <p-ifta-label class="w-full">
+        <input pInputText [id]="'receiver-' + idx()" formControlName="receiver" class="w-full" />
+        <label [for]="'receiver-' + idx()">{{ 'dogs.fields.receiver' | transloco }}</label>
+      </p-ifta-label>
+    </div>
+    <div class="field fw">
+      <p-ifta-label class="w-full">
+        <input pInputText [id]="'receiverPhone-' + idx()" formControlName="receiverPhone" class="w-full" />
+        <label [for]="'receiverPhone-' + idx()">{{ 'dogs.fields.receiverPhone' | transloco }}</label>
+      </p-ifta-label>
+    </div>
   </div>
 
   <!-- Row 6: Size chips -->

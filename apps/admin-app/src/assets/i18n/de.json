@@ -177,6 +177,9 @@
       "chipId": "Chip-ID",
       "deliveryStop": "Lieferstopp",
       "receiver": "Empfänger",
+      "receiverPhone": "Empfänger-Telefonnummer",
+      "height": "Höhe",
+      "behaviors": "Verhalten",
       "notAssigned": "Nicht zugewiesen",
       "requester": "Antragsteller",
       "pickup": "Abholung",
@@ -274,7 +277,8 @@
       "adminPickupLocation": "Tatsächliche Abholung",
       "pickupOther": "Sonstiges (in Notizen angeben)",
       "pickupOtherHint": "Bitte beschreiben Sie den Abholort im Feld Besondere Hinweise.",
-      "receiver": "Empfänger (optional)"
+      "receiver": "Empfänger (optional)",
+      "receiverPhone": "Empfänger-Telefonnummer (optional)"
     },
     "errors": {
       "required": "Pflichtfeld.",

@@ -1,7 +1,7 @@
-import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input } from '@angular/core';
 import { TagModule } from 'primeng/tag';
-import { TranslocoModule } from '@jsverse/transloco';
-import { Dog } from '@models/lib/dog.model';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { Dog, DogBehavior, DogHeight } from '@models/lib/dog.model';
 
 export interface DogRequester {
   name: string;
@@ -21,9 +21,26 @@ export class DogDetailsGridComponent {
   readonly dog = input.required<Dog>();
   readonly requester = input<DogRequester | null>(null);
 
+  private readonly transloco = inject(TranslocoService);
+
   sizeSeverity(size: Dog['size']): 'success' | 'warn' | 'danger' {
     if (size === 'small') return 'success';
     if (size === 'medium') return 'warn';
     return 'danger';
+  }
+
+  heightLabel(height: DogHeight | null | undefined): string {
+    if (!height) return '—';
+    const key = height === 'under10' ? 'heightUnder10'
+      : height === '10to25' ? 'height10to25'
+      : 'heightOver30';
+    return this.transloco.translate(`dogs.fields.${key}`);
+  }
+
+  behaviorsLabel(behaviors: DogBehavior[] | null | undefined): string {
+    if (!behaviors?.length) return '—';
+    return behaviors
+      .map(b => this.transloco.translate(`dogs.fields.behavior${b.charAt(0).toUpperCase()}${b.slice(1)}`))
+      .join(', ');
   }
 }

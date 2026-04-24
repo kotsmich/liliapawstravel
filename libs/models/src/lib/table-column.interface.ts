@@ -4,6 +4,8 @@ export interface TableColumn<T = unknown> {
   field: string;
   header: string;
   sortable?: boolean;
+  /** Optional path on the row used for sorting when it differs from the displayed field (e.g. sort by resolved name instead of ID). */
+  sortField?: string;
   width?: string;
   type?: 'text' | 'date' | 'badge' | 'avatar' | 'actions' | 'template' | 'icon-button';
   dateFormat?: string;

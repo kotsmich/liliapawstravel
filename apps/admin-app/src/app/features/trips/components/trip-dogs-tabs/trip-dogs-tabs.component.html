@@ -10,6 +10,7 @@
         size="small"
         (onClick)="dogManager.removeSelectedDogs()" />
     }
+     <app-trip-dogs-export-pdf [activeTab]="activeTab()" />
     <p-button
       type="button"
       [label]="'trips.addDog' | transloco"
@@ -28,10 +29,10 @@
     <p-tab value="all">{{ 'trips.allDogsTab' | transloco: { count: dogManager.dogsData().length } }}</p-tab>
   </p-tablist>
 </p-tabs>
-
+<!-- 
 @if (showExportPdf()) {
   <app-trip-dogs-export-pdf [activeTab]="activeTab()" />
-}
+} -->
 @if (activeTab() === 'all') {
   <app-dogs-table
     [dogs]="dogManager.dogsData()"

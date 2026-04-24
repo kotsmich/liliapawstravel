@@ -20,6 +20,7 @@ export interface Dog {
   destinationId?: string | null;
   pickupLocationId?: string | null;
   receiver?: string | null;
+  receiverPhone?: string | null;
   /** Transient — used only when creating a dog with a brand-new requester. Not stored on the dog. */
   newRequesterName?: string | null;
 }

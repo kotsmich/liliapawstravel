@@ -19,13 +19,15 @@ const DOG_TABLE_COLUMN_STYLES = {
 };
 
 const DOG_PR_TABLE_COLUMN_STYLES = {
-  0: { cellWidth: 10, halign: 'center' as const },
-  1: { cellWidth: 45 },
-  2: { cellWidth: 45 },
-  3: { cellWidth: 42 },
-  4: { cellWidth: 40 },
+  0: { cellWidth: 8, halign: 'center' as const },
+  1: { cellWidth: 30 },
+  2: { cellWidth: 24 },
+  3: { cellWidth: 28 },
+  4: { cellWidth: 30 },
+  5: { cellWidth: 30 },
+  6: { cellWidth: 32 },
 };
-const DOG_PR_TABLE_SPAN = 5;
+const DOG_PR_TABLE_SPAN = 7;
 
 function dogRow(dog: { name?: string; size?: string; age?: number; chipId?: string; pickupLocation?: string; dropLocation?: string; notes?: string }, index: number): (string | number)[] {
   return [
@@ -48,9 +50,11 @@ function dogPrRow(dog: Dog, index: number, trip: Trip): (string | number)[] {
   return [
     index + 1,
     requesterName,
-    dog.receiver ?? '',
+    dog.name ?? '',
+    dog.receiverPhone ?? '',
     destination,
     dog.chipId ?? '',
+    dog.receiver ?? '',
   ];
 }
 

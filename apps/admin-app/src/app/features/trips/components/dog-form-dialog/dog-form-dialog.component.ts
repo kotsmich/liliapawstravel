@@ -121,6 +121,7 @@ export class DogFormDialogComponent implements OnInit {
       notes:            [''],
       destinationId:    [null],
       receiver:         [null],
+      receiverPhone:    [null],
     });
   }
 
@@ -143,6 +144,7 @@ export class DogFormDialogComponent implements OnInit {
       newRequesterName: [null],
       destinationId:    [d.destinationId     ?? null],
       receiver:         [d.receiver          ?? null],
+      receiverPhone:    [d.receiverPhone     ?? null],
     }, { validators: DogFormDialogComponent.requesterValidator });
   }
 

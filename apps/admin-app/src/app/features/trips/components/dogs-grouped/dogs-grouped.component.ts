@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, signal } from '@angular/core';
 import { AccordionModule } from 'primeng/accordion';
 import { TooltipModule } from 'primeng/tooltip';
 import { Dog } from '@models/lib/dog.model';
@@ -31,4 +31,10 @@ export class DogsByGroupComponent {
 
   readonly selectionChange = output<{ dogs: (Dog & { _idx: number })[]; groupKey: string }>();
   readonly rowClicked = output<Dog>();
+
+  readonly expandedKeys = signal<string[]>([]);
+
+  onAccordionValueChange(value: unknown): void {
+    this.expandedKeys.set(Array.isArray(value) ? value.map(String) : []);
+  }
 }

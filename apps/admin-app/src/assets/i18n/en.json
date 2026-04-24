@@ -177,6 +177,9 @@
       "chipId": "Chip ID",
       "deliveryStop": "Delivery Stop",
       "receiver": "Receiver",
+      "receiverPhone": "Receiver phone",
+      "height": "Height",
+      "behaviors": "Behaviors",
       "notAssigned": "Not assigned",
       "requester": "Requester",
       "pickup": "Pickup",
@@ -274,7 +277,8 @@
       "adminPickupLocation": "Actual Pickup",
       "pickupOther": "Other (specify in notes)",
       "pickupOtherHint": "Please describe the pickup location in the Special Notes field below.",
-      "receiver": "Receiver (optional)"
+      "receiver": "Receiver (optional)",
+      "receiverPhone": "Receiver phone (optional)"
     },
     "errors": {
       "required": "Required.",

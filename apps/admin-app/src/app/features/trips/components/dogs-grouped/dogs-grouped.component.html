@@ -5,7 +5,7 @@
     <div class="no-groups">{{ emptyMessage() }}</div>
   }
 } @else {
-  <p-accordion [multiple]="true" [value]="[]">
+  <p-accordion [multiple]="true" [value]="expandedKeys()" (valueChange)="onAccordionValueChange($event)">
     @for (group of groups(); track group.key) {
       <p-accordion-panel [value]="group.key">
         <p-accordion-header>
@@ -24,16 +24,18 @@
           </div>
         </p-accordion-header>
         <p-accordion-content>
-          @if (group.dogs.length === 0 && emptyGroupMessage()) {
-            <span class="text-color-secondary text-sm">{{ emptyGroupMessage() }}</span>
-          } @else {
-            <app-dogs-table
-              [dogs]="group.dogs"
-              [columns]="dogColumns()"
-              [actions]="dogActions()"
-              [config]="tableConfig()"
-              (selectionChange)="selectionChange.emit({ dogs: $event, groupKey: group.key })"
-              (rowClicked)="rowClicked.emit($event)" />
+          @if (expandedKeys().includes(group.key)) {
+            @if (group.dogs.length === 0 && emptyGroupMessage()) {
+              <span class="text-color-secondary text-sm">{{ emptyGroupMessage() }}</span>
+            } @else {
+              <app-dogs-table
+                [dogs]="group.dogs"
+                [columns]="dogColumns()"
+                [actions]="dogActions()"
+                [config]="tableConfig()"
+                (selectionChange)="selectionChange.emit({ dogs: $event, groupKey: group.key })"
+                (rowClicked)="rowClicked.emit($event)" />
+            }
           }
         </p-accordion-content>
       </p-accordion-panel>
