@@ -1,27 +1,36 @@
 <div class="layout flex flex-column">
 
+  <!-- Skip-to-content link for keyboard / screen-reader users (WCAG 2.4.1) -->
+  <!-- <a class="skip-link" href="#main-content">{{ 'shell.skipToContent' | transloco }}</a> -->
+
   <!-- Top navbar -->
-  <header class="topbar flex align-items-center flex-shrink-0">
+  <header class="topbar flex align-items-center flex-shrink-0" role="banner">
     <div class="topbar__brand flex align-items-center gap-2">
       <span aria-hidden="true">🐾</span>
       <span class="topbar__brand-name">Lilia Paws</span>
     </div>
 
-    <nav class="topbar__nav flex align-items-center flex-1" aria-label="Admin navigation">
+    <nav class="topbar__nav flex align-items-center flex-1" [attr.aria-label]="'shell.adminNav' | transloco">
       @for (item of navItems; track item.link) {
         <button
           type="button"
           class="nav-item flex align-items-center"
           [class.active]="isActive(item.link)"
+          [attr.aria-current]="isActive(item.link) ? 'page' : null"
+          [attr.aria-label]="item.labelKey | transloco"
           (click)="navigateTo(item.link)"
           >
           <span class="nav-item__icon-wrap flex align-items-center justify-content-center">
-            <i [class]="item.icon"></i>
+            <i [class]="item.icon" aria-hidden="true"></i>
             @if (item.link === '/admin/requests' && (pendingCount$ | async); as count) {
-              <span class="nav-badge flex align-items-center justify-content-center">{{ count }}</span>
+              <span class="nav-badge flex align-items-center justify-content-center"
+                    role="status"
+                    [attr.aria-label]="(count + ' ' + ('shell.pendingRequests' | transloco))">{{ count }}</span>
             }
             @if (item.link === '/admin/messages' && (unreadMessagesCount$ | async); as count) {
-              <span class="nav-badge flex align-items-center justify-content-center">{{ count }}</span>
+              <span class="nav-badge flex align-items-center justify-content-center"
+                    role="status"
+                    [attr.aria-label]="(count + ' ' + ('shell.unreadMessages' | transloco))">{{ count }}</span>
             }
           </span>
           <span class="nav-item__label">{{ item.labelKey | transloco }}</span>
@@ -37,13 +46,14 @@
           type="button"
           class="account-btn flex align-items-center gap-2"
           [class.active]="isActive('/admin/settings')"
+          [attr.aria-label]="('shell.account' | transloco) + ' — ' + user.email"
           [pTooltip]="user.email"
           tooltipPosition="bottom"
           (click)="navigateTo('/admin/settings')"
         >
-          <span class="account-btn__avatar">{{ user.email[0].toUpperCase() }}</span>
+          <span class="account-btn__avatar" aria-hidden="true">{{ user.email[0].toUpperCase() }}</span>
           <span class="account-btn__role account-btn__role--{{ user.role }}">{{ user.role }}</span>
-        </button>
+        </button> 
       }
       <p-button
         icon="pi pi-sign-out"
@@ -51,6 +61,7 @@
         [rounded]="true"
         severity="secondary"
         styleClass="logout-btn"
+        [ariaLabel]="'shell.logout' | transloco"
         [pTooltip]="'shell.logout' | transloco"
         tooltipPosition="bottom"
         (onClick)="logout()"
@@ -58,8 +69,8 @@
     </div>
   </header>
 
-  <div class="content flex-1">
+  <main id="main-content" class="content flex-1" tabindex="-1" role="main">
     <router-outlet></router-outlet>
-  </div>
+  </main>
 
 </div>

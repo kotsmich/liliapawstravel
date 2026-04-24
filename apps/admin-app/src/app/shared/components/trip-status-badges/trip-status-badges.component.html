@@ -1,16 +1,16 @@
-<div class="flex align-items-center gap-2 flex-wrap">
+<div class="flex align-items-center gap-2 flex-wrap" role="group" [attr.aria-label]="'trips.tags.statusGroup' | transloco">
   @if (trip().isFull || trip().spotsAvailable <= 0) {
-    <p-tag severity="danger" [value]="'trips.tags.full' | transloco" />
+    <p-tag severity="danger" icon="pi pi-lock" [value]="'trips.tags.full' | transloco" />
   } @else if (!trip().acceptingRequests) {
-    <p-tag severity="warn" [value]="'trips.tags.freezed' | transloco" />
+    <p-tag severity="warn" icon="pi pi-pause-circle" [value]="'trips.tags.freezed' | transloco" />
   } @else {
-    <p-tag severity="success" [value]="'trips.tags.open' | transloco" />
+    <p-tag severity="success" icon="pi pi-check-circle" [value]="'trips.tags.open' | transloco" />
   }
   @if (trip().status === 'upcoming') {
-    <p-tag severity="info" [value]="'trips.tags.upcoming' | transloco" />
+    <p-tag severity="info" icon="pi pi-calendar" [value]="'trips.tags.upcoming' | transloco" />
   } @else if (trip().status === 'completed') {
-    <p-tag severity="success" [value]="'trips.tags.completed' | transloco" />
+    <p-tag severity="success" icon="pi pi-flag" [value]="'trips.tags.completed' | transloco" />
   } @else {
-    <p-tag severity="secondary" [value]="'trips.tags.inProgress' | transloco" />
+    <p-tag severity="secondary" icon="pi pi-spin pi-spinner" [value]="'trips.tags.inProgress' | transloco" />
   }
 </div>

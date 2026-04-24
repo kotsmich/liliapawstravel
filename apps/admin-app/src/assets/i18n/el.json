@@ -7,7 +7,12 @@
   },
   "shell": {
     "logout": "Αποσύνδεση",
-    "fontSize": "Προσαρμογή μεγέθους γραμματοσειράς"
+    "fontSize": "Προσαρμογή μεγέθους γραμματοσειράς",
+    "skipToContent": "Μετάβαση στο κύριο περιεχόμενο",
+    "adminNav": "Πλοήγηση διαχειριστή",
+    "pendingRequests": "εκκρεμή αιτήματα",
+    "unreadMessages": "μη αναγνωσμένα μηνύματα",
+    "account": "Λογαριασμός"
   },
   "login": {
     "title": "Lilia Paws Admin",
@@ -197,7 +202,8 @@
       "open": "Ανοιχτό",
       "upcoming": "Επερχόμενο",
       "inProgress": "Σε Εξέλιξη",
-      "completed": "Ολοκληρωμένο"
+      "completed": "Ολοκληρωμένο",
+      "statusGroup": "Κατάσταση ταξιδιού"
     },
     "detail": {
       "dogsTab": "Σκύλοι ({{ count }})",

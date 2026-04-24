@@ -7,7 +7,12 @@
   },
   "shell": {
     "logout": "Abmelden",
-    "fontSize": "Schriftgröße anpassen"
+    "fontSize": "Schriftgröße anpassen",
+    "skipToContent": "Zum Hauptinhalt springen",
+    "adminNav": "Admin-Navigation",
+    "pendingRequests": "ausstehende Anfragen",
+    "unreadMessages": "ungelesene Nachrichten",
+    "account": "Konto"
   },
   "login": {
     "title": "Lilia Paws Admin",
@@ -197,7 +202,8 @@
       "open": "Offen",
       "upcoming": "Bevorstehend",
       "inProgress": "In Bearbeitung",
-      "completed": "Abgeschlossen"
+      "completed": "Abgeschlossen",
+      "statusGroup": "Reisestatus"
     },
     "detail": {
       "dogsTab": "Hunde ({{ count }})",

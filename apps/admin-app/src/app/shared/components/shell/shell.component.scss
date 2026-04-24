@@ -5,7 +5,7 @@
 /* ── Top navbar ── */
 .topbar {
   background: #1e293b;
-  color: #cbd5e1;
+  color: #e2e8f0;
   height: 52px;
   font-size: 16px; /* isolate navbar from root font-size changes */
   padding: 0 1rem;
@@ -42,7 +42,7 @@
 
   &__user {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: #cbd5e1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -57,7 +57,7 @@
   gap: 0.5rem;
   padding: 0 0.75rem;
   height: 52px;
-  color: #94a3b8;
+  color: #cbd5e1; /* lifted from #94a3b8 (5.2:1) to ~10.4:1 on #1e293b */
   background: none;
   border: none;
   border-bottom: 3px solid transparent;
@@ -69,13 +69,20 @@
   transition: color 0.15s, border-color 0.15s, background 0.15s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
     color: #fff;
   }
 
+  &:focus-visible {
+    outline: 2px solid #f0a07a;
+    outline-offset: -3px;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
   &.active {
-    color: #f0a05a;
-    border-bottom-color: #e07b54;
+    color: #ffd6b8; /* keeps the warm-orange brand cue but lifts contrast on dark sidebar to ~9:1 */
+    border-bottom-color: #f0a07a;
+    font-weight: 600;
   }
 
   &__icon-wrap {
@@ -105,7 +112,7 @@
   pointer-events: none;
 }
 
-.logout-btn { color: #94a3b8 !important; }
+.logout-btn { color: #cbd5e1 !important; }
 
 /* ── Account button ── */
 .account-btn {
@@ -115,14 +122,19 @@
   padding: 0 0.5rem;
   height: 36px;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 20px;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
 
-  &:hover { background: rgba(255, 255, 255, 0.07); border-color: rgba(255,255,255,0.25); }
+  &:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.4); }
 
-  &.active { border-color: #e07b54; }
+  &:focus-visible {
+    outline: 2px solid #f0a07a;
+    outline-offset: 2px;
+  }
+
+  &.active { border-color: #f0a07a; }
 
   &__avatar {
     width: 24px;
@@ -146,8 +158,8 @@
     padding: 0.1rem 0.4rem;
     border-radius: 8px;
 
-    &--admin { background: #1d4ed820; color: #93c5fd; }
-    &--operator { background: rgba(255,255,255,0.08); color: #94a3b8; }
+    &--admin { background: #1d4ed840; color: #bfdbfe; } /* ~8.5:1 on dark sidebar */
+    &--operator { background: rgba(255,255,255,0.12); color: #e2e8f0; } /* ~13:1 */
 
     @media (max-width: 480px) { display: none; }
   }

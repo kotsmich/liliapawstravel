@@ -5,32 +5,75 @@
   --color-primary-light: #f0a07a;
   --color-primary-dark: #c05a33;
   --color-primary-hover: rgba(224, 123, 84, 0.15);
+  --color-primary-on-light: #b04a26; /* WCAG AA: ~5.9:1 on #f8fafc — use for text/icons on light backgrounds */
   --color-surface: #fff8f0;
   --color-surface-alt: #fdf3e8;
   --color-border: #f0e0d0;
   --color-border-alt: #e8d0c0;
   --color-text: #3d2b1f;
-  --color-text-muted: #a0a0a0;
-  --color-error: #ef4444;
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
+  --color-text-muted: #6b7280; /* darkened from #a0a0a0 (~2.7:1) to ~5.0:1 on light backgrounds */
+  --color-label: #4b5563;       /* small-text label gray, ~7.0:1 on #f8fafc */
+  --color-error: #dc2626;       /* darkened from #ef4444 for 4.7:1 on white */
+  --color-error-strong: #991b1b;
+  --color-success: #15803d;     /* darkened from #22c55e for 4.6:1 on white */
+  --color-warning: #b45309;     /* darkened from #f59e0b for 4.7:1 on white */
   --color-white: #ffffff;
   --color-sidebar: #1e293b;
-  --color-sidebar-text: #94a3b8;
+  --color-sidebar-text: #cbd5e1; /* lifted from #94a3b8 (5.2:1) to ~10.4:1 on sidebar */
+  --color-sidebar-text-muted: #94a3b8;
   --color-sidebar-active: #ffffff;
   --color-slate-text: #1e293b;
-  --color-slate-mid: #64748b;
+  --color-slate-mid: #475569;   /* darkened from #64748b for ~6.7:1 on light backgrounds */
   --color-slate-light: #94a3b8;
-  --color-error-alt: #dc2626;
+  --color-error-alt: #b91c1c;
   --color-bg-light: #f8fafc;
   --color-border-light: #e2e8f0;
   --color-border-subtle: #f1f5f9;
   --color-dog-badge-bg: #fff3ed;
   --color-dog-badge-border: #fbd5c0;
+
+  /* Focus ring — solid, high-contrast, meets WCAG 2.1 SC 1.4.11 (3:1) */
+  --focus-ring-color: #c05a33;
+  --focus-ring: 0 0 0 3px rgba(176, 74, 38, 0.55);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', sans-serif; background: var(--color-bg-light); color: var(--color-slate-text); -webkit-font-smoothing: antialiased; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--color-bg-light);
+  color: var(--color-slate-text);
+  line-height: 1.6; /* WCAG 1.4.12 — improves readability for low-vision/dyslexic users */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Skip-to-content link (WCAG 2.4.1) ── */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 8px;
+  z-index: 9999;
+  background: var(--color-primary-dark);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 0 0 8px 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.15s ease-out;
+
+  &:focus,
+  &:focus-visible {
+    top: 0;
+    outline: 2px solid #fff;
+    outline-offset: -4px;
+  }
+}
+
+/* ── Global :focus-visible safety net for keyboard users ── */
+:where(button, a, [role="button"], [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 
 /* PrimeNG global overrides */
 .p-button { font-family: 'Inter', sans-serif; font-weight: 600; }
@@ -234,9 +277,9 @@ body { font-family: 'Inter', sans-serif; background: var(--color-bg-light); colo
      extra CSS needed.
    ============================================================ */
 :root {
-  --field-focus-border: var(--color-primary);
-  --field-focus-ring: 0 0 0 3px rgba(224, 123, 84, 0.28);
-  --field-invalid-ring: 0 0 0 2px rgba(239, 68, 68, 0.18);
+  --field-focus-border: var(--color-primary-dark);
+  --field-focus-ring: 0 0 0 3px rgba(176, 74, 38, 0.55); /* solid enough for 3:1 against light fields */
+  --field-invalid-ring: 0 0 0 2px rgba(220, 38, 38, 0.45);
 }
 
 /* 1. Suppress PrimeNG's default red on ng-dirty-but-not-yet-touched.
@@ -302,5 +345,72 @@ p-inputnumber .p-inputtext:enabled:focus {
 /* 4. Ifta-label: tint the floating label in brand orange while
       its field is focused, so the active field is doubly obvious. */
 .p-iftalabel:focus-within label {
-  color: var(--color-primary) !important;
+  color: var(--color-primary-dark) !important;
+}
+
+/* ============================================================
+   Low-vision support: high-contrast media query (WCAG 1.4.6)
+   Triggered when the OS/browser requests increased contrast.
+   ============================================================ */
+@media (prefers-contrast: more) {
+  :root {
+    --color-text-muted: #1f2937;
+    --color-label: #111827;
+    --color-slate-mid: #1e293b;
+    --color-error: #7f1d1d;
+    --color-success: #14532d;
+    --color-warning: #78350f;
+    --color-sidebar-text: #ffffff;
+    --color-border-light: #475569;
+    --focus-ring: 0 0 0 4px #000;
+    --field-focus-ring: 0 0 0 4px #000;
+  }
+
+  body { background: #ffffff; }
+  .skip-link { background: #000; }
+}
+
+/* ============================================================
+   Dark mode — OPT-IN via [data-theme="dark"] on <html> or <body>.
+   NOT triggered by prefers-color-scheme, because several admin
+   surfaces (shell content, cards, dialogs) currently hardcode
+   light backgrounds. Auto-firing dark would invert text without
+   inverting those backgrounds, producing low-contrast text.
+   To enable later: set <html data-theme="dark"> from a toggle.
+   ============================================================ */
+[data-theme="dark"] {
+  --color-bg-light: #0f172a;
+  --color-surface: #1e293b;
+  --color-surface-alt: #243044;
+  --color-text: #f1f5f9;
+  --color-text-muted: #cbd5e1;
+  --color-label: #cbd5e1;
+  --color-slate-text: #f1f5f9;
+  --color-slate-mid: #cbd5e1;
+  --color-slate-light: #94a3b8;
+  --color-border-light: #334155;
+  --color-border-subtle: #1e293b;
+  --color-white: #1e293b;
+  --color-primary-on-light: #f0a07a;
+  --color-error: #fca5a5;
+  --color-success: #86efac;
+  --color-warning: #fcd34d;
+  --focus-ring-color: #f0a07a;
+  --focus-ring: 0 0 0 3px rgba(240, 160, 122, 0.6);
+  --field-focus-border: #f0a07a;
+  --field-focus-ring: 0 0 0 3px rgba(240, 160, 122, 0.5);
+
+  body { background: var(--color-bg-light); color: var(--color-text); }
+}
+
+/* ============================================================
+   Reduced-motion support: respect user's OS preference.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

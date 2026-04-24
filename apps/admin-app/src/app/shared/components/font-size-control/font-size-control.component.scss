@@ -14,14 +14,20 @@
   border-radius: 50%;
   background: none;
   border: none;
-  color: #94a3b8;
+  color: #cbd5e1; /* lifted from #94a3b8 for ~10:1 on #1e293b */
   cursor: pointer;
   font-size: 1rem;
   transition: color 0.15s, background 0.15s;
 
   &:hover {
     color: #fff;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #f0a07a;
+    outline-offset: 2px;
+    color: #fff;
   }
 }
 
@@ -45,7 +51,7 @@
   &__label {
     font-size: 11px;
     font-weight: 600;
-    color: #64748b;
+    color: #cbd5e1; /* lifted from #64748b (~3.6:1) to ~10:1 on #1e293b */
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -56,7 +62,7 @@
 
   &__icon {
     font-size: 10px;
-    color: #64748b;
+    color: #cbd5e1;
     flex-shrink: 0;
   }
 
@@ -64,29 +70,34 @@
     -webkit-appearance: none;
     appearance: none;
     flex: 1;
-    height: 3px;
+    height: 4px;
     border-radius: 2px;
-    background: #475569;
+    background: #64748b;
     outline: none;
     cursor: pointer;
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px rgba(240, 160, 122, 0.6);
+    }
 
     &::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 13px;
-      height: 13px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
       background: #f0a05a;
+      border: 2px solid #1e293b;
       cursor: pointer;
-      transition: background 0.15s;
+      transition: background 0.15s, transform 0.15s;
 
-      &:hover { background: #e07b54; }
+      &:hover { background: #e07b54; transform: scale(1.15); }
     }
 
     &::-moz-range-thumb {
-      width: 13px;
-      height: 13px;
-      border: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #1e293b;
       border-radius: 50%;
       background: #f0a05a;
       cursor: pointer;
@@ -96,17 +107,23 @@
   &__reset {
     align-self: flex-end;
     background: none;
-    border: 1px solid #334155;
+    border: 1px solid #64748b;
     border-radius: 4px;
-    color: #64748b;
+    color: #cbd5e1;
     font-size: 11px;
     padding: 3px 8px;
     cursor: pointer;
-    transition: color 0.15s, border-color 0.15s;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
 
     &:hover {
-      color: #cbd5e1;
-      border-color: #64748b;
+      color: #fff;
+      border-color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    &:focus-visible {
+      outline: 2px solid #f0a07a;
+      outline-offset: 2px;
     }
   }
 }

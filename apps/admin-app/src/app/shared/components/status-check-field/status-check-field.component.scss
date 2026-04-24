@@ -6,9 +6,9 @@
 /* ── Section label above each status row ── */
 .field-section-label {
   display: block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--color-slate-mid);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e293b; /* ~16:1 on light page bg — was --color-slate-mid which the dark-mode media query was inverting */
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.5rem;
@@ -37,17 +37,17 @@
   }
 
   &__title {
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: var(--color-slate-text);
+    color: #1e293b;
     display: flex;
     align-items: center;
     gap: 0.4rem;
   }
 
   &__desc {
-    font-size: 0.775rem;
-    color: var(--color-slate-mid);
+    font-size: 0.8rem;
+    color: #334155;
   }
 }
 
@@ -83,14 +83,14 @@
   }
 
   &__title {
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: var(--color-slate-text);
+    color: #1e293b;
   }
 
   &__desc {
-    font-size: 0.775rem;
-    color: var(--color-slate-mid);
+    font-size: 0.8rem;
+    color: #334155;
   }
 
   &__badge {

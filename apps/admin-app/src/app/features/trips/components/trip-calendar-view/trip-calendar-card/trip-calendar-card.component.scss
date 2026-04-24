@@ -26,9 +26,9 @@
 }
 
 .trip-dogs-count {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  color: var(--color-slate-mid);
+  color: #334155; /* ~9.5:1 on white card — was --color-slate-mid */
   white-space: nowrap;
 }
 
@@ -50,15 +50,16 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  strong { color: var(--color-slate-text); font-size: 1.05rem; }
+  strong { color: #1e293b; font-size: 1.05rem; font-weight: 600; }
+  i { color: #475569; }
 }
 
 .trip-body {
   align-items: center;
   gap: 1rem;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
 
-  .notes { color: var(--color-slate-mid); font-style: italic; width: 100%; }
+  .notes { color: #334155; font-style: italic; width: 100%; }
 }
 
 .trip-actions {
@@ -80,17 +81,38 @@
     flex-direction: column;
     align-items: flex-end;
     gap: 0.2rem;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     margin-left: auto;
 
     .spots-count {
-      color: var(--color-slate-mid);
-      &.low { color: #dc2626; font-weight: 600; }
+      color: #334155; /* ~9.5:1 on white */
+      font-weight: 500;
+      &.low { color: #b91c1c; font-weight: 700; }
     }
   }
 }
 
+/* ── Locked / frozen / full state ──
+   Old version dimmed the whole card with opacity+grayscale, which
+   tanked text contrast for low-vision users. New version keeps text
+   fully readable and signals the state with a left border + ribbon. */
 .event--locked {
-  opacity: 0.65;
-  filter: grayscale(0.35);
+  position: relative;
+  border-left: 4px solid #b45309;
+
+  &::before {
+    content: '🔒 ' attr(data-locked-label);
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #fef3c7;
+    color: #78350f;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0 0 0 8px;
+    z-index: 1;
+  }
 }
