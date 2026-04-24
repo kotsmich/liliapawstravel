@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, isDevMode } from '@angular/core';
 import { Translation, TranslocoLoader } from '@jsverse/transloco';
 import { HttpClient } from '@angular/common/http';
 
@@ -8,6 +8,9 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 
   getTranslation(lang: string) {
     const safeLang = lang || 'en';
-    return this.http.get<Translation>(`/assets/i18n/${safeLang}.json`);
+    const url = isDevMode()
+      ? `/assets/i18n/${safeLang}.json?v=${Date.now()}`
+      : `/assets/i18n/${safeLang}.json`;
+    return this.http.get<Translation>(url);
   }
 }

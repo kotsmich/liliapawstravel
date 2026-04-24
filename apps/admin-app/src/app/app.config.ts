@@ -94,6 +94,8 @@ export const appConfig: ApplicationConfig = {
       config: {
         availableLangs: ['en', 'el', 'de'],
         defaultLang: 'el',
+        fallbackLang: 'el',
+        missingHandler: { useFallbackTranslation: true },
         reRenderOnLangChange: true,
         prodMode: !isDevMode(),
       },

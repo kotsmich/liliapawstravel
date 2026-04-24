@@ -69,6 +69,26 @@ export class DogFormComponent {
     ];
   });
 
+  readonly heights = computed((): { value: string; label: string }[] => {
+    this._t();
+    return [
+      { value: 'under10', label: this.transloco.translate('dogs.heightUnder10') },
+      { value: '10to25',  label: this.transloco.translate('dogs.height10to25') },
+      { value: 'over30',  label: this.transloco.translate('dogs.heightOver30') },
+    ];
+  });
+
+  readonly behaviors = computed((): { value: string; label: string }[] => {
+    this._t();
+    return [
+      { value: 'friendly',   label: this.transloco.translate('dogs.behaviorFriendly') },
+      { value: 'aggressive', label: this.transloco.translate('dogs.behaviorAggressive') },
+      { value: 'fearful',    label: this.transloco.translate('dogs.behaviorFearful') },
+      { value: 'anxious',    label: this.transloco.translate('dogs.behaviorAnxious') },
+      { value: 'calm',       label: this.transloco.translate('dogs.behaviorCalm') },
+    ];
+  });
+
   readonly genders = computed((): { value: string; label: string }[] => {
     this._t();
     return [
@@ -76,6 +96,22 @@ export class DogFormComponent {
       { value: 'female', label: this.transloco.translate('dogs.genderFemale') },
     ];
   });
+
+  hasBehavior(value: string): boolean {
+    const current = this.ctrl('behaviors').value as string[] | null;
+    return Array.isArray(current) && current.includes(value);
+  }
+
+  toggleBehavior(value: string): void {
+    const ctrl = this.ctrl('behaviors');
+    const current = Array.isArray(ctrl.value) ? [...(ctrl.value as string[])] : [];
+    const idx = current.indexOf(value);
+    if (idx >= 0) current.splice(idx, 1);
+    else current.push(value);
+    ctrl.setValue(current);
+    ctrl.markAsTouched();
+    ctrl.markAsDirty();
+  }
 
   readonly pickupOptions = computed((): { value: string; label: string }[] => {
     this._t();

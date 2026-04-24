@@ -1,85 +1,102 @@
 <div [formGroup]="form()" class="dlg-form">
+  <!-- Row 1: Name + Microchip -->
   <div class="row">
     <app-form-field
       controlName="name"
       labelKey="dogs.fields.dogName"
       errorKey="dogs.errors.required"
       [idSuffix]="idx()" />
-    <div class="field fw">
-      <p-ifta-label>
-        <p-select [inputId]="'size-' + idx()" formControlName="size" [options]="sizes"
-          optionLabel="label" optionValue="value" styleClass="w-full" />
-        <label [for]="'size-' + idx()">{{ 'dogs.fields.size' | transloco }}</label>
-      </p-ifta-label>
-      <small class="p-error" *appValidationError="form().get('size')">{{ 'dogs.errors.required' | transloco }}</small>
-    </div>
+    <app-form-field
+      controlName="chipId"
+      labelKey="dogs.fields.microchipId"
+      errorKey="dogs.errors.chipIdRequired"
+      [maxlength]="15"
+      [idSuffix]="idx()" />
   </div>
 
-
-    <!-- Row 1: Requested Pickup | Admin Pickup -->
+  <!-- Row 2: Requested Pickup + Requested Destination -->
   <div class="row">
-    <div class="field fw">
-      <p-ifta-label class="w-full">
-        <input pInputText [id]="'pickupLocation-' + idx()" formControlName="pickupLocation" class="w-full" [readonly]="isEditMode()" />
-        <label [for]="'pickupLocation-' + idx()">{{ 'dogs.fields.pickupLocation' | transloco }}</label>
-      </p-ifta-label>
-    </div>
-    @if (tripPickupLocations().length > 0) {
-      <div class="field fw">
-        <p-ifta-label>
-          <p-select
-            [inputId]="'pickupId-' + idx()"
-            formControlName="pickupLocationId"
-            [options]="pickupOptions()"
-            optionLabel="name"
-            optionValue="id"
-            [showClear]="false"
-            styleClass="w-full"
-            (onChange)="onPickupSelect($event.value)" />
-          <label [for]="'pickupId-' + idx()">
-            {{ 'dogs.fields.adminPickupLocation' | transloco }}
-          </label>
-        </p-ifta-label>
-        @if (form().get('pickupLocationId')?.value === null && form().get('pickupLocationId')?.touched) {
-          <small class="p-error">{{ 'dogs.errors.required' | transloco }}</small>
-        }
-        @if (form().get('pickupLocationId')?.value === null && form().get('pickupLocationId')?.dirty) {
-          <small class="text-color-secondary text-xs flex align-items-center gap-1">
-            <i class="pi pi-info-circle"></i>
-            {{ 'dogs.fields.pickupOtherHint' | transloco }}
-          </small>
-        }
+    @if (isEditMode()) {
+      <div class="field fw requested-display">
+        <span class="requested-label">{{ 'dogs.fields.pickupLocation' | transloco }}</span>
+        <span class="requested-value">{{ form().get('pickupLocation')?.value || '—' }}</span>
       </div>
-    }
-  </div>
-
-  <!-- Row 2: Requested Destination | Admin Destination -->
-  <div class="row">
-    <div class="field fw">
-      <p-ifta-label class="w-full">
-        <input pInputText [id]="'dropLocation-' + idx()" formControlName="dropLocation" class="w-full" [readonly]="isEditMode()" />
-        <label [for]="'dropLocation-' + idx()">{{ 'dogs.fields.dropLocation' | transloco }}</label>
-      </p-ifta-label>
-    </div>
-    @if (tripDestinations().length > 0) {
+      <div class="field fw requested-display">
+        <span class="requested-label">{{ 'dogs.fields.dropLocation' | transloco }}</span>
+        <span class="requested-value">{{ form().get('dropLocation')?.value || '—' }}</span>
+      </div>
+    } @else {
       <div class="field fw">
-        <p-ifta-label>
-          <p-select
-            [inputId]="'adminDest-' + idx()"
-            formControlName="destinationId"
-            [options]="tripDestinations()"
-            optionLabel="name"
-            optionValue="id"
-            [showClear]="true"
-            styleClass="w-full" />
-          <label [for]="'adminDest-' + idx()">{{ 'dogs.fields.adminDestination' | transloco }}</label>
+        <p-ifta-label class="w-full">
+          <input pInputText [id]="'pickupLocation-' + idx()" formControlName="pickupLocation" class="w-full" />
+          <label [for]="'pickupLocation-' + idx()">{{ 'dogs.fields.pickupLocation' | transloco }}</label>
+        </p-ifta-label>
+      </div>
+      <div class="field fw">
+        <p-ifta-label class="w-full">
+          <input pInputText [id]="'dropLocation-' + idx()" formControlName="dropLocation" class="w-full" />
+          <label [for]="'dropLocation-' + idx()">{{ 'dogs.fields.dropLocation' | transloco }}</label>
         </p-ifta-label>
       </div>
     }
   </div>
 
+  <!-- Row 3: Actual Pickup + Actual Destination -->
+  @if (tripPickupLocations().length > 0 || tripDestinations().length > 0) {
+    <div class="row">
+      @if (tripPickupLocations().length > 0) {
+        <div class="field fw">
+          <p-ifta-label>
+            <p-select
+              [inputId]="'pickupId-' + idx()"
+              formControlName="pickupLocationId"
+              [options]="pickupOptions()"
+              optionLabel="name"
+              optionValue="id"
+              [showClear]="false"
+              styleClass="w-full"
+              (onChange)="onPickupSelect($event.value)" />
+            <label [for]="'pickupId-' + idx()">
+              {{ 'dogs.fields.adminPickupLocation' | transloco }}
+            </label>
+          </p-ifta-label>
+          <!-- @if (form().get('pickupLocationId')?.value === null && form().get('pickupLocationId')?.touched) {
+            <small class="p-error">{{ 'dogs.errors.required' | transloco }}</small>
+          } -->
+          @if (form().get('pickupLocationId')?.value === null && form().get('pickupLocationId')?.dirty) {
+            <small class="text-color-secondary text-xs flex align-items-center gap-1">
+              <i class="pi pi-info-circle"></i>
+              {{ 'dogs.fields.pickupOtherHint' | transloco }}
+            </small>
+          }
+        </div>
+      } @else {
+        <div></div>
+      }
+      @if (tripDestinations().length > 0) {
+        <div class="field fw">
+          <p-ifta-label>
+            <p-select
+              [inputId]="'adminDest-' + idx()"
+              formControlName="destinationId"
+              [options]="tripDestinations()"
+              optionLabel="name"
+              optionValue="id"
+              [showClear]="true"
+              styleClass="w-full" />
+            <label [for]="'adminDest-' + idx()">{{ 'dogs.fields.adminDestination' | transloco }}</label>
+          </p-ifta-label>
+        </div>
+      }
+    </div>
+  }
 
+  <!-- Row 4: Requester (existing + new) -->
+  @if (!hideRequester()) {
+    <app-dog-requestor-selector [requestors]="requestors()" [idx]="idx()" />
+  }
 
+  <!-- Row 5: Receiver -->
   <div class="field fw">
     <p-ifta-label class="w-full">
       <input pInputText [id]="'receiver-' + idx()" formControlName="receiver" class="w-full" />
@@ -87,18 +104,52 @@
     </p-ifta-label>
   </div>
 
-  @if (!hideRequester()) {
-    <app-dog-requestor-selector [requestors]="requestors()" [idx]="idx()" />
-  }
-  
-  <div class="row row-chip">
+  <!-- Row 6: Size chips -->
+  <div class="chip-field">
+    <label class="chip-label">{{ 'dogs.fields.size' | transloco }}</label>
+    <div class="chip-list">
+      @for (s of sizes(); track s.value) {
+        <button type="button" class="chip"
+          [class.active]="form().get('size')?.value === s.value"
+          (click)="selectChip('size', s.value)">{{ s.label }}</button>
+      }
+    </div>
+    <!-- <small class="p-error" *appValidationError="form().get('size')">{{ 'dogs.errors.required' | transloco }}</small> -->
+  </div>
+
+  <!-- Row 7: Height chips -->
+  <div class="chip-field">
+    <label class="chip-label">{{ 'dogs.fields.height' | transloco }}</label>
+    <div class="chip-list">
+      @for (h of heights(); track h.value) {
+        <button type="button" class="chip"
+          [class.active]="form().get('height')?.value === h.value"
+          (click)="selectChip('height', h.value)">{{ h.label }}</button>
+      }
+    </div>
+  </div>
+
+  <!-- Row 8: Behaviors chips (multi-select) -->
+  <div class="chip-field">
+    <label class="chip-label">{{ 'dogs.fields.behaviors' | transloco }}</label>
+    <div class="chip-list">
+      @for (b of behaviorOptions(); track b.value) {
+        <button type="button" class="chip"
+          [class.active]="hasBehavior(b.value)"
+          (click)="toggleBehavior(b.value)">{{ b.label }}</button>
+      }
+    </div>
+  </div>
+
+  <!-- Row 9: Gender + Age -->
+  <div class="row">
     <div class="field fw">
       <p-ifta-label>
-        <p-select [inputId]="'gender-' + idx()" formControlName="gender" [options]="genders"
+        <p-select [inputId]="'gender-' + idx()" formControlName="gender" [options]="genders()"
           optionLabel="label" optionValue="value" styleClass="w-full" />
         <label [for]="'gender-' + idx()">{{ 'dogs.fields.gender' | transloco }}</label>
       </p-ifta-label>
-      <small class="p-error" *appValidationError="form().get('gender')">{{ 'dogs.errors.required' | transloco }}</small>
+      <!-- <small class="p-error" *appValidationError="form().get('gender')">{{ 'dogs.errors.required' | transloco }}</small> -->
     </div>
     <div class="field fw">
       <p-ifta-label>
@@ -108,14 +159,9 @@
       </p-ifta-label>
       <small class="p-error" *appValidationError="form().get('age')">{{ 'dogs.errors.ageMinimum' | transloco }}</small>
     </div>
-    <app-form-field
-      controlName="chipId"
-      labelKey="dogs.fields.microchipId"
-      errorKey="dogs.errors.chipIdRequired"
-      [maxlength]="15"
-      [idSuffix]="idx()" />
   </div>
 
+  <!-- Row 10: Notes -->
   <div class="field fw">
     <p-ifta-label>
       <textarea pTextarea [id]="'notes-' + idx()" formControlName="notes" rows="2"

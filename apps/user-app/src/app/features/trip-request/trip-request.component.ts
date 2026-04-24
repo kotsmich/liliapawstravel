@@ -38,7 +38,7 @@ import { NoTripHintComponent } from './components/no-trip-hint/no-trip-hint.comp
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    DatePipe, DecimalPipe, ReactiveFormsModule, FormsModule,
+    DatePipe, ReactiveFormsModule, FormsModule,
     AccordionModule, ButtonModule, DividerModule, MessageModule, ConfirmDialogModule,
     InputTextModule, IftaLabelModule, SelectModule, ProgressSpinnerModule, TagModule,
     DogFormComponent, TripCalendarComponent, ToastNotificationComponent, TranslocoModule, TooltipModule,
@@ -153,7 +153,9 @@ readonly selectedDateLocal = toSignal(this.store.select(selectCalendarSelectedDa
   dogGroup() {
     return this.fb.group({
       name:           [isDevMode() ? RandomUtil.pick(RandomProperty.dogNames) : null, Validators.required],
-      size:           ['small',                                 Validators.required],
+      size:           [],
+      height:         [null],
+      behaviors:      [[] as string[]],
       gender:         ['male',                                 Validators.required],
       age:            [ 1 ,                                 [Validators.required, Validators.min(0)]],
       chipId:         [''],

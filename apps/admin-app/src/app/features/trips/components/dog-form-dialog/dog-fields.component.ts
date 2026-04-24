@@ -64,14 +64,65 @@ export class DogFieldsComponent {
     }
   }
 
-  public sizes = [
+  readonly sizes = computed(() => {
+    this.langChange();
+    return [
       { value: 'small',  label: this.transloco.translate('dogs.fields.sizeSmall') },
       { value: 'medium', label: this.transloco.translate('dogs.fields.sizeMedium') },
       { value: 'large',  label: this.transloco.translate('dogs.fields.sizeLarge') },
     ];
+  });
 
-      public genders = [
+  readonly heights = computed(() => {
+    this.langChange();
+    return [
+      { value: 'under10', label: this.transloco.translate('dogs.fields.heightUnder10') },
+      { value: '10to25',  label: this.transloco.translate('dogs.fields.height10to25') },
+      { value: 'over30',  label: this.transloco.translate('dogs.fields.heightOver30') },
+    ];
+  });
+
+  readonly behaviorOptions = computed(() => {
+    this.langChange();
+    return [
+      { value: 'friendly',   label: this.transloco.translate('dogs.fields.behaviorFriendly') },
+      { value: 'aggressive', label: this.transloco.translate('dogs.fields.behaviorAggressive') },
+      { value: 'fearful',    label: this.transloco.translate('dogs.fields.behaviorFearful') },
+      { value: 'anxious',    label: this.transloco.translate('dogs.fields.behaviorAnxious') },
+      { value: 'calm',       label: this.transloco.translate('dogs.fields.behaviorCalm') },
+    ];
+  });
+
+  readonly genders = computed(() => {
+    this.langChange();
+    return [
       { value: 'male',   label: this.transloco.translate('dogs.fields.genderMale') },
       { value: 'female', label: this.transloco.translate('dogs.fields.genderFemale') },
     ];
+  });
+
+  selectChip(field: 'size' | 'height', value: string): void {
+    const ctrl = this.form().get(field);
+    if (!ctrl) return;
+    ctrl.setValue(ctrl.value === value ? null : value);
+    ctrl.markAsTouched();
+    ctrl.markAsDirty();
+  }
+
+  hasBehavior(value: string): boolean {
+    const current = this.form().get('behaviors')?.value as string[] | null;
+    return Array.isArray(current) && current.includes(value);
+  }
+
+  toggleBehavior(value: string): void {
+    const ctrl = this.form().get('behaviors');
+    if (!ctrl) return;
+    const current = Array.isArray(ctrl.value) ? [...(ctrl.value as string[])] : [];
+    const i = current.indexOf(value);
+    if (i >= 0) current.splice(i, 1);
+    else current.push(value);
+    ctrl.setValue(current);
+    ctrl.markAsTouched();
+    ctrl.markAsDirty();
+  }
 }

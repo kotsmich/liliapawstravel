@@ -195,3 +195,87 @@ body { font-family: 'Inter', sans-serif; background: var(--color-bg-light); colo
     .p-datepicker-day { height: 46px !important; }
   }
 }
+
+/* ============================================================
+   Form input focus + validation styling
+   - Focused field always shows a brand-orange ring (never red),
+     so the admin can clearly see which field is active.
+   - Red invalid border only appears when the field is touched
+     (i.e. the user blurred while leaving a required field empty)
+     AND not currently focused. Typing alone (ng-dirty) doesn't
+     paint red.
+   - Non-required fields are never invalid when empty, so they
+     never go red. This is handled by Angular's validators — no
+     extra CSS needed.
+   ============================================================ */
+:root {
+  --field-focus-border: var(--color-primary);
+  --field-focus-ring: 0 0 0 3px rgba(224, 123, 84, 0.28);
+  --field-invalid-ring: 0 0 0 2px rgba(239, 68, 68, 0.18);
+}
+
+/* 1. Suppress PrimeNG's default red on ng-dirty-but-not-yet-touched.
+      We only want the invalid look after blur. */
+.p-inputtext.ng-invalid.ng-dirty:not(.ng-touched),
+.p-textarea.ng-invalid.ng-dirty:not(.ng-touched),
+p-inputnumber.ng-invalid.ng-dirty:not(.ng-touched) > .p-inputtext,
+p-inputnumber.ng-invalid.ng-dirty:not(.ng-touched) .p-inputtext,
+.p-select.ng-invalid.ng-dirty:not(.ng-touched),
+.p-datepicker.ng-invalid.ng-dirty:not(.ng-touched) .p-inputtext {
+  border-color: var(--p-inputtext-border-color) !important;
+  box-shadow: none !important;
+}
+
+/* 2. Touched + invalid + not focused → red border (gentler than
+      PrimeNG's default solid red). */
+.p-inputtext.ng-invalid.ng-touched:not(:focus),
+.p-textarea.ng-invalid.ng-touched:not(:focus) {
+  border-color: var(--color-error) !important;
+  box-shadow: var(--field-invalid-ring) !important;
+}
+p-inputnumber.ng-invalid.ng-touched:not(.p-focus) > .p-inputtext,
+p-inputnumber.ng-invalid.ng-touched:not(.p-focus) .p-inputtext {
+  border-color: var(--color-error) !important;
+  box-shadow: var(--field-invalid-ring) !important;
+}
+.p-select.ng-invalid.ng-touched:not(.p-focus) {
+  border-color: var(--color-error) !important;
+  box-shadow: var(--field-invalid-ring) !important;
+}
+.p-datepicker.ng-invalid.ng-touched:not(.p-focus) .p-inputtext {
+  border-color: var(--color-error) !important;
+  box-shadow: var(--field-invalid-ring) !important;
+}
+
+/* 3. Focus always wins — brand orange ring overrides red. */
+.p-inputtext:enabled:focus,
+.p-textarea:enabled:focus {
+  border-color: var(--field-focus-border) !important;
+  box-shadow: var(--field-focus-ring) !important;
+  outline: none !important;
+}
+p-inputnumber.p-focus > .p-inputtext,
+p-inputnumber > .p-inputtext:enabled:focus,
+p-inputnumber .p-inputtext:enabled:focus {
+  border-color: var(--field-focus-border) !important;
+  box-shadow: var(--field-focus-ring) !important;
+  outline: none !important;
+}
+.p-select.p-focus,
+.p-select:focus-within {
+  border-color: var(--field-focus-border) !important;
+  box-shadow: var(--field-focus-ring) !important;
+  outline: none !important;
+}
+.p-datepicker.p-focus .p-inputtext,
+.p-datepicker .p-inputtext:enabled:focus {
+  border-color: var(--field-focus-border) !important;
+  box-shadow: var(--field-focus-ring) !important;
+  outline: none !important;
+}
+
+/* 4. Ifta-label: tint the floating label in brand orange while
+      its field is focused, so the active field is doubly obvious. */
+.p-iftalabel:focus-within label {
+  color: var(--color-primary) !important;
+}

@@ -214,6 +214,8 @@ export class DogManagerService {
       id:             [dog?.id             ?? ''],
       name:           [dog?.name           ?? ''],
       size:           [dog?.size           ?? ''],
+      height:         [dog?.height         ?? null],
+      behaviors:      [dog?.behaviors      ?? []],
       gender:         [dog?.gender         ?? ''],
       age:            [dog?.age            ??  1],
       chipId:         [dog?.chipId         ?? ''],

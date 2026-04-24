@@ -110,6 +110,8 @@ export class DogFormDialogComponent implements OnInit {
     return this.fb.group({
       name:             [RandomUtil.pick(RandomProperty.dogNames),  Validators.required],
       size:             [null],
+      height:           [null],
+      behaviors:        [[] as string[]],
       gender:           [null],
       age:              [null,   Validators.min(0)],
       chipId:           [null],
@@ -127,6 +129,8 @@ export class DogFormDialogComponent implements OnInit {
     return this.fb.group({
       name:             [d.name,              Validators.required],
       size:             [d.size],
+      height:           [d.height            ?? null],
+      behaviors:        [d.behaviors         ?? []],
       gender:           [d.gender],
       age:              [d.age,               Validators.min(0)],
       chipId:           [d.chipId],

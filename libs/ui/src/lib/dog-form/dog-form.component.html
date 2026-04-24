@@ -111,6 +111,45 @@
     </div>
   </div>
 
+  <!-- Row 4b: Height chips -->
+  <div class="dog-form__row dog-form__row--fields">
+    <div class="dog-form__field dog-form__field--size flex flex-column">
+      <label>{{ 'dogs.height' | transloco }}</label>
+      <div class="size-chips">
+        @for (h of heights(); track h.value) {
+          <button
+            type="button"
+            class="size-chip"
+            [class.active]="ctrl('height').value === h.value"
+            (click)="ctrl('height').setValue(h.value); ctrl('height').markAsTouched()">
+            {{ h.label }}
+          </button>
+        }
+      </div>
+      @if (ctrl('height').touched && errorFor('height')) {
+        <small class="p-error">{{ errorFor('height') }}</small>
+      }
+    </div>
+  </div>
+
+  <!-- Row 4c: Behavior chips (multi-select) -->
+  <div class="dog-form__row dog-form__row--fields">
+    <div class="dog-form__field dog-form__field--size flex flex-column">
+      <label>{{ 'dogs.behavior' | transloco }}</label>
+      <div class="size-chips">
+        @for (b of behaviors(); track b.value) {
+          <button
+            type="button"
+            class="size-chip"
+            [class.active]="hasBehavior(b.value)"
+            (click)="toggleBehavior(b.value)">
+            {{ b.label }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
   <!-- Row 5: Notes -->
   <div class="dog-form__row dog-form__row--notes flex">
     <div class="dog-form__field dog-form__field--full flex flex-column">

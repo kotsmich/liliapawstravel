@@ -21,7 +21,7 @@ type RequestDog = NonNullable<TripRequest['dogs']>[number];
   selector: 'app-request-detail-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DialogModule, ButtonModule, TagModule, GenericTableComponent, TranslocoModule, MediaViewerComponent, InternalNoteEditorComponent, RequestInfoGridComponent, RequestDetailFooterComponent],
+  imports: [DialogModule, ButtonModule, TagModule, GenericTableComponent, TranslocoModule, MediaViewerComponent, InternalNoteEditorComponent, RequestInfoGridComponent],
   providers: [LocalDatePipe],
   templateUrl: './request-detail-dialog.component.html',
   styleUrl: './request-detail-dialog.component.scss',

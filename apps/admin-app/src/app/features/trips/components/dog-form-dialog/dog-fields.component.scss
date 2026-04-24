@@ -9,12 +9,77 @@
   @media (max-width: 600px) { grid-template-columns: 1fr; }
 }
 
-.row-chip {
-  grid-template-columns: 130px 80px 1fr;
-  @media (max-width: 600px) { grid-template-columns: 1fr 1fr; }
-}
-
 .field { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.75rem; }
 .fw { width: 100%; }
 .p-error { font-size: 0.75rem; color: var(--color-error-alt); }
 
+.requested-display {
+  gap: 0.15rem;
+  padding: 0.25rem 0;
+}
+
+.requested-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #7a6358;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.requested-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text, #2c2220);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.chip-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.9rem;
+}
+
+.chip-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #7a6358;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 20px;
+  border: 1.5px solid var(--color-border, #e2d5d0);
+  background: var(--color-surface, #faf8f7);
+  color: var(--color-text-muted, #7a6358);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--color-primary, #e07b54);
+    color: var(--color-primary, #e07b54);
+    background: #fff5f0;
+  }
+
+  &.active {
+    border-color: var(--color-primary, #e07b54);
+    background: var(--color-primary, #e07b54);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(224, 123, 84, 0.25);
+  }
+}
