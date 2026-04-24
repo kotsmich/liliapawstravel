@@ -71,15 +71,28 @@ export function fitDimensions(
   return { w: srcW * ratio, h: srcH * ratio };
 }
 
-export function drawBrandedHeader(doc: import('jspdf').jsPDF, subtitle: string): void {
+export function drawBrandedHeader(
+  doc: import('jspdf').jsPDF,
+  subtitle: string,
+  height: number = BRAND_HEADER_HEIGHT,
+): void {
   const pageWidth = doc.internal.pageSize.getWidth();
   doc.setFillColor(...BRAND_COLOR);
-  doc.rect(0, 0, pageWidth, BRAND_HEADER_HEIGHT, 'F');
+  doc.rect(0, 0, pageWidth, height, 'F');
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(11);
+
+  const compact = height < BRAND_HEADER_HEIGHT;
+  const titleSize = compact ? 9.5 : 11;
+  const subtitleSize = compact ? 7 : 8;
+  const baselineY = compact ? height * 0.72 : 8;
+
+  doc.setFontSize(titleSize);
   doc.setFont('helvetica', 'bold');
-  doc.text('Lilia Paws Travel', PAGE_MARGIN, 8);
-  doc.setFontSize(8);
+  doc.text('Lilia Paws Travel', PAGE_MARGIN, baselineY);
+  const titleWidth = doc.getTextWidth('Lilia Paws Travel');
+
+  doc.setFontSize(subtitleSize);
   doc.setFont('helvetica', 'normal');
-  doc.text(subtitle, PAGE_MARGIN + 44, 8);
+  const subtitleX = compact ? PAGE_MARGIN + titleWidth + 4 : PAGE_MARGIN + 44;
+  doc.text(subtitle, subtitleX, baselineY);
 }

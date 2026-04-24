@@ -22,10 +22,10 @@
 
 <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event?.toString())" styleClass="dogs-tabs">
   <p-tablist>
-    <p-tab value="all">{{ 'trips.allDogsTab' | transloco: { count: dogManager.dogsData().length } }}</p-tab>
-    <p-tab value="byRequestor">{{ 'trips.byRequestorTab' | transloco: { count: dogManager.tripRequestors().length } }}</p-tab>
-    <p-tab value="byDestination">{{ 'trips.byDestinationTab' | transloco: { count: dogManager.tripDestinations().length } }}</p-tab>
     <p-tab value="byPickup">{{ 'trips.byPickupTab' | transloco: { count: dogManager.tripPickupLocations().length } }}</p-tab>
+    <p-tab value="byDestination">{{ 'trips.byDestinationTab' | transloco: { count: dogManager.tripDestinations().length } }}</p-tab>
+    <p-tab value="byRequestor">{{ 'trips.byRequestorTab' | transloco: { count: dogManager.tripRequestors().length } }}</p-tab>
+    <p-tab value="all">{{ 'trips.allDogsTab' | transloco: { count: dogManager.dogsData().length } }}</p-tab>
   </p-tablist>
 </p-tabs>
 

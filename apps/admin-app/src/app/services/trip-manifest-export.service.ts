@@ -18,7 +18,6 @@ const DOG_TABLE_COLUMN_STYLES = {
   7: { cellWidth: 40 },
 };
 
-const DOG_PR_TABLE_HEAD = [['#', 'Requester Name', 'Receiver Name', 'Destination', 'ChipId']];
 const DOG_PR_TABLE_COLUMN_STYLES = {
   0: { cellWidth: 10, halign: 'center' as const },
   1: { cellWidth: 45 },
@@ -26,7 +25,7 @@ const DOG_PR_TABLE_COLUMN_STYLES = {
   3: { cellWidth: 42 },
   4: { cellWidth: 40 },
 };
-const DOG_PR_TABLE_SPAN = DOG_PR_TABLE_HEAD[0].length;
+const DOG_PR_TABLE_SPAN = 5;
 
 function dogRow(dog: { name?: string; size?: string; age?: number; chipId?: string; pickupLocation?: string; dropLocation?: string; notes?: string }, index: number): (string | number)[] {
   return [
@@ -57,6 +56,7 @@ function dogPrRow(dog: Dog, index: number, trip: Trip): (string | number)[] {
 
 function buildGroupedBody(groups: DogGroup[], trip: Trip): RowInput[] {
   const body: RowInput[] = [];
+  let runningIndex = 0;
   for (const group of groups) {
     body.push([{
       content: group.label,
@@ -80,7 +80,10 @@ function buildGroupedBody(groups: DogGroup[], trip: Trip): RowInput[] {
       }]);
       continue;
     }
-    group.dogs.forEach((dog, i) => body.push(dogPrRow(dog, i, trip)));
+    for (const dog of group.dogs) {
+      body.push(dogPrRow(dog, runningIndex, trip));
+      runningIndex++;
+    }
   }
   return body;
 }
@@ -165,9 +168,15 @@ export class TripManifestExportService {
     const pageWidth = doc.internal.pageSize.getWidth();
     const font = await loadUnicodeFontIntoDoc(doc);
 
-    drawBrandedHeader(doc, `Trip Dog Manifest — By ${groupingType}`);
-
     const usePrLayout = groupingType === 'Pickup' || groupingType === 'Destination';
+    const compactHeaderHeight = 8;
+
+    drawBrandedHeader(
+      doc,
+      `Trip Dog Manifest — By ${groupingType}`,
+      usePrLayout ? compactHeaderHeight : undefined,
+    );
+
     const { tripDate, route } = usePrLayout
       ? tripMetaValues(trip)
       : tripMetaLines(doc, trip, pageWidth);
@@ -176,12 +185,10 @@ export class TripManifestExportService {
 
     if (usePrLayout) {
       autoTable(doc, {
-        startY: 18,
-        head: DOG_PR_TABLE_HEAD,
+        startY: compactHeaderHeight,
         body: buildGroupedBody(groups, trip),
-        styles:             { font },
-        headStyles:         { font, fillColor: BRAND_COLOR, textColor: [255, 255, 255], fontSize: 8, halign: 'left' },
-        bodyStyles:         { font, fontSize: 8, textColor: [50, 50, 50], valign: 'middle' },
+        styles:             { font, cellPadding: 1.2 },
+        bodyStyles:         { font, fontSize: 8, textColor: [50, 50, 50], valign: 'middle', cellPadding: 1.2 },
         alternateRowStyles: { fillColor: [255, 248, 240] },
         columnStyles:       DOG_PR_TABLE_COLUMN_STYLES,
         margin: { left: PAGE_MARGIN, right: PAGE_MARGIN },
@@ -221,8 +228,17 @@ export class TripManifestExportService {
       }
     }
 
-    const safeName = route.replace(/[^a-z0-9]/gi, '-').toLowerCase();
-    const safeGrouping = groupingType.toLowerCase().replace(/\s+/g, '-');
-    doc.save(`trip-manifest-${tripDate}-${safeName}-by-${safeGrouping}.pdf`);
+    const safeDate = tripDate.replace(/\//g, '-');
+    let fileName: string;
+    if (groupingType === 'Pickup') {
+      fileName = `Παραλαβες ${safeDate}.pdf`;
+    } else if (groupingType === 'Destination') {
+      fileName = `Παραδοσεις ${safeDate}.pdf`;
+    } else {
+      const safeName = route.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+      const safeGrouping = groupingType.toLowerCase().replace(/\s+/g, '-');
+      fileName = `trip-manifest-${tripDate}-${safeName}-by-${safeGrouping}.pdf`;
+    }
+    doc.save(fileName);
   }
 }
