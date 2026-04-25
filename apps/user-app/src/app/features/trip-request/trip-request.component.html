@@ -88,20 +88,24 @@
                 <div class="requester-fields">
                   <div class="field">
                     <p-ifta-label>
-                      <input pInputText id="reqName" formControlName="requesterName" size="small" />
+                      <input pInputText id="reqName" formControlName="requesterName" size="small"
+                        [attr.aria-invalid]="form.get('requesterName')?.touched && form.get('requesterName')?.invalid ? 'true' : null"
+                        [attr.aria-describedby]="form.get('requesterName')?.touched && form.get('requesterName')?.invalid ? 'reqName-err' : null" />
                       <label for="reqName">{{ 'tripRequest.fullName' | transloco }}</label>
                     </p-ifta-label>
                     @if (form.get('requesterName')?.touched && form.get('requesterName')?.invalid) {
-                      <small class="p-error">{{ 'tripRequest.required' | transloco }}</small>
+                      <small id="reqName-err" class="p-error" role="alert">{{ 'tripRequest.required' | transloco }}</small>
                     }
                   </div>
                   <div class="field">
                     <p-ifta-label>
-                      <input pInputText id="reqEmail" formControlName="requesterEmail" type="email" size="small" />
+                      <input pInputText id="reqEmail" formControlName="requesterEmail" type="email" size="small"
+                        [attr.aria-invalid]="form.get('requesterEmail')?.touched && form.get('requesterEmail')?.invalid ? 'true' : null"
+                        [attr.aria-describedby]="form.get('requesterEmail')?.touched && form.get('requesterEmail')?.invalid ? 'reqEmail-err' : null" />
                       <label for="reqEmail">{{ 'tripRequest.email' | transloco }}</label>
                     </p-ifta-label>
                     @if (form.get('requesterEmail')?.touched && form.get('requesterEmail')?.invalid) {
-                      <small class="p-error">{{ 'tripRequest.validEmail' | transloco }}</small>
+                      <small id="reqEmail-err" class="p-error" role="alert">{{ 'tripRequest.validEmail' | transloco }}</small>
                     }
                   </div>
                   <div class="field">
@@ -112,6 +116,7 @@
                         [(ngModel)]="phoneCountryCode"
                         [ngModelOptions]="{standalone: true}"
                         optionValue="value"
+                        [ariaLabel]="'tripRequest.phone' | transloco"
                         appendTo="body">
                         <ng-template #selectedItem let-item>
                           <div class="flag-option">
@@ -127,12 +132,14 @@
                         </ng-template>
                       </p-select>
                       <p-ifta-label class="flex-1">
-                        <input pInputText id="reqPhone" formControlName="requesterPhone" size="small" />
+                        <input pInputText id="reqPhone" formControlName="requesterPhone" size="small"
+                          [attr.aria-invalid]="form.get('requesterPhone')?.touched && form.get('requesterPhone')?.invalid ? 'true' : null"
+                          [attr.aria-describedby]="form.get('requesterPhone')?.touched && form.get('requesterPhone')?.invalid ? 'reqPhone-err' : null" />
                         <label for="reqPhone">{{ 'tripRequest.phone' | transloco }}</label>
                       </p-ifta-label>
                     </div>
                     @if (form.get('requesterPhone')?.touched && form.get('requesterPhone')?.invalid) {
-                      <small class="p-error">{{ 'tripRequest.required' | transloco }}</small>
+                      <small id="reqPhone-err" class="p-error" role="alert">{{ 'tripRequest.required' | transloco }}</small>
                     }
                   </div>
                 </div>

@@ -150,18 +150,24 @@
   padding: 1rem 1.25rem;
   text-align: center;
   cursor: pointer;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
   background: var(--color-surface, #faf8f7);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.3rem;
 
-  &:hover,
-  &:focus {
+  &:hover {
     border-color: var(--color-primary, #c97d5b);
     background: var(--color-surface-alt, #f5f0ee);
-    outline: none;
+  }
+
+  /* WCAG 2.4.7 — visible focus indicator for keyboard users */
+  &:focus-visible {
+    border-color: var(--color-primary-dark, #c05a33);
+    background: var(--color-surface-alt, #f5f0ee);
+    outline: 2px solid var(--focus-ring-color, #c05a33);
+    outline-offset: 2px;
   }
 
   &__icon {
@@ -232,28 +238,38 @@
 .size-chip {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
-  padding: 0.3rem 0.85rem;
-  border-radius: 20px;
+  /* WCAG 2.5.8 Target Size — min-height 44px, padding lifted from 0.3/0.85rem */
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border-radius: 22px;
   border: 1.5px solid var(--color-border, #e2d5d0);
   background: var(--color-surface, #faf8f7);
-  color: var(--color-text-muted, #7a6358);
-  font-size: 0.8rem;
+  color: var(--color-text-muted, #6b7280);
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
   white-space: nowrap;
 
   &:hover {
     border-color: var(--color-primary, #e07b54);
-    color: var(--color-primary, #e07b54);
+    color: var(--color-primary-on-light, #b04a26);
     background: #fff5f0;
   }
 
+  /* WCAG 2.4.7 — keyboard focus indicator */
+  &:focus-visible {
+    outline: 2px solid var(--focus-ring-color, #c05a33);
+    outline-offset: 2px;
+    border-color: var(--color-primary-dark, #c05a33);
+  }
+
   &.active {
-    border-color: var(--color-primary, #e07b54);
-    background: var(--color-primary, #e07b54);
+    border-color: var(--color-primary-dark, #c05a33);
+    background: var(--color-primary-dark, #c05a33);
     color: #fff;
-    box-shadow: 0 2px 8px rgba(224, 123, 84, 0.25);
+    box-shadow: 0 2px 8px rgba(176, 74, 38, 0.3);
   }
 }

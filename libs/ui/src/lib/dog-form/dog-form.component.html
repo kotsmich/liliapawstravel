@@ -4,9 +4,11 @@
   <div class="dog-form__row dog-form__row--name-receiver flex gap-2">
     <div class="dog-form__field flex flex-column">
       <label [for]="'name-' + index">{{ 'dogs.dogName' | transloco }}</label>
-      <input pInputText [id]="'name-' + index" formControlName="name" />
+      <input pInputText [id]="'name-' + index" formControlName="name"
+        [attr.aria-invalid]="ctrl('name').touched && errorFor('name') ? 'true' : null"
+        [attr.aria-describedby]="ctrl('name').touched && errorFor('name') ? 'name-' + index + '-err' : null" />
       @if (ctrl('name').touched && errorFor('name')) {
-        <small class="p-error">{{ errorFor('name') }}</small>
+        <small [id]="'name-' + index + '-err'" class="p-error" role="alert">{{ errorFor('name') }}</small>
       }
     </div>
     <div class="dog-form__field dog-form__field--receiver flex flex-column">
@@ -40,9 +42,10 @@
       } @else {
         <label [for]="'pickup-' + index">{{ 'dogs.pickupLocation' | transloco }}</label>
         <input pInputText [id]="'pickup-' + index" formControlName="pickupLocation"
-          />
+          [attr.aria-invalid]="ctrl('pickupLocation').touched && errorFor('pickupLocation') ? 'true' : null"
+          [attr.aria-describedby]="ctrl('pickupLocation').touched && errorFor('pickupLocation') ? 'pickup-' + index + '-err' : null" />
         @if (ctrl('pickupLocation').touched && errorFor('pickupLocation')) {
-          <small class="p-error">{{ errorFor('pickupLocation') }}</small>
+          <small [id]="'pickup-' + index + '-err'" class="p-error" role="alert">{{ errorFor('pickupLocation') }}</small>
         }
       }
     </div>
@@ -51,11 +54,17 @@
         {{ 'dogs.dropLocation' | transloco }}
         <i class="pi pi-info-circle"
            [pTooltip]="'dogs.dropLocationInfo' | transloco"
-           tooltipPosition="top"></i>
+           tooltipPosition="top"
+           role="img"
+           [attr.aria-label]="'dogs.dropLocationInfo' | transloco"
+           tabindex="0"></i>
+        <span class="sr-only">{{ 'dogs.dropLocationInfo' | transloco }}</span>
       </label>
-      <input pInputText [id]="'drop-' + index" formControlName="dropLocation"/>
+      <input pInputText [id]="'drop-' + index" formControlName="dropLocation"
+        [attr.aria-invalid]="ctrl('dropLocation').touched && errorFor('dropLocation') ? 'true' : null"
+        [attr.aria-describedby]="ctrl('dropLocation').touched && errorFor('dropLocation') ? 'drop-' + index + '-err' : null"/>
       @if (ctrl('dropLocation').touched && errorFor('dropLocation')) {
-        <small class="p-error">{{ errorFor('dropLocation') }}</small>
+        <small [id]="'drop-' + index + '-err'" class="p-error" role="alert">{{ errorFor('dropLocation') }}</small>
       }
     </div>
   </div>
@@ -64,9 +73,11 @@
   <div class="dog-form__row flex flex-wrap gap-2">
     <div class="dog-form__field flex flex-column">
       <label [for]="'chip-' + index">{{ 'dogs.microchipId' | transloco }}</label>
-      <input pInputText [id]="'chip-' + index" formControlName="chipId"maxlength="15" />
+      <input pInputText [id]="'chip-' + index" formControlName="chipId" maxlength="15"
+        [attr.aria-invalid]="ctrl('chipId').touched && errorFor('chipId') ? 'true' : null"
+        [attr.aria-describedby]="ctrl('chipId').touched && errorFor('chipId') ? 'chip-' + index + '-err' : null" />
       @if (ctrl('chipId').touched && errorFor('chipId')) {
-        <small class="p-error">{{ errorFor('chipId') }}</small>
+        <small [id]="'chip-' + index + '-err'" class="p-error" role="alert">{{ errorFor('chipId') }}</small>
       }
     </div>
     <div class="dog-form__field dog-form__field--sm flex flex-column">
@@ -74,7 +85,7 @@
       <p-inputnumber [inputId]="'age-' + index" formControlName="age"
         [min]="0" [showButtons]="false" styleClass="w-full" />
       @if (ctrl('age').touched && errorFor('age')) {
-        <small class="p-error">{{ errorFor('age') }}</small>
+        <small class="p-error" role="alert">{{ errorFor('age') }}</small>
       }
     </div>
     <div class="dog-form__field flex flex-column">
@@ -82,7 +93,7 @@
       <p-select [inputId]="'gender-' + index" formControlName="gender"
         [options]="genders()" optionLabel="label" optionValue="value" styleClass="w-full" />
       @if (ctrl('gender').touched && errorFor('gender')) {
-        <small class="p-error">{{ errorFor('gender') }}</small>
+        <small class="p-error" role="alert">{{ errorFor('gender') }}</small>
       }
     </div>
   </div>

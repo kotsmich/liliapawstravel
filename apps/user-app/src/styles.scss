@@ -5,25 +5,29 @@
   --color-primary-light: #f0a07a;
   --color-primary-dark:  #c05a33;
   --color-primary-hover: rgba(224, 123, 84, 0.15);
+  --color-primary-on-light: #b04a26; /* WCAG AA: ~5.9:1 on light bg — text/icons */
   --color-gold:          #c9a05a;
   --color-surface:       #fff8f0;
   --color-surface-alt:   #fdf3e8;
   --color-border:        #f0e0d0;
   --color-border-alt:    #e8d0c0;
   --color-text:          #1e1208;
-  --color-text-muted:    #8a7a6a;
-  --color-error:         #ef4444;
-  --color-success:       #22c55e;
-  --color-warning:       #f59e0b;
+  --color-text-muted:    #6b7280; /* darkened from #8a7a6a (~2.8:1) to ~5.0:1 on light backgrounds */
+  --color-label:         #4b5563; /* small-text label gray, ~7.0:1 on light */
+  --color-error:         #dc2626; /* darkened from #ef4444 for ~4.7:1 on white */
+  --color-error-strong:  #991b1b;
+  --color-success:       #15803d; /* darkened from #22c55e for ~4.6:1 on white */
+  --color-warning:       #b45309; /* darkened from #f59e0b for ~4.7:1 on white */
   --color-white:         #ffffff;
   --color-dark:          #1a1208;
   --color-sidebar:       #1e293b;
-  --color-sidebar-text:  #94a3b8;
+  --color-sidebar-text:  #cbd5e1; /* lifted from #94a3b8 (5.2:1) to ~10.4:1 on sidebar */
+  --color-sidebar-text-muted: #94a3b8;
   --color-sidebar-active:#ffffff;
   --color-slate-text:    #1e293b;
-  --color-slate-mid:     #64748b;
+  --color-slate-mid:     #475569; /* darkened from #64748b for ~6.7:1 on light */
   --color-slate-light:   #94a3b8;
-  --color-error-alt:     #dc2626;
+  --color-error-alt:     #b91c1c;
   --color-bg-light:      #f8fafc;
   --color-border-light:  #e2e8f0;
   --color-border-subtle: #f1f5f9;
@@ -32,6 +36,10 @@
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body:    'Inter', sans-serif;
   --navbar-h: 72px;
+
+  /* Focus ring — solid, high-contrast, meets WCAG 2.1 SC 1.4.11 (3:1) */
+  --focus-ring-color: #c05a33;
+  --focus-ring: 0 0 0 3px rgba(176, 74, 38, 0.55);
 }
 
 /* ── Keyframes ── */
@@ -79,6 +87,7 @@ body {
   font-family: var(--font-body);
   color: var(--color-text);
   background: #fff;
+  line-height: 1.6; /* WCAG 1.4.12 — improves readability for low-vision/dyslexic users */
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -91,13 +100,55 @@ a { color: inherit; text-decoration: none; }
 }
 .skip-link {
   position: absolute; top: -100%; left: 1rem; z-index: 10000;
-  padding: .75rem 1.5rem; background: var(--color-primary); color: #fff;
+  padding: .75rem 1.5rem; background: var(--color-primary-dark); color: #fff;
   font-weight: 700; border-radius: 0 0 8px 8px; text-decoration: none;
-  &:focus { top: 0; }
+  transition: top 0.15s ease-out;
+
+  &:focus,
+  &:focus-visible {
+    top: 0;
+    outline: 2px solid #fff;
+    outline-offset: -4px;
+  }
+}
+
+/* ── Global :focus-visible safety net for keyboard users (WCAG 2.4.7) ── */
+:where(button, a, [role="button"], [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Reduced motion (WCAG 2.3.3 / 2.2.2) ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ── PrimeNG global ── */
 .p-button { font-family: var(--font-body); font-weight: 600; border-radius: 30px; }
+
+/* WCAG 1.4.3 — placeholder & disabled contrast (PrimeNG defaults can fall below 4.5:1) */
+.p-inputtext::placeholder,
+.p-textarea::placeholder,
+input.p-inputtext::placeholder,
+textarea.p-inputtextarea::placeholder {
+  color: #6b7280; /* ~5.0:1 on white */
+  opacity: 1;
+}
+
+.p-inputtext:disabled,
+.p-textarea:disabled,
+.p-select.p-disabled,
+.p-inputnumber.p-disabled .p-inputtext {
+  color: #6b7280 !important; /* maintain readable contrast on disabled fields */
+  opacity: 1 !important;
+  -webkit-text-fill-color: #6b7280 !important; /* Safari iOS */
+}
 
 /* ── Form helpers ── */
 .field { display: flex; flex-direction: column; gap: .35rem; margin-bottom: .75rem; }

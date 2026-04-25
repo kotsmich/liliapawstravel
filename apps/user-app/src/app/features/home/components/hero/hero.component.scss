@@ -156,13 +156,21 @@
 }
 
 .hero__dot {
+  position: relative;
   width: 28px; height: 3px;
   border-radius: 3px;
   border: none;
-  background: rgba(255,255,255,.35);
+  background: rgba(255,255,255,.55); /* lifted from .35 for ~3:1 against dark gradient */
   cursor: pointer;
   padding: 0;
   transition: background .3s, width .3s;
+
+  /* WCAG 2.5.8 — invisible 24×24+ tap target without changing visible pill shape */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -11px -2px;
+  }
 
   &.active {
     background: #fff;
