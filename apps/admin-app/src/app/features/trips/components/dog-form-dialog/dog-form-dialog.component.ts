@@ -78,7 +78,7 @@ export class DogFormDialogComponent implements OnInit {
   private readonly _panelCount = signal(0);
   readonly panelForms = computed(() => { this._panelCount(); return (this.addForms?.controls ?? []) as FormGroup[]; });
 
-  activeAccordionPanels: string[] = ['0'];
+  activeAccordionPanels: string[] = [];
 
   private readonly fb = inject(FormBuilder);
 
@@ -86,7 +86,7 @@ export class DogFormDialogComponent implements OnInit {
     if (this.isNewDog()) {
       this.addForms = this.fb.array([this.buildAddDogGroup(1)]);
       this._panelCount.set(1);
-      this.activeAccordionPanels = ['0'];
+      this.activeAccordionPanels = [];
       this.activeForm$.next(this.addForms);
     } else {
       this.editForm = this.buildEditDogGroup(this.dog()!);
@@ -156,7 +156,7 @@ export class DogFormDialogComponent implements OnInit {
   addPanel(): void {
     this.addForms.push(this.buildAddDogGroup(this.addForms.length + 1));
     this._panelCount.update(v => v + 1);
-    this.activeAccordionPanels = [(this.addForms.length - 1).toString()];
+    this.activeAccordionPanels = [];
   }
 
   removePanel(i: number): void {

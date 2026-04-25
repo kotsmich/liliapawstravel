@@ -15,6 +15,7 @@
     align-items: center;
     justify-self: center;
     text-align: center;
+    min-width: 0;
   }
 
   &__right {
@@ -22,6 +23,18 @@
     align-items: center;
     gap: 0.5rem;
     justify-self: end;
+  }
+
+  @media (max-width: 630px) {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "left right"
+      "main main";
+    row-gap: 0.5rem;
+
+    &__left  { grid-area: left;  justify-self: start; }
+    &__right { grid-area: right; justify-self: end; }
+    &__main  { grid-area: main;  justify-self: stretch; width: 100%; }
   }
 }
 
@@ -49,9 +62,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
   strong { color: #1e293b; font-size: 1.05rem; font-weight: 600; }
   i { color: #475569; }
+
+  @media (max-width: 600px) {
+    strong { font-size: 0.95rem; }
+  }
 }
 
 .trip-body {
@@ -88,6 +106,25 @@
       color: #334155; /* ~9.5:1 on white */
       font-weight: 500;
       &.low { color: #b91c1c; font-weight: 700; }
+    }
+  }
+
+  @media (max-width: 630px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+
+    &__main {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.5rem;
+
+      ::ng-deep .p-button { width: 100%; justify-content: center; }
+    }
+
+    &__info {
+      align-items: center;
+      margin-left: 0;
     }
   }
 }

@@ -27,7 +27,11 @@
   }
 
   &__brand-name {
-    @media (max-width: 480px) { display: none; }
+    @media (max-width: 900px) { display: none; }
+  }
+
+  &__end app-font-size-control {
+    @media (max-width: 430px) { display: none; }
   }
 
   &__nav {
@@ -92,7 +96,7 @@
   }
 
   &__label {
-    @media (max-width: 600px) { display: none; }
+    @media (max-width: 800px) { display: none; }
   }
 }
 
