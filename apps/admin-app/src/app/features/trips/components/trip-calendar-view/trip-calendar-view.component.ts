@@ -31,7 +31,7 @@ export class TripCalendarViewComponent {
 
   onDateDblClicked(dateStr: string): void {
     const trip = this.trips().find((trip) => trip.date === dateStr);
-    if (trip) this.editTrip.emit(trip);
+    if (trip) this.viewDetails.emit(trip);
   }
 
 }
