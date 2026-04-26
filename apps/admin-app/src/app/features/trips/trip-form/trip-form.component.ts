@@ -1,5 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject, computed } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { Component, OnInit, ChangeDetectionStrategy, inject, computed, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormControl, Validators } from '@angular/forms';
@@ -9,7 +9,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ChipModule } from 'primeng/chip';
 import { Store } from '@ngrx/store';
-import { filter, map, startWith } from 'rxjs';
+import { filter, map, startWith, take } from 'rxjs';
 import { clearSelectedTrip, loadTripById, updateTrip, addTrip, selectSelectedTrip, selectTripsMutating } from '@admin/features/trips/store';
 import { toIsoDateStr } from '@admin/shared/utils/date';
 import { Dog } from '@models/lib/dog.model';
@@ -66,13 +66,11 @@ export class TripFormComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly transloco = inject(TranslocoService);
   readonly dogManager = inject(DogManagerService);
 
   isEdit = false;
   editId: string | null = null;
-  private formPatched = false;
 
   readonly today = new Date();
 
@@ -190,12 +188,13 @@ export class TripFormComponent implements OnInit {
     return null;
   });
 
-  selectedDog: Dog | null = null;
-  dogDetailVisible = false;
+  readonly selectedDog = signal<Dog | null>(null);
+  readonly dogDetailVisible = signal(false);
 
-  get selectedRequester() {
-    return this.selectedDog ? this.dogManager.getRequesterForDog(this.selectedDog) : null;
-  }
+  readonly selectedRequester = computed(() => {
+    const dog = this.selectedDog();
+    return dog ? this.dogManager.getRequesterForDog(dog) : null;
+  });
 
   ngOnInit(): void {
     this.resolveRouteContext();
@@ -217,17 +216,14 @@ export class TripFormComponent implements OnInit {
     this.store.dispatch(loadTripById({ id: this.editId! }));
     this.store.select(selectSelectedTrip).pipe(
       filter(Boolean),
-      takeUntilDestroyed(this.destroyRef),
+      take(1),
     ).subscribe((trip) => {
-      if (!this.formPatched) {
-        this.form.patchValue({
-          ...trip,
-          destinations: trip.destinations?.length ? trip.destinations : DEFAULT_DESTINATIONS,
-          pickupLocations: trip.pickupLocations?.length ? trip.pickupLocations : DEFAULT_PICKUP_LOCATIONS,
-          date: trip.date ? new Date(trip.date + 'T00:00:00') : null,
-        });
-        this.formPatched = true;
-      }
+      this.form.patchValue({
+        ...trip,
+        destinations: trip.destinations?.length ? trip.destinations : DEFAULT_DESTINATIONS,
+        pickupLocations: trip.pickupLocations?.length ? trip.pickupLocations : DEFAULT_PICKUP_LOCATIONS,
+        date: trip.date ? new Date(trip.date + 'T00:00:00') : null,
+      });
       this.dogManager.initFromTrip(trip);
     });
   }
@@ -241,8 +237,8 @@ export class TripFormComponent implements OnInit {
   }
 
   openDogDetail(dog: Dog): void {
-    this.selectedDog = dog;
-    this.dogDetailVisible = true;
+    this.selectedDog.set(dog);
+    this.dogDetailVisible.set(true);
   }
 
   navigateToTrips(): void {

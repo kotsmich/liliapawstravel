@@ -11,6 +11,7 @@ import {
   updateRequestNote, updateRequestNoteSuccess, updateRequestNoteFailure,
   setSelectedRequests, setSelectedTripId,
 } from './requests.actions';
+import { deleteTripSuccess } from '@admin/features/trips/store';
 
 export interface RequestsState {
   requests: TripRequest[];
@@ -65,8 +66,28 @@ export const requestsFeature = createFeature({
       requests: state.requests.map((existing) => (existing.id === request.id ? request : existing)),
     })),
     on(bulkApproveRequests, bulkRejectRequests, (state) => ({ ...state, loading: true, error: null })),
-    on(bulkApproveRequestsSuccess, bulkRejectRequestsSuccess, (state) => ({ ...state, loading: false, selectedRequestIds: [] })),
+    on(bulkApproveRequestsSuccess, (state, { succeeded }) => ({
+      ...state,
+      requests: state.requests.map((request) =>
+        succeeded.includes(request.id) ? { ...request, status: 'approved' as const } : request,
+      ),
+      loading: false,
+      selectedRequestIds: [],
+    })),
+    on(bulkRejectRequestsSuccess, (state, { succeeded }) => ({
+      ...state,
+      requests: state.requests.map((request) =>
+        succeeded.includes(request.id) ? { ...request, status: 'rejected' as const } : request,
+      ),
+      loading: false,
+      selectedRequestIds: [],
+    })),
     on(bulkApproveRequestsFailure, bulkRejectRequestsFailure, (state, { error }) => ({ ...state, loading: false, error })),
+    on(deleteTripSuccess, (state, { id }) => ({
+      ...state,
+      requests: state.requests.filter((request) => request.tripId !== id),
+      selectedTripId: state.selectedTripId === id ? null : state.selectedTripId,
+    })),
     on(setSelectedRequests, (state, { ids }) => ({ ...state, selectedRequestIds: ids })),
     on(setSelectedTripId, (state, { tripId }) => ({ ...state, selectedTripId: tripId })),
     on(updateRequestNote, (state) => ({ ...state })),

@@ -22,6 +22,7 @@ import {
   autoSelectNearestTripDate,
 } from './trips.actions';
 import { selectAllTrips } from './trips.selectors';
+import { pickAutoSelectDate } from './nearest-trip.util';
 
 @Injectable()
 export class TripsEffects {
@@ -44,13 +45,7 @@ export class TripsEffects {
     this.actions$.pipe(
       ofType(autoSelectNearestTripDate),
       withLatestFrom(this.store.select(selectAllTrips)),
-      map(([, trips]) => {
-        const today = new Date().toISOString().slice(0, 10);
-        const nearestFuture = trips.map((trip) => trip.date).filter((date) => date >= today).sort()[0];
-        const mostRecentPast = [...trips.map((trip) => trip.date)].sort().at(-1);
-        const selected = nearestFuture ?? mostRecentPast ?? today;
-        return selectDate({ date: selected });
-      })
+      map(([, trips]) => selectDate({ date: pickAutoSelectDate(trips) }))
     )
   );
 

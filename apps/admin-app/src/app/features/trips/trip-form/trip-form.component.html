@@ -43,7 +43,7 @@
 </div>
 
 <app-dog-detail-dialog
-  [visible]="dogDetailVisible"
-  [dog]="selectedDog"
-  [requester]="selectedRequester"
-  (visibleChange)="dogDetailVisible = $event" />
+  [visible]="dogDetailVisible()"
+  [dog]="selectedDog()"
+  [requester]="selectedRequester()"
+  (visibleChange)="dogDetailVisible.set($event)" />

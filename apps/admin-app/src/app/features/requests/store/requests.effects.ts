@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, EMPTY, filter, map, mergeMap, of, switchMap, withLatestFrom } from 'rxjs';
+import { auditTime, catchError, EMPTY, filter, map, mergeMap, of, switchMap, withLatestFrom } from 'rxjs';
 import { extractError } from '@admin/shared/utils/extract-error';
 import { Store } from '@ngrx/store';
 import { RequestsService } from '@admin/services/requests.service';
@@ -16,7 +16,8 @@ import {
   setSelectedTripId, autoSelectNearestTripId,
 } from './requests.actions';
 import { selectSelectedTripId } from './requests.selectors';
-import { deleteTripSuccess, loadTripByIdSuccess, loadTrips, loadTripsSuccess, selectAllTrips } from '@admin/features/trips/store';
+import { loadTripByIdSuccess, loadTrips, loadTripsSuccess, selectAllTrips } from '@admin/features/trips/store';
+import { findNearestTrip } from '@admin/features/trips/store/nearest-trip.util';
 
 @Injectable()
 export class RequestsEffects {
@@ -99,20 +100,15 @@ export class RequestsEffects {
     )
   );
 
-  reloadAfterMutation$ = createEffect(() =>
+  // Single-record approve/reject/delete are patched in-place by the reducer,
+  // so they no longer trigger a full list reload. Only bulk operations refetch
+  // the trips list (capacities change), and the request list is updated
+  // optimistically for bulk and on deleteTripSuccess by the reducer.
+  reloadTripsAfterBulkApprove$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(
-        approveRequestSuccess,
-        rejectRequestSuccess,
-        bulkApproveRequestsSuccess,
-        bulkRejectRequestsSuccess,
-        deleteTripSuccess,
-      ),
-      mergeMap((action) =>
-        action.type === bulkApproveRequestsSuccess.type
-          ? [loadRequests(), loadTrips()]
-          : [loadRequests()]
-      )
+      ofType(bulkApproveRequestsSuccess),
+      auditTime(300),
+      map(() => loadTrips())
     )
   );
 
@@ -129,12 +125,7 @@ export class RequestsEffects {
     this.actions$.pipe(
       ofType(autoSelectNearestTripId),
       withLatestFrom(this.store.select(selectAllTrips)),
-      map(([, trips]) => {
-        const nearest = [...trips]
-          .filter((trip) => trip.status === 'upcoming')
-          .sort((a, b) => a.date.localeCompare(b.date))[0];
-        return setSelectedTripId({ tripId: nearest?.id ?? null });
-      })
+      map(([, trips]) => setSelectedTripId({ tripId: findNearestTrip(trips, { status: 'upcoming' })?.id ?? null }))
     )
   );
 

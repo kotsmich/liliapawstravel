@@ -1,6 +1,8 @@
 import { createSelector, MemoizedSelector } from '@ngrx/store';
 import { selectRequestsState } from './requests.reducer';
 import { TripRequest } from '@models/lib/trip-request.model';
+import { Trip } from '@models/lib/trip.model';
+import { selectAllTrips } from '@admin/features/trips/store';
 
 export const selectAllRequests = createSelector(selectRequestsState, (state) => state.requests);
 export const selectRequestsIsLoading = createSelector(selectRequestsState, (state) => state.loading);
@@ -58,3 +60,54 @@ export const selectRequestsByTripId = (tripId: string): MemoizedSelector<object,
 };
 
 export const clearSelectRequestsByTripIdCache = (): void => _cache.clear();
+
+export interface RequestsViewModel {
+  loading: boolean;
+  selectedTripId: string | null;
+  selectedRequests: TripRequest[];
+  pendingCount: number;
+  approvedCount: number;
+  rejectedCount: number;
+  cancelledCount: number;
+  allRequests: TripRequest[];
+  filteredRequests: TripRequest[];
+  trips: Trip[];
+}
+
+export const initialRequestsViewModel: RequestsViewModel = {
+  loading: false,
+  selectedTripId: null,
+  selectedRequests: [],
+  pendingCount: 0,
+  approvedCount: 0,
+  rejectedCount: 0,
+  cancelledCount: 0,
+  allRequests: [],
+  filteredRequests: [],
+  trips: [],
+};
+
+export const selectRequestsViewModel = createSelector(
+  selectRequestsIsLoading,
+  selectSelectedTripId,
+  selectSelectedRequests,
+  selectPendingCount,
+  selectApprovedCount,
+  selectRejectedCount,
+  selectCancelledCount,
+  selectAllRequests,
+  selectFilteredBySelectedTrip,
+  selectAllTrips,
+  (loading, selectedTripId, selectedRequests, pendingCount, approvedCount, rejectedCount, cancelledCount, allRequests, filteredRequests, trips): RequestsViewModel => ({
+    loading,
+    selectedTripId,
+    selectedRequests,
+    pendingCount,
+    approvedCount,
+    rejectedCount,
+    cancelledCount,
+    allRequests,
+    filteredRequests,
+    trips,
+  }),
+);

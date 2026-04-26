@@ -2,20 +2,18 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 import { DatePipe } from '@angular/common';
 import { LocalDatePipe } from '@ui/lib/pipes/local-date.pipe';
 import { TranslocoModule } from '@jsverse/transloco';
-import { Store } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Observable, take } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { loadTrips, selectAllTrips } from '@admin/features/trips/store';
 import {
-  loadRequests, selectRequestsIsLoading,
+  loadRequests,
   updateRequestNote, setSelectedRequests, setSelectedTripId,
-  selectSelectedRequests, selectSelectedTripId, selectAllRequests,
-} from '@admin/features/requests/store';
-import {
-  selectFilteredBySelectedTrip,
-  selectPendingCount, selectApprovedCount, selectRejectedCount, selectCancelledCount,
+  selectAllRequests,
+  selectRequestsViewModel, initialRequestsViewModel,
 } from '@admin/features/requests/store';
 import { resetRequests } from '@admin/core/store/notifications';
 import { TripRequest } from '@models/lib/trip-request.model';
@@ -45,16 +43,18 @@ export class RequestsListComponent implements OnInit {
   private readonly localDate = inject(LocalDatePipe);
   private readonly approvalService = inject(RequestsApprovalService);
 
-  readonly loading          = toSignal(this.store.select(selectRequestsIsLoading),       { initialValue: false });
-  readonly selectedTripId   = toSignal(this.store.select(selectSelectedTripId),          { initialValue: null as string | null });
-  readonly selectedRequests = toSignal(this.store.select(selectSelectedRequests),        { initialValue: [] as TripRequest[] });
-  readonly trips            = toSignal(this.store.select(selectAllTrips),                { initialValue: [] as Trip[] });
-  readonly pendingCount     = toSignal(this.store.select(selectPendingCount),            { initialValue: 0 });
-  readonly approvedCount    = toSignal(this.store.select(selectApprovedCount),           { initialValue: 0 });
-  readonly rejectedCount    = toSignal(this.store.select(selectRejectedCount),           { initialValue: 0 });
-  readonly cancelledCount   = toSignal(this.store.select(selectCancelledCount),          { initialValue: 0 });
-  private readonly allRequests      = toSignal(this.store.select(selectAllRequests),             { initialValue: [] as TripRequest[] });
-  private readonly filteredRequests = toSignal(this.store.select(selectFilteredBySelectedTrip), { initialValue: [] as TripRequest[] });
+  private readonly vm = toSignal(this.store.select(selectRequestsViewModel), { initialValue: initialRequestsViewModel });
+
+  readonly loading          = computed(() => this.vm().loading);
+  readonly selectedTripId   = computed(() => this.vm().selectedTripId);
+  readonly selectedRequests = computed(() => this.vm().selectedRequests);
+  readonly trips            = computed(() => this.vm().trips);
+  readonly pendingCount     = computed(() => this.vm().pendingCount);
+  readonly approvedCount    = computed(() => this.vm().approvedCount);
+  readonly rejectedCount    = computed(() => this.vm().rejectedCount);
+  readonly cancelledCount   = computed(() => this.vm().cancelledCount);
+  private readonly allRequests      = computed(() => this.vm().allRequests);
+  private readonly filteredRequests = computed(() => this.vm().filteredRequests);
 
   activeTab         = signal('all');
   selectedRequestId = signal<string | null>(null);
@@ -71,8 +71,8 @@ export class RequestsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(resetRequests());
-    this.store.dispatch(loadRequests());
-    this.store.dispatch(loadTrips());
+    this.dispatchIfMissing(this.store.select(selectAllRequests), () => loadRequests());
+    this.dispatchIfMissing(this.store.select(selectAllTrips),    () => loadTrips());
   }
 
   onSelectionChange(requests: TripRequest[]): void { this.store.dispatch(setSelectedRequests({ ids: requests.map((r) => r.id) })); }
@@ -116,5 +116,11 @@ export class RequestsListComponent implements OnInit {
         value:   trip.id,
         pending: requests.filter((r) => r.tripId === trip.id && r.status === 'pending').length,
       }));
+  }
+
+  private dispatchIfMissing<T>(source: Observable<T[]>, actionFactory: () => Action): void {
+    source.pipe(take(1)).subscribe((value) => {
+      if (!value || value.length === 0) this.store.dispatch(actionFactory());
+    });
   }
 }
