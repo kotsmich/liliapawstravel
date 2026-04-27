@@ -14,6 +14,7 @@ import { clearSelectedTrip, loadTripById, updateTrip, addTrip, selectSelectedTri
 import { toIsoDateStr } from '@admin/shared/utils/date';
 import { Dog } from '@models/lib/dog.model';
 import { TripDestination } from '@models/lib/trip.model';
+import { environment } from '../../../../environments/environment';
 import { DogDetailDialogComponent } from '@admin/features/trips/components/dog-detail-dialog/dog-detail-dialog.component';
 import { DogManagerService } from './dog-manager.service';
 import { DogDialogService } from './dog-dialog.service';
@@ -22,28 +23,8 @@ import { TripInfoFormComponent } from './trip-info-form/trip-info-form.component
 import { type LocationListConfig } from './trip-location-list/trip-location-list.component';
 import { TripDogsTabsComponent } from '../components/trip-dogs-tabs/trip-dogs-tabs.component';
 
-const DEFAULT_DESTINATIONS: TripDestination[] = [
-  { name: 'Μόναχο' },
-  { name: 'Στουγκαρδη' },
-  { name: 'Καρσλουη' },
-  { name: 'Φρανκφούρτη' },
-  { name: 'Κολωνια' },
-  { name: 'Ντίσελντορφ' },
-  { name: 'Ντορτμουντ' },
-  { name: 'Ολλανδια' },
-  { name: 'Καλαις' },
-];
-
-const DEFAULT_PICKUP_LOCATIONS: TripDestination[] = [
-  { name: 'Αγιοκαμπος' },
-  { name: 'Λάρισα' },
-  { name: 'Λιτοχωρο' },
-  { name: 'Κατερινη' },
-  { name: 'Θεσσαλονίκη' },
-  { name: 'Κοζανι' },
-  { name: 'Ιωάννινα' },
-  { name: 'Ηγουμενιτσα' },
-];
+const DEFAULT_DESTINATIONS = environment.defaultDestinations;
+const DEFAULT_PICKUP_LOCATIONS = environment.defaultPickupLocations;
 @Component({
   selector: 'app-trip-form',
   standalone: true,

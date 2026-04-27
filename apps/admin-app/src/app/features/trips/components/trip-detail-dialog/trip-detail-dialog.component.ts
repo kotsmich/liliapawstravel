@@ -4,6 +4,7 @@ import { DogDialogService } from '../../trip-form/dog-dialog.service';
 import { Trip } from '@models/lib/trip.model';
 import { Dog } from '@models/lib/dog.model';
 import { TripRequest } from '@models/lib/trip-request.model';
+import { DetailDialogBase } from '@admin/shared/components/detail-dialog-base';
 import { DogDetailDialogComponent } from '../dog-detail-dialog/dog-detail-dialog.component';
 import { DogManagerService } from '../../trip-form/dog-manager.service';
 import { TripDogsTabsComponent } from '../trip-dogs-tabs/trip-dogs-tabs.component';
@@ -21,10 +22,9 @@ import { TripDogsTabsComponent } from '../trip-dogs-tabs/trip-dogs-tabs.componen
   templateUrl: './trip-detail-dialog.component.html',
   styleUrls: ['./trip-detail-dialog.component.scss'],
 })
-export class TripDetailDialogComponent {
+export class TripDetailDialogComponent extends DetailDialogBase {
   readonly dogManager = inject(DogManagerService);
 
-  readonly visible = input(false);
   readonly header = input('');
   readonly trip = signal<Trip | null>(null);
 
@@ -34,12 +34,10 @@ export class TripDetailDialogComponent {
   }
   readonly requests = input<TripRequest[]>([]);
   readonly activeTab = input('all');
-  readonly visibleChange = output<boolean>();
   readonly tabChanged = output<string>();
   readonly approveRequest = output<TripRequest>();
   readonly rejectRequest = output<TripRequest>();
   readonly deleteRequest = output<TripRequest>();
-  readonly closed = output<void>();
 
   readonly selectedDog = signal<Dog | null>(null);
   readonly dogDetailVisible = signal(false);
@@ -53,9 +51,4 @@ export class TripDetailDialogComponent {
     const dog = this.selectedDog();
     return dog ? this.dogManager.getRequesterForDog(dog) : null;
   };
-
-  onHide(): void {
-    this.visibleChange.emit(false);
-    this.closed.emit();
-  }
 }

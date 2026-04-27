@@ -5,6 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.interface';
 import { requestStatusSeverity, requestStatusLabel, RequestStatus } from '@admin/shared/utils/status';
+import { statusBadgeColumn } from '@admin/shared/utils/status-badge-column';
 import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
 
 type RequestRow = TripRequest & { dogsCount: number };
@@ -56,13 +57,13 @@ export class RequestsTableComponent {
     return [
       { field: 'requesterName', header: this.transloco.translate('requests.table.requester'), sortable: true },
       { field: 'dogsCount', header: this.transloco.translate('requests.table.dogs'), sortable: true },
-      {
-        field: 'status', header: this.transloco.translate('requests.table.status'), sortable: true, type: 'badge',
-        badgeConfig: {
-          severity: (_, row) => requestStatusSeverity((row as RequestRow).status as RequestStatus),
-          label:    (_, row) => requestStatusLabel((row as RequestRow).status as RequestStatus, this.transloco),
-        },
-      },
+      statusBadgeColumn<RequestRow>(
+        'status',
+        this.transloco.translate('requests.table.status'),
+        (_, row) => requestStatusSeverity(row.status as RequestStatus),
+        (_, row) => requestStatusLabel(row.status as RequestStatus, this.transloco),
+        { sortable: true },
+      ),
     ];
   });
 

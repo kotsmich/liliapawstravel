@@ -4,16 +4,15 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { Trip } from '@models/lib/trip.model';
 import { TableColumn, TableConfig } from '@models/lib/table-column.interface';
 import { requestStatusSeverity, requestStatusLabel, RequestStatus } from '@admin/shared/utils/status';
+import { DetailDialogBase } from '@admin/shared/components/detail-dialog-base';
 import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
 import { MediaViewerComponent } from '../../../../shared/components/media-viewer/media-viewer.component';
 import { InternalNoteEditorComponent } from './internal-note-editor/internal-note-editor.component';
 import { RequestInfoGridComponent } from './request-info-grid/request-info-grid.component';
-import { RequestDetailFooterComponent } from './request-detail-footer/request-detail-footer.component';
 
 type RequestDog = NonNullable<TripRequest['dogs']>[number];
 
@@ -26,12 +25,10 @@ type RequestDog = NonNullable<TripRequest['dogs']>[number];
   templateUrl: './request-detail-dialog.component.html',
   styleUrl: './request-detail-dialog.component.scss',
 })
-export class RequestDetailDialogComponent {
-  readonly visible = input(false);
+export class RequestDetailDialogComponent extends DetailDialogBase {
   readonly request = input<TripRequest | null>(null);
   readonly trips = input<Trip[]>([]);
 
-  readonly visibleChange = output<boolean>();
   readonly approve = output<void>();
   readonly reject = output<void>();
   readonly cancel = output<void>();
@@ -61,6 +58,7 @@ export class RequestDetailDialogComponent {
   });
 
   readonly dogColumns = computed((): TableColumn<RequestDog>[] => {
+    // this.langChange();
     return [
       {
         field: 'photoUrl',

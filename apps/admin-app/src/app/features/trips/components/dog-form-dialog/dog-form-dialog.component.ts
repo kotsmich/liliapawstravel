@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, input, output, OnInit, computed, signal } from '@angular/core';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { Subject, switchMap, startWith, map, of } from 'rxjs';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -12,6 +12,7 @@ import { DogFieldsComponent } from './dog-fields.component';
 import { DogRequestorSelectorComponent } from './dog-requestor-selector/dog-requestor-selector.component';
 import { RandomProperty, RandomUtil } from '@models/index';
 import { AsyncButtonDirective } from '@ui/lib/directives/async-button.directive';
+import { requesterRequiredValidator } from '@admin/shared/validators/requester-required.validator';
 
 
 @Component({
@@ -95,12 +96,6 @@ export class DogFormDialogComponent implements OnInit {
     }
   }
 
-  private static requesterValidator(group: AbstractControl): ValidationErrors | null {
-    const hasExisting = !!group.get('requesterId')?.value;
-    const hasNew = !!group.get('newRequesterName')?.value?.trim();
-    return hasExisting || hasNew ? null : { requesterRequired: true };
-  }
-
   static requesterKey(d?: Dog | null): string | null {
     return d?.requesterId ?? null;
   }
@@ -145,7 +140,7 @@ export class DogFormDialogComponent implements OnInit {
       destinationId:    [d.destinationId     ?? null],
       receiver:         [d.receiver          ?? null],
       receiverPhone:    [d.receiverPhone     ?? null],
-    }, { validators: DogFormDialogComponent.requesterValidator });
+    }, { validators: requesterRequiredValidator });
   }
 
   panelLabel(i: number): string {

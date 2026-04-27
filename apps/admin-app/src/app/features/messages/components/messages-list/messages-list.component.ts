@@ -2,11 +2,11 @@ import { Component, ChangeDetectionStrategy, inject, computed, input, output } f
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { ContactSubmission } from '@models/lib/contact-form.model';
 import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.interface';
 import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
 import { ConfirmActionService } from '@admin/shared/services/confirm-action.service';
+import { statusBadgeColumn } from '@admin/shared/utils/status-badge-column';
 
 @Component({
   selector: 'app-messages-list',
@@ -47,15 +47,14 @@ export class MessagesListComponent {
         formatter: (val) => (val as string) || '—',
       },
       { field: 'submittedAt', header: this.transloco.translate('messages.table.date'), sortable: true, type: 'date', dateFormat: 'dd/MM/yyyy HH:mm' },
-      {
-        field: 'isRead', header: this.transloco.translate('messages.table.status'), type: 'badge',
-        badgeConfig: {
-          severity: (val) => val ? 'secondary' : 'warn',
-          label: (val) => val
-            ? this.transloco.translate('messages.table.statusRead')
-            : this.transloco.translate('messages.table.statusNew'),
-        },
-      },
+      statusBadgeColumn<ContactSubmission>(
+        'isRead',
+        this.transloco.translate('messages.table.status'),
+        (val) => val ? 'secondary' : 'warn',
+        (val) => val
+          ? this.transloco.translate('messages.table.statusRead')
+          : this.transloco.translate('messages.table.statusNew'),
+      ),
     ];
   });
 

@@ -6,6 +6,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Trip } from '@models/lib/trip.model';
 import { TableColumn, TableAction, TableConfig } from '@models/lib/table-column.interface';
 import { tripStatusSeverity, tripStatusLabel, TripStatus } from '@admin/shared/utils/status';
+import { statusBadgeColumn } from '@admin/shared/utils/status-badge-column';
 import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
 
 @Component({
@@ -39,26 +40,20 @@ export class RecentTripsComponent {
       {
         field: 'route',
         header: this.transloco.translate('trips.table.route'),
-        formatter: (_, row) => {
-          const t = row as Trip;
-          return `${t.departureCity}, ${t.departureCountry} → ${t.arrivalCity}, ${t.arrivalCountry}`;
-        },
+        formatter: (_, row) => `${row.departureCity}, ${row.departureCountry} → ${row.arrivalCity}, ${row.arrivalCountry}`,
       },
       { field: 'date', header: this.transloco.translate('trips.table.date') },
       {
         field: 'dogs',
         header: this.transloco.translate('trips.dogs'),
-        formatter: (_, row) => String((row as Trip).dogs?.length ?? 0),
+        formatter: (_, row) => String(row.dogs?.length ?? 0),
       },
-      {
-        field: 'status',
-        header: this.transloco.translate('trips.table.status'),
-        type: 'badge',
-        badgeConfig: {
-          severity: (_, row) => tripStatusSeverity((row as Trip).status as TripStatus),
-          label:    (_, row) => tripStatusLabel((row as Trip).status as TripStatus, this.transloco),
-        },
-      },
+      statusBadgeColumn<Trip>(
+        'status',
+        this.transloco.translate('trips.table.status'),
+        (_, row) => tripStatusSeverity(row.status as TripStatus),
+        (_, row) => tripStatusLabel(row.status as TripStatus, this.transloco),
+      ),
     ];
   });
 

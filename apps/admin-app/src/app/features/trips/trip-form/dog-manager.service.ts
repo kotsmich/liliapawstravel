@@ -1,7 +1,7 @@
 import { Injectable, DestroyRef, inject, signal, computed } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { map, startWith } from 'rxjs';
-import { FormBuilder, FormArray, FormGroup, AbstractControl } from '@angular/forms';
+import { map } from 'rxjs';
+import { FormBuilder, FormArray, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslocoService } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
@@ -13,6 +13,8 @@ import { buildDogColumns } from '@admin/features/trips/shared/dog-columns';
 import { DogGroup } from '@admin/features/trips/shared/dog-group.model';
 import { DogsService } from '@admin/services/dogs.service';
 import { ConfirmActionService } from '@admin/shared/services/confirm-action.service';
+import { groupBy } from '@admin/shared/utils/group-by';
+import { requesterRequiredValidator } from '@admin/shared/validators/requester-required.validator';
 import { DogDialogService } from './dog-dialog.service';
 
 @Injectable()
@@ -34,16 +36,10 @@ export class DogManagerService {
     requesterId:      [null as string | null],
     requesterKey:     [null as string | null],
     newRequesterName: [null as string | null],
-  }, {
-    validators: (group: AbstractControl) => {
-      const hasExisting = !!group.get('requesterId')?.value;
-      const hasNew = !!group.get('newRequesterName')?.value?.trim();
-      return hasExisting || hasNew ? null : { requesterRequired: true };
-    },
-  });
+  }, { validators: requesterRequiredValidator });
 
   private readonly _requesterFormValue = toSignal(
-    this.requesterForm.valueChanges.pipe(startWith(this.requesterForm.value)),
+    this.requesterForm.valueChanges,
     { initialValue: this.requesterForm.value as { requesterId: string | null; requesterKey: string | null; newRequesterName: string | null } },
   );
 
@@ -73,43 +69,16 @@ export class DogManagerService {
     { initialValue: [] as (Dog & { _idx: number; _destinationName: string })[] },
   );
 
-  readonly dogsPerRequestor = computed(() => {
-    const data = this.dogsData();
-    const result = new Map<string, (Dog & { _idx: number })[]>();
-    this.tripRequestors().forEach(req => {
-      result.set(req.requesterId, data.filter(dog => req.dogs.some(requestDog => requestDog.id === dog.id)));
-    });
-    return result;
-  });
-
-  readonly dogsPerDestination = computed((): { destination: TripDestination; dogs: (Dog & { _idx: number })[] }[] =>
-    this.tripDestinations().map(dest => ({
-      destination: dest,
-      dogs: this.dogsData().filter(d => d.destinationId === dest.id),
-    }))
-  );
-
-  readonly dogsPerPickupLocation = computed((): { destination: TripDestination; dogs: (Dog & { _idx: number })[] }[] => {
-    const destinations = this.tripPickupLocations();
-    const allDogs = this.dogsData();
-    const groups = destinations.map(dest => ({
-      destination: dest,
-      dogs: allDogs.filter(d => d.pickupLocationId === dest.id),
-    }));
-    const otherDogs = allDogs.filter(d => !d.pickupLocationId);
-    if (otherDogs.length > 0) {
-      groups.push({ destination: { id: '__other__', name: 'Other' }, dogs: otherDogs });
-    }
-    return groups;
-  });
+  private readonly dogsByRequester = computed(() => groupBy(this.dogsData(), d => d.requesterId ?? null));
+  private readonly dogsByDestination = computed(() => groupBy(this.dogsData(), d => d.destinationId ?? null));
+  private readonly dogsByPickup = computed(() => groupBy(this.dogsData(), d => d.pickupLocationId ?? null));
 
   readonly requestorGroups = computed((): DogGroup[] => {
     this._lang();
     return this.tripRequestors().map(req => {
-      const groupKey = req.requesterId;
-      const dogs = this.dogsPerRequestor().get(groupKey) ?? [];
+      const dogs = this.dogsByRequester().get(req.requesterId) ?? [];
       return {
-        key: groupKey,
+        key: req.requesterId,
         label: req.name,
         dogs,
         hasWarning: dogs.some(d => !d.destinationId),
@@ -119,22 +88,28 @@ export class DogManagerService {
   });
 
   readonly destinationGroups = computed((): DogGroup[] =>
-    this.dogsPerDestination().map(entry => ({
-      key: entry.destination.id || entry.destination.name,
-      label: entry.destination.name,
+    this.tripDestinations().map(dest => ({
+      key: dest.id || dest.name,
+      label: dest.name,
       icon: 'pi pi-map-marker',
-      dogs: entry.dogs,
-    }))
+      dogs: this.dogsByDestination().get(dest.id ?? null) ?? [],
+    })),
   );
 
-  readonly pickupGroups = computed((): DogGroup[] =>
-    this.dogsPerPickupLocation().map(entry => ({
-      key: entry.destination.id || entry.destination.name,
-      label: entry.destination.name,
+  readonly pickupGroups = computed((): DogGroup[] => {
+    const grouped = this.dogsByPickup();
+    const groups: DogGroup[] = this.tripPickupLocations().map(dest => ({
+      key: dest.id || dest.name,
+      label: dest.name,
       icon: 'pi pi-map-marker',
-      dogs: entry.dogs,
-    }))
-  );
+      dogs: grouped.get(dest.id ?? null) ?? [],
+    }));
+    const otherDogs = grouped.get(null) ?? [];
+    if (otherDogs.length > 0) {
+      groups.push({ key: '__other__', label: 'Other', icon: 'pi pi-map-marker', dogs: otherDogs });
+    }
+    return groups;
+  });
 
   readonly dogColumns = computed(() => {
     this._lang();
