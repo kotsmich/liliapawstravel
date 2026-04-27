@@ -1,6 +1,5 @@
 import { Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd, NavigationStart, NavigationCancel, NavigationError } from '@angular/router';
-import { Title, Meta } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY } from 'rxjs';
@@ -16,8 +15,8 @@ import { SocketEvent } from '@models/lib/socket-events.model';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { wsRequestApproved, wsRequestRejected } from '@user/core/toast/toast.actions';
 import { RouterUrlService } from '@user/services/router-url.service';
-
-const BASE_URL = 'https://liliapawstravel.com';
+import { SeoService } from '@user/services/seo.service';
+import { LoggerService } from '@user/services/logger.service';
 
 const ROUTE_TO_SEO_KEY: Record<string, string> = {
   '/': 'home',
@@ -35,7 +34,7 @@ const ROUTE_TO_SEO_KEY: Record<string, string> = {
       <p-progressBar mode="indeterminate" styleClass="route-loader" [style]="{ height: '3px' }" />
     }
     <app-navbar></app-navbar>
-    <main id="main-content" aria-live="polite"><router-outlet></router-outlet></main>
+    <main id="main-content"><router-outlet></router-outlet></main>
     <app-footer></app-footer>
   `,
   styles: [`
@@ -47,6 +46,8 @@ export class AppComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly document = inject(DOCUMENT);
   private readonly currentUrl = inject(RouterUrlService).currentUrl;
+  private readonly seo = inject(SeoService);
+  private readonly logger = inject(LoggerService);
 
   readonly navigating = signal(false);
 
@@ -54,8 +55,6 @@ export class AppComponent implements OnInit {
     private readonly store: Store,
     private readonly wsService: AppWebSocketService,
     private readonly router: Router,
-    private readonly titleService: Title,
-    private readonly metaService: Meta,
     private readonly translocoService: TranslocoService,
   ) {
     this.router.events.pipe(takeUntilDestroyed()).subscribe((event) => {
@@ -72,7 +71,7 @@ export class AppComponent implements OnInit {
       .listen<TripRequest>(SocketEvent.REQUEST_UPDATED)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        catchError((err) => { console.error('WS REQUEST_UPDATED error', err); return EMPTY; }),
+        catchError((err) => { this.logger.error('WS REQUEST_UPDATED error', err); return EMPTY; }),
       )
       .subscribe((request) => {
         if (request.status === 'approved') {
@@ -96,20 +95,10 @@ export class AppComponent implements OnInit {
 
   private updateMeta(url: string, lang: string): void {
     const seoKey = ROUTE_TO_SEO_KEY[url] ?? 'home';
-    const title = this.translocoService.translate(`seo.${seoKey}.title`, undefined, lang);
-    const description = this.translocoService.translate(`seo.${seoKey}.description`, undefined, lang);
-    const canonical = `${BASE_URL}${url}`;
-
-    this.titleService.setTitle(title);
-
-    this.metaService.updateTag({ name: 'description', content: description });
-    this.metaService.updateTag({ property: 'og:title', content: title });
-    this.metaService.updateTag({ property: 'og:description', content: description });
-    this.metaService.updateTag({ property: 'og:url', content: canonical });
-    this.metaService.updateTag({ name: 'twitter:title', content: title });
-    this.metaService.updateTag({ name: 'twitter:description', content: description });
-
-    const canonicalEl = this.document.querySelector('link[rel="canonical"]');
-    if (canonicalEl) canonicalEl.setAttribute('href', canonical);
+    this.seo.apply({
+      title: this.translocoService.translate(`seo.${seoKey}.title`, undefined, lang),
+      description: this.translocoService.translate(`seo.${seoKey}.description`, undefined, lang),
+      url,
+    });
   }
 }

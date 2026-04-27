@@ -19,7 +19,7 @@ export class NavbarComponent {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly currentUrl = inject(RouterUrlService).currentUrl;
 
-  menuOpen = false;
+  readonly menuOpen = signal(false);
   readonly scrolled = signal(false);
 
   @HostListener('window:scroll')
@@ -27,8 +27,8 @@ export class NavbarComponent {
     if (isPlatformBrowser(this.platformId)) this.scrolled.set(window.scrollY > 20);
   }
 
-  toggleMenu(): void { this.menuOpen = !this.menuOpen; }
-  closeMenu(): void { this.menuOpen = false; }
+  toggleMenu(): void { this.menuOpen.update(v => !v); }
+  closeMenu(): void { this.menuOpen.set(false); }
 
   navigateTo(path: string): void {
     this.router.navigate([path]);

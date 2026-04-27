@@ -106,15 +106,15 @@
                 <div formArrayName="dogs" class="dogs-list">
                   <p-accordion
                     [value]="openDogs()"
-                    (valueChange)="openDogs.set($any($event))"
+                    (valueChange)="onAccordionValueChange($event)"
                     [multiple]="true">
-                    @for (dog of dogs.controls; track i; let i = $index) {
+                    @for (dog of dogControls; track dog; let i = $index) {
                       <p-accordion-panel
                         [value]="i.toString()"
                         [class.has-error]="dog.invalid && dog.touched">
                         <p-accordion-header>
                           <div class="dog-accordion-header">
-                            <span class="dog-card-label">{{ ('tripRequest.dogNum' | transloco: { num: i + 1 }) }} - {{ dogs.at(i).get('name')?.value }}</span>
+                            <span class="dog-card-label">{{ ('tripRequest.dogNum' | transloco: { num: i + 1 }) }} - {{ dog.get('name')?.value }}</span>
                             @if (dogs.length > 1) {
                               <p-button
                                 icon="pi pi-trash"
@@ -129,7 +129,7 @@
                         </p-accordion-header>
                         <p-accordion-content>
                           <ui-dog-form
-                            [formGroup]="$any(dog)"
+                            [formGroup]="dog"
                             [index]="i"
                             [canRemove]="false"
                             [tripDestinations]="pickupDestinations()"
@@ -157,7 +157,7 @@
                   [text]="'tripRequest.submissionFailed' | transloco: { error: errorMessage }" styleClass="mb-3" />
               }
 
-              @if (showSummary) {
+              @if (showSummary()) {
                 <div class="summary">
                   <h3>📋 {{ 'tripRequest.summary' | transloco }}</h3>
                   <p><strong>{{ form.value.requesterName }}</strong> · {{ form.value.requesterEmail }} · {{ form.value.requesterPhone }}</p>

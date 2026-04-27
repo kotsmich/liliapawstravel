@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Injector, afterNextRender, inject, computed, runInInjectionContext, signal, ViewChild, ElementRef } from '@angular/core';
 import { DatePipe, ViewportScroller } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormArray, AbstractControl, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormArray, FormGroup, AbstractControl, Validators } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
@@ -61,7 +61,7 @@ export class TripRequestComponent {
   @ViewChild('dogsSection') private dogsSection?: ElementRef<HTMLElement>;
   @ViewChild(TripCalendarComponent) private tripCalendar?: TripCalendarComponent;
 
-  showSummary = false;
+  readonly showSummary = signal(false);
   readonly openDogs = signal<string[]>(['0']);
 
   readonly dogPhotoFiles = new Map<AbstractControl, File>();
@@ -131,6 +131,12 @@ export class TripRequestComponent {
   }
 
   get dogs(): FormArray { return this.form.get('dogs') as FormArray; }
+  get dogControls(): FormGroup[] { return this.dogs.controls as FormGroup[]; }
+
+  onAccordionValueChange(value: string | string[] | undefined | null): void {
+    if (Array.isArray(value)) this.openDogs.set(value);
+    else this.openDogs.set(value ? [value] : []);
+  }
 
   dogGroup() {
     return this.fb.group({
@@ -168,7 +174,7 @@ export class TripRequestComponent {
     this.dogs.push(this.dogGroup());
     const newIndex = (this.dogs.length - 1).toString();
     this.openDogs.update(prev => [...prev, newIndex]);
-    this.showSummary = false;
+    this.showSummary.set(false);
   }
 
   removeDog(index: number): void {
@@ -183,7 +189,7 @@ export class TripRequestComponent {
         this.dogPhotoFiles.delete(removed);
         this.dogDocumentFiles.delete(removed);
         this.dogs.removeAt(index);
-        this.showSummary = false;
+        this.showSummary.set(false);
         this.openDogs.update(prev =>
           prev
             .filter(key => key !== index.toString())
@@ -245,7 +251,7 @@ export class TripRequestComponent {
     this.openDogs.set(['0']);
     this.dogPhotoFiles.clear();
     this.dogDocumentFiles.clear();
-    this.showSummary = false;
+    this.showSummary.set(false);
   }
 
   preview(): void {
@@ -254,7 +260,7 @@ export class TripRequestComponent {
       this.openInvalidDogPanels();
       return;
     }
-    this.showSummary = true;
+    this.showSummary.set(true);
   }
 
   onSubmit(): void {
@@ -296,7 +302,7 @@ export class TripRequestComponent {
     this.form.reset();
     this.dogs.clear();
     this.dogs.push(this.dogGroup());
-    this.showSummary = false;
+    this.showSummary.set(false);
     this.openDogs.set(['0']);
     this.dogPhotoFiles.clear();
     this.dogDocumentFiles.clear();

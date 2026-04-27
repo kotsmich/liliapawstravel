@@ -5,6 +5,11 @@
     "requestTransport": "Transport anfragen",
     "contact": "Kontakt"
   },
+  "aria": {
+    "mainNav": "Hauptnavigation",
+    "toggleNav": "Navigationsmenü umschalten",
+    "bookingInfo": "Buchungsinformationen"
+  },
   "footer": {
     "tagline": "Sicherer Transport adoptierter Hunde durch Europa.",
     "navigation": "Navigation",

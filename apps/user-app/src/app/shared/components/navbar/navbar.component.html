@@ -1,10 +1,10 @@
-<nav class="navbar" [class.scrolled]="scrolled()" aria-label="Main navigation">
+<nav class="navbar" [class.scrolled]="scrolled()" [attr.aria-label]="'aria.mainNav' | transloco">
   <div class="navbar__container flex align-items-center justify-content-between">
     <button class="navbar__brand flex align-items-center" type="button" (click)="navigateTo('/')">
       <span aria-hidden="true">🐾</span>
       <span class="navbar__name">Lilia Paws Travel</span>
     </button>
-    <ul class="navbar__links flex align-items-center" [class.open]="menuOpen" role="menubar">
+    <ul class="navbar__links flex align-items-center" [class.open]="menuOpen()" role="menubar">
       <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/')" (click)="navigateTo('/')">{{ 'nav.home' | transloco }}</button></li>
       <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/about')" (click)="navigateTo('/about')">{{ 'nav.about' | transloco }}</button></li>
       <li role="none"><button role="menuitem" type="button" [class.active]="isActive('/request')" (click)="navigateTo('/request')">{{ 'nav.requestTransport' | transloco }}</button></li>
@@ -12,8 +12,8 @@
     </ul>
     <div class="navbar__right">
       <app-language-switcher />
-      <button class="navbar__burger" type="button" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen" aria-label="Toggle navigation menu">
-        <i class="pi" [ngClass]="menuOpen ? 'pi-times' : 'pi-bars'"></i>
+      <button class="navbar__burger" type="button" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()" [attr.aria-label]="'aria.toggleNav' | transloco">
+        <i class="pi" [ngClass]="menuOpen() ? 'pi-times' : 'pi-bars'"></i>
       </button>
     </div>
   </div>
