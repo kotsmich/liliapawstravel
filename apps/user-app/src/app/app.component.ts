@@ -1,8 +1,8 @@
-import { Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd, NavigationStart, NavigationCancel, NavigationError } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { catchError, EMPTY } from 'rxjs';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { catchError, combineLatest, EMPTY, map, startWith, switchMap } from 'rxjs';
 import { ToastModule } from 'primeng/toast';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TranslocoService } from '@jsverse/transloco';
@@ -83,14 +83,22 @@ export class AppComponent implements OnInit {
   }
 
   private initDynamicTitles(): void {
-    const lang = toSignal(this.translocoService.langChanges$, {
-      initialValue: this.translocoService.getActiveLang(),
-    });
-    effect(() => {
-      const activeLang = lang();
-      this.document.documentElement.setAttribute('lang', activeLang);
-      this.updateMeta(this.currentUrl(), activeLang);
-    });
+    const lang$ = this.translocoService.langChanges$.pipe(
+      startWith(this.translocoService.getActiveLang()),
+    );
+    const url$ = toObservable(this.currentUrl);
+
+    combineLatest([lang$, url$])
+      .pipe(
+        switchMap(([lang, url]) =>
+          this.translocoService.load(lang).pipe(map(() => ({ lang, url }))),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(({ lang, url }) => {
+        this.document.documentElement.setAttribute('lang', lang);
+        this.updateMeta(url, lang);
+      });
   }
 
   private updateMeta(url: string, lang: string): void {

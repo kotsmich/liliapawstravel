@@ -133,9 +133,10 @@ export class TripRequestComponent {
   get dogs(): FormArray { return this.form.get('dogs') as FormArray; }
   get dogControls(): FormGroup[] { return this.dogs.controls as FormGroup[]; }
 
-  onAccordionValueChange(value: string | string[] | undefined | null): void {
-    if (Array.isArray(value)) this.openDogs.set(value);
-    else this.openDogs.set(value ? [value] : []);
+  onAccordionValueChange(value: string | number | string[] | number[] | undefined | null): void {
+    if (Array.isArray(value)) this.openDogs.set(value.map(String));
+    else if (value === null || value === undefined) this.openDogs.set([]);
+    else this.openDogs.set([String(value)]);
   }
 
   dogGroup() {

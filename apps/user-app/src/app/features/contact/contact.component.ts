@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ContactForm } from '@models/lib/contact-form.model';
 import { devValue } from '@models/lib/utils';
@@ -15,7 +16,7 @@ import { ContactMapComponent } from './components/contact-map/contact-map.compon
   selector: 'app-contact',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, CardModule, ContactFormComponent, ContactMapComponent, TranslocoModule],
+  imports: [ReactiveFormsModule, CardModule, ContactFormComponent, ContactMapComponent, TranslocoModule, NgOptimizedImage],
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss'],
 })

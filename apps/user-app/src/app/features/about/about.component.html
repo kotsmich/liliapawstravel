@@ -7,11 +7,11 @@
     <div class="page-intro__slides" aria-hidden="true">
       @for (slide of heroSlides; track $index; let i = $index) {
         <div class="page-intro__slide" [class.active]="i === currentSlide()">
-          <img
-            [src]="slide"
-            alt=""
-            [loading]="i === 0 ? 'eager' : 'lazy'"
-          />
+          @if (i === 0) {
+            <img [ngSrc]="slide" alt="" fill priority sizes="100vw" />
+          } @else {
+            <img [ngSrc]="slide" alt="" fill sizes="100vw" />
+          }
         </div>
       }
       <div class="page-intro__bg-overlay"></div>
@@ -45,9 +45,10 @@
           <div class="story__founder">
             <img
               class="story__founder-photo"
-              src="assets/images/founder.png"
+              ngSrc="assets/images/founder.webp"
               alt="Λίλια Ποντίκα"
-              loading="lazy"
+              width="828"
+              height="1792"
             />
             <div>
               <strong>Λίλια Ποντίκα</strong>
@@ -66,7 +67,7 @@
       <div class="story__mosaic" aria-hidden="true">
         @for (photo of storyPhotos; track $index; let i = $index) {
           <div class="story__mosaic-item story__mosaic-item--{{ i + 1 }}">
-            <img [src]="photo" alt="" [loading]="i === 0 ? 'eager' : 'lazy'" />
+            <img [ngSrc]="photo" alt="" fill sizes="(max-width: 900px) 50vw, 25vw" />
           </div>
         }
       </div>

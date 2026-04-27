@@ -36,9 +36,10 @@
           <img
             class="slider__img"
             [class.active]="i === currentIndex()"
-            [src]="photo"
+            [ngSrc]="photo"
             [alt]="'Photo ' + (i + 1)"
-            loading="lazy"
+            fill
+            sizes="(max-width: 900px) 100vw, 50vw"
           />
         }
         <div class="slider__counter" aria-live="polite" aria-atomic="true">
@@ -81,9 +82,10 @@
           <img
             class="slider__img"
             [class.active]="i === fleetIndex()"
-            [src]="photo"
+            [ngSrc]="photo"
             [alt]="'Fleet photo ' + (i + 1)"
-            loading="lazy"
+            fill
+            sizes="(max-width: 900px) 100vw, 50vw"
           />
         }
         <div class="slider__counter" aria-live="polite" aria-atomic="true">
@@ -128,9 +130,10 @@
   <!-- Background image with overlay -->
   <div class="how__bg" aria-hidden="true">
     <img
-      src="assets/images/how-bg.jpeg"
+      ngSrc="assets/images/how-bg.webp"
       alt=""
-      loading="lazy"
+      fill
+      sizes="100vw"
     />
     <div class="how__bg-overlay"></div>
   </div>
@@ -171,7 +174,7 @@
     <div class="gallery__grid">
       @for (img of galleryImages; track img.src; let i = $index) {
         <div class="gallery__item" [attr.data-index]="i">
-          <img [src]="img.src" [alt]="img.alt" loading="lazy" />
+          <img [ngSrc]="img.src" [alt]="img.alt" fill sizes="(max-width: 600px) 50vw, 25vw" />
           <div class="gallery__overlay" aria-hidden="true">
             <span class="gallery__overlay-icon">🐾</span>
           </div>

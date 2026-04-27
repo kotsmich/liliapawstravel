@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
 import { CtaSectionComponent } from '@user/features/home/components/cta-section/cta-section.component';
@@ -8,7 +9,7 @@ import { autoRotate } from '@user/shared/auto-rotate';
   selector: 'app-about',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslocoModule, CtaSectionComponent],
+  imports: [TranslocoModule, CtaSectionComponent, NgOptimizedImage],
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
 })
@@ -16,18 +17,18 @@ export class AboutComponent {
   private readonly router = inject(Router);
 
   readonly heroSlides = [
-    'assets/images/about-hero-1.jpeg',
-    'assets/images/about-hero-2.jpeg',
-    'assets/images/about-hero-3.jpeg',
-    'assets/images/about-hero-4.jpeg',
+    'assets/images/about-hero-1.webp',
+    'assets/images/about-hero-2.webp',
+    'assets/images/about-hero-3.webp',
+    'assets/images/about-hero-4.webp',
   ];
 
   readonly storyPhotos = [
-    'assets/images/story-1.jpg',
-    'assets/images/story-2.jpg',
-    'assets/images/story-3.jpg',
-    'assets/images/story-4.jpg',
-    'assets/images/story-5.jpg',
+    'assets/images/story-1.webp',
+    'assets/images/story-2.webp',
+    'assets/images/story-3.webp',
+    'assets/images/story-4.webp',
+    'assets/images/story-5.webp',
   ];
 
   readonly values = [

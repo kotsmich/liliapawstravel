@@ -4,12 +4,24 @@
   <div class="hero__slides" aria-hidden="true">
     @for (slide of slides; track $index; let i = $index) {
       <div class="hero__slide" [class.active]="i === currentSlide()">
-        <img
-          class="hero__bg"
-          [src]="slide.image"
-          [alt]="slide.captionKey | transloco"
-          loading="eager"
-        />
+        @if (i === 0) {
+          <img
+            class="hero__bg"
+            [ngSrc]="slide.image"
+            [alt]="slide.captionKey | transloco"
+            fill
+            priority
+            sizes="100vw"
+          />
+        } @else {
+          <img
+            class="hero__bg"
+            [ngSrc]="slide.image"
+            [alt]="slide.captionKey | transloco"
+            fill
+            sizes="100vw"
+          />
+        }
       </div>
     }
     <!-- Gradient overlays -->

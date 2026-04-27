@@ -108,7 +108,7 @@ export class PanoramaSectionComponent implements AfterViewInit, OnDestroy {
   activeIndex = 0;
 
   readonly panoramas = [
-    { src: 'assets/images/pano-1.jpg', label: 'View 1' },
+    { src: 'assets/images/pano-1.webp', label: 'View 1' },
   ];
 
   async ngAfterViewInit(): Promise<void> {

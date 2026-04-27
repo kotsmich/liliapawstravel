@@ -1,4 +1,4 @@
-import { Directive, effect, inject, input } from '@angular/core';
+import { Directive, Input, inject } from '@angular/core';
 import { Button } from 'primeng/button';
 
 @Directive({
@@ -8,14 +8,23 @@ import { Button } from 'primeng/button';
 export class AsyncButtonDirective {
   private readonly button = inject(Button);
 
-  readonly asyncLoading = input.required<boolean>();
-  readonly asyncInvalid = input<boolean>(false);
+  private loading = false;
+  private invalid = false;
 
-  constructor() {
-    effect(() => {
-      const loading = this.asyncLoading();
-      this.button.loading = loading;
-      this.button.disabled = loading || this.asyncInvalid();
-    });
+  @Input({ required: true })
+  set asyncLoading(value: boolean) {
+    this.loading = value;
+    this.sync();
+  }
+
+  @Input()
+  set asyncInvalid(value: boolean) {
+    this.invalid = value;
+    this.sync();
+  }
+
+  private sync(): void {
+    this.button.loading = this.loading;
+    this.button.disabled = this.loading || this.invalid;
   }
 }
