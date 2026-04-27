@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect } from '@ngrx/effects';
 import { MessageService } from 'primeng/api';
+import { TranslocoService } from '@jsverse/transloco';
 import { filter, tap } from 'rxjs';
 import { TOAST_REGISTRY } from './toast.registry';
 
@@ -8,12 +9,13 @@ import { TOAST_REGISTRY } from './toast.registry';
 export class NotificationEffects {
   private readonly actions$ = inject(Actions);
   private readonly messageService = inject(MessageService);
+  private readonly transloco = inject(TranslocoService);
 
   showToast$ = createEffect(
     () =>
       this.actions$.pipe(
         filter((action) => action.type in TOAST_REGISTRY),
-        tap((action) => this.messageService.add(TOAST_REGISTRY[action.type](action)))
+        tap((action) => this.messageService.add(TOAST_REGISTRY[action.type](action, this.transloco)))
       ),
     { dispatch: false }
   );

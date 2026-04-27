@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, inject, computed, signal, ViewChild, ElementRef, isDevMode } from '@angular/core';
-import { DatePipe, DecimalPipe, ViewportScroller } from '@angular/common';
+import { DatePipe, ViewportScroller } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
@@ -13,21 +13,19 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { Store } from '@ngrx/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { Actions, ofType } from '@ngrx/effects';
+import { ConfirmationService } from 'primeng/api';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { TripDestination } from '@models/lib/trip.model';
-import { firstValueFrom } from 'rxjs';
 import { DogFormComponent } from '@ui/lib/dog-form/dog-form.component';
 import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
 import { ToastNotificationComponent } from '@ui/lib/toast-notification/toast-notification.component';
 import { CalendarEvent } from '@models/lib/calendar-event.model';
 import { RandomUtil, RandomProperty } from '@models/lib/utils';
-import { clearSelectedTrip, selectTripsAsCalendarEvents, selectTripsIsLoading } from '@user/core/store/trips';
-import { selectDate, clearDate, selectCalendarSelectedDate, selectTripForSelectedDate } from '@user/core/store/calendar';
-import { submitRequest, resetRequest, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError } from '@user/features/trip-request/store';
-import { TripsService } from '@user/services/trips.service';
+import { selectTripsAsCalendarEvents, selectTripsIsLoading, selectAllTrips } from '@user/core/store/trips';
+import { submitRequest, submitRequestSuccess, resetRequest, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError, DogFiles } from '@user/features/trip-request/store';
 import { FocusInvalidInputDirective } from '@ui/lib/directives/focus-invalid-input.directive';
 import { TripRequestHeroComponent } from './components/trip-request-hero/trip-request-hero.component';
 import { TripRequestSidebarComponent } from './components/trip-request-sidebar/trip-request-sidebar.component';
@@ -72,11 +70,10 @@ export class TripRequestComponent {
 
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store);
+  private readonly actions$ = inject(Actions);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly messageService = inject(MessageService);
   private readonly viewportScroller = inject(ViewportScroller);
   private readonly transloco = inject(TranslocoService);
-  private readonly tripsService = inject(TripsService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   @ViewChild('dogsSection') private dogsSection?: ElementRef<HTMLElement>;
@@ -84,22 +81,25 @@ export class TripRequestComponent {
 
   showSummary = false;
   readonly openDogs = signal<string[]>(['0']);
-  private readonly uploading = signal(false);
 
   readonly dogPhotoFiles = new Map<number, File>();
   readonly dogDocumentFiles = new Map<number, File>();
 
+  readonly selectedDateLocal = signal<string | null>(null);
+
   readonly calendarEvents  = toSignal(this.store.select(selectTripsAsCalendarEvents), { initialValue: [] as CalendarEvent[] });
-readonly selectedDateLocal = toSignal(this.store.select(selectCalendarSelectedDate), { initialValue: null as string | null });
-  readonly selectedTrip    = toSignal(this.store.select(selectTripForSelectedDate),   { initialValue: null });
+  private readonly allTrips = toSignal(this.store.select(selectAllTrips), { initialValue: [] });
+  readonly selectedTrip    = computed(() => {
+    const date = this.selectedDateLocal();
+    return date ? (this.allTrips().find((trip) => trip.date === date) ?? null) : null;
+  });
   readonly pickupDestinations = computed((): TripDestination[] => {
     const trip = this.selectedTrip();
     if (!trip) return [];
     return trip.pickupLocations ?? [];
   });
   readonly loading         = toSignal(this.store.select(selectTripsIsLoading),         { initialValue: false });
-  private readonly storeSubmitting = toSignal(this.store.select(selectTripRequestIsLoading), { initialValue: false });
-  readonly submitting      = computed(() => this.uploading() || this.storeSubmitting());
+  readonly submitting      = toSignal(this.store.select(selectTripRequestIsLoading), { initialValue: false });
   readonly success         = toSignal(this.store.select(selectTripRequestIsSuccess),   { initialValue: false });
   readonly error           = toSignal(this.store.select(selectTripRequestError),       { initialValue: null as string | null });
 
@@ -138,9 +138,8 @@ readonly selectedDateLocal = toSignal(this.store.select(selectCalendarSelectedDa
   });
 
   constructor() {
-    // Toast handled by NotificationEffects — reset form and scroll on success
-    this.store.select(selectTripRequestIsSuccess).pipe(
-      filter(Boolean),
+    this.actions$.pipe(
+      ofType(submitRequestSuccess),
       takeUntilDestroyed(),
     ).subscribe(() => {
       this.onReset();
@@ -247,12 +246,12 @@ readonly selectedDateLocal = toSignal(this.store.select(selectCalendarSelectedDa
         acceptButtonStyleClass: 'p-button-danger',
         accept: () => {
           this.resetDogs();
-          this.store.dispatch(selectDate({ date }));
+          this.selectedDateLocal.set(date);
           this.scrollToDogForm();
         },
       });
     } else {
-      this.store.dispatch(selectDate({ date }));
+      this.selectedDateLocal.set(date);
       this.scrollToDogForm();
     }
   }
@@ -280,57 +279,31 @@ readonly selectedDateLocal = toSignal(this.store.select(selectCalendarSelectedDa
     this.showSummary = true;
   }
 
-  async onSubmit(): Promise<void> {
+  onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.openInvalidDogPanels();
       this.cdr.detectChanges();
       return;
     }
-    this.uploading.set(true);
-    try {
-      const { requesterName, requesterEmail, requesterPhone } = this.form.value;
-      const dogs = await this.uploadDogFiles(this.form.value.dogs as Record<string, unknown>[]);
-      this.store.dispatch(submitRequest({
-        dogs,
-        tripId: this.selectedTrip()!.id,
-        requesterName: requesterName!,
-        requesterEmail: requesterEmail!,
-        requesterPhone: `${this.phoneCountryCode} ${requesterPhone!}`.trim(),
-      }));
-    } finally {
-      this.uploading.set(false);
-    }
-  }
+    const trip = this.selectedTrip();
+    if (!trip) return;
 
-  private async uploadDogFiles(dogs: Record<string, unknown>[]): Promise<Record<string, unknown>[]> {
-    return Promise.all(
-      dogs.map(async (dog, index) => {
-        const photoFile = this.dogPhotoFiles.get(index);
-        const docFile = this.dogDocumentFiles.get(index);
-        if (!photoFile && !docFile) return dog;
+    const { requesterName, requesterEmail, requesterPhone } = this.form.value;
+    const dogs = this.form.value.dogs as Record<string, unknown>[];
+    const dogFiles: DogFiles[] = dogs.map((_, index) => ({
+      photo: this.dogPhotoFiles.get(index) ?? null,
+      document: this.dogDocumentFiles.get(index) ?? null,
+    }));
 
-        const formData = new FormData();
-        if (photoFile) formData.append('photo', photoFile);
-        if (docFile) formData.append('document', docFile);
-
-        try {
-          const urls = await firstValueFrom(this.tripsService.uploadTempDogFiles(formData));
-          return {
-            ...dog,
-            photoUrl: urls.photoUrl ?? null,
-            documentUrl: urls.documentUrl ?? null,
-          };
-        } catch {
-          this.messageService.add({
-            severity: 'warn',
-            summary: this.transloco.translate('tripRequest.uploadFailedTitle'),
-            detail: this.transloco.translate('tripRequest.uploadFailedDetail'),
-          });
-          return dog;
-        }
-      }),
-    );
+    this.store.dispatch(submitRequest({
+      dogs,
+      dogFiles,
+      tripId: trip.id,
+      requesterName: requesterName!,
+      requesterEmail: requesterEmail!,
+      requesterPhone: `${this.phoneCountryCode} ${requesterPhone!}`.trim(),
+    }));
   }
 
   private openInvalidDogPanels(): void {
@@ -350,7 +323,6 @@ readonly selectedDateLocal = toSignal(this.store.select(selectCalendarSelectedDa
     this.dogPhotoFiles.clear();
     this.dogDocumentFiles.clear();
     this.store.dispatch(resetRequest());
-    this.store.dispatch(clearSelectedTrip());
-    this.store.dispatch(clearDate());
+    this.selectedDateLocal.set(null);
   }
 }

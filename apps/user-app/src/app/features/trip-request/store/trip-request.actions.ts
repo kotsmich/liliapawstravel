@@ -1,10 +1,16 @@
 import { createAction, props } from '@ngrx/store';
 import { TripRequest } from '@models/lib/trip-request.model';
 
+export interface DogFiles {
+  photo: File | null;
+  document: File | null;
+}
+
 export const submitRequest = createAction(
   '[TripRequest] Submit Request',
   props<{
     dogs: Record<string, unknown>[];
+    dogFiles: DogFiles[];
     tripId?: string;
     requesterName: string;
     requesterEmail: string;

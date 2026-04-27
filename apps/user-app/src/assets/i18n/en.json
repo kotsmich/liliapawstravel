@@ -167,6 +167,28 @@
       "countries": "18 countries"
     }
   },
+  "toasts": {
+    "requestSubmitted": {
+      "summary": "Request Submitted!",
+      "detail": "Your transport request has been submitted. We'll confirm within 24 hours. 🐾"
+    },
+    "requestApproved": {
+      "summary": "Request Approved",
+      "detail": "Your trip request has been approved!"
+    },
+    "requestRejected": {
+      "summary": "Request Update",
+      "detail": "Your request was not accepted."
+    },
+    "connectionError": {
+      "summary": "Connection Error",
+      "detail": "Please check your connection"
+    },
+    "serverError": {
+      "summary": "Server Error",
+      "detail": "Something went wrong"
+    }
+  },
   "aboutPage": {
     "heroTag": "Our Story",
     "heroTitle": "Born from a love for rescue dogs",

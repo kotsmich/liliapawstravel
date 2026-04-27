@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Actions, ROOT_EFFECTS_INIT, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, of, retry, switchMap } from 'rxjs';
 
 import { TripsService } from '@user/services/trips.service';
@@ -11,6 +11,13 @@ export class TripsEffects {
   private readonly actions$ = inject(Actions);
   private readonly tripsService = inject(TripsService);
   private readonly wsService = inject(TripsWebSocketService);
+
+  init$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ROOT_EFFECTS_INIT),
+      map(() => refreshTrips()),
+    )
+  );
 
   refreshTrips$ = createEffect(() =>
     this.actions$.pipe(

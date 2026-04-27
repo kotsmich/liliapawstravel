@@ -1,5 +1,13 @@
 import { ActionCreator } from '@ngrx/store';
+import { TranslocoService } from '@jsverse/transloco';
 import { submitRequestSuccess } from '@user/features/trip-request/store';
+import {
+  wsRequestApproved,
+  wsRequestRejected,
+  httpConnectionError,
+  httpServerError,
+  dogUploadFailed,
+} from './toast.actions';
 
 export interface ToastPayload {
   severity: 'success' | 'info' | 'warn' | 'error';
@@ -8,19 +16,47 @@ export interface ToastPayload {
   life?: number;
 }
 
+export type ToastFactory<TAction = unknown> = (action: TAction, transloco: TranslocoService) => ToastPayload;
+
 function register<AC extends ActionCreator>(
   action: AC,
-  factory: (action: ReturnType<AC>) => ToastPayload
-): Record<string, (action: any) => ToastPayload> {
-  return { [action.type]: factory };
+  factory: ToastFactory<ReturnType<AC>>,
+): Record<string, ToastFactory> {
+  return { [action.type]: factory as ToastFactory };
 }
 
-export const TOAST_REGISTRY: Record<string, (action: any) => ToastPayload> = {
-  ...register(submitRequestSuccess,
-    () => ({
-      severity: 'success',
-      summary: 'Request Submitted!',
-      detail: "Your transport request has been submitted. We'll confirm within 24 hours. 🐾",
-      life: 5000,
-    })),
+export const TOAST_REGISTRY: Record<string, ToastFactory> = {
+  ...register(submitRequestSuccess, (_action, transloco) => ({
+    severity: 'success',
+    summary: transloco.translate('toasts.requestSubmitted.summary'),
+    detail: transloco.translate('toasts.requestSubmitted.detail'),
+    life: 5000,
+  })),
+  ...register(wsRequestApproved, (_action, transloco) => ({
+    severity: 'success',
+    summary: transloco.translate('toasts.requestApproved.summary'),
+    detail: transloco.translate('toasts.requestApproved.detail'),
+    life: 6000,
+  })),
+  ...register(wsRequestRejected, (_action, transloco) => ({
+    severity: 'warn',
+    summary: transloco.translate('toasts.requestRejected.summary'),
+    detail: transloco.translate('toasts.requestRejected.detail'),
+    life: 6000,
+  })),
+  ...register(httpConnectionError, (_action, transloco) => ({
+    severity: 'error',
+    summary: transloco.translate('toasts.connectionError.summary'),
+    detail: transloco.translate('toasts.connectionError.detail'),
+  })),
+  ...register(httpServerError, (_action, transloco) => ({
+    severity: 'error',
+    summary: transloco.translate('toasts.serverError.summary'),
+    detail: transloco.translate('toasts.serverError.detail'),
+  })),
+  ...register(dogUploadFailed, (_action, transloco) => ({
+    severity: 'warn',
+    summary: transloco.translate('tripRequest.uploadFailedTitle'),
+    detail: transloco.translate('tripRequest.uploadFailedDetail'),
+  })),
 };

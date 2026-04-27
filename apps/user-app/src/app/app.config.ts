@@ -16,7 +16,6 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { APP_ROUTES } from './app.routes';
 import { userApiInterceptor } from '@user/interceptors/user-api.interceptor';
 import { tripsReducer, TripsEffects } from '@user/core/store/trips';
-import { calendarReducer } from '@user/core/store/calendar';
 import { tripRequestReducer, TripRequestEffects } from '@user/features/trip-request/store';
 import { contactReducer, ContactEffects } from '@user/features/contact/store';
 import { NotificationEffects } from '@user/core/toast/notification.effects';
@@ -51,7 +50,6 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideHttpClient(withInterceptors([userApiInterceptor])),
     provideStore({
-      calendar: calendarReducer,
       contact: contactReducer,
       tripRequest: tripRequestReducer,
       trips: tripsReducer,

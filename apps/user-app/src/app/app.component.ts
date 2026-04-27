@@ -5,7 +5,6 @@ import { DOCUMENT } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, combineLatest, EMPTY } from 'rxjs';
 import { filter, map, startWith } from 'rxjs/operators';
-import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TranslocoService } from '@jsverse/transloco';
@@ -16,7 +15,7 @@ import { FooterComponent } from '@user/shared/components/footer/footer.component
 import { AppWebSocketService } from '@ui/lib/websocket/app-websocket.service';
 import { SocketEvent } from '@models/lib/socket-events.model';
 import { TripRequest } from '@models/lib/trip-request.model';
-import { refreshTrips } from '@user/core/store/trips';
+import { wsRequestApproved, wsRequestRejected } from '@user/core/toast/toast.actions';
 
 const BASE_URL = 'https://liliapawstravel.com';
 
@@ -107,7 +106,6 @@ export class AppComponent implements OnInit {
   constructor(
     private readonly store: Store,
     private readonly wsService: AppWebSocketService,
-    private readonly messageService: MessageService,
     private readonly router: Router,
     private readonly titleService: Title,
     private readonly metaService: Meta,
@@ -120,7 +118,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(refreshTrips());
     this.wsService.connect();
     this.initDynamicTitles();
 
@@ -132,19 +129,9 @@ export class AppComponent implements OnInit {
       )
       .subscribe((request) => {
         if (request.status === 'approved') {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Request Approved',
-            detail: 'Your trip request has been approved!',
-            life: 6000,
-          });
+          this.store.dispatch(wsRequestApproved());
         } else if (request.status === 'rejected') {
-          this.messageService.add({
-            severity: 'warn',
-            summary: 'Request Update',
-            detail: 'Your request was not accepted.',
-            life: 6000,
-          });
+          this.store.dispatch(wsRequestRejected());
         }
       });
   }

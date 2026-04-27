@@ -167,6 +167,28 @@
       "countries": "18 Länder"
     }
   },
+  "toasts": {
+    "requestSubmitted": {
+      "summary": "Antrag gesendet!",
+      "detail": "Ihr Transportantrag wurde übermittelt. Wir bestätigen innerhalb von 24 Stunden. 🐾"
+    },
+    "requestApproved": {
+      "summary": "Antrag genehmigt",
+      "detail": "Ihr Transportantrag wurde genehmigt!"
+    },
+    "requestRejected": {
+      "summary": "Antragsstatus",
+      "detail": "Ihr Antrag wurde nicht angenommen."
+    },
+    "connectionError": {
+      "summary": "Verbindungsfehler",
+      "detail": "Bitte überprüfen Sie Ihre Verbindung"
+    },
+    "serverError": {
+      "summary": "Serverfehler",
+      "detail": "Etwas ist schiefgelaufen"
+    }
+  },
   "aboutPage": {
     "heroTag": "Unsere Geschichte",
     "heroTitle": "Entstanden aus Liebe zu Rettungshunden",
