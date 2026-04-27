@@ -2,6 +2,7 @@ import { createFeature, createReducer, on } from '@ngrx/store';
 import { AdminUser } from '@models/lib/admin-user.model';
 import {
   loadUsers, loadUsersSuccess, loadUsersFailure,
+  createUser, createUserSuccess, createUserFailure,
   updateUser, updateUserSuccess, updateUserFailure,
   deleteUser, deleteUserSuccess, deleteUserFailure,
 } from './users.actions';
@@ -25,6 +26,9 @@ export const usersFeature = createFeature({
     on(loadUsers, (state) => ({ ...state, loading: true, error: null })),
     on(loadUsersSuccess, (state, { users }) => ({ ...state, users, loading: false })),
     on(loadUsersFailure, (state, { error }) => ({ ...state, loading: false, error })),
+    on(createUser, (state) => ({ ...state, error: null })),
+    on(createUserSuccess, (state, { user }) => ({ ...state, users: [...state.users, user] })),
+    on(createUserFailure, (state, { error }) => ({ ...state, error })),
     on(updateUser, (state) => ({ ...state, error: null })),
     on(updateUserSuccess, (state, { user }) => ({
       ...state,

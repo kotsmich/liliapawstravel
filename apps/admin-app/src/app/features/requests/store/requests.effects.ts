@@ -40,7 +40,7 @@ export class RequestsEffects {
   approveRequest$ = createEffect(() =>
     this.actions$.pipe(
       ofType(approveRequest),
-      switchMap(({ requestId }) =>
+      mergeMap(({ requestId }) =>
         this.requestsService.approveRequest(requestId).pipe(
           mergeMap(({ request, trip }) => [
             approveRequestSuccess({ request }),
@@ -55,7 +55,7 @@ export class RequestsEffects {
   rejectRequest$ = createEffect(() =>
     this.actions$.pipe(
       ofType(rejectRequest),
-      switchMap(({ id }) =>
+      mergeMap(({ id }) =>
         this.requestsService.updateRequestStatus(id, 'rejected').pipe(
           map((request) => rejectRequestSuccess({ request })),
           catchError((error) => of(rejectRequestFailure({ error: extractError(error) })))
@@ -67,7 +67,7 @@ export class RequestsEffects {
   deleteRequest$ = createEffect(() =>
     this.actions$.pipe(
       ofType(deleteRequest),
-      switchMap(({ requestId }) =>
+      mergeMap(({ requestId }) =>
         this.requestsService.deleteRequest(requestId).pipe(
           map(() => deleteRequestSuccess({ requestId })),
           catchError((error) => of(deleteRequestFailure({ error: extractError(error) })))
@@ -144,7 +144,7 @@ export class RequestsEffects {
   updateRequestNote$ = createEffect(() =>
     this.actions$.pipe(
       ofType(updateRequestNote),
-      switchMap(({ id, note }) =>
+      mergeMap(({ id, note }) =>
         this.requestsService.updateRequestNote(id, note).pipe(
           map((request) => updateRequestNoteSuccess({ request })),
           catchError((error) => of(updateRequestNoteFailure({ error: extractError(error) })))

@@ -8,11 +8,13 @@ import { SelectModule } from 'primeng/select';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { MessageModule } from 'primeng/message';
 import { MessageService } from 'primeng/api';
-import { catchError, EMPTY } from 'rxjs';
-import { AuthService } from '@admin/services/auth.service';
+import { Actions, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { take } from 'rxjs';
 import { AdminRole } from '@models/lib/admin-user.model';
 import { ValidationErrorDirective } from '@ui/lib/directives/validation-error.directive';
 import { AsyncButtonDirective } from '@ui/lib/directives/async-button.directive';
+import { createUser, createUserSuccess, createUserFailure } from '../users/store/users.actions';
 
 @Component({
   selector: 'app-invitation',
@@ -29,7 +31,8 @@ import { AsyncButtonDirective } from '@ui/lib/directives/async-button.directive'
 })
 export class InvitationComponent {
   private readonly fb = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
+  private readonly store = inject(Store);
+  private readonly actions$ = inject(Actions);
   private readonly messageService = inject(MessageService);
 
   userSaving = signal(false);
@@ -51,16 +54,15 @@ export class InvitationComponent {
     const { email, password, role } = this.newUserForm.value;
     this.userSaving.set(true);
     this.userError.set(null);
-    this.authService.createUser(email!, password!, role as AdminRole).pipe(
-      catchError((err: { error?: { message?: string }; message?: string }) => {
-        this.userError.set(err?.error?.message ?? 'Failed to create user');
-        this.userSaving.set(false);
-        return EMPTY;
-      })
-    ).subscribe(() => {
+    this.store.dispatch(createUser({ email: email!, password: password!, role: role as AdminRole }));
+    this.actions$.pipe(ofType(createUserSuccess, createUserFailure), take(1)).subscribe((action) => {
+      if (action.type === createUserSuccess.type) {
+        this.newUserForm.reset({ role: 'operator' });
+        this.messageService.add({ severity: 'success', summary: 'User created successfully' });
+      } else {
+        this.userError.set((action as ReturnType<typeof createUserFailure>).error ?? 'Failed to create user');
+      }
       this.userSaving.set(false);
-      this.newUserForm.reset({ role: 'operator' });
-      this.messageService.add({ severity: 'success', summary: 'User created successfully' });
     });
   }
 }

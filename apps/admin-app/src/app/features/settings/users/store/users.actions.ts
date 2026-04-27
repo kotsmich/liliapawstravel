@@ -11,6 +11,19 @@ export const loadUsersFailure = createAction(
   props<{ error: string }>()
 );
 
+export const createUser = createAction(
+  '[Users] Create User',
+  props<{ email: string; password: string; role: AdminRole }>()
+);
+export const createUserSuccess = createAction(
+  '[Users] Create User Success',
+  props<{ user: AdminUser }>()
+);
+export const createUserFailure = createAction(
+  '[Users] Create User Failure',
+  props<{ error: string }>()
+);
+
 export const updateUser = createAction(
   '[Users] Update User',
   props<{ id: string; changes: { email?: string; role?: AdminRole } }>()

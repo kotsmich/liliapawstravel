@@ -380,7 +380,9 @@
     "colEmail": "Email",
     "colRole": "Role",
     "noUsers": "No users found.",
-    "editUser": "Edit User"
+    "editUser": "Edit User",
+    "deleteUser": "Delete User",
+    "confirmDeleteUser": "Are you sure you want to delete the user \"{{email}}\"? This action cannot be undone."
   },
   "account": {
     "title": "Account",

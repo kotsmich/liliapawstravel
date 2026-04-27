@@ -87,7 +87,7 @@ export class TripsEffects {
   updateTrip$ = createEffect(() =>
     this.actions$.pipe(
       ofType(updateTrip),
-      switchMap(({ id, trip }) =>
+      mergeMap(({ id, trip }) =>
         this.tripsService.updateTrip(id, trip).pipe(
           map((updated) => updateTripSuccess({ trip: updated })),
           catchError((error) => of(updateTripFailure({ error: extractError(error) })))
@@ -120,9 +120,9 @@ export class TripsEffects {
   addDog$ = createEffect(() =>
     this.actions$.pipe(
       ofType(addDog),
-      switchMap(({ tripId, dog }) =>
+      mergeMap(({ tripId, dog }) =>
         this.dogsService.createDog(tripId, dog).pipe(
-          mergeMap((saved) => [addDogSuccess({ tripId, dog: saved }), loadTripById({ id: tripId })]),
+          map((saved) => addDogSuccess({ tripId, dog: saved })),
           catchError((error) => of(addDogFailure({ error: extractError(error) })))
         )
       )
@@ -132,12 +132,12 @@ export class TripsEffects {
   addDogs$ = createEffect(() =>
     this.actions$.pipe(
       ofType(addDogs),
-      switchMap(({ tripId, dogs, requesterId, newRequesterName }) => {
+      mergeMap(({ tripId, dogs, requesterId, newRequesterName }) => {
         const body: { dogs: typeof dogs; requesterId?: string; newRequesterName?: string } = { dogs };
         if (requesterId) body.requesterId = requesterId;
         if (newRequesterName?.trim()) body.newRequesterName = newRequesterName.trim();
         return this.dogsService.createDogs(tripId, body).pipe(
-          mergeMap((saved) => [addDogsSuccess({ tripId, dogs: saved }), loadTripById({ id: tripId })]),
+          map((saved) => addDogsSuccess({ tripId, dogs: saved })),
           catchError((error) => of(addDogsFailure({ error: extractError(error) })))
         );
       })
@@ -149,7 +149,7 @@ export class TripsEffects {
       ofType(deleteDog),
       mergeMap(({ tripId, dogId }) =>
         this.dogsService.deleteDog(dogId).pipe(
-          mergeMap(() => [deleteDogSuccess({ tripId, dogId }), loadTripById({ id: tripId })]),
+          map(() => deleteDogSuccess({ tripId, dogId })),
           catchError((error) => of(deleteDogFailure({ error: extractError(error) })))
         )
       )
@@ -159,9 +159,9 @@ export class TripsEffects {
   updateDog$ = createEffect(() =>
     this.actions$.pipe(
       ofType(updateDog),
-      switchMap(({ tripId, dog }) =>
+      mergeMap(({ tripId, dog }) =>
         this.dogsService.updateDog(dog.id, dog).pipe(
-           mergeMap((updated) => [ updateDogSuccess({ tripId, dog: updated }), loadTripById({ id: tripId })]),
+          map((updated) => updateDogSuccess({ tripId, dog: updated })),
           catchError((error) => of(updateDogFailure({ error: extractError(error) })))
         )
       )
@@ -171,9 +171,9 @@ export class TripsEffects {
   deleteDogs$ = createEffect(() =>
     this.actions$.pipe(
       ofType(deleteDogs),
-      switchMap(({ tripId, dogIds }) =>
+      mergeMap(({ tripId, dogIds }) =>
         this.dogsService.deleteDogs(dogIds).pipe(
-          mergeMap(() => [deleteDogsSuccess({ tripId, dogIds }), loadTripById({ id: tripId })]),
+          map(() => deleteDogsSuccess({ tripId, dogIds })),
           catchError((error) => of(deleteDogsFailure({ error: extractError(error) })))
         )
       )

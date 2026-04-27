@@ -380,7 +380,9 @@
     "colEmail": "E-Mail",
     "colRole": "Rolle",
     "noUsers": "Keine Benutzer gefunden.",
-    "editUser": "Benutzer bearbeiten"
+    "editUser": "Benutzer bearbeiten",
+    "deleteUser": "Benutzer löschen",
+    "confirmDeleteUser": "Möchten Sie den Benutzer \"{{email}}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."
   },
   "account": {
     "title": "Konto",

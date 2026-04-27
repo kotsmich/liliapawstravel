@@ -40,4 +40,8 @@ export class AuthService {
   createUser(email: string, password: string, role: AdminRole): Observable<AdminUser> {
     return this.http.post<AdminUser>(`${this.baseUrl}/users`, { email, password, role });
   }
+
+  deleteUser(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/users/${id}`);
+  }
 }

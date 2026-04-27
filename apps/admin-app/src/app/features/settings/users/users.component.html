@@ -15,7 +15,7 @@
       <tr>
         <th>{{ 'settings.colEmail' | transloco }}</th>
         <th>{{ 'settings.colRole' | transloco }}</th>
-        <th style="width: 5rem"></th>
+        <th style="width: 8rem"></th>
       </tr>
     </ng-template>
 
@@ -35,6 +35,14 @@
             severity="secondary"
             (onClick)="openEdit(user)"
           />
+          <p-button
+            icon="pi pi-trash"
+            [text]="true"
+            [rounded]="true"
+            severity="danger"
+            [disabled]="isSelf(user)"
+            (onClick)="deleteUser(user)"
+          />
         </td>
       </tr>
     </ng-template>
@@ -46,6 +54,7 @@
     </ng-template>
   </p-table>
 
+  <p-confirmDialog />
 </div>
 
 <!-- Edit dialog -->
