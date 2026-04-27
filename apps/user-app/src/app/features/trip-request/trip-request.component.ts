@@ -20,7 +20,6 @@ import { map } from 'rxjs/operators';
 import { TripDestination } from '@models/lib/trip.model';
 import { DogFormComponent } from '@ui/lib/dog-form/dog-form.component';
 import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
-import { ToastNotificationComponent } from '@ui/lib/toast-notification/toast-notification.component';
 import { CalendarEvent } from '@models/lib/calendar-event.model';
 import { devSeed, RandomProperty } from '@models/lib/utils';
 import { selectTripsAsCalendarEvents, selectTripsIsLoading, selectAllTrips, selectNextAvailableTrip } from '@user/core/store/trips';
@@ -41,7 +40,7 @@ import { PhoneInputComponent } from '@user/shared/components/phone-input/phone-i
     DatePipe, ReactiveFormsModule,
     AccordionModule, ButtonModule, DividerModule, MessageModule, ConfirmDialogModule,
     InputTextModule, IftaLabelModule, ProgressSpinnerModule, TagModule,
-    DogFormComponent, TripCalendarComponent, ToastNotificationComponent, TranslocoModule, TooltipModule,
+    DogFormComponent, TripCalendarComponent, TranslocoModule, TooltipModule,
     FocusInvalidInputDirective, ValidationErrorDirective,
     TripRequestHeroComponent, TripRequestSidebarComponent, TripDetailsCardComponent, NoTripHintComponent,
     StepHeaderComponent, PhoneInputComponent,
