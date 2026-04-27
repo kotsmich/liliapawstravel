@@ -1,11 +1,10 @@
 import { Component, HostListener, ChangeDetectionStrategy, inject, signal, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser, NgClass } from '@angular/common';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { filter, map, startWith } from 'rxjs/operators';
 import { TranslocoModule } from '@jsverse/transloco';
 import { LanguageSwitcherComponent } from '@user/shared/components/language-switcher/language-switcher.component';
+import { RouterUrlService } from '@user/services/router-url.service';
 
 @Component({
   selector: 'app-navbar',
@@ -18,15 +17,7 @@ import { LanguageSwitcherComponent } from '@user/shared/components/language-swit
 export class NavbarComponent {
   private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
-
-  private readonly currentUrl = toSignal(
-    this.router.events.pipe(
-      filter((e) => e instanceof NavigationEnd),
-      map((e) => (e as NavigationEnd).urlAfterRedirects || (e as NavigationEnd).url),
-      startWith(this.router.url),
-    ),
-    { initialValue: this.router.url },
-  );
+  private readonly currentUrl = inject(RouterUrlService).currentUrl;
 
   menuOpen = false;
   readonly scrolled = signal(false);

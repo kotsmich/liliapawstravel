@@ -1,10 +1,9 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd, NavigationStart, NavigationCancel, NavigationError } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, combineLatest, EMPTY } from 'rxjs';
-import { filter, map, startWith } from 'rxjs/operators';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { catchError, EMPTY } from 'rxjs';
 import { ToastModule } from 'primeng/toast';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TranslocoService } from '@jsverse/transloco';
@@ -16,6 +15,7 @@ import { AppWebSocketService } from '@ui/lib/websocket/app-websocket.service';
 import { SocketEvent } from '@models/lib/socket-events.model';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { wsRequestApproved, wsRequestRejected } from '@user/core/toast/toast.actions';
+import { RouterUrlService } from '@user/services/router-url.service';
 
 const BASE_URL = 'https://liliapawstravel.com';
 
@@ -100,6 +100,7 @@ const ROUTE_META: Record<string, Record<string, RouteMeta>> = {
 export class AppComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly document = inject(DOCUMENT);
+  private readonly currentUrl = inject(RouterUrlService).currentUrl;
 
   readonly navigating = signal(false);
 
@@ -115,11 +116,11 @@ export class AppComponent implements OnInit {
       if (e instanceof NavigationStart)                               this.navigating.set(true);
       if (e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError) this.navigating.set(false);
     });
+    this.initDynamicTitles();
   }
 
   ngOnInit(): void {
     this.wsService.connect();
-    this.initDynamicTitles();
 
     this.wsService
       .listen<TripRequest>(SocketEvent.REQUEST_UPDATED)
@@ -137,19 +138,14 @@ export class AppComponent implements OnInit {
   }
 
   private initDynamicTitles(): void {
-    combineLatest([
-      this.router.events.pipe(
-        filter((e) => e instanceof NavigationEnd),
-        map((e) => (e as NavigationEnd).urlAfterRedirects || (e as NavigationEnd).url),
-        startWith(this.router.url),
-      ),
-      this.translocoService.langChanges$.pipe(startWith(this.translocoService.getActiveLang())),
-    ])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(([url, lang]) => {
-        this.document.documentElement.setAttribute('lang', lang);
-        this.updateMeta(url, lang);
-      });
+    const lang = toSignal(this.translocoService.langChanges$, {
+      initialValue: this.translocoService.getActiveLang(),
+    });
+    effect(() => {
+      const activeLang = lang();
+      this.document.documentElement.setAttribute('lang', activeLang);
+      this.updateMeta(this.currentUrl(), activeLang);
+    });
   }
 
   private updateMeta(url: string, lang: string): void {

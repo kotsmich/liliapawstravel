@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
+import { CONTACT_INFO } from '@user/shared/contact-info';
 
 @Component({
   selector: 'app-footer',
@@ -13,6 +14,7 @@ import { TranslocoModule } from '@jsverse/transloco';
 export class FooterComponent {
   private readonly router = inject(Router);
 
+  readonly contact = CONTACT_INFO;
   year = new Date().getFullYear();
 
   navigateTo(path: string): void {

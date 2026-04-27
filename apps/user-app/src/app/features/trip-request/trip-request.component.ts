@@ -1,6 +1,6 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, inject, computed, signal, ViewChild, ElementRef, isDevMode } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, inject, computed, signal, ViewChild, ElementRef } from '@angular/core';
 import { DatePipe, ViewportScroller } from '@angular/common';
-import { ReactiveFormsModule, FormsModule, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
@@ -8,7 +8,6 @@ import { MessageModule } from 'primeng/message';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { IftaLabelModule } from 'primeng/iftalabel';
-import { SelectModule } from 'primeng/select';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
@@ -23,51 +22,34 @@ import { DogFormComponent } from '@ui/lib/dog-form/dog-form.component';
 import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.component';
 import { ToastNotificationComponent } from '@ui/lib/toast-notification/toast-notification.component';
 import { CalendarEvent } from '@models/lib/calendar-event.model';
-import { RandomUtil, RandomProperty } from '@models/lib/utils';
+import { devSeed, RandomProperty } from '@models/lib/utils';
 import { selectTripsAsCalendarEvents, selectTripsIsLoading, selectAllTrips } from '@user/core/store/trips';
 import { submitRequest, submitRequestSuccess, resetRequest, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError, DogFiles } from '@user/features/trip-request/store';
 import { FocusInvalidInputDirective } from '@ui/lib/directives/focus-invalid-input.directive';
+import { ValidationErrorDirective } from '@ui/lib/directives/validation-error.directive';
 import { TripRequestHeroComponent } from './components/trip-request-hero/trip-request-hero.component';
 import { TripRequestSidebarComponent } from './components/trip-request-sidebar/trip-request-sidebar.component';
 import { TripDetailsCardComponent } from './components/trip-details-card/trip-details-card.component';
 import { NoTripHintComponent } from './components/no-trip-hint/no-trip-hint.component';
+import { StepHeaderComponent } from './components/step-header/step-header.component';
+import { PhoneInputComponent } from '@user/shared/components/phone-input/phone-input.component';
 @Component({
   selector: 'app-trip-request',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    DatePipe, ReactiveFormsModule, FormsModule,
+    DatePipe, ReactiveFormsModule,
     AccordionModule, ButtonModule, DividerModule, MessageModule, ConfirmDialogModule,
-    InputTextModule, IftaLabelModule, SelectModule, ProgressSpinnerModule, TagModule,
+    InputTextModule, IftaLabelModule, ProgressSpinnerModule, TagModule,
     DogFormComponent, TripCalendarComponent, ToastNotificationComponent, TranslocoModule, TooltipModule,
-    FocusInvalidInputDirective,
+    FocusInvalidInputDirective, ValidationErrorDirective,
     TripRequestHeroComponent, TripRequestSidebarComponent, TripDetailsCardComponent, NoTripHintComponent,
+    StepHeaderComponent, PhoneInputComponent,
   ],
   templateUrl: './trip-request.component.html',
   styleUrls: ['./trip-request.component.scss'],
 })
 export class TripRequestComponent {
-  readonly phoneCountryCodes = [
-    { label: 'Greece +30',      code: 'gr', value: '+30'  },
-    { label: 'USA +1',          code: 'us', value: '+1'   },
-    { label: 'UK +44',          code: 'gb', value: '+44'  },
-    { label: 'Germany +49',     code: 'de', value: '+49'  },
-    { label: 'France +33',      code: 'fr', value: '+33'  },
-    { label: 'Italy +39',       code: 'it', value: '+39'  },
-    { label: 'Spain +34',       code: 'es', value: '+34'  },
-    { label: 'Netherlands +31', code: 'nl', value: '+31'  },
-    { label: 'Belgium +32',     code: 'be', value: '+32'  },
-    { label: 'Switzerland +41', code: 'ch', value: '+41'  },
-    { label: 'Austria +43',     code: 'at', value: '+43'  },
-    { label: 'Portugal +351',   code: 'pt', value: '+351' },
-    { label: 'Poland +48',      code: 'pl', value: '+48'  },
-    { label: 'Romania +40',     code: 'ro', value: '+40'  },
-    { label: 'Bulgaria +359',   code: 'bg', value: '+359' },
-    { label: 'Cyprus +357',     code: 'cy', value: '+357' },
-    { label: 'Australia +61',   code: 'au', value: '+61'  },
-  ];
-  phoneCountryCode = '+30';
-
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store);
   private readonly actions$ = inject(Actions);
@@ -104,9 +86,9 @@ export class TripRequestComponent {
   readonly error           = toSignal(this.store.select(selectTripRequestError),       { initialValue: null as string | null });
 
   readonly form = this.fb.group({
-    requesterName:  [isDevMode() ? RandomUtil.pick(RandomProperty.requesterNames)  : '', Validators.required],
-    requesterEmail: [isDevMode() ? RandomUtil.pick(RandomProperty.requesterEmails) : '', [Validators.required, Validators.email]],
-    requesterPhone: [isDevMode() ? RandomUtil.pick(RandomProperty.requesterPhones) : '', Validators.required],
+    requesterName:  [devSeed(RandomProperty.requesterNames),  Validators.required],
+    requesterEmail: [devSeed(RandomProperty.requesterEmails), [Validators.required, Validators.email]],
+    requesterPhone: [devSeed(RandomProperty.requesterPhones.map((number) => `+30 ${number}`)), Validators.required],
     dogs: this.fb.array([this.dogGroup()]),
   });
 
@@ -151,7 +133,7 @@ export class TripRequestComponent {
 
   dogGroup() {
     return this.fb.group({
-      name:           [isDevMode() ? RandomUtil.pick(RandomProperty.dogNames) : null, Validators.required],
+      name:           [devSeed(RandomProperty.dogNames, null), Validators.required],
       size:           [],
       height:         [null],
       behaviors:      [[] as string[]],
@@ -302,7 +284,7 @@ export class TripRequestComponent {
       tripId: trip.id,
       requesterName: requesterName!,
       requesterEmail: requesterEmail!,
-      requesterPhone: `${this.phoneCountryCode} ${requesterPhone!}`.trim(),
+      requesterPhone: (requesterPhone ?? '').trim(),
     }));
   }
 

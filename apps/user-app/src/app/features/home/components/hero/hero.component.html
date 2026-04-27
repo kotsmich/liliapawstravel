@@ -3,7 +3,7 @@
   <!-- ── Background Slider ── -->
   <div class="hero__slides" aria-hidden="true">
     @for (slide of slides; track $index; let i = $index) {
-      <div class="hero__slide" [class.active]="i === currentSlide">
+      <div class="hero__slide" [class.active]="i === currentSlide()">
         <img
           class="hero__bg"
           [src]="slide.image"
@@ -42,10 +42,10 @@
             class="hero__dot"
             type="button"
             role="tab"
-            [class.active]="i === currentSlide"
+            [class.active]="i === currentSlide()"
             (click)="goTo(i)"
             [attr.aria-label]="'Slide ' + (i + 1)"
-            [attr.aria-selected]="i === currentSlide"
+            [attr.aria-selected]="i === currentSlide()"
           ></button>
         }
       </div>

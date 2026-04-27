@@ -6,7 +6,7 @@
   <header class="page-intro" aria-label="About us">
     <div class="page-intro__slides" aria-hidden="true">
       @for (slide of heroSlides; track $index; let i = $index) {
-        <div class="page-intro__slide" [class.active]="i === currentSlide">
+        <div class="page-intro__slide" [class.active]="i === currentSlide()">
           <img
             [src]="slide"
             alt=""

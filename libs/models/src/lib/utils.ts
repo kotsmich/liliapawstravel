@@ -1,3 +1,5 @@
+import { isDevMode } from '@angular/core';
+
 export function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
@@ -7,6 +9,18 @@ export const RandomUtil = {
     return arr[Math.floor(Math.random() * arr.length)];
   },
 };
+
+/** Seed a form control with a random value in dev, fallback in prod. */
+export function devSeed<T>(source: readonly T[], fallback: T): T;
+export function devSeed<T>(source: readonly T[]): T | '';
+export function devSeed<T>(source: readonly T[], fallback: T | '' = ''): T | '' {
+  return isDevMode() ? RandomUtil.pick(source) : fallback;
+}
+
+/** Seed a form control with a constant value in dev, fallback in prod. */
+export function devValue<T>(value: T, fallback: T | '' = ''): T | '' {
+  return isDevMode() ? value : fallback;
+}
 
 export const RandomProperty = {
   dogNames:        ['Bella', 'Max', 'Luna', 'Rocky', 'Milo', 'Daisy', 'Buddy', 'Coco', 'Loki', 'Zeus', 'Charlie', 'Molly', 'Bear', 'Stella', 'Duke', 'Rosie', 'Rex', 'Penny', 'Archie', 'Nala', 'Finn', 'Maggie', 'Gus', 'Zoe', 'Bruno'],

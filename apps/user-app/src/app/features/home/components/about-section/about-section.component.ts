@@ -1,9 +1,7 @@
-import {
-  Component, Input, ChangeDetectionStrategy,
-  OnInit, OnDestroy, ChangeDetectorRef, inject,
-} from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
+import { autoRotate } from '@user/shared/auto-rotate';
 
 @Component({
   selector: 'app-about-section',
@@ -13,10 +11,8 @@ import { TranslocoModule } from '@jsverse/transloco';
   templateUrl: './about-section.component.html',
   styleUrls: ['./about-section.component.scss'],
 })
-export class AboutSectionComponent implements OnInit, OnDestroy {
+export class AboutSectionComponent {
   @Input() steps: Array<{ step: number; title: string; desc: string }> = [];
-
-  private readonly cdr = inject(ChangeDetectorRef);
 
   readonly features = [
     { icon: '🛡️', titleKey: 'about.safetyFirst.title', descKey: 'about.safetyFirst.desc' },
@@ -45,86 +41,17 @@ export class AboutSectionComponent implements OnInit, OnDestroy {
     'assets/images/van.png',
   ];
 
-  currentIndex = 0;
-  fleetIndex = 0;
-  private timer: ReturnType<typeof setInterval> | null = null;
-  private fleetTimer: ReturnType<typeof setInterval> | null = null;
+  private readonly photoRotation = autoRotate(() => this.photos.length, 4500);
+  private readonly fleetRotation = autoRotate(() => this.fleetPhotos.length, 4500);
 
-  ngOnInit(): void {
-    this.startTimer();
-    this.startFleetTimer();
-  }
+  readonly currentIndex = this.photoRotation.index;
+  readonly fleetIndex = this.fleetRotation.index;
 
-  ngOnDestroy(): void {
-    this.stopTimer();
-    this.stopFleetTimer();
-  }
+  prev(): void { this.photoRotation.prev(); }
+  next(): void { this.photoRotation.next(); }
+  goTo(index: number): void { this.photoRotation.goTo(index); }
 
-  prev(): void {
-    this.currentIndex = (this.currentIndex - 1 + this.photos.length) % this.photos.length;
-    this.resetTimer();
-    this.cdr.markForCheck();
-  }
-
-  next(): void {
-    this.currentIndex = (this.currentIndex + 1) % this.photos.length;
-    this.resetTimer();
-    this.cdr.markForCheck();
-  }
-
-  goTo(index: number): void {
-    this.currentIndex = index;
-    this.resetTimer();
-    this.cdr.markForCheck();
-  }
-
-  fleetPrev(): void {
-    this.fleetIndex = (this.fleetIndex - 1 + this.fleetPhotos.length) % this.fleetPhotos.length;
-    this.resetFleetTimer();
-    this.cdr.markForCheck();
-  }
-
-  fleetNext(): void {
-    this.fleetIndex = (this.fleetIndex + 1) % this.fleetPhotos.length;
-    this.resetFleetTimer();
-    this.cdr.markForCheck();
-  }
-
-  fleetGoTo(index: number): void {
-    this.fleetIndex = index;
-    this.resetFleetTimer();
-    this.cdr.markForCheck();
-  }
-
-  private startTimer(): void {
-    this.timer = setInterval(() => {
-      this.currentIndex = (this.currentIndex + 1) % this.photos.length;
-      this.cdr.markForCheck();
-    }, 4500);
-  }
-
-  private stopTimer(): void {
-    if (this.timer) { clearInterval(this.timer); this.timer = null; }
-  }
-
-  private resetTimer(): void {
-    this.stopTimer();
-    this.startTimer();
-  }
-
-  private startFleetTimer(): void {
-    this.fleetTimer = setInterval(() => {
-      this.fleetIndex = (this.fleetIndex + 1) % this.fleetPhotos.length;
-      this.cdr.markForCheck();
-    }, 4500);
-  }
-
-  private stopFleetTimer(): void {
-    if (this.fleetTimer) { clearInterval(this.fleetTimer); this.fleetTimer = null; }
-  }
-
-  private resetFleetTimer(): void {
-    this.stopFleetTimer();
-    this.startFleetTimer();
-  }
+  fleetPrev(): void { this.fleetRotation.prev(); }
+  fleetNext(): void { this.fleetRotation.next(); }
+  fleetGoTo(index: number): void { this.fleetRotation.goTo(index); }
 }

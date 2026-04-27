@@ -12,19 +12,9 @@
 
       <!-- Step 1: Calendar card -->
       <section class="card">
-        <div class="step-head">
-          <div class="step-num" [class.done]="calendarDone()">
-            @if (calendarDone()) {
-              <i class="pi pi-check"></i>
-            } @else {
-              1
-            }
-          </div>
-          <div>
-            <h2>{{ 'tripRequest.selectDate' | transloco }}</h2>
-            <p class="step-sub">{{ 'tripRequest.clickHint' | transloco }}</p>
-          </div>
-        </div>
+        <app-step-header [num]="1" [done]="calendarDone()" [sub]="'tripRequest.clickHint' | transloco">
+          {{ 'tripRequest.selectDate' | transloco }}
+        </app-step-header>
         @if (nextAvailableTrip(); as next) {
           <button
             type="button"
@@ -73,74 +63,33 @@
 
               <!-- Step 2: Your details -->
               <div class="form-section" >
-                <div class="step-head">
-                  <div class="step-num" [class.done]="contactDone()">
-                    @if (contactDone()) {
-                      <i class="pi pi-check"></i>
-                    } @else {
-                      2
-                    }
-                  </div>
-                  <div>
-                    <h2>{{ 'tripRequest.yourDetails' | transloco }}</h2>
-                  </div>
-                </div>
+                <app-step-header [num]="2" [done]="contactDone()">
+                  {{ 'tripRequest.yourDetails' | transloco }}
+                </app-step-header>
                 <div class="requester-fields">
                   <div class="field">
                     <p-ifta-label>
                       <input pInputText id="reqName" formControlName="requesterName" size="small"
-                        [attr.aria-invalid]="form.get('requesterName')?.touched && form.get('requesterName')?.invalid ? 'true' : null"
-                        [attr.aria-describedby]="form.get('requesterName')?.touched && form.get('requesterName')?.invalid ? 'reqName-err' : null" />
+                        [attr.aria-invalid]="form.get('requesterName')?.touched && form.get('requesterName')?.invalid ? 'true' : null" />
                       <label for="reqName">{{ 'tripRequest.fullName' | transloco }}</label>
                     </p-ifta-label>
-                    @if (form.get('requesterName')?.touched && form.get('requesterName')?.invalid) {
-                      <small id="reqName-err" class="p-error" role="alert">{{ 'tripRequest.required' | transloco }}</small>
-                    }
+                    <small class="p-error" *appValidationError="form.get('requesterName')">{{ 'tripRequest.required' | transloco }}</small>
                   </div>
                   <div class="field">
                     <p-ifta-label>
                       <input pInputText id="reqEmail" formControlName="requesterEmail" type="email" size="small"
-                        [attr.aria-invalid]="form.get('requesterEmail')?.touched && form.get('requesterEmail')?.invalid ? 'true' : null"
-                        [attr.aria-describedby]="form.get('requesterEmail')?.touched && form.get('requesterEmail')?.invalid ? 'reqEmail-err' : null" />
+                        [attr.aria-invalid]="form.get('requesterEmail')?.touched && form.get('requesterEmail')?.invalid ? 'true' : null" />
                       <label for="reqEmail">{{ 'tripRequest.email' | transloco }}</label>
                     </p-ifta-label>
-                    @if (form.get('requesterEmail')?.touched && form.get('requesterEmail')?.invalid) {
-                      <small id="reqEmail-err" class="p-error" role="alert">{{ 'tripRequest.validEmail' | transloco }}</small>
-                    }
+                    <small class="p-error" *appValidationError="form.get('requesterEmail')">{{ 'tripRequest.validEmail' | transloco }}</small>
                   </div>
                   <div class="field">
-                    <div class="phone-input-row">
-                      <p-select
-                        class="phone-code-select"
-                        [options]="phoneCountryCodes"
-                        [(ngModel)]="phoneCountryCode"
-                        [ngModelOptions]="{standalone: true}"
-                        optionValue="value"
-                        [ariaLabel]="'tripRequest.phone' | transloco"
-                        appendTo="body">
-                        <ng-template #selectedItem let-item>
-                          <div class="flag-option">
-                            <img [src]="'https://flagcdn.com/20x15/' + item.code + '.png'" [alt]="item.code" />
-                            <span>{{ item.value }}</span>
-                          </div>
-                        </ng-template>
-                        <ng-template #item let-item>
-                          <div class="flag-option">
-                            <img [src]="'https://flagcdn.com/20x15/' + item.code + '.png'" [alt]="item.code" />
-                            <span>{{ item.label }}</span>
-                          </div>
-                        </ng-template>
-                      </p-select>
-                      <p-ifta-label class="flex-1">
-                        <input pInputText id="reqPhone" formControlName="requesterPhone" size="small"
-                          [attr.aria-invalid]="form.get('requesterPhone')?.touched && form.get('requesterPhone')?.invalid ? 'true' : null"
-                          [attr.aria-describedby]="form.get('requesterPhone')?.touched && form.get('requesterPhone')?.invalid ? 'reqPhone-err' : null" />
-                        <label for="reqPhone">{{ 'tripRequest.phone' | transloco }}</label>
-                      </p-ifta-label>
-                    </div>
-                    @if (form.get('requesterPhone')?.touched && form.get('requesterPhone')?.invalid) {
-                      <small id="reqPhone-err" class="p-error" role="alert">{{ 'tripRequest.required' | transloco }}</small>
-                    }
+                    <lp-phone-input
+                      formControlName="requesterPhone"
+                      inputId="reqPhone"
+                      [label]="'tripRequest.phone' | transloco"
+                      [invalid]="!!(form.get('requesterPhone')?.touched && form.get('requesterPhone')?.invalid)" />
+                    <small class="p-error" *appValidationError="form.get('requesterPhone')">{{ 'tripRequest.required' | transloco }}</small>
                   </div>
                 </div>
               </div>
@@ -149,21 +98,10 @@
 
               <!-- Step 3: Dogs -->
               <div class="form-section" >
-                <div class="step-head">
-                  <div class="step-num" [class.done]="dogsDone()">
-                    @if (dogsDone()) {
-                      <i class="pi pi-check"></i>
-                    } @else {
-                      3
-                    }
-                  </div>
-                  <div>
-                    <h2>
-                      {{ 'tripRequest.addDogs' | transloco }}
-                      <i class="pi pi-info-circle" [pTooltip]="'dogs.dropLocationInfo' | transloco" tooltipPosition="top"></i>
-                    </h2>
-                  </div>
-                </div>
+                <app-step-header [num]="3" [done]="dogsDone()">
+                  {{ 'tripRequest.addDogs' | transloco }}
+                  <i class="pi pi-info-circle" [pTooltip]="'dogs.dropLocationInfo' | transloco" tooltipPosition="top"></i>
+                </app-step-header>
 
                 <div formArrayName="dogs" class="dogs-list">
                   <p-accordion

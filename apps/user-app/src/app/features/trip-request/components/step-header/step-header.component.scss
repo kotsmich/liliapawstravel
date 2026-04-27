@@ -1,0 +1,44 @@
+:host { display: block; }
+
+.step-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+    font-size: 1.05rem; font-weight: 700; color: #2d2016;
+    margin: 0 0 .15rem; letter-spacing: -.01em;
+    display: flex; align-items: center; gap: .45rem;
+
+    .pi-info-circle {
+      font-size: .85rem;
+      color: #9e8b83;
+      cursor: pointer;
+      &:hover { color: var(--color-primary, #e07b54); }
+    }
+  }
+}
+
+.step-num {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--color-primary, #e07b54);
+  color: #fff;
+  font-weight: 700; font-size: .82rem;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(224, 123, 84, .3);
+  transition: background .3s ease, box-shadow .3s ease;
+
+  &.done {
+    background: #16a34a;
+    box-shadow: 0 2px 8px rgba(22, 163, 74, .3);
+  }
+
+  .pi { font-size: .8rem; }
+}
+
+.step-sub {
+  color: var(--color-text-muted, #6b7280); font-size: .83rem; margin: 0;
+}

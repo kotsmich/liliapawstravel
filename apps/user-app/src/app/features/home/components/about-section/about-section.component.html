@@ -35,14 +35,14 @@
         @for (photo of photos; track $index; let i = $index) {
           <img
             class="slider__img"
-            [class.active]="i === currentIndex"
+            [class.active]="i === currentIndex()"
             [src]="photo"
             [alt]="'Photo ' + (i + 1)"
             loading="lazy"
           />
         }
         <div class="slider__counter" aria-live="polite" aria-atomic="true">
-          {{ currentIndex + 1 }} / {{ photos.length }}
+          {{ currentIndex() + 1 }} / {{ photos.length }}
         </div>
       </div>
 
@@ -54,10 +54,10 @@
               class="slider__dot"
               type="button"
               role="tab"
-              [class.active]="i === currentIndex"
+              [class.active]="i === currentIndex()"
               (click)="goTo(i)"
               [attr.aria-label]="'Go to slide ' + (i + 1)"
-              [attr.aria-selected]="i === currentIndex"
+              [attr.aria-selected]="i === currentIndex()"
             ></button>
           }
         </div>
@@ -80,14 +80,14 @@
         @for (photo of fleetPhotos; track $index; let i = $index) {
           <img
             class="slider__img"
-            [class.active]="i === fleetIndex"
+            [class.active]="i === fleetIndex()"
             [src]="photo"
             [alt]="'Fleet photo ' + (i + 1)"
             loading="lazy"
           />
         }
         <div class="slider__counter" aria-live="polite" aria-atomic="true">
-          {{ fleetIndex + 1 }} / {{ fleetPhotos.length }}
+          {{ fleetIndex() + 1 }} / {{ fleetPhotos.length }}
         </div>
       </div>
       <div class="slider__nav">
@@ -98,10 +98,10 @@
               class="slider__dot"
               type="button"
               role="tab"
-              [class.active]="i === fleetIndex"
+              [class.active]="i === fleetIndex()"
               (click)="fleetGoTo(i)"
               [attr.aria-label]="'Go to slide ' + (i + 1)"
-              [attr.aria-selected]="i === fleetIndex"
+              [attr.aria-selected]="i === fleetIndex()"
             ></button>
           }
         </div>

@@ -1,10 +1,8 @@
-import {
-  Component, ChangeDetectionStrategy, inject,
-  OnInit, OnDestroy, ChangeDetectorRef,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
 import { CtaSectionComponent } from '@user/features/home/components/cta-section/cta-section.component';
+import { autoRotate } from '@user/shared/auto-rotate';
 
 @Component({
   selector: 'app-about',
@@ -14,9 +12,8 @@ import { CtaSectionComponent } from '@user/features/home/components/cta-section/
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
 })
-export class AboutComponent implements OnInit, OnDestroy {
+export class AboutComponent {
   private readonly router = inject(Router);
-  private readonly cdr    = inject(ChangeDetectorRef);
 
   readonly heroSlides = [
     'assets/images/about-hero-1.jpeg',
@@ -25,9 +22,6 @@ export class AboutComponent implements OnInit, OnDestroy {
     'assets/images/about-hero-4.jpeg',
   ];
 
-  currentSlide = 0;
-  private slideTimer: ReturnType<typeof setInterval> | null = null;
-
   readonly storyPhotos = [
     'assets/images/story-1.jpg',
     'assets/images/story-2.jpg',
@@ -35,17 +29,6 @@ export class AboutComponent implements OnInit, OnDestroy {
     'assets/images/story-4.jpg',
     'assets/images/story-5.jpg',
   ];
-
-  ngOnInit(): void {
-    this.slideTimer = setInterval(() => {
-      this.currentSlide = (this.currentSlide + 1) % this.heroSlides.length;
-      this.cdr.markForCheck();
-    }, 3500);
-  }
-
-  ngOnDestroy(): void {
-    if (this.slideTimer) clearInterval(this.slideTimer);
-  }
 
   readonly values = [
     { icon: '🛡️', titleKey: 'aboutPage.values.safety.title', descKey: 'aboutPage.values.safety.desc' },
@@ -56,6 +39,7 @@ export class AboutComponent implements OnInit, OnDestroy {
     { icon: '🌍', titleKey: 'aboutPage.values.reach.title',  descKey: 'aboutPage.values.reach.desc'  },
   ];
 
+  readonly currentSlide = autoRotate(() => this.heroSlides.length, 3500).index;
 
   goToRequest(): void { this.router.navigate(['/request']); }
   goToContact(): void { this.router.navigate(['/contact']); }

@@ -28,7 +28,7 @@
           <a href="#" class="footer__social-btn" aria-label="Instagram" rel="noopener noreferrer">
             <i class="pi pi-instagram" aria-hidden="true"></i>
           </a>
-          <a href="mailto:liliapawstravel@gmail.com" class="footer__social-btn" aria-label="Email">
+          <a [href]="'mailto:' + contact.email" class="footer__social-btn" aria-label="Email">
             <i class="pi pi-envelope" aria-hidden="true"></i>
           </a>
         </div>
@@ -70,23 +70,19 @@
         <h4 class="footer__col-title">{{ 'footer.contact' | transloco }}</h4>
         <ul class="footer__contact-list">
           <li>
-            <a href="mailto:liliapawstravel@gmail.com" class="footer__contact-item">
+            <a [href]="'mailto:' + contact.email" class="footer__contact-item">
               <i class="pi pi-envelope" aria-hidden="true"></i>
-              <span>liliapawstravel&#64;gmail.com</span>
+              <span>{{ contact.email }}</span>
             </a>
           </li>
-          <li>
-            <a href="tel:+306907288150" class="footer__contact-item">
-              <i class="pi pi-phone" aria-hidden="true"></i>
-              <span>+30 690 728 8150</span>
-            </a>
-          </li>
-          <li>
-            <a href="tel:+306948225016" class="footer__contact-item">
-              <i class="pi pi-phone" aria-hidden="true"></i>
-              <span>+30 694 822 5016</span>
-            </a>
-          </li>
+          @for (phone of contact.phones; track phone.tel) {
+            <li>
+              <a [href]="'tel:' + phone.tel" class="footer__contact-item">
+                <i class="pi pi-phone" aria-hidden="true"></i>
+                <span>{{ phone.display }}</span>
+              </a>
+            </li>
+          }
         </ul>
       </div>
 
