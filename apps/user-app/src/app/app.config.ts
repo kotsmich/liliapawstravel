@@ -1,7 +1,7 @@
 import { ApplicationConfig, isDevMode } from '@angular/core';
 import { provideTransloco } from '@jsverse/transloco';
 import { TranslocoHttpLoader } from '@user/core/transloco-loader';
-import { provideRouter, withRouterConfig, withPreloading, PreloadAllModules, withInMemoryScrolling } from '@angular/router';
+import { provideRouter, withPreloading, PreloadAllModules, withInMemoryScrolling } from '@angular/router';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -43,7 +43,6 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     provideRouter(
       APP_ROUTES,
-      withRouterConfig({ onSameUrlNavigation: 'reload' }),
       withPreloading(PreloadAllModules),
       withInMemoryScrolling({ scrollPositionRestoration: 'top' })
     ),
@@ -55,7 +54,7 @@ export const appConfig: ApplicationConfig = {
       trips: tripsReducer,
     }),
     provideEffects([ContactEffects, TripRequestEffects, TripsEffects, NotificationEffects]),
-    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
+    ...(isDevMode() ? [provideStoreDevtools({ maxAge: 25 })] : []),
     providePrimeNG({
       theme: {
         preset: LiliaPreset,

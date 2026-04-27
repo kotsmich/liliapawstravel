@@ -1,5 +1,6 @@
 import { createSelector } from '@ngrx/store';
 import { CalendarEvent } from '@models/lib/calendar-event.model';
+import { toLocalIsoDate } from '@models/lib/utils';
 import { selectAllTrips } from './trips.reducer';
 
 export const selectTripsAsCalendarEvents = createSelector(selectAllTrips, (trips): CalendarEvent[] =>
@@ -23,3 +24,12 @@ export const selectTripsAsCalendarEvents = createSelector(selectAllTrips, (trips
       acceptingRequests: trip.acceptingRequests,
     }))
 );
+
+export const selectNextAvailableTrip = createSelector(selectTripsAsCalendarEvents, (events): CalendarEvent | null => {
+  const todayStr = toLocalIsoDate(new Date());
+  return (
+    events
+      .filter((event) => !event.isFull && event.acceptingRequests !== false && event.date >= todayStr)
+      .sort((a, b) => a.date.localeCompare(b.date))[0] ?? null
+  );
+});

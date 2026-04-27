@@ -19,64 +19,10 @@ import { RouterUrlService } from '@user/services/router-url.service';
 
 const BASE_URL = 'https://liliapawstravel.com';
 
-interface RouteMeta {
-  title: string;
-  description: string;
-  canonical: string;
-}
-
-const ROUTE_META: Record<string, Record<string, RouteMeta>> = {
-  en: {
-    '/': {
-      title: 'Lilia Paws Travel — Safe Dog Transport Across Europe',
-      description: 'Lilia Paws Travel safely transports adopted dogs across Europe, connecting shelters with loving families. Request transport for your rescue dog today.',
-      canonical: `${BASE_URL}/`,
-    },
-    '/contact': {
-      title: 'Contact Us — Lilia Paws Travel',
-      description: 'Get in touch with Lilia Paws Travel. We answer questions about dog transport across Europe and help you schedule your rescue dog\'s journey.',
-      canonical: `${BASE_URL}/contact`,
-    },
-    '/request': {
-      title: 'Request Dog Transport — Lilia Paws Travel',
-      description: 'Submit a transport request for your rescue dog. Lilia Paws Travel connects adoptive families with safe, reliable cross-Europe dog transport.',
-      canonical: `${BASE_URL}/request`,
-    },
-  },
-  el: {
-    '/': {
-      title: 'Lilia Paws Travel — Ασφαλής Μεταφορά Σκύλων στην Ευρώπη',
-      description: 'Η Lilia Paws Travel μεταφέρει με ασφάλεια υιοθετημένους σκύλους σε όλη την Ευρώπη, συνδέοντας καταφύγια με αγαπημένες οικογένειες. Ζητήστε μεταφορά για τον σκύλο σας σήμερα.',
-      canonical: `${BASE_URL}/`,
-    },
-    '/contact': {
-      title: 'Επικοινωνία — Lilia Paws Travel',
-      description: 'Επικοινωνήστε με την Lilia Paws Travel. Απαντάμε σε ερωτήσεις για τη μεταφορά σκύλων στην Ευρώπη και σας βοηθάμε να προγραμματίσετε το ταξίδι του σκύλου σας.',
-      canonical: `${BASE_URL}/contact`,
-    },
-    '/request': {
-      title: 'Αίτηση Μεταφοράς Σκύλου — Lilia Paws Travel',
-      description: 'Υποβάλετε αίτημα μεταφοράς για τον υιοθετημένο σκύλο σας. Η Lilia Paws Travel συνδέει οικογένειες με ασφαλή και αξιόπιστη μεταφορά σε όλη την Ευρώπη.',
-      canonical: `${BASE_URL}/request`,
-    },
-  },
-  de: {
-    '/': {
-      title: 'Lilia Paws Travel — Sicherer Hundetransport durch Europa',
-      description: 'Lilia Paws Travel transportiert adoptierte Hunde sicher durch Europa und verbindet Tierheime mit liebevollen Familien. Beantragen Sie noch heute den Transport für Ihren Rettungshund.',
-      canonical: `${BASE_URL}/`,
-    },
-    '/contact': {
-      title: 'Kontakt — Lilia Paws Travel',
-      description: 'Nehmen Sie Kontakt mit Lilia Paws Travel auf. Wir beantworten Fragen zum Hundetransport durch Europa und helfen Ihnen, die Reise Ihres Rettungshundes zu planen.',
-      canonical: `${BASE_URL}/contact`,
-    },
-    '/request': {
-      title: 'Hundetransport anfragen — Lilia Paws Travel',
-      description: 'Stellen Sie einen Transportantrag für Ihren Rettungshund. Lilia Paws Travel verbindet Adoptiveltern mit sicherem und zuverlässigem Hundetransport durch ganz Europa.',
-      canonical: `${BASE_URL}/request`,
-    },
-  },
+const ROUTE_TO_SEO_KEY: Record<string, string> = {
+  '/': 'home',
+  '/contact': 'contact',
+  '/request': 'request',
 };
 
 @Component({
@@ -149,19 +95,21 @@ export class AppComponent implements OnInit {
   }
 
   private updateMeta(url: string, lang: string): void {
-    const langMeta = ROUTE_META[lang] ?? ROUTE_META['en'];
-    const meta = langMeta[url] ?? langMeta['/'];
+    const seoKey = ROUTE_TO_SEO_KEY[url] ?? 'home';
+    const title = this.translocoService.translate(`seo.${seoKey}.title`, undefined, lang);
+    const description = this.translocoService.translate(`seo.${seoKey}.description`, undefined, lang);
+    const canonical = `${BASE_URL}${url}`;
 
-    this.titleService.setTitle(meta.title);
+    this.titleService.setTitle(title);
 
-    this.metaService.updateTag({ name: 'description', content: meta.description });
-    this.metaService.updateTag({ property: 'og:title', content: meta.title });
-    this.metaService.updateTag({ property: 'og:description', content: meta.description });
-    this.metaService.updateTag({ property: 'og:url', content: meta.canonical });
-    this.metaService.updateTag({ name: 'twitter:title', content: meta.title });
-    this.metaService.updateTag({ name: 'twitter:description', content: meta.description });
+    this.metaService.updateTag({ name: 'description', content: description });
+    this.metaService.updateTag({ property: 'og:title', content: title });
+    this.metaService.updateTag({ property: 'og:description', content: description });
+    this.metaService.updateTag({ property: 'og:url', content: canonical });
+    this.metaService.updateTag({ name: 'twitter:title', content: title });
+    this.metaService.updateTag({ name: 'twitter:description', content: description });
 
     const canonicalEl = this.document.querySelector('link[rel="canonical"]');
-    if (canonicalEl) canonicalEl.setAttribute('href', meta.canonical);
+    if (canonicalEl) canonicalEl.setAttribute('href', canonical);
   }
 }

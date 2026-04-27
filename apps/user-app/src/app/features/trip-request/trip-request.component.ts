@@ -1,6 +1,6 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, inject, computed, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Injector, afterNextRender, inject, computed, runInInjectionContext, signal, ViewChild, ElementRef } from '@angular/core';
 import { DatePipe, ViewportScroller } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormArray, AbstractControl, Validators } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
@@ -23,7 +23,7 @@ import { TripCalendarComponent } from '@ui/lib/trip-calendar/trip-calendar.compo
 import { ToastNotificationComponent } from '@ui/lib/toast-notification/toast-notification.component';
 import { CalendarEvent } from '@models/lib/calendar-event.model';
 import { devSeed, RandomProperty } from '@models/lib/utils';
-import { selectTripsAsCalendarEvents, selectTripsIsLoading, selectAllTrips } from '@user/core/store/trips';
+import { selectTripsAsCalendarEvents, selectTripsIsLoading, selectAllTrips, selectNextAvailableTrip } from '@user/core/store/trips';
 import { submitRequest, submitRequestSuccess, resetRequest, selectTripRequestIsLoading, selectTripRequestIsSuccess, selectTripRequestError, DogFiles } from '@user/features/trip-request/store';
 import { FocusInvalidInputDirective } from '@ui/lib/directives/focus-invalid-input.directive';
 import { ValidationErrorDirective } from '@ui/lib/directives/validation-error.directive';
@@ -57,6 +57,7 @@ export class TripRequestComponent {
   private readonly viewportScroller = inject(ViewportScroller);
   private readonly transloco = inject(TranslocoService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly injector = inject(Injector);
 
   @ViewChild('dogsSection') private dogsSection?: ElementRef<HTMLElement>;
   @ViewChild(TripCalendarComponent) private tripCalendar?: TripCalendarComponent;
@@ -64,8 +65,8 @@ export class TripRequestComponent {
   showSummary = false;
   readonly openDogs = signal<string[]>(['0']);
 
-  readonly dogPhotoFiles = new Map<number, File>();
-  readonly dogDocumentFiles = new Map<number, File>();
+  readonly dogPhotoFiles = new Map<AbstractControl, File>();
+  readonly dogDocumentFiles = new Map<AbstractControl, File>();
 
   readonly selectedDateLocal = signal<string | null>(null);
 
@@ -97,27 +98,28 @@ export class TripRequestComponent {
     { initialValue: this.form.invalid },
   );
 
-  readonly nextAvailableTrip = computed(() => {
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    return this.calendarEvents()
-      .filter(e => !e.isFull && e.acceptingRequests !== false && e.date >= todayStr)
-      .sort((a, b) => a.date.localeCompare(b.date))[0] ?? null;
-  });
+  readonly nextAvailableTrip = toSignal(this.store.select(selectNextAvailableTrip), { initialValue: null });
+
+  private readonly dogsStatus = toSignal(this.dogs.statusChanges, { initialValue: this.dogs.status });
+  private readonly contactValid = toSignal(
+    this.form.statusChanges.pipe(
+      map(() =>
+        (this.form.get('requesterName')?.valid ?? false) &&
+        (this.form.get('requesterEmail')?.valid ?? false) &&
+        (this.form.get('requesterPhone')?.valid ?? false),
+      ),
+    ),
+    {
+      initialValue:
+        (this.form.get('requesterName')?.valid ?? false) &&
+        (this.form.get('requesterEmail')?.valid ?? false) &&
+        (this.form.get('requesterPhone')?.valid ?? false),
+    },
+  );
 
   readonly calendarDone = computed(() => !!this.selectedTrip());
-  readonly dogsDone = computed(() => {
-    this.formInvalid();
-    return this.dogs.valid;
-  });
-  readonly contactDone = computed(() => {
-    this.formInvalid();
-    return (
-      (this.form.get('requesterName')?.valid ?? false) &&
-      (this.form.get('requesterEmail')?.valid ?? false) &&
-      (this.form.get('requesterPhone')?.valid ?? false)
-    );
-  });
+  readonly dogsDone = computed(() => this.dogsStatus() === 'VALID');
+  readonly contactDone = computed(() => this.contactValid());
 
   constructor() {
     this.actions$.pipe(
@@ -147,19 +149,19 @@ export class TripRequestComponent {
     });
   }
 
-  onDogPhotoChange(index: number, file: File | null): void {
+  onDogPhotoChange(group: AbstractControl, file: File | null): void {
     if (file) {
-      this.dogPhotoFiles.set(index, file);
+      this.dogPhotoFiles.set(group, file);
     } else {
-      this.dogPhotoFiles.delete(index);
+      this.dogPhotoFiles.delete(group);
     }
   }
 
-  onDogDocumentChange(index: number, file: File | null): void {
+  onDogDocumentChange(group: AbstractControl, file: File | null): void {
     if (file) {
-      this.dogDocumentFiles.set(index, file);
+      this.dogDocumentFiles.set(group, file);
     } else {
-      this.dogDocumentFiles.delete(index);
+      this.dogDocumentFiles.delete(group);
     }
   }
 
@@ -178,6 +180,9 @@ export class TripRequestComponent {
       rejectLabel: this.transloco.translate('tripRequest.collapse'),
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
+        const removed = this.dogs.at(index);
+        this.dogPhotoFiles.delete(removed);
+        this.dogDocumentFiles.delete(removed);
         this.dogs.removeAt(index);
         this.showSummary = false;
         this.openDogs.update(prev =>
@@ -185,18 +190,6 @@ export class TripRequestComponent {
             .filter(v => v !== index.toString())
             .map(v => +v > index ? (+v - 1).toString() : v),
         );
-        // Shift file maps: remove index, move higher indices down
-        this.dogPhotoFiles.delete(index);
-        this.dogDocumentFiles.delete(index);
-        const totalDogs = this.dogs.length;
-        for (let i = index; i < totalDogs; i++) {
-          const photo = this.dogPhotoFiles.get(i + 1);
-          const doc = this.dogDocumentFiles.get(i + 1);
-          photo ? this.dogPhotoFiles.set(i, photo) : this.dogPhotoFiles.delete(i);
-          doc ? this.dogDocumentFiles.set(i, doc) : this.dogDocumentFiles.delete(i);
-        }
-        this.dogPhotoFiles.delete(totalDogs);
-        this.dogDocumentFiles.delete(totalDogs);
       },
     });
   }
@@ -210,7 +203,9 @@ export class TripRequestComponent {
     const next = this.nextAvailableTrip();
     if (!next) return;
     this.tripCalendar?.navigateTo(next.date);
-    requestAnimationFrame(() => this.onDateSelected(next.date));
+    runInInjectionContext(this.injector, () => {
+      afterNextRender(() => this.onDateSelected(next.date));
+    });
   }
 
   onDateSelected(date: string): void {
@@ -239,7 +234,9 @@ export class TripRequestComponent {
   }
 
   private scrollToDogForm(): void {
-    setTimeout(() => this.dogsSection?.nativeElement.scrollIntoView({  block: 'center'}), 10);
+    runInInjectionContext(this.injector, () => {
+      afterNextRender(() => this.dogsSection?.nativeElement.scrollIntoView({ block: 'center' }));
+    });
   }
 
   private resetDogs(): void {
@@ -273,9 +270,9 @@ export class TripRequestComponent {
 
     const { requesterName, requesterEmail, requesterPhone } = this.form.value;
     const dogs = this.form.value.dogs as Record<string, unknown>[];
-    const dogFiles: DogFiles[] = dogs.map((_, index) => ({
-      photo: this.dogPhotoFiles.get(index) ?? null,
-      document: this.dogDocumentFiles.get(index) ?? null,
+    const dogFiles: DogFiles[] = this.dogs.controls.map((group) => ({
+      photo: this.dogPhotoFiles.get(group) ?? null,
+      document: this.dogDocumentFiles.get(group) ?? null,
     }));
 
     this.store.dispatch(submitRequest({

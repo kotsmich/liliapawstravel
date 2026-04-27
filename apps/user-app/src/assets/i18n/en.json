@@ -250,5 +250,19 @@
     "removePhoto": "Remove photo",
     "removeDocument": "Remove document",
     "receiver": "Receiver (optional)"
+  },
+  "seo": {
+    "home": {
+      "title": "Lilia Paws Travel — Safe Dog Transport Across Europe",
+      "description": "Lilia Paws Travel safely transports adopted dogs across Europe, connecting shelters with loving families. Request transport for your rescue dog today."
+    },
+    "contact": {
+      "title": "Contact Us — Lilia Paws Travel",
+      "description": "Get in touch with Lilia Paws Travel. We answer questions about dog transport across Europe and help you schedule your rescue dog's journey."
+    },
+    "request": {
+      "title": "Request Dog Transport — Lilia Paws Travel",
+      "description": "Submit a transport request for your rescue dog. Lilia Paws Travel connects adoptive families with safe, reliable cross-Europe dog transport."
+    }
   }
 }

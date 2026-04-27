@@ -22,6 +22,14 @@ export function devValue<T>(value: T, fallback: T | '' = ''): T | '' {
   return isDevMode() ? value : fallback;
 }
 
+/** Format a Date as a local-timezone YYYY-MM-DD string (inverse of LocalDatePipe input). */
+export function toLocalIsoDate(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 export const RandomProperty = {
   dogNames:        ['Bella', 'Max', 'Luna', 'Rocky', 'Milo', 'Daisy', 'Buddy', 'Coco', 'Loki', 'Zeus', 'Charlie', 'Molly', 'Bear', 'Stella', 'Duke', 'Rosie', 'Rex', 'Penny', 'Archie', 'Nala', 'Finn', 'Maggie', 'Gus', 'Zoe', 'Bruno'],
   sizes:           ['small', 'medium', 'large'] as Array<'small' | 'medium' | 'large'>,

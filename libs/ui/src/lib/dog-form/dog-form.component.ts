@@ -58,44 +58,37 @@ export class DogFormComponent {
 
   private readonly transloco = inject(TranslocoService);
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly _t = toSignal(this.transloco.selectTranslation(), { initialValue: null });
-
-  readonly sizes = computed((): { value: string; label: string }[] => {
-    this._t();
-    return [
-      { value: 'small',  label: this.transloco.translate('dogs.sizeSmall') },
-      { value: 'medium', label: this.transloco.translate('dogs.sizeMedium') },
-      { value: 'large',  label: this.transloco.translate('dogs.sizeLarge') },
-    ];
+  private readonly activeLang = toSignal(this.transloco.langChanges$, {
+    initialValue: this.transloco.getActiveLang(),
   });
+  private translate(key: string): string {
+    return this.transloco.translate(key, undefined, this.activeLang());
+  }
 
-  readonly heights = computed((): { value: string; label: string }[] => {
-    this._t();
-    return [
-      { value: 'under10', label: this.transloco.translate('dogs.heightUnder10') },
-      { value: '10to25',  label: this.transloco.translate('dogs.height10to25') },
-      { value: 'over30',  label: this.transloco.translate('dogs.heightOver30') },
-    ];
-  });
+  readonly sizes = computed((): { value: string; label: string }[] => [
+    { value: 'small',  label: this.translate('dogs.sizeSmall') },
+    { value: 'medium', label: this.translate('dogs.sizeMedium') },
+    { value: 'large',  label: this.translate('dogs.sizeLarge') },
+  ]);
 
-  readonly behaviors = computed((): { value: string; label: string }[] => {
-    this._t();
-    return [
-      { value: 'friendly',   label: this.transloco.translate('dogs.behaviorFriendly') },
-      { value: 'aggressive', label: this.transloco.translate('dogs.behaviorAggressive') },
-      { value: 'fearful',    label: this.transloco.translate('dogs.behaviorFearful') },
-      { value: 'anxious',    label: this.transloco.translate('dogs.behaviorAnxious') },
-      { value: 'calm',       label: this.transloco.translate('dogs.behaviorCalm') },
-    ];
-  });
+  readonly heights = computed((): { value: string; label: string }[] => [
+    { value: 'under10', label: this.translate('dogs.heightUnder10') },
+    { value: '10to25',  label: this.translate('dogs.height10to25') },
+    { value: 'over30',  label: this.translate('dogs.heightOver30') },
+  ]);
 
-  readonly genders = computed((): { value: string; label: string }[] => {
-    this._t();
-    return [
-      { value: 'male',   label: this.transloco.translate('dogs.genderMale') },
-      { value: 'female', label: this.transloco.translate('dogs.genderFemale') },
-    ];
-  });
+  readonly behaviors = computed((): { value: string; label: string }[] => [
+    { value: 'friendly',   label: this.translate('dogs.behaviorFriendly') },
+    { value: 'aggressive', label: this.translate('dogs.behaviorAggressive') },
+    { value: 'fearful',    label: this.translate('dogs.behaviorFearful') },
+    { value: 'anxious',    label: this.translate('dogs.behaviorAnxious') },
+    { value: 'calm',       label: this.translate('dogs.behaviorCalm') },
+  ]);
+
+  readonly genders = computed((): { value: string; label: string }[] => [
+    { value: 'male',   label: this.translate('dogs.genderMale') },
+    { value: 'female', label: this.translate('dogs.genderFemale') },
+  ]);
 
   hasBehavior(value: string): boolean {
     const current = this.ctrl('behaviors').value as string[] | null;
@@ -113,13 +106,10 @@ export class DogFormComponent {
     ctrl.markAsDirty();
   }
 
-  readonly pickupOptions = computed((): { value: string; label: string }[] => {
-    this._t();
-    return [
-      ...this.tripDestinations().map(d => ({ value: d.name, label: d.name })),
-      { value: 'Other', label: this.transloco.translate('dogs.pickupOther') },
-    ];
-  });
+  readonly pickupOptions = computed((): { value: string; label: string }[] => [
+    ...this.tripDestinations().map(d => ({ value: d.name, label: d.name })),
+    { value: 'Other', label: this.translate('dogs.pickupOther') },
+  ]);
 
   ctrl(field: string): AbstractControl {
     return this.formGroup().get(field)!;

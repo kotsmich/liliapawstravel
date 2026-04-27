@@ -250,5 +250,19 @@
     "removePhoto": "Foto entfernen",
     "removeDocument": "Dokument entfernen",
     "receiver": "Empfänger (optional)"
+  },
+  "seo": {
+    "home": {
+      "title": "Lilia Paws Travel — Sicherer Hundetransport durch Europa",
+      "description": "Lilia Paws Travel transportiert adoptierte Hunde sicher durch Europa und verbindet Tierheime mit liebevollen Familien. Beantragen Sie noch heute den Transport für Ihren Rettungshund."
+    },
+    "contact": {
+      "title": "Kontakt — Lilia Paws Travel",
+      "description": "Nehmen Sie Kontakt mit Lilia Paws Travel auf. Wir beantworten Fragen zum Hundetransport durch Europa und helfen Ihnen, die Reise Ihres Rettungshundes zu planen."
+    },
+    "request": {
+      "title": "Hundetransport anfragen — Lilia Paws Travel",
+      "description": "Stellen Sie einen Transportantrag für Ihren Rettungshund. Lilia Paws Travel verbindet Adoptiveltern mit sicherem und zuverlässigem Hundetransport durch ganz Europa."
+    }
   }
 }

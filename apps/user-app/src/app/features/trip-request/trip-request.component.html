@@ -129,12 +129,12 @@
                         </p-accordion-header>
                         <p-accordion-content>
                           <ui-dog-form
-                            [formGroup]="$any(dogs.at(i))"
+                            [formGroup]="$any(dog)"
                             [index]="i"
                             [canRemove]="false"
                             [tripDestinations]="pickupDestinations()"
-                            (photoFileChange)="onDogPhotoChange(i, $event)"
-                            (documentFileChange)="onDogDocumentChange(i, $event)" />
+                            (photoFileChange)="onDogPhotoChange(dog, $event)"
+                            (documentFileChange)="onDogDocumentChange(dog, $event)" />
                         </p-accordion-content>
                       </p-accordion-panel>
                     }
