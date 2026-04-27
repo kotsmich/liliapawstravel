@@ -20,15 +20,15 @@ export const tripRequestFeature = createFeature({
   name: 'tripRequest',
   reducer: createReducer(
     initialState,
-    on(submitRequest, (s) => ({ ...s, loading: true, success: false, error: null })),
-    on(submitRequestSuccess, (s, { request }) => ({
-      ...s,
+    on(submitRequest, (state) => ({ ...state, loading: true, success: false, error: null })),
+    on(submitRequestSuccess, (state, { request }) => ({
+      ...state,
       lastRequest: request,
       loading: false,
       success: true,
     })),
-    on(submitRequestFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(resetRequest, (s) => ({ ...s, loading: false, success: false, error: null }))
+    on(submitRequestFailure, (state, { error }) => ({ ...state, loading: false, error })),
+    on(resetRequest, (state) => ({ ...state, loading: false, success: false, error: null }))
   ),
 });
 

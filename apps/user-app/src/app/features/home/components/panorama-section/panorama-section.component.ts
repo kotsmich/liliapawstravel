@@ -18,12 +18,12 @@ import type { Viewer } from '@photo-sphere-viewer/core';
       </div>
 
       <div class="pano-section__tabs">
-        @for (p of panoramas; track p.src; let i = $index) {
+        @for (panorama of panoramas; track panorama.src; let i = $index) {
           <button
             class="pano-tab"
             [class.active]="i === activeIndex"
             (click)="switchTo(i)"
-          >{{ p.label }}</button>
+          >{{ panorama.label }}</button>
         }
       </div>
 

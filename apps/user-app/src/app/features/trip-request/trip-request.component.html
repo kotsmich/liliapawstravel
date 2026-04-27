@@ -69,24 +69,24 @@
                 <div class="requester-fields">
                   <div class="field">
                     <p-ifta-label>
-                      <input pInputText id="reqName" formControlName="requesterName" size="small"
+                      <input pInputText id="requesterName" formControlName="requesterName" size="small"
                         [attr.aria-invalid]="form.get('requesterName')?.touched && form.get('requesterName')?.invalid ? 'true' : null" />
-                      <label for="reqName">{{ 'tripRequest.fullName' | transloco }}</label>
+                      <label for="requesterName">{{ 'tripRequest.fullName' | transloco }}</label>
                     </p-ifta-label>
                     <small class="p-error" *appValidationError="form.get('requesterName')">{{ 'tripRequest.required' | transloco }}</small>
                   </div>
                   <div class="field">
                     <p-ifta-label>
-                      <input pInputText id="reqEmail" formControlName="requesterEmail" type="email" size="small"
+                      <input pInputText id="requesterEmail" formControlName="requesterEmail" type="email" size="small"
                         [attr.aria-invalid]="form.get('requesterEmail')?.touched && form.get('requesterEmail')?.invalid ? 'true' : null" />
-                      <label for="reqEmail">{{ 'tripRequest.email' | transloco }}</label>
+                      <label for="requesterEmail">{{ 'tripRequest.email' | transloco }}</label>
                     </p-ifta-label>
                     <small class="p-error" *appValidationError="form.get('requesterEmail')">{{ 'tripRequest.validEmail' | transloco }}</small>
                   </div>
                   <div class="field">
                     <lp-phone-input
                       formControlName="requesterPhone"
-                      inputId="reqPhone"
+                      inputId="requesterPhone"
                       [label]="'tripRequest.phone' | transloco"
                       [invalid]="!!(form.get('requesterPhone')?.touched && form.get('requesterPhone')?.invalid)" />
                     <small class="p-error" *appValidationError="form.get('requesterPhone')">{{ 'tripRequest.required' | transloco }}</small>
@@ -152,23 +152,23 @@
 
               <div class="form-divider" aria-hidden="true"></div>
 
-              @if (error(); as e) {
+              @if (error(); as errorMessage) {
                 <p-message severity="error"
-                  [text]="'tripRequest.submissionFailed' | transloco: { error: e }" styleClass="mb-3" />
+                  [text]="'tripRequest.submissionFailed' | transloco: { error: errorMessage }" styleClass="mb-3" />
               }
 
               @if (showSummary) {
                 <div class="summary">
                   <h3>📋 {{ 'tripRequest.summary' | transloco }}</h3>
                   <p><strong>{{ form.value.requesterName }}</strong> · {{ form.value.requesterEmail }} · {{ form.value.requesterPhone }}</p>
-                  @for (d of form.value.dogs; track i; let i = $index) {
+                  @for (dog of form.value.dogs; track i; let i = $index) {
                     <div class="summary-row flex flex-column">
-                      <strong>{{ 'tripRequest.dogNum' | transloco: { num: i + 1 } }}: {{ d.name }}</strong>
-                      <span>{{ d.size }} | {{ d.gender }} | {{ d.age }} yr</span>
-                      @if (d.receiver) {
-                        <span>{{ 'tripRequest.receiver' | transloco }}: {{ d.receiver }}</span>
+                      <strong>{{ 'tripRequest.dogNum' | transloco: { num: i + 1 } }}: {{ dog.name }}</strong>
+                      <span>{{ dog.size }} | {{ dog.gender }} | {{ dog.age }} yr</span>
+                      @if (dog.receiver) {
+                        <span>{{ 'tripRequest.receiver' | transloco }}: {{ dog.receiver }}</span>
                       }
-                      <span>{{ d.pickupLocation }} → {{ d.dropLocation }}</span>
+                      <span>{{ dog.pickupLocation }} → {{ dog.dropLocation }}</span>
                     </div>
                   }
                 </div>

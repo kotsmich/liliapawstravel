@@ -16,19 +16,19 @@ interface LangOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ButtonModule, PopoverModule],
   template: `
-    <button class="lang-trigger" type="button" (click)="op.toggle($event)" [attr.aria-label]="'Language selector'">
+    <button class="lang-trigger" type="button" (click)="popover.toggle($event)" [attr.aria-label]="'Language selector'">
       <span class="fi" [class]="'fi fi-' + activeCode"></span>
       <i class="pi pi-angle-down lang-trigger__caret"></i>
     </button>
 
-    <p-popover #op styleClass="lang-popover">
+    <p-popover #popover styleClass="lang-popover">
       <div class="lang-options">
         @for (lang of langs; track lang.value) {
           <button
             class="lang-option"
             [class.active]="activeLang === lang.value"
             type="button"
-            (click)="changeLang(lang.value); op.hide()"
+            (click)="changeLang(lang.value); popover.hide()"
             [attr.aria-label]="lang.label"
           >
             <span class="fi" [class]="'fi fi-' + lang.code"></span>
@@ -87,7 +87,7 @@ interface LangOption {
   `],
 })
 export class LanguageSwitcherComponent {
-  @ViewChild('op') op!: Popover;
+  @ViewChild('popover') popover!: Popover;
 
   private readonly transloco = inject(TranslocoService);
 
@@ -100,7 +100,7 @@ export class LanguageSwitcherComponent {
   activeLang = this.transloco.getActiveLang() ?? 'en';
 
   get activeCode(): string {
-    return this.langs.find(l => l.value === this.activeLang)?.code ?? 'gb';
+    return this.langs.find(lang => lang.value === this.activeLang)?.code ?? 'gb';
   }
 
   changeLang(lang: string): void {

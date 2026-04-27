@@ -262,11 +262,11 @@ textarea.p-inputtextarea::placeholder {
 
 /* ── Contact form PrimeNG ── */
 .contact-form {
-  .field.fw.message-field {
+  .field.field--full-width.message-field {
     p-ifta-label, .p-iftalabel { flex: 1; display: flex; flex-direction: column; }
     textarea.p-inputtextarea { flex: 1; resize: none; height: 100%; }
   }
-  .fw {
+  .field--full-width {
     p-ifta-label, .p-iftalabel { display: block; width: 100%; }
     input.p-inputtext, textarea.p-inputtextarea {
       width: 100%; box-sizing: border-box;

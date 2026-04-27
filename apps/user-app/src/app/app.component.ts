@@ -58,9 +58,9 @@ export class AppComponent implements OnInit {
     private readonly metaService: Meta,
     private readonly translocoService: TranslocoService,
   ) {
-    this.router.events.pipe(takeUntilDestroyed()).subscribe((e) => {
-      if (e instanceof NavigationStart)                               this.navigating.set(true);
-      if (e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError) this.navigating.set(false);
+    this.router.events.pipe(takeUntilDestroyed()).subscribe((event) => {
+      if (event instanceof NavigationStart)                               this.navigating.set(true);
+      if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) this.navigating.set(false);
     });
     this.initDynamicTitles();
   }

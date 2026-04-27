@@ -186,8 +186,8 @@ export class TripRequestComponent {
         this.showSummary = false;
         this.openDogs.update(prev =>
           prev
-            .filter(v => v !== index.toString())
-            .map(v => +v > index ? (+v - 1).toString() : v),
+            .filter(key => key !== index.toString())
+            .map(key => +key > index ? (+key - 1).toString() : key),
         );
       },
     });
@@ -286,8 +286,8 @@ export class TripRequestComponent {
 
   private openInvalidDogPanels(): void {
     const open = new Set(this.openDogs());
-    this.dogs.controls.forEach((ctrl, i) => {
-      if (ctrl.invalid) open.add(i.toString());
+    this.dogs.controls.forEach((control, i) => {
+      if (control.invalid) open.add(i.toString());
     });
     this.openDogs.set([...open]);
   }

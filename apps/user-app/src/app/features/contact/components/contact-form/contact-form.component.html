@@ -16,47 +16,47 @@
   @if (!success()) {
     <form focusInvalidInput [formGroup]="form()" (ngSubmit)="formSubmit.emit()" novalidate>
       <div class="fields-row">
-        <div class="field fw">
+        <div class="field field--full-width">
           <p-ifta-label>
             <input pInputText id="name" formControlName="name" />
             <label for="name">{{ 'contact.form.fullName' | transloco }}</label>
           </p-ifta-label>
-          <small class="p-error" *appValidationError="form().get('name')">{{ err('name') }}</small>
+          <small class="p-error" *appValidationError="form().get('name')">{{ errorFor('name') }}</small>
         </div>
-        <div class="field fw">
+        <div class="field field--full-width">
           <p-ifta-label>
             <input pInputText id="email" formControlName="email" type="email" />
             <label for="email">{{ 'contact.form.email' | transloco }}</label>
-          </p-ifta-label> 
-          <small class="p-error" *appValidationError="form().get('email')">{{ err('email') }}</small>
+          </p-ifta-label>
+          <small class="p-error" *appValidationError="form().get('email')">{{ errorFor('email') }}</small>
         </div>
       </div>
       <div class="fields-row">
-        <div class="field fw">
+        <div class="field field--full-width">
           <p-ifta-label>
             <input pInputText id="phone" formControlName="phone" type="tel" />
             <label for="phone">{{ 'contact.form.phone' | transloco }}</label>
           </p-ifta-label>
-          <small class="p-error" *appValidationError="form().get('phone')">{{ err('phone') }}</small>
+          <small class="p-error" *appValidationError="form().get('phone')">{{ errorFor('phone') }}</small>
         </div>
-        <div class="field fw">
+        <div class="field field--full-width">
           <p-ifta-label>
             <input pInputText id="subject" formControlName="subject" />
             <label for="subject">{{ 'contact.form.subject' | transloco }}</label>
           </p-ifta-label>
-          <small class="p-error" *appValidationError="form().get('subject')">{{ err('subject') }}</small>
+          <small class="p-error" *appValidationError="form().get('subject')">{{ errorFor('subject') }}</small>
         </div>
       </div>
-      <div class="field fw message-field">
+      <div class="field field--full-width message-field">
         <p-ifta-label>
           <textarea pTextarea id="message" formControlName="message" rows="6"></textarea>
           <label for="message">{{ 'contact.form.message' | transloco }}</label>
         </p-ifta-label>
-        <small class="p-error" *appValidationError="form().get('message')">{{ err('message') }}</small>
+        <small class="p-error" *appValidationError="form().get('message')">{{ errorFor('message') }}</small>
       </div>
       <div class="submit-row">
         <p-button
-          appAsyncButton 
+          appAsyncButton
           [asyncLoading]="loading()"
           type="submit"
           [label]="loading() ? ('contact.form.sending' | transloco) : ('contact.form.send' | transloco)"

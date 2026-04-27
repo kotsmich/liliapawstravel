@@ -20,15 +20,15 @@ export const contactFeature = createFeature({
   name: 'contact',
   reducer: createReducer(
     initialState,
-    on(submitContact, (s) => ({ ...s, loading: true, success: false, error: null })),
-    on(submitContactSuccess, (s, { submission }) => ({
-      ...s,
+    on(submitContact, (state) => ({ ...state, loading: true, success: false, error: null })),
+    on(submitContactSuccess, (state, { submission }) => ({
+      ...state,
       lastSubmission: submission,
       loading: false,
       success: true,
     })),
-    on(submitContactFailure, (s, { error }) => ({ ...s, loading: false, error })),
-    on(resetContact, (s) => ({ ...s, loading: false, success: false, error: null }))
+    on(submitContactFailure, (state, { error }) => ({ ...state, loading: false, error })),
+    on(resetContact, (state) => ({ ...state, loading: false, success: false, error: null }))
   ),
 });
 

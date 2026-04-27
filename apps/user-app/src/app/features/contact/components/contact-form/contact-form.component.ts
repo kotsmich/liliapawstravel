@@ -41,21 +41,21 @@ export class ContactFormComponent {
   readonly reset = output<void>();
 
   get emailHint(): string | null {
-    const ctrl = this.form()?.get('email');
-    if (!ctrl) return null;
-    const val = ctrl.value as string;
-    return val && !ctrl.hasError('email')
-      ? this.transloco.translate('contact.form.replyTo', { email: val })
+    const control = this.form()?.get('email');
+    if (!control) return null;
+    const value = control.value as string;
+    return value && !control.hasError('email')
+      ? this.transloco.translate('contact.form.replyTo', { email: value })
       : null;
   }
 
-  err(field: string): string | null {
-    const c = this.form()?.get(field);
-    if (!c?.errors || !c.touched) return null;
-    if (c.errors['required']) return this.transloco.translate('contact.form.errors.required');
-    if (c.errors['email']) return this.transloco.translate('contact.form.errors.email');
-    if (c.errors['minlength']) return this.transloco.translate('contact.form.errors.minLength', { length: c.errors['minlength'].requiredLength });
-    if (c.errors['pattern']) return this.transloco.translate('contact.form.errors.invalidPhone');
+  errorFor(field: string): string | null {
+    const control = this.form()?.get(field);
+    if (!control?.errors || !control.touched) return null;
+    if (control.errors['required']) return this.transloco.translate('contact.form.errors.required');
+    if (control.errors['email']) return this.transloco.translate('contact.form.errors.email');
+    if (control.errors['minlength']) return this.transloco.translate('contact.form.errors.minLength', { length: control.errors['minlength'].requiredLength });
+    if (control.errors['pattern']) return this.transloco.translate('contact.form.errors.invalidPhone');
     return null;
   }
 }

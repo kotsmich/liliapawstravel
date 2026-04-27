@@ -18,9 +18,9 @@ export interface ToastPayload {
 
 export type ToastFactory<TAction = unknown> = (action: TAction, transloco: TranslocoService) => ToastPayload;
 
-function register<AC extends ActionCreator>(
-  action: AC,
-  factory: ToastFactory<ReturnType<AC>>,
+function register<TAction extends ActionCreator>(
+  action: TAction,
+  factory: ToastFactory<ReturnType<TAction>>,
 ): Record<string, ToastFactory> {
   return { [action.type]: factory as ToastFactory };
 }
