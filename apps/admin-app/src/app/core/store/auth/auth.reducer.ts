@@ -1,12 +1,20 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { AdminUser } from '@models/lib/admin-user.model';
-import { login, loginSuccess, loginFailure, logout, restoreSession } from './auth.actions';
+import {
+  login, loginSuccess, loginFailure, logout, restoreSession,
+  changeEmail, changeEmailSuccess, changeEmailFailure,
+  changePassword, changePasswordSuccess, changePasswordFailure,
+} from './auth.actions';
 
 export interface AuthState {
   user: AdminUser | null;
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
+  emailMutating: boolean;
+  emailError: string | null;
+  passwordMutating: boolean;
+  passwordError: string | null;
 }
 
 const initialState: AuthState = {
@@ -14,6 +22,10 @@ const initialState: AuthState = {
   isAuthenticated: false,
   loading: false,
   error: null,
+  emailMutating: false,
+  emailError: null,
+  passwordMutating: false,
+  passwordError: null,
 };
 
 export const authFeature = createFeature({
@@ -28,7 +40,17 @@ export const authFeature = createFeature({
     on(logout, () => ({ ...initialState })),
     on(restoreSession, (state, { user }) => ({
       ...state, user, isAuthenticated: true,
-    }))
+    })),
+    on(changeEmail, (state) => ({ ...state, emailMutating: true, emailError: null })),
+    on(changeEmailSuccess, (state, { email }) => ({
+      ...state,
+      emailMutating: false,
+      user: state.user ? { ...state.user, email } : state.user,
+    })),
+    on(changeEmailFailure, (state, { error }) => ({ ...state, emailMutating: false, emailError: error })),
+    on(changePassword, (state) => ({ ...state, passwordMutating: true, passwordError: null })),
+    on(changePasswordSuccess, (state) => ({ ...state, passwordMutating: false })),
+    on(changePasswordFailure, (state, { error }) => ({ ...state, passwordMutating: false, passwordError: error }))
   ),
 });
 
@@ -40,4 +62,8 @@ export const {
   selectIsAuthenticated,
   selectLoading: selectAuthLoading,
   selectError: selectAuthError,
+  selectEmailMutating,
+  selectEmailError,
+  selectPasswordMutating,
+  selectPasswordError,
 } = authFeature;

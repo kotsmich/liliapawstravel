@@ -4,7 +4,8 @@ import { ButtonModule } from 'primeng/button';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
 import { DogBioExportService } from '../../../../services/dog-bio-export.service';
-import { DogDetailsGridComponent, DogRequester } from './dog-details-grid/dog-details-grid.component';
+import { DogDetailsGridComponent } from './dog-details-grid/dog-details-grid.component';
+import { DogRequester } from '@admin/features/trips/shared/dog-requester.model';
 import { MediaViewerComponent } from '../../../../shared/components/media-viewer/media-viewer.component';
 
 @Component({

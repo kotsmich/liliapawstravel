@@ -22,7 +22,7 @@
         @if (emailError()) {
           <p-message severity="error" [text]="emailError()!" styleClass="mb-3 w-full" />
         }
-        <form [formGroup]="emailForm" (ngSubmit)="submitEmailChange(user)" novalidate>
+        <form [formGroup]="emailForm" (ngSubmit)="submitEmailChange()" novalidate>
           <div class="field">
             <p-ifta-label>
               <p-password

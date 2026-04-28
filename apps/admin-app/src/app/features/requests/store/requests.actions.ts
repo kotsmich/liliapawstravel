@@ -86,6 +86,13 @@ export const bulkRejectRequestsFailure = createAction(
   props<{ error: string }>()
 );
 
+export const bulkApproveRequestsNoSelection = createAction(
+  '[TripRequest] Bulk Approve Requests No Selection'
+);
+export const bulkRejectRequestsNoSelection = createAction(
+  '[TripRequest] Bulk Reject Requests No Selection'
+);
+
 export const updateRequestNote = createAction(
   '[TripRequest] Update Request Note',
   props<{ id: string; note: string }>()

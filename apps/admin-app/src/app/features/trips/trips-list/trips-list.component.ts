@@ -5,13 +5,13 @@ import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToastModule } from 'primeng/toast';
 import { Store } from '@ngrx/store';
 import { of, switchMap } from 'rxjs';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { loadTrips, loadTripById, deleteTrip, selectAllTrips, selectTripsIsLoading, selectTripsAsCalendarEvents, selectTripsForSelectedDate, selectTripById } from '@admin/features/trips/store';
 import { selectDate, selectCalendarSelectedDate } from '@admin/core/store/calendar';
-import { loadRequests, approveRequest, rejectRequest, deleteRequest, selectRequestsByTripId } from '@admin/features/requests/store';
+import { loadRequests, deleteRequest, selectRequestsByTripId } from '@admin/features/requests/store';
+import { RequestsApprovalService } from '@admin/features/requests/requests-approval.service';
 import { LoadingSpinnerComponent } from '@ui/lib/loading-spinner/loading-spinner.component';
 import { Trip } from '@models/lib/trip.model';
 import { TripRequest } from '@models/lib/trip-request.model';
@@ -26,7 +26,7 @@ import { TripDetailDialogComponent } from '../components/trip-detail-dialog/trip
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CardModule, ButtonModule, ConfirmDialogModule, ToastModule,
+    CardModule, ButtonModule, ConfirmDialogModule,
     LoadingSpinnerComponent,
     TripCalendarViewComponent,
     AllTripsTabComponent,
@@ -43,6 +43,7 @@ export class TripsListComponent implements OnInit {
   private readonly confirm = inject(ConfirmActionService);
   private readonly transloco = inject(TranslocoService);
   private readonly localDate = inject(LocalDatePipe);
+  private readonly approvalService = inject(RequestsApprovalService);
 
   readonly trips = toSignal(this.store.select(selectAllTrips), { initialValue: [] as Trip[] });
   readonly loading = toSignal(this.store.select(selectTripsIsLoading), { initialValue: false });
@@ -53,7 +54,6 @@ export class TripsListComponent implements OnInit {
   readonly activeTab = signal<'calendar' | 'all'>('calendar');
 
   readonly detailDialogVisible = signal(false);
-  readonly detailActiveTab = signal('all');
   readonly detailTripId = signal<string | null>(null);
 
   readonly detailTrip = toSignal(toObservable(this.detailTripId).pipe(
@@ -100,7 +100,6 @@ export class TripsListComponent implements OnInit {
   }
 
   openDetail(trip: Trip): void {
-    this.detailActiveTab.set('all');
     this.detailTripId.set(trip.id);
     this.store.dispatch(loadTripById({ id: trip.id }));
     this.store.dispatch(loadRequests());
@@ -112,28 +111,11 @@ export class TripsListComponent implements OnInit {
   }
 
   approveRequestInDetail(req: TripRequest): void {
-    this.confirm.confirm({
-      header:      this.transloco.translate('trips.confirm.approveRequest.header'),
-      message:     this.transloco.translate('trips.confirm.approveRequest.message', {
-        name:  sanitizeHtml(req.requesterName),
-        count: req.dogs?.length ?? 0,
-      }),
-      acceptLabel: this.transloco.translate('common.approve'),
-      rejectLabel: this.transloco.translate('common.back'),
-      severity:    'success',
-      accept: () => this.store.dispatch(approveRequest({ requestId: req.id, tripId: req.tripId! })),
-    });
+    this.approvalService.approve(req, this.localDate.transform(this.detailTrip()?.date ?? ''));
   }
 
   rejectRequestInDetail(req: TripRequest): void {
-    this.confirm.confirm({
-      header:      this.transloco.translate('trips.confirm.rejectRequest.header'),
-      message:     this.transloco.translate('trips.confirm.rejectRequest.message', { name: sanitizeHtml(req.requesterName) }),
-      acceptLabel: this.transloco.translate('common.reject'),
-      rejectLabel: this.transloco.translate('common.back'),
-      severity:    'danger',
-      accept: () => this.store.dispatch(rejectRequest({ id: req.id })),
-    });
+    this.approvalService.reject(req, this.localDate.transform(this.detailTrip()?.date ?? ''));
   }
 
   deleteRequestInDetail(req: TripRequest): void {

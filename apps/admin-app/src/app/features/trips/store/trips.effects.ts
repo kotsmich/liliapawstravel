@@ -191,4 +191,21 @@ export class TripsEffects {
       )
     )
   );
+
+  // Refetch the affected trip after any mutation so that server-derived fields
+  // (capacities, requesters, generated flags) stay in sync in both the detail
+  // view and the trips list. Add new mutation success actions to ofType below.
+  refreshTripAfterMutation$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(
+        updateTripSuccess,
+        addDogSuccess,
+        addDogsSuccess,
+        updateDogSuccess,
+        deleteDogSuccess,
+        deleteDogsSuccess,
+      ),
+      map((action) => loadTripById({ id: 'tripId' in action ? action.tripId : action.trip.id }))
+    )
+  );
 }

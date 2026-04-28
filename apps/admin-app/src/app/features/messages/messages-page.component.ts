@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Store } from '@ngrx/store';
-import { ToastModule } from 'primeng/toast';
 import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -18,7 +17,7 @@ import { MessageDetailDialogComponent } from './components/message-detail-dialog
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ToastModule, CardModule, SkeletonModule,
+    CardModule, SkeletonModule,
     PageHeaderComponent, LoadingOverlayComponent,
     MessagesListComponent, MessageDetailDialogComponent,
     TranslocoModule,

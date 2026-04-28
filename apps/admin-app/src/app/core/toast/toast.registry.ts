@@ -10,10 +10,20 @@ import {
   deleteRequestSuccess,
   bulkApproveRequestsSuccess, bulkApproveRequestsFailure,
   bulkRejectRequestsSuccess, bulkRejectRequestsFailure,
+  bulkApproveRequestsNoSelection, bulkRejectRequestsNoSelection,
   updateRequestNoteSuccess, updateRequestNoteFailure,
   addRequestFromSocket,
 } from '@admin/features/requests/store';
 import { deleteMessageSuccess, addMessageFromSocket } from '@admin/features/messages/store';
+import {
+  changeEmailSuccess, changeEmailFailure,
+  changePasswordSuccess, changePasswordFailure,
+} from '@admin/core/store/auth';
+import {
+  createUserSuccess, createUserFailure,
+  updateUserSuccess, updateUserFailure,
+  deleteUserSuccess, deleteUserFailure,
+} from '@admin/features/settings/users/store/users.actions';
 
 export interface ToastPayload {
   severity: 'success' | 'info' | 'warn' | 'error';
@@ -67,6 +77,10 @@ export const TOAST_REGISTRY: Record<string, (action: any) => ToastPayload> = {
       : { severity: 'warn', summary: 'Partial success', detail: `${succeeded.length} rejected, ${failed.length} failed.` }),
   ...register(bulkRejectRequestsFailure,
     ({ error }) => ({ severity: 'error', summary: 'Bulk action failed', detail: error })),
+  ...register(bulkApproveRequestsNoSelection,
+    () => ({ severity: 'warn', summary: 'Nothing to approve', detail: 'Select pending requests assigned to a trip.' })),
+  ...register(bulkRejectRequestsNoSelection,
+    () => ({ severity: 'warn', summary: 'Nothing to reject', detail: 'Select pending requests to reject.' })),
 
   // Requests — note
   ...register(updateRequestNoteSuccess,
@@ -77,6 +91,30 @@ export const TOAST_REGISTRY: Record<string, (action: any) => ToastPayload> = {
   // Messages
   ...register(deleteMessageSuccess,
     () => ({ severity: 'success', summary: 'Deleted', detail: 'Message deleted.' })),
+
+  // Auth — profile mutations
+  ...register(changeEmailSuccess,
+    () => ({ severity: 'success', summary: 'Email updated successfully' })),
+  ...register(changeEmailFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Failed to update email', detail: error })),
+  ...register(changePasswordSuccess,
+    () => ({ severity: 'success', summary: 'Password changed successfully' })),
+  ...register(changePasswordFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Failed to change password', detail: error })),
+
+  // Users
+  ...register(createUserSuccess,
+    () => ({ severity: 'success', summary: 'User created successfully' })),
+  ...register(createUserFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Failed to create user', detail: error })),
+  ...register(updateUserSuccess,
+    () => ({ severity: 'success', summary: 'User updated successfully' })),
+  ...register(updateUserFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Failed to update user', detail: error })),
+  ...register(deleteUserSuccess,
+    () => ({ severity: 'success', summary: 'User deleted successfully' })),
+  ...register(deleteUserFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Failed to delete user', detail: error })),
 
   // Socket events
   ...register(addRequestFromSocket,

@@ -66,20 +66,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.wsService.connect();
-
-    this.wsService
-      .listen<TripRequest>(SocketEvent.REQUEST_UPDATED)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        catchError((err) => { this.logger.error('WS REQUEST_UPDATED error', err); return EMPTY; }),
-      )
-      .subscribe((request) => {
-        if (request.status === 'approved') {
-          this.store.dispatch(wsRequestApproved());
-        } else if (request.status === 'rejected') {
-          this.store.dispatch(wsRequestRejected());
-        }
-      });
   }
 
   private initDynamicTitles(): void {

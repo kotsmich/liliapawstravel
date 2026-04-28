@@ -12,8 +12,6 @@
   @if (trip()) {
     <app-trip-dogs-tabs
       [tripId]="trip()?.id ?? null"
-      [activeTab]="activeTab()"
-      (activeTabChange)="tabChanged.emit($event)"
       [showAddButton]="true"
       [requests]="requests()"
       (rowClicked)="openDogDetail($event)" />

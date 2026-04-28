@@ -4,7 +4,6 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ChipModule } from 'primeng/chip';
@@ -18,6 +17,9 @@ import { environment } from '../../../../environments/environment';
 import { DogDetailDialogComponent } from '@admin/features/trips/components/dog-detail-dialog/dog-detail-dialog.component';
 import { DogManagerService } from './dog-manager.service';
 import { DogDialogService } from './dog-dialog.service';
+import { DogActionsService } from './dog-actions.service';
+import { DogGroupingService } from './dog-grouping.service';
+import { DogSelectionStore } from './dog-selection.store';
 import { TripFormHeaderComponent } from './trip-form-header/trip-form-header.component';
 import { TripInfoFormComponent } from './trip-info-form/trip-info-form.component';
 import { type LocationListConfig } from './trip-location-list/trip-location-list.component';
@@ -29,10 +31,10 @@ const DEFAULT_PICKUP_LOCATIONS = environment.defaultPickupLocations;
   selector: 'app-trip-form',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [DogDialogService, DogManagerService],
+  providers: [DogDialogService, DogSelectionStore, DogActionsService, DogGroupingService, DogManagerService],
   imports: [
     RouterModule, ReactiveFormsModule,
-    ButtonModule, ToastModule, ConfirmDialogModule, InputTextModule, ChipModule,
+    ButtonModule, ConfirmDialogModule, InputTextModule, ChipModule,
     TranslocoModule,
     DogDetailDialogComponent,
     TripFormHeaderComponent,

@@ -3,6 +3,7 @@ import { ButtonModule } from 'primeng/button';
 import { TranslocoModule } from '@jsverse/transloco';
 import { DogManagerService } from '@admin/features/trips/trip-form/dog-manager.service';
 import { TripManifestExportService } from '@admin/services/trip-manifest-export.service';
+import { TRIP_DOGS_DEFAULT_TAB } from '../trip-dogs-tabs.constants';
 
 @Component({
   selector: 'app-trip-dogs-export-pdf',
@@ -23,7 +24,7 @@ export class TripDogsExportPdfComponent {
   private readonly exportService = inject(TripManifestExportService);
   private readonly dogManager = inject(DogManagerService);
 
-  readonly activeTab = input('all');
+  readonly activeTab = input<string>(TRIP_DOGS_DEFAULT_TAB);
 
   readonly disabled = computed(() => !this.dogManager.dogsData().length);
 

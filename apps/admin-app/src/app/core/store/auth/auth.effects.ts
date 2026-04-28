@@ -1,9 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, of, switchMap, tap } from 'rxjs';
+import { catchError, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { AuthService } from '@admin/services/auth.service';
-import { login, loginSuccess, loginFailure, logout } from './auth.actions';
+import { extractError } from '@admin/shared/utils/extract-error';
+import {
+  login, loginSuccess, loginFailure, logout,
+  changeEmail, changeEmailSuccess, changeEmailFailure,
+  changePassword, changePasswordSuccess, changePasswordFailure,
+} from './auth.actions';
 
 @Injectable()
 export class AuthEffects {
@@ -17,9 +22,7 @@ export class AuthEffects {
       switchMap(({ email, password }) =>
         this.authService.login(email, password).pipe(
           map(({ user }) => loginSuccess({ user })),
-          catchError((error) =>
-            of(loginFailure({ error: error?.error?.message ?? error?.message ?? 'Unknown error' }))
-          )
+          catchError((error) => of(loginFailure({ error: extractError(error) })))
         )
       )
     )
@@ -46,5 +49,29 @@ export class AuthEffects {
         tap(() => this.router.navigate(['/admin/login']))
       ),
     { dispatch: false }
+  );
+
+  changeEmail$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(changeEmail),
+      mergeMap(({ currentPassword, newEmail }) =>
+        this.authService.changeEmail(currentPassword, newEmail).pipe(
+          map(({ email }) => changeEmailSuccess({ email })),
+          catchError((error) => of(changeEmailFailure({ error: extractError(error) })))
+        )
+      )
+    )
+  );
+
+  changePassword$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(changePassword),
+      mergeMap(({ currentPassword, newPassword }) =>
+        this.authService.changePassword(currentPassword, newPassword).pipe(
+          map(() => changePasswordSuccess()),
+          catchError((error) => of(changePasswordFailure({ error: extractError(error) })))
+        )
+      )
+    )
   );
 }

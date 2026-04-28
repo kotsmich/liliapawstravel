@@ -6,7 +6,6 @@ import { Action, Store } from '@ngrx/store';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Observable, take } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
-import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { loadTrips, selectAllTrips } from '@admin/features/trips/store';
 import {
@@ -29,7 +28,7 @@ import { RequestsApprovalService } from './requests-approval.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ButtonModule, ToastModule, ConfirmDialogModule,
+    ButtonModule, ConfirmDialogModule,
     PageHeaderComponent,
     RequestsFilterComponent, RequestsTableComponent, RequestDetailDialogComponent,
     TranslocoModule,

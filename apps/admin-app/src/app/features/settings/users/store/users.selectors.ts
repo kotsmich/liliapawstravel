@@ -1,1 +1,9 @@
-export { selectUsers, selectUsersLoading, selectUsersError } from './users.reducer';
+export {
+  selectUsers,
+  selectUsersLoading,
+  selectUsersError,
+  selectUsersCreating,
+  selectUsersCreateError,
+  selectUsersUpdating,
+  selectUsersUpdateError,
+} from './users.reducer';

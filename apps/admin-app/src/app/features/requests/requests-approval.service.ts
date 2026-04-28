@@ -1,13 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { ConfirmActionService } from '@admin/shared/services/confirm-action.service';
 import { sanitizeHtml } from '@admin/shared/utils/sanitize';
 import {
   approveRequest, rejectRequest,
   bulkApproveRequests, bulkRejectRequests,
+  bulkApproveRequestsNoSelection, bulkRejectRequestsNoSelection,
 } from '@admin/features/requests/store';
 
 @Injectable({ providedIn: 'root' })
@@ -15,18 +15,16 @@ export class RequestsApprovalService {
   private readonly store = inject(Store);
   private readonly confirm = inject(ConfirmActionService);
   private readonly transloco = inject(TranslocoService);
-  private readonly messageService = inject(MessageService);
 
   approve(req: TripRequest, tripDateLabel: string, onAccepted?: () => void): void {
     if (!req.tripId) return;
+    const trip = sanitizeHtml(tripDateLabel);
+    const requester = sanitizeHtml(req.requesterName);
     this.confirm.confirm({
-      header:      this.transloco.translate('requests.confirm.approve.header'),
-      message:     this.transloco.translate('requests.confirm.approve.message', {
-        trip:      sanitizeHtml(tripDateLabel),
-        requester: sanitizeHtml(req.requesterName),
-      }),
-      acceptLabel: this.transloco.translate('common.approve'),
-      rejectLabel: this.transloco.translate('common.back'),
+      header:      'Επιβεβαίωση Έγκρισης',
+      message:     `Έγκριση αιτήματος για ταξίδι ${trip} από ${requester};`,
+      acceptLabel: 'Έγκριση',
+      rejectLabel: 'Πίσω',
       severity:    'success',
       accept: () => {
         this.store.dispatch(approveRequest({ requestId: req.id, tripId: req.tripId! }));
@@ -36,14 +34,13 @@ export class RequestsApprovalService {
   }
 
   reject(req: TripRequest, tripDateLabel: string, onAccepted?: () => void): void {
+    const trip = sanitizeHtml(tripDateLabel);
+    const requester = sanitizeHtml(req.requesterName);
     this.confirm.confirm({
-      header:      this.transloco.translate('requests.confirm.reject.header'),
-      message:     this.transloco.translate('requests.confirm.reject.message', {
-        trip:      sanitizeHtml(tripDateLabel),
-        requester: sanitizeHtml(req.requesterName),
-      }),
-      acceptLabel: this.transloco.translate('common.reject'),
-      rejectLabel: this.transloco.translate('common.back'),
+      header:      'Επιβεβαίωση Απόρριψης',
+      message:     `Απόρριψη αιτήματος για ταξίδι ${trip} από ${requester}; Αυτό δεν μπορεί να αναιρεθεί.`,
+      acceptLabel: 'Απόρριψη',
+      rejectLabel: 'Πίσω',
       severity:    'danger',
       accept: () => {
         this.store.dispatch(rejectRequest({ id: req.id }));
@@ -54,7 +51,7 @@ export class RequestsApprovalService {
 
   bulkApprove(requests: TripRequest[]): void {
     if (!requests.length) {
-      this.messageService.add({ severity: 'warn', summary: 'Nothing to approve', detail: 'Select pending requests assigned to a trip.' });
+      this.store.dispatch(bulkApproveRequestsNoSelection());
       return;
     }
     this.confirm.confirm({
@@ -68,7 +65,7 @@ export class RequestsApprovalService {
 
   bulkReject(requests: TripRequest[]): void {
     if (!requests.length) {
-      this.messageService.add({ severity: 'warn', summary: 'Nothing to reject', detail: 'Select pending requests to reject.' });
+      this.store.dispatch(bulkRejectRequestsNoSelection());
       return;
     }
     this.confirm.confirm({

@@ -11,6 +11,7 @@ import { DogsByGroupComponent } from '@admin/features/trips/components/dogs-grou
 import { DogFormDialogWrapperComponent } from '@admin/features/trips/components/dog-form-dialog-wrapper/dog-form-dialog-wrapper.component';
 import { DogManagerService } from '@admin/features/trips/trip-form/dog-manager.service';
 import { TripDogsExportPdfComponent } from './trip-dogs-export-pdf/trip-dogs-export-pdf.component';
+import { TRIP_DOGS_DEFAULT_TAB, TripDogsTab } from './trip-dogs-tabs.constants';
 
 @Component({
   selector: 'app-trip-dogs-tabs',
@@ -28,7 +29,7 @@ export class TripDogsTabsComponent {
   readonly dogManager = inject(DogManagerService);
 
   readonly tripId = input<string | null>(null);
-  readonly activeTab = model('byPickup');
+  readonly activeTab = model(TRIP_DOGS_DEFAULT_TAB);
   readonly showAddButton = input(false);
   readonly showExportPdf = input(false);
   readonly tableSelectable = input(false);
@@ -47,7 +48,7 @@ export class TripDogsTabsComponent {
   }));
 
   onTabChange(tab: string | undefined): void {
-    this.activeTab.set(tab ?? 'byPickup');
+    this.activeTab.set((tab as TripDogsTab) ?? TRIP_DOGS_DEFAULT_TAB);
     this.dogManager.clearGroupSelections();
   }
 }

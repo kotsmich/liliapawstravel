@@ -72,14 +72,6 @@
         "header": "Reise löschen",
         "message": "Reise {{ route }} am {{ date }} löschen?"
       },
-      "approveRequest": {
-        "header": "Genehmigung bestätigen",
-        "message": "Anfrage von {{ name }} genehmigen ({{ count }} Hund/e)?"
-      },
-      "rejectRequest": {
-        "header": "Ablehnung bestätigen",
-        "message": "Anfrage von {{ name }} ablehnen? Dies kann nicht rückgängig gemacht werden."
-      },
       "deleteRequest": {
         "header": "Anfrage löschen",
         "message": "Anfrage von {{ name }} löschen?",

@@ -11,12 +11,20 @@ export interface UsersState {
   users: AdminUser[];
   loading: boolean;
   error: string | null;
+  creating: boolean;
+  createError: string | null;
+  updating: boolean;
+  updateError: string | null;
 }
 
 const initialState: UsersState = {
   users: [],
   loading: false,
   error: null,
+  creating: false,
+  createError: null,
+  updating: false,
+  updateError: null,
 };
 
 export const usersFeature = createFeature({
@@ -26,15 +34,18 @@ export const usersFeature = createFeature({
     on(loadUsers, (state) => ({ ...state, loading: true, error: null })),
     on(loadUsersSuccess, (state, { users }) => ({ ...state, users, loading: false })),
     on(loadUsersFailure, (state, { error }) => ({ ...state, loading: false, error })),
-    on(createUser, (state) => ({ ...state, error: null })),
-    on(createUserSuccess, (state, { user }) => ({ ...state, users: [...state.users, user] })),
-    on(createUserFailure, (state, { error }) => ({ ...state, error })),
-    on(updateUser, (state) => ({ ...state, error: null })),
+    on(createUser, (state) => ({ ...state, creating: true, createError: null })),
+    on(createUserSuccess, (state, { user }) => ({
+      ...state, users: [...state.users, user], creating: false,
+    })),
+    on(createUserFailure, (state, { error }) => ({ ...state, creating: false, createError: error })),
+    on(updateUser, (state) => ({ ...state, updating: true, updateError: null })),
     on(updateUserSuccess, (state, { user }) => ({
       ...state,
       users: state.users.map((u) => (u.id === user.id ? user : u)),
+      updating: false,
     })),
-    on(updateUserFailure, (state, { error }) => ({ ...state, error })),
+    on(updateUserFailure, (state, { error }) => ({ ...state, updating: false, updateError: error })),
     on(deleteUser, (state) => ({ ...state, error: null })),
     on(deleteUserSuccess, (state, { id }) => ({
       ...state,
@@ -51,4 +62,8 @@ export const {
   selectUsers,
   selectLoading: selectUsersLoading,
   selectError: selectUsersError,
+  selectCreating: selectUsersCreating,
+  selectCreateError: selectUsersCreateError,
+  selectUpdating: selectUsersUpdating,
+  selectUpdateError: selectUsersUpdateError,
 } = usersFeature;

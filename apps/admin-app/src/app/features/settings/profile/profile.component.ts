@@ -1,18 +1,23 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { Store } from '@ngrx/store';
+import { Actions, ofType } from '@ngrx/effects';
 import { TranslocoModule } from '@jsverse/transloco';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { MessageModule } from 'primeng/message';
-import { MessageService } from 'primeng/api';
-import { catchError, EMPTY } from 'rxjs';
-import { AuthService } from '@admin/services/auth.service';
-import { selectCurrentUser, restoreSession } from '@admin/core/store/auth';
-import { AdminUser } from '@models/lib/admin-user.model';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { take } from 'rxjs';
+import {
+  selectCurrentUser,
+  selectEmailMutating, selectEmailError,
+  selectPasswordMutating, selectPasswordError,
+  changeEmail, changeEmailSuccess,
+  changePassword, changePasswordSuccess,
+} from '@admin/core/store/auth';
 import { ValidationErrorDirective } from '@ui/lib/directives/validation-error.directive';
 import { AsyncButtonDirective } from '@ui/lib/directives/async-button.directive';
 
@@ -38,16 +43,14 @@ function passwordsMatch(group: AbstractControl) {
 })
 export class ProfileComponent {
   private readonly fb = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
   private readonly store = inject(Store);
-  private readonly messageService = inject(MessageService);
+  private readonly actions$ = inject(Actions);
 
   user$ = this.store.select(selectCurrentUser);
-
-  emailSaving = signal(false);
-  passwordSaving = signal(false);
-  emailError = signal<string | null>(null);
-  passwordError = signal<string | null>(null);
+  emailSaving = toSignal(this.store.select(selectEmailMutating), { initialValue: false });
+  emailError = toSignal(this.store.select(selectEmailError), { initialValue: null });
+  passwordSaving = toSignal(this.store.select(selectPasswordMutating), { initialValue: false });
+  passwordError = toSignal(this.store.select(selectPasswordError), { initialValue: null });
 
   emailForm = this.fb.group({
     currentPassword: ['', [Validators.required, Validators.minLength(6)]],
@@ -60,40 +63,17 @@ export class ProfileComponent {
     confirmPassword: ['', Validators.required],
   }, { validators: passwordsMatch });
 
-  submitEmailChange(currentUser: AdminUser): void {
+  submitEmailChange(): void {
     if (this.emailForm.invalid) { this.emailForm.markAllAsTouched(); return; }
     const { currentPassword, newEmail } = this.emailForm.value;
-    this.emailSaving.set(true);
-    this.emailError.set(null);
-    this.authService.changeEmail(currentPassword!, newEmail!).pipe(
-      catchError((err: { error?: { message?: string }; message?: string }) => {
-        this.emailError.set(err?.error?.message ?? 'Failed to update email');
-        this.emailSaving.set(false);
-        return EMPTY;
-      })
-    ).subscribe(({ email }) => {
-      this.emailSaving.set(false);
-      this.emailForm.reset();
-      this.store.dispatch(restoreSession({ user: { ...currentUser, email } }));
-      this.messageService.add({ severity: 'success', summary: 'Email updated successfully' });
-    });
+    this.store.dispatch(changeEmail({ currentPassword: currentPassword!, newEmail: newEmail! }));
+    this.actions$.pipe(ofType(changeEmailSuccess), take(1)).subscribe(() => this.emailForm.reset());
   }
 
   submitPasswordChange(): void {
     if (this.passwordForm.invalid) { this.passwordForm.markAllAsTouched(); return; }
     const { currentPassword, newPassword } = this.passwordForm.value;
-    this.passwordSaving.set(true);
-    this.passwordError.set(null);
-    this.authService.changePassword(currentPassword!, newPassword!).pipe(
-      catchError((err: { error?: { message?: string }; message?: string }) => {
-        this.passwordError.set(err?.error?.message ?? 'Failed to change password');
-        this.passwordSaving.set(false);
-        return EMPTY;
-      })
-    ).subscribe(() => {
-      this.passwordSaving.set(false);
-      this.passwordForm.reset();
-      this.messageService.add({ severity: 'success', summary: 'Password changed successfully' });
-    });
+    this.store.dispatch(changePassword({ currentPassword: currentPassword!, newPassword: newPassword! }));
+    this.actions$.pipe(ofType(changePasswordSuccess), take(1)).subscribe(() => this.passwordForm.reset());
   }
 }

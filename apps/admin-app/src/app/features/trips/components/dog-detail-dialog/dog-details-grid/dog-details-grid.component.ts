@@ -2,12 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, input } from '@angular/core
 import { TagModule } from 'primeng/tag';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Dog, DogBehavior, DogHeight } from '@models/lib/dog.model';
-
-export interface DogRequester {
-  name: string;
-  email: string;
-  phone: string;
-}
+import { DogRequester } from '@admin/features/trips/shared/dog-requester.model';
 
 @Component({
   selector: 'app-dog-details-grid',

@@ -72,14 +72,6 @@
         "header": "Delete Trip",
         "message": "Delete the trip {{ route }} on {{ date }}?"
       },
-      "approveRequest": {
-        "header": "Confirm Approval",
-        "message": "Approve request by {{ name }} ({{ count }} dog(s))?"
-      },
-      "rejectRequest": {
-        "header": "Confirm Rejection",
-        "message": "Reject request by {{ name }}? This cannot be undone."
-      },
       "deleteRequest": {
         "header": "Delete Request",
         "message": "Delete the request from {{ name }}?",

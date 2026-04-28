@@ -1,5 +1,4 @@
 <div class="trips-page flex flex-column gap-4">
-  <p-toast />
   <p-confirmdialog />
 
   @if (loading()) {
@@ -46,9 +45,7 @@
   [header]="detailHeader()"
   [trip]="detailTrip()"
   [requests]="detailRequests()"
-  [activeTab]="detailActiveTab()"
   (visibleChange)="detailDialogVisible.set($event)"
-  (tabChanged)="detailActiveTab.set($event)"
   (approveRequest)="approveRequestInDetail($event)"
   (rejectRequest)="rejectRequestInDetail($event)"
   (deleteRequest)="deleteRequestInDetail($event)"

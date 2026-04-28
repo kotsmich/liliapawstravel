@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, input, output, OnInit, computed, signal } from '@angular/core';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { Subject, switchMap, startWith, map, of } from 'rxjs';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -10,9 +10,8 @@ import { Dog } from '@models/lib/dog.model';
 import { TripDestination, TripRequester } from '@models/lib/trip.model';
 import { DogFieldsComponent } from './dog-fields.component';
 import { DogRequestorSelectorComponent } from './dog-requestor-selector/dog-requestor-selector.component';
-import { RandomProperty, RandomUtil } from '@models/index';
 import { AsyncButtonDirective } from '@ui/lib/directives/async-button.directive';
-import { requesterRequiredValidator } from '@admin/shared/validators/requester-required.validator';
+import { buildAddDogGroup, buildEditDogGroup } from '@admin/features/trips/trip-form/dog-form.factory';
 
 
 @Component({
@@ -85,62 +84,15 @@ export class DogFormDialogComponent implements OnInit {
 
   private buildForms(): void {
     if (this.isNewDog()) {
-      this.addForms = this.fb.array([this.buildAddDogGroup(1)]);
+      this.addForms = this.fb.array([buildAddDogGroup(1)]);
       this._panelCount.set(1);
       this.activeAccordionPanels = [];
       this.activeForm$.next(this.addForms);
     } else {
-      this.editForm = this.buildEditDogGroup(this.dog()!);
+      this.editForm = buildEditDogGroup(this.dog()!);
       if (this.editForm.invalid) this.editForm.markAllAsTouched();
       this.activeForm$.next(this.editForm);
     }
-  }
-
-  static requesterKey(d?: Dog | null): string | null {
-    return d?.requesterId ?? null;
-  }
-
-  /** Form group for add mode — no requester fields (requester is set at the group level). */
-  private buildAddDogGroup(index: number): FormGroup {
-    return this.fb.group({
-      name:             [`Dog ${index}`,  Validators.required],
-      size:             [null],
-      height:           [null],
-      behaviors:        [[] as string[]],
-      gender:           [null],
-      age:              [null,   Validators.min(0)],
-      chipId:           [null],
-      pickupLocation:   [''],
-      pickupLocationId: [null],
-      dropLocation:     [''],
-      notes:            [''],
-      destinationId:    [null],
-      receiver:         [null],
-      receiverPhone:    [null],
-    });
-  }
-
-  /** Form group for edit mode — includes requester fields and the requester validator. */
-  private buildEditDogGroup(d: Dog): FormGroup {
-    return this.fb.group({
-      name:             [d.name,              Validators.required],
-      size:             [d.size],
-      height:           [d.height            ?? null],
-      behaviors:        [d.behaviors         ?? []],
-      gender:           [d.gender],
-      age:              [d.age,               Validators.min(0)],
-      chipId:           [d.chipId],
-      pickupLocation:   [d.pickupLocation    ?? ''],
-      pickupLocationId: [d.pickupLocationId  ?? null],
-      dropLocation:     [d.dropLocation      ?? ''],
-      notes:            [d.notes             ?? ''],
-      requesterId:      [d.requesterId       ?? null],
-      requesterKey:     [DogFormDialogComponent.requesterKey(d)],
-      newRequesterName: [null],
-      destinationId:    [d.destinationId     ?? null],
-      receiver:         [d.receiver          ?? null],
-      receiverPhone:    [d.receiverPhone     ?? null],
-    }, { validators: requesterRequiredValidator });
   }
 
   panelLabel(i: number): string {
@@ -149,7 +101,7 @@ export class DogFormDialogComponent implements OnInit {
   }
 
   addPanel(): void {
-    this.addForms.push(this.buildAddDogGroup(this.addForms.length + 1));
+    this.addForms.push(buildAddDogGroup(this.addForms.length + 1));
     this._panelCount.update(v => v + 1);
     this.activeAccordionPanels = [];
   }

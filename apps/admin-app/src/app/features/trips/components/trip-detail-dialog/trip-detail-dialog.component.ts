@@ -7,13 +7,16 @@ import { TripRequest } from '@models/lib/trip-request.model';
 import { DetailDialogBase } from '@admin/shared/components/detail-dialog-base';
 import { DogDetailDialogComponent } from '../dog-detail-dialog/dog-detail-dialog.component';
 import { DogManagerService } from '../../trip-form/dog-manager.service';
+import { DogActionsService } from '../../trip-form/dog-actions.service';
+import { DogGroupingService } from '../../trip-form/dog-grouping.service';
+import { DogSelectionStore } from '../../trip-form/dog-selection.store';
 import { TripDogsTabsComponent } from '../trip-dogs-tabs/trip-dogs-tabs.component';
 
 @Component({
   selector: 'app-trip-detail-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [DogDialogService, DogManagerService],
+  providers: [DogDialogService, DogSelectionStore, DogActionsService, DogGroupingService, DogManagerService],
   imports: [
     DialogModule,
     DogDetailDialogComponent,
@@ -33,8 +36,6 @@ export class TripDetailDialogComponent extends DetailDialogBase {
     if (value) this.dogManager.initFromTrip(value);
   }
   readonly requests = input<TripRequest[]>([]);
-  readonly activeTab = input('all');
-  readonly tabChanged = output<string>();
   readonly approveRequest = output<TripRequest>();
   readonly rejectRequest = output<TripRequest>();
   readonly deleteRequest = output<TripRequest>();
