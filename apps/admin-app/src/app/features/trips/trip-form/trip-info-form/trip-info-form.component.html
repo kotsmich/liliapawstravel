@@ -95,20 +95,12 @@
           <p-tabpanel value="locations">
             <div class="locations-tab-body">
               <app-trip-location-list
-                [items]="pickupLocations()"
-                [inputCtrl]="pickupLocationInputCtrl()"
-                [config]="pickupLocationsConfig()"
-                [hasError]="pickupLocationsHasError()"
-                (addItem)="addPickupLocation.emit()"
-                (removeItem)="removePickupLocation.emit($event)" />
+                [control]="pickupLocationsControl()"
+                [config]="pickupLocationsConfig()" />
 
               <app-trip-location-list
-                [items]="destinations()"
-                [inputCtrl]="destinationInputCtrl()"
-                [config]="destinationsConfig()"
-                [hasError]="destinationsHasError()"
-                (addItem)="addDestination.emit()"
-                (removeItem)="removeDestination.emit($event)" />
+                [control]="destinationsControl()"
+                [config]="destinationsConfig()" />
             </div>
           </p-tabpanel>
         </p-tabpanels>

@@ -17,18 +17,10 @@
       [isAtCapacity]="isAtCapacity()"
       [capacityWarning]="capacityWarning()"
       [dogsCount]="dogManager.dogsData().length"
-      [pickupLocations]="pickupLocationsValue() ?? []"
-      [destinations]="destinationsValue() ?? []"
-      [pickupLocationInputCtrl]="pickupLocationInputCtrl"
-      [destinationInputCtrl]="destinationInputCtrl"
+      [pickupLocationsControl]="form.controls.pickupLocations"
+      [destinationsControl]="form.controls.destinations"
       [pickupLocationsConfig]="pickupLocationsConfig"
-      [destinationsConfig]="destinationsConfig"
-      [pickupLocationsHasError]="!!(form.get('pickupLocations')?.touched && form.get('pickupLocations')?.invalid)"
-      [destinationsHasError]="!!(form.get('destinations')?.touched && form.get('destinations')?.invalid)"
-      (addPickupLocation)="addPickupLocation()"
-      (removePickupLocation)="removePickupLocation($event)"
-      (addDestination)="addDestination()"
-      (removeDestination)="removeDestination($event)" />
+      [destinationsConfig]="destinationsConfig" />
 
     @if (isEdit) {
        <app-trip-dogs-tabs

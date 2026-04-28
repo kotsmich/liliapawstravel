@@ -76,7 +76,10 @@ export class RequestsListComponent implements OnInit {
 
   onSelectionChange(requests: TripRequest[]): void { this.store.dispatch(setSelectedRequests({ ids: requests.map((r) => r.id) })); }
   onTripSelected(tripId: string | null): void      { this.store.dispatch(setSelectedTripId({ tripId })); }
-  openDetail(request: TripRequest): void           { this.selectedRequestId.set(request.id); this.dialogVisible.set(true); }
+  openDetail(request: TripRequest): void {
+    this.selectedRequestId.set(request.id);
+    this.dialogVisible.set(true);
+  }
   cancel(): void                                   { this.dialogVisible.set(false); }
   onSaveNote(note: string): void {
     const id = this.selectedRequestId();
@@ -95,8 +98,14 @@ export class RequestsListComponent implements OnInit {
     this.approvalService.reject(req, this.tripDate(req.tripId), () => this.dialogVisible.set(false));
   }
 
-  onApproveFromTable(req: TripRequest): void { this.selectedRequestId.set(req.id); this.approvalService.approve(req, this.tripDate(req.tripId)); }
-  onRejectFromTable(req: TripRequest): void  { this.selectedRequestId.set(req.id); this.approvalService.reject(req, this.tripDate(req.tripId)); }
+  onApproveFromTable(req: TripRequest): void {
+    this.selectedRequestId.set(req.id);
+    this.approvalService.approve(req, this.tripDate(req.tripId));
+  }
+  onRejectFromTable(req: TripRequest): void {
+    this.selectedRequestId.set(req.id);
+    this.approvalService.reject(req, this.tripDate(req.tripId));
+  }
   onBulkApprove(requests: TripRequest[]): void { this.approvalService.bulkApprove(requests); }
   onBulkReject(requests: TripRequest[]): void  { this.approvalService.bulkReject(requests); }
 

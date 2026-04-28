@@ -50,7 +50,10 @@ export class InvitationComponent {
   ];
 
   submitCreateUser(): void {
-    if (this.newUserForm.invalid) { this.newUserForm.markAllAsTouched(); return; }
+    if (this.newUserForm.invalid) {
+      this.newUserForm.markAllAsTouched();
+      return;
+    }
     const { email, password, role } = this.newUserForm.value;
     this.store.dispatch(createUser({ email: email!, password: password!, role: role as AdminRole }));
     this.actions$.pipe(ofType(createUserSuccess), take(1)).subscribe(() => {

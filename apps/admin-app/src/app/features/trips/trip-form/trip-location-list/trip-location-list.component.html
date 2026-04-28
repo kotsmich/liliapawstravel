@@ -11,9 +11,9 @@
           class="pi pi-times-circle chip-remove"
           role="button"
           tabindex="0"
-          (click)="removeItem.emit($index)"
-          (keydown.enter)="removeItem.emit($index)"
-          (keydown.space)="removeItem.emit($index); $event.preventDefault()"></i>
+          (click)="remove($index)"
+          (keydown.enter)="remove($index)"
+          (keydown.space)="remove($index); $event.preventDefault()"></i>
       </p-chip>
     }
     @if (items().length === 0) {
@@ -24,10 +24,10 @@
   <div class="add-destination-row">
     <input
       pInputText
-      [formControl]="inputCtrl()"
+      [formControl]="inputCtrl"
       [placeholder]="config().placeholderKey | transloco"
       class="destination-input"
-      (keydown.enter)="addItem.emit(); $event.preventDefault()" />
+      (keydown.enter)="add(); $event.preventDefault()" />
     <p-button
       icon="pi pi-plus"
       [label]="config().addButtonKey | transloco"
@@ -35,7 +35,7 @@
       [outlined]="true"
       size="small"
       type="button"
-      (onClick)="addItem.emit()" />
+      (onClick)="add()" />
   </div>
 
   @if (hasError()) {

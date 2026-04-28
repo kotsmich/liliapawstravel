@@ -1,14 +1,16 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Store } from '@ngrx/store';
 import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { loadMessages, loadMessageById, deleteMessage, selectAllMessages, selectMessagesIsLoading, selectUnreadCount } from '@admin/features/messages/store';
 import { resetMessages } from '@admin/core/store/notifications';
 import { ContactSubmission } from '@models/lib/contact-form.model';
 import { PageHeaderComponent } from '@ui/lib/components/page-header/page-header.component';
 import { LoadingOverlayComponent } from '@ui/lib/components/loading/loading-overlay.component';
+import { ConfirmActionService } from '@admin/shared/services/confirm-action.service';
 import { MessagesListComponent } from './components/messages-list/messages-list.component';
 import { MessageDetailDialogComponent } from './components/message-detail-dialog/message-detail-dialog.component';
 
@@ -17,7 +19,7 @@ import { MessageDetailDialogComponent } from './components/message-detail-dialog
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CardModule, SkeletonModule,
+    CardModule, SkeletonModule, ConfirmDialogModule,
     PageHeaderComponent, LoadingOverlayComponent,
     MessagesListComponent, MessageDetailDialogComponent,
     TranslocoModule,
@@ -27,6 +29,8 @@ import { MessageDetailDialogComponent } from './components/message-detail-dialog
 })
 export class MessagesPageComponent implements OnInit {
   private readonly store = inject(Store);
+  private readonly confirm = inject(ConfirmActionService);
+  private readonly transloco = inject(TranslocoService);
 
   readonly messages = toSignal(this.store.select(selectAllMessages), { initialValue: [] as ContactSubmission[] });
   readonly loading = toSignal(this.store.select(selectMessagesIsLoading), { initialValue: false });
@@ -55,8 +59,17 @@ export class MessagesPageComponent implements OnInit {
   }
 
   deleteMessage(msg: ContactSubmission): void {
-    this.store.dispatch(deleteMessage({ id: msg.id }));
-    this.dialogVisible.set(false);
-    this.selectedMessageId.set(null);
+    this.confirm.confirm({
+      header:      this.transloco.translate('messages.confirmDelete.header'),
+      message:     this.transloco.translate('messages.confirmDelete.message', { name: msg.name }),
+      acceptLabel: this.transloco.translate('messages.confirmDelete.accept'),
+      rejectLabel: this.transloco.translate('messages.confirmDelete.reject'),
+      severity:    'danger',
+      accept: () => {
+        this.store.dispatch(deleteMessage({ id: msg.id }));
+        this.dialogVisible.set(false);
+        this.selectedMessageId.set(null);
+      },
+    });
   }
 }

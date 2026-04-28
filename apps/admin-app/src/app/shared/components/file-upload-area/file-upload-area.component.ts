@@ -1,12 +1,28 @@
 import {
   Component, ChangeDetectionStrategy, ViewChild, ElementRef,
-  Input, input, output, signal, ChangeDetectorRef, inject,
+  Input, input, output, signal, DestroyRef, inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { from, map } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { TranslocoModule } from '@jsverse/transloco';
 
 export type FileUploadPreviewType = 'image' | 'document';
+
+function fileToDataUrl$(file: File) {
+  return from(file.arrayBuffer()).pipe(
+    map((buffer) => {
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      const chunk = 0x8000;
+      for (let i = 0; i < bytes.byteLength; i += chunk) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+      }
+      return `data:${file.type};base64,${btoa(binary)}`;
+    }),
+  );
+}
 
 @Component({
   selector: 'app-file-upload-area',
@@ -44,7 +60,7 @@ export class FileUploadAreaComponent {
   readonly previewUrl = signal<string | null>(null);
   readonly fileName = signal<string | null>(null);
 
-  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   private seedFromExisting(url: string | null): void {
     if (url) {
@@ -82,23 +98,18 @@ export class FileUploadAreaComponent {
 
   private applyFile(file: File): void {
     if (this.previewType() === 'image') {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        this.previewUrl.set((event.target as FileReader).result as string);
-        this.cdr.markForCheck();
-      };
-      reader.readAsDataURL(file);
+      fileToDataUrl$(file)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((url) => this.previewUrl.set(url));
     } else {
       this.fileName.set(file.name);
     }
     this.fileChange.emit(file);
-    this.cdr.markForCheck();
   }
 
   removeFile(): void {
     this.previewUrl.set(null);
     this.fileName.set(null);
     this.fileChange.emit(null);
-    this.cdr.markForCheck();
   }
 }

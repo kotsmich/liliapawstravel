@@ -5,8 +5,6 @@ import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { ChipModule } from 'primeng/chip';
 import { Store } from '@ngrx/store';
 import { filter, map, startWith, take } from 'rxjs';
 import { clearSelectedTrip, loadTripById, updateTrip, addTrip, selectSelectedTrip, selectTripsMutating } from '@admin/features/trips/store';
@@ -34,7 +32,7 @@ const DEFAULT_PICKUP_LOCATIONS = environment.defaultPickupLocations;
   providers: [DogDialogService, DogSelectionStore, DogActionsService, DogGroupingService, DogManagerService],
   imports: [
     RouterModule, ReactiveFormsModule,
-    ButtonModule, ConfirmDialogModule, InputTextModule, ChipModule,
+    ButtonModule, ConfirmDialogModule,
     TranslocoModule,
     DogDetailDialogComponent,
     TripFormHeaderComponent,
@@ -78,9 +76,6 @@ export class TripFormComponent implements OnInit {
     dogs: this.dogManager.dogsArray,
   });
 
-  readonly destinationInputCtrl = new FormControl('');
-  readonly pickupLocationInputCtrl = new FormControl('');
-
   readonly destinationsConfig: LocationListConfig = {
     titleKey: 'trips.form.destinations',
     hintKey: 'trips.form.destinationsHint',
@@ -98,46 +93,6 @@ export class TripFormComponent implements OnInit {
     emptyKey: 'trips.form.noPickupLocations',
     errorKey: 'trips.form.pickupLocationsRequired',
   };
-
-  readonly destinationsValue = toSignal(
-    this.form.get('destinations')!.valueChanges,
-    { initialValue: (this.form.get('destinations')!.value ?? []) as TripDestination[] },
-  );
-
-  readonly pickupLocationsValue = toSignal(
-    this.form.get('pickupLocations')!.valueChanges,
-    { initialValue: (this.form.get('pickupLocations')!.value ?? []) as TripDestination[] },
-  );
-
-  addDestination(): void {
-    const val = (this.destinationInputCtrl.value ?? '').trim();
-    if (!val) return;
-    const newDest: TripDestination = { name: val };
-    this.form.get('destinations')!.setValue([...(this.destinationsValue() ?? []), newDest]);
-    this.destinationInputCtrl.setValue('');
-  }
-
-  removeDestination(index: number): void {
-    const updated = [...(this.destinationsValue() ?? [])];
-    updated.splice(index, 1);
-    this.form.get('destinations')!.setValue(updated);
-    this.form.get('destinations')!.markAsTouched();
-  }
-
-  addPickupLocation(): void {
-    const val = (this.pickupLocationInputCtrl.value ?? '').trim();
-    if (!val) return;
-    const newLoc: TripDestination = { name: val };
-    this.form.get('pickupLocations')!.setValue([...(this.pickupLocationsValue() ?? []), newLoc]);
-    this.pickupLocationInputCtrl.setValue('');
-  }
-
-  removePickupLocation(index: number): void {
-    const updated = [...(this.pickupLocationsValue() ?? [])];
-    updated.splice(index, 1);
-    this.form.get('pickupLocations')!.setValue(updated);
-    this.form.get('pickupLocations')!.markAsTouched();
-  }
 
   readonly mutating = toSignal(this.store.select(selectTripsMutating), { initialValue: false });
 
@@ -231,7 +186,10 @@ export class TripFormComponent implements OnInit {
   onSubmit(): void {
     this.form.get('destinations')!.markAsTouched();
     this.form.get('pickupLocations')!.markAsTouched();
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const value = this.form.value as any;

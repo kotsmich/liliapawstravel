@@ -12,6 +12,7 @@ import { DogFieldsComponent } from './dog-fields.component';
 import { DogRequestorSelectorComponent } from './dog-requestor-selector/dog-requestor-selector.component';
 import { AsyncButtonDirective } from '@ui/lib/directives/async-button.directive';
 import { buildAddDogGroup, buildEditDogGroup } from '@admin/features/trips/trip-form/dog-form.factory';
+import { toDogPayload } from '@admin/features/trips/shared/dog-payload';
 
 
 @Component({
@@ -76,7 +77,10 @@ export class DogFormDialogComponent implements OnInit {
 
   readonly isNewDog = computed(() => this.dog() === null);
   private readonly _panelCount = signal(0);
-  readonly panelForms = computed(() => { this._panelCount(); return (this.addForms?.controls ?? []) as FormGroup[]; });
+  readonly panelForms = computed(() => {
+    this._panelCount();
+    return (this.addForms?.controls ?? []) as FormGroup[];
+  });
 
   activeAccordionPanels: string[] = [];
 
@@ -116,36 +120,12 @@ export class DogFormDialogComponent implements OnInit {
       this.addForms.markAllAsTouched();
       this.addModeRequesterForm()?.markAllAsTouched();
       if (this.addForms.invalid || this.addModeRequesterForm()?.invalid) return;
-      this.dogSaved.emit(this.addForms.value.map((v: any) => this.toDogPayload(v)));
+      this.dogSaved.emit(this.addForms.value.map((v: any) => toDogPayload(v, this.tripDestinations(), this.tripPickupLocations())));
     } else {
       this.editForm.markAllAsTouched();
       if (this.editForm.invalid) return;
-      this.dogSaved.emit([{ id: this.dog()!.id, ...this.toDogPayload(this.editForm.value) } as Dog]);
+      this.dogSaved.emit([{ id: this.dog()!.id, ...toDogPayload(this.editForm.value, this.tripDestinations(), this.tripPickupLocations()) } as Dog]);
     }
-  }
-
-  private toDogPayload({ newRequesterName, requesterKey: _rk, ...dogData }: any): Omit<Dog, 'id'> {
-    const destinations = this.tripDestinations();
-    const pickupLocations = this.tripPickupLocations();
-    const findDest = (id: string | null) => destinations.find((d: TripDestination) => d.id === id) ?? null;
-    const findPickup = (id: string | null) => pickupLocations.find((d: TripDestination) => d.id === id) ?? null;
-
-    // Resolve pickupLocation text from the selected pickup location ID (or 'Other' when none chosen).
-    const pickupDest = findPickup(dogData.pickupLocationId);
-    const pickupLocation = pickupLocations.length > 0 ? (pickupDest?.name ?? 'Other') : (dogData.pickupLocation || '');
-    const pickupLocationId = pickupDest ? dogData.pickupLocationId : null;
-
-    // Keep dropLocation in sync with the selected delivery stop when one is chosen.
-    const dropDest = findDest(dogData.destinationId);
-    const dropLocation = dropDest ? dropDest.name : dogData.dropLocation;
-
-    return {
-      ...dogData,
-      pickupLocation,
-      pickupLocationId,
-      dropLocation,
-...(newRequesterName?.trim() ? { newRequesterName: newRequesterName.trim() } : {}),
-    };
   }
 
   onCancel(): void {

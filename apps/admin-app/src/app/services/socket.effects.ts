@@ -29,7 +29,10 @@ export class SocketEffects {
 
   requestNew$ = createEffect(() =>
     this.wsService.listen<TripRequest>(SocketEvent.REQUEST_NEW).pipe(
-      catchError((err) => { console.error('WS REQUEST_NEW error', err); return EMPTY; }),
+      catchError((err) => {
+        console.error('WS REQUEST_NEW error', err);
+        return EMPTY;
+      }),
       mergeMap((request) => [
         addRequestFromSocket({ request }),
         increment({ notificationType: 'requests' }),
@@ -39,14 +42,20 @@ export class SocketEffects {
 
   requestUpdated$ = createEffect(() =>
     this.wsService.listen<TripRequest>(SocketEvent.REQUEST_UPDATED).pipe(
-      catchError((err) => { console.error('WS REQUEST_UPDATED error', err); return EMPTY; }),
+      catchError((err) => {
+        console.error('WS REQUEST_UPDATED error', err);
+        return EMPTY;
+      }),
       map((request) => requestUpdatedFromSocket({ request })),
     )
   );
 
   messageNew$ = createEffect(() =>
     this.wsService.listen<ContactSubmission>(SocketEvent.MESSAGE_NEW).pipe(
-      catchError((err) => { console.error('WS MESSAGE_NEW error', err); return EMPTY; }),
+      catchError((err) => {
+        console.error('WS MESSAGE_NEW error', err);
+        return EMPTY;
+      }),
       mergeMap((message) => [
         addMessageFromSocket({ message }),
         increment({ notificationType: 'messages' }),

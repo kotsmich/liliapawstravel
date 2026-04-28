@@ -38,7 +38,10 @@ export class LoginComponent {
   error$ = this.store.select(selectAuthError);
 
   onSubmit(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     const { email, password } = this.form.value;
     this.store.dispatch(login({ email: email!, password: password! }));
   }

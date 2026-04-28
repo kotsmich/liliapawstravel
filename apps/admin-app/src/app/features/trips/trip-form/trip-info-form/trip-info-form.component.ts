@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { IftaLabelModule } from 'primeng/iftalabel';
@@ -39,17 +39,8 @@ export class TripInfoFormComponent {
   readonly capacityWarning = input<string | null>(null);
   readonly dogsCount = input<number>(0);
 
-  readonly pickupLocations = input.required<TripDestination[]>();
-  readonly destinations = input.required<TripDestination[]>();
-  readonly pickupLocationInputCtrl = input.required<FormControl<string | null>>();
-  readonly destinationInputCtrl = input.required<FormControl<string | null>>();
+  readonly pickupLocationsControl = input.required<FormControl<TripDestination[] | null>>();
+  readonly destinationsControl = input.required<FormControl<TripDestination[] | null>>();
   readonly pickupLocationsConfig = input.required<LocationListConfig>();
   readonly destinationsConfig = input.required<LocationListConfig>();
-  readonly pickupLocationsHasError = input<boolean>(false);
-  readonly destinationsHasError = input<boolean>(false);
-
-  readonly addPickupLocation = output<void>();
-  readonly removePickupLocation = output<number>();
-  readonly addDestination = output<void>();
-  readonly removeDestination = output<number>();
 }

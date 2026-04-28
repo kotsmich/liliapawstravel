@@ -1,9 +1,11 @@
-import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, input } from '@angular/core';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
 import { InputTextModule } from 'primeng/inputtext';
 import { TranslocoModule } from '@jsverse/transloco';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop';
+import { startWith, switchMap } from 'rxjs';
 import { TripDestination } from '@models/lib/trip.model';
 
 export interface LocationListConfig {
@@ -24,11 +26,38 @@ export interface LocationListConfig {
   styleUrl: './trip-location-list.component.scss',
 })
 export class TripLocationListComponent {
-  readonly items = input.required<TripDestination[]>();
-  readonly inputCtrl = input.required<FormControl<string | null>>();
+  readonly control = input.required<FormControl<TripDestination[] | null>>();
   readonly config = input.required<LocationListConfig>();
-  readonly hasError = input<boolean>(false);
 
-  readonly addItem = output<void>();
-  readonly removeItem = output<number>();
+  readonly inputCtrl = new FormControl('');
+
+  private readonly tick = toSignal(
+    toObservable(this.control).pipe(switchMap(c => c.events.pipe(startWith(null)))),
+  );
+
+  readonly items = computed(() => {
+    this.tick();
+    return this.control().value ?? [];
+  });
+  readonly hasError = computed(() => {
+    this.tick();
+    const c = this.control();
+    return c.touched && c.invalid;
+  });
+
+  add(): void {
+    const val = (this.inputCtrl.value ?? '').trim();
+    if (!val) return;
+    const c = this.control();
+    c.setValue([...(c.value ?? []), { name: val }]);
+    this.inputCtrl.setValue('');
+  }
+
+  remove(index: number): void {
+    const c = this.control();
+    const updated = [...(c.value ?? [])];
+    updated.splice(index, 1);
+    c.setValue(updated);
+    c.markAsTouched();
+  }
 }

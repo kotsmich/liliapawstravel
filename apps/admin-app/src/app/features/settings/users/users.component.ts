@@ -78,7 +78,10 @@ export class UsersComponent implements OnInit {
   }
 
   saveUser(): void {
-    if (this.editForm.invalid) { this.editForm.markAllAsTouched(); return; }
+    if (this.editForm.invalid) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
     const user = this.editingUser();
     if (!user) return;
     const { email, role } = this.editForm.value;
