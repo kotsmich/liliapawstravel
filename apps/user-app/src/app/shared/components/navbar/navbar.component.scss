@@ -78,17 +78,6 @@
 /* ── Mobile ── */
 @media (max-width: 768px) {
   .navbar {
-    /* Always show solid bg on mobile for readability */
-    background: rgba(250, 248, 245, 0.95) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-
-    &:not(.scrolled) {
-      .navbar__name { color: #2d2016; }
-      .navbar__links li button { color: #524b43; }
-      .navbar__burger { color: #3b352e; }
-    }
-
     &__burger {
       display: flex; align-items: center; justify-content: center;
       width: 40px; height: 40px; font-size: 1.25rem; border-radius: 8px;

@@ -1,0 +1,61 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="visible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '420px', maxWidth: '92vw' }"
+  [header]="'tripRequest.exportDialog.title' | transloco">
+
+  <div class="export-dialog__body">
+    <div class="export-dialog__field">
+      <span class="export-dialog__label">{{ 'tripRequest.exportDialog.selectLanguage' | transloco }}</span>
+      <div class="export-dialog__flags">
+        @for (lang of langs; track lang.value) {
+          <button
+            type="button"
+            class="export-dialog__flag"
+            [class.active]="selectedLang() === lang.value"
+            [attr.aria-label]="lang.ariaLabel"
+            [attr.aria-pressed]="selectedLang() === lang.value"
+            (click)="selectLang(lang.value)">
+            <span class="fi" [class]="'fi fi-' + lang.flag"></span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="export-dialog__field">
+      <span class="export-dialog__label">{{ 'tripRequest.exportDialog.formatLabel' | transloco }}</span>
+      <p-select
+        class="export-dialog__select"
+        [options]="formatOptions"
+        [ngModel]="selectedFormat()"
+        (ngModelChange)="selectedFormat.set($event)"
+        optionLabel="labelKey"
+        optionValue="value"
+        appendTo="body">
+        <ng-template let-opt pTemplate="selectedItem">
+          {{ opt.labelKey | transloco }}
+        </ng-template>
+        <ng-template let-opt pTemplate="item">
+          {{ opt.labelKey | transloco }}
+        </ng-template>
+      </p-select>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      type="button"
+      [label]="'tripRequest.exportDialog.cancel' | transloco"
+      [text]="true"
+      (onClick)="onCancel()" />
+    <p-button
+      type="button"
+      [label]="'tripRequest.exportDialog.export' | transloco"
+      icon="pi pi-download"
+      (onClick)="onExport()" />
+  </ng-template>
+</p-dialog>

@@ -45,7 +45,9 @@
     "reject": "Reject",
     "remove": "Remove",
     "actions": "Actions",
-    "noRecordsFound": "No records found"
+    "noRecordsFound": "No records found",
+    "download": "Download",
+    "previewUnavailable": "Preview not available for this file type"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -269,7 +271,7 @@
       "documentLabel": "Document",
       "documentOptional": "(optional — TRACES or authorization)",
       "documentClickHint": "Click or drag document",
-      "documentFormats": "PDF, JPG, PNG — max 10MB",
+      "documentFormats": "PDF, DOC, DOCX, ODT, RTF, TXT, JPG, PNG — max 50MB",
       "removePhoto": "Remove photo",
       "removeDocument": "Remove document",
       "adminDestination": "Actual Destination",

@@ -1,0 +1,62 @@
+<div class="page transport-docs-page">
+
+  <app-document-export-dialog #exportDialog />
+
+  <!-- Hero — protagonist CTA -->
+  <section class="page-intro">
+    <div class="page-intro__bg" aria-hidden="true">
+      <img
+        ngSrc="assets/images/cta-bg.webp"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+      />
+      <div class="page-intro__bg-overlay"></div>
+    </div>
+
+    <div class="page-intro__inner">
+      <span class="page-eyebrow">{{ 'transportDocuments.eyebrow' | transloco }}</span>
+      <h1>{{ 'transportDocuments.title' | transloco }}</h1>
+      <p>{{ 'transportDocuments.subtitle' | transloco }}</p>
+
+      <button type="button" class="hero-cta" (click)="openDialog()">
+        <i class="pi pi-download hero-cta__icon" aria-hidden="true"></i>
+        <span class="hero-cta__label">{{ 'transportDocuments.download' | transloco }}</span>
+      </button>
+      <small class="hero-cta__note">{{ 'transportDocuments.downloadNote' | transloco }}</small>
+    </div>
+    <div class="page-intro__rule" aria-hidden="true"></div>
+  </section>
+
+  <!-- How we work -->
+  <section class="content-section">
+    <div class="content-section__inner">
+      <h2 class="content-section__title">{{ 'transportDocuments.howWeWork.title' | transloco }}</h2>
+      @for (key of howWeWorkParagraphs; track key) {
+        <p class="content-section__paragraph">{{ key | transloco }}</p>
+      }
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="content-section content-section--faq">
+    <div class="content-section__inner">
+      <h2 class="content-section__title">{{ 'transportDocuments.faq.title' | transloco }}</h2>
+
+      <p-accordion [value]="['0']" class="faq-accordion">
+        @for (item of faqItems; track item.value) {
+          <p-accordion-panel [value]="item.value">
+            <p-accordion-header>
+              <span class="faq-accordion__question">{{ item.questionKey | transloco }}</span>
+            </p-accordion-header>
+            <p-accordion-content>
+              <p class="faq-accordion__answer">{{ item.answerKey | transloco }}</p>
+            </p-accordion-content>
+          </p-accordion-panel>
+        }
+      </p-accordion>
+    </div>
+  </section>
+
+</div>

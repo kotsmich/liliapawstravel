@@ -45,7 +45,9 @@
     "reject": "Απόρριψη",
     "remove": "Αφαίρεση",
     "actions": "Ενέργειες",
-    "noRecordsFound": "Δεν βρέθηκαν εγγραφές"
+    "noRecordsFound": "Δεν βρέθηκαν εγγραφές",
+    "download": "Λήψη",
+    "previewUnavailable": "Δεν υπάρχει προεπισκόπηση για αυτόν τον τύπο αρχείου"
   },
   "dashboard": {
     "title": "Πίνακας Ελέγχου",
@@ -269,7 +271,7 @@
       "documentLabel": "Έγγραφο",
       "documentOptional": "(προαιρετικό — TRACES ή εξουσιοδότηση)",
       "documentClickHint": "Κλικ ή σύρτε έγγραφο",
-      "documentFormats": "PDF, JPG, PNG — max 10MB",
+      "documentFormats": "PDF, DOC, DOCX, ODT, RTF, TXT, JPG, PNG — έως 50MB",
       "removePhoto": "Αφαίρεση φωτογραφίας",
       "removeDocument": "Αφαίρεση εγγράφου",
       "adminDestination": "Πραγματική Παράδοση",

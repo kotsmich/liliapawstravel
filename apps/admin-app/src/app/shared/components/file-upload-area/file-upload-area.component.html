@@ -30,7 +30,7 @@
 
   @if (previewType() === 'document' && fileName()) {
     <div class="document-preview">
-      <i class="pi pi-file-pdf document-preview__icon"></i>
+      <i class="pi pi-file document-preview__icon"></i>
       <span class="document-preview__name">{{ fileName() }}</span>
       <p-button icon="pi pi-times" [text]="true" severity="danger" [rounded]="true"
         size="small" [pTooltip]="removeTooltip()"

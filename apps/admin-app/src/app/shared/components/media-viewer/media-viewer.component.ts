@@ -2,6 +2,14 @@ import { Component, ChangeDetectionStrategy, input, computed, inject } from '@an
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslocoModule } from '@jsverse/transloco';
 
+const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
+
+function extOf(url: string): string {
+  const path = url.split('#')[0].split('?')[0].toLowerCase();
+  const dot = path.lastIndexOf('.');
+  return dot >= 0 ? path.slice(dot) : '';
+}
+
 @Component({
   selector: 'app-media-viewer',
   standalone: true,
@@ -19,9 +27,16 @@ export class MediaViewerComponent {
   readonly frameHeight = input('380px');
   readonly imgMaxHeight = input('260px');
 
-  readonly isPdf = computed(() =>
-    (this.url() ?? '').toLowerCase().includes('.pdf'),
-  );
+  readonly isPdf = computed(() => extOf(this.url() ?? '') === '.pdf');
+  readonly isImage = computed(() => IMAGE_EXTENSIONS.includes(extOf(this.url() ?? '')));
+  readonly isDownloadOnly = computed(() => !!this.url() && !this.isPdf() && !this.isImage());
+
+  readonly fileName = computed(() => {
+    const url = this.url();
+    if (!url) return '';
+    const path = url.split('#')[0].split('?')[0];
+    return decodeURIComponent(path.split('/').pop() ?? '');
+  });
 
   readonly safeUrl = computed((): SafeResourceUrl | null => {
     const url = this.url();

@@ -20,6 +20,50 @@
   border: 1px solid var(--surface-border);
 }
 
+.media-download {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-ground);
+  text-align: center;
+
+  &__icon {
+    font-size: 2.5rem;
+    color: var(--text-color-secondary);
+  }
+
+  &__name {
+    font-weight: 600;
+    word-break: break-all;
+  }
+
+  &__hint {
+    color: var(--text-color-secondary);
+    font-size: 0.8rem;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: var(--primary-color);
+    color: var(--primary-color-text);
+    text-decoration: none;
+    font-size: 0.875rem;
+
+    &:hover {
+      filter: brightness(0.95);
+    }
+  }
+}
+
 .media-placeholder {
   display: flex;
   flex-direction: column;

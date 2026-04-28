@@ -3,6 +3,7 @@
   <app-trip-request-hero />
 
   <p-confirmdialog [style]="{ 'max-width': '480px', width: '90vw' }" />
+  <app-document-export-dialog />
 
   <!-- ── 2-col layout ── -->
   <div class="page-layout">
@@ -134,7 +135,8 @@
                             [canRemove]="false"
                             [tripDestinations]="pickupDestinations()"
                             (photoFileChange)="onDogPhotoChange(dog, $event)"
-                            (documentFileChange)="onDogDocumentChange(dog, $event)" />
+                            (documentFileChange)="onDogDocumentChange(dog, $event)"
+                            (documentExportRequested)="onDocumentExportRequested()" />
                         </p-accordion-content>
                       </p-accordion-panel>
                     }

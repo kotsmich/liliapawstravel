@@ -99,13 +99,21 @@ export class DogBioExportService {
 
   private async _appendDocument(merged: PDFDocument, dog: Dog): Promise<void> {
     if (!dog.documentUrl) return;
+    const path = dog.documentUrl.toLowerCase().split('#')[0].split('?')[0];
+    const isPdf = path.endsWith('.pdf');
+    const isImage = /\.(jpg|jpeg|png)$/.test(path);
+    if (!isPdf && !isImage) {
+      // Word/ODT/RTF/TXT cannot be embedded in a PDF without server-side conversion.
+      console.warn(`Document for dog "${dog.name}" is not PDF or image — skipping bio-export attachment.`);
+      return;
+    }
     const response = await fetch(dog.documentUrl);
     if (!response.ok) {
       console.warn(`Could not fetch document for dog "${dog.name}" (${response.status}) — skipping document page.`);
       return;
     }
     const bytes = await response.arrayBuffer();
-    if (dog.documentUrl.toLowerCase().includes('.pdf')) {
+    if (isPdf) {
       await this._appendPdfBytes(merged, bytes);
     } else {
       await this._appendImageBytes(merged, bytes, dog.documentUrl);

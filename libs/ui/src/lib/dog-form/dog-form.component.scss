@@ -120,6 +120,51 @@
     flex-direction: column;
 
     @media (max-width: 480px) { flex: 1 1 100%; }
+
+    .upload-area {
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+  }
+
+  &__export-btn {
+    align-self: stretch;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+    padding: 0.55rem 0.9rem;
+    border: 1.5px solid #eb691c;
+    border-radius: 10px;
+    background: #fff7f0;
+    color: #c4541a;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+    font-family: inherit;
+    white-space: nowrap;
+
+    &:hover {
+      background: #eb691c;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(235, 105, 28, 0.25);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid #eb691c;
+      outline-offset: 2px;
+    }
+  }
+
+  &__export-btn-icon {
+    font-size: 1rem;
   }
 
   &__upload-label {

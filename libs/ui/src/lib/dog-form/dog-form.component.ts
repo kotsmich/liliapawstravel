@@ -49,6 +49,7 @@ export class DogFormComponent {
   readonly removeClicked = output<void>();
   readonly photoFileChange = output<File | null>();
   readonly documentFileChange = output<File | null>();
+  readonly documentExportRequested = output<void>();
 
   readonly photoInput = viewChild.required<ElementRef<HTMLInputElement>>('photoInput');
   readonly documentInput = viewChild.required<ElementRef<HTMLInputElement>>('documentInput');

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Injector, afterNextRender, inject, computed, runInInjectionContext, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Injector, afterNextRender, inject, computed, runInInjectionContext, signal, viewChild, ViewChild, ElementRef } from '@angular/core';
 import { DatePipe, ViewportScroller } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormArray, FormGroup, AbstractControl, Validators } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
@@ -31,6 +31,7 @@ import { TripRequestSidebarComponent } from './components/trip-request-sidebar/t
 import { TripDetailsCardComponent } from './components/trip-details-card/trip-details-card.component';
 import { NoTripHintComponent } from './components/no-trip-hint/no-trip-hint.component';
 import { StepHeaderComponent } from './components/step-header/step-header.component';
+import { DocumentExportDialogComponent } from '@user/shared/components/document-export-dialog/document-export-dialog.component';
 import { PhoneInputComponent } from '@user/shared/components/phone-input/phone-input.component';
 @Component({
   selector: 'app-trip-request',
@@ -43,7 +44,7 @@ import { PhoneInputComponent } from '@user/shared/components/phone-input/phone-i
     DogFormComponent, TripCalendarComponent, TranslocoModule, TooltipModule,
     FocusInvalidInputDirective, ValidationErrorDirective,
     TripRequestHeroComponent, TripRequestSidebarComponent, TripDetailsCardComponent, NoTripHintComponent,
-    StepHeaderComponent, PhoneInputComponent,
+    StepHeaderComponent, DocumentExportDialogComponent, PhoneInputComponent,
   ],
   templateUrl: './trip-request.component.html',
   styleUrls: ['./trip-request.component.scss'],
@@ -60,6 +61,7 @@ export class TripRequestComponent {
 
   @ViewChild('dogsSection') private dogsSection?: ElementRef<HTMLElement>;
   @ViewChild(TripCalendarComponent) private tripCalendar?: TripCalendarComponent;
+  private readonly exportDialog = viewChild.required(DocumentExportDialogComponent);
 
   readonly showSummary = signal(false);
   readonly openDogs = signal<string[]>(['0']);
@@ -169,6 +171,10 @@ export class TripRequestComponent {
     } else {
       this.dogDocumentFiles.delete(group);
     }
+  }
+
+  onDocumentExportRequested(): void {
+    this.exportDialog().open();
   }
 
   addDog(): void {

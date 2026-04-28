@@ -18,5 +18,12 @@ export const APP_ROUTES: Routes = [
     loadChildren: () =>
       import('./features/trip-request/trip-request.routes').then((m) => m.TRIP_REQUEST_ROUTES),
   },
+  {
+    path: 'transport-documents',
+    loadChildren: () =>
+      import('./features/transport-documents/transport-documents.routes').then(
+        (m) => m.TRANSPORT_DOCUMENTS_ROUTES,
+      ),
+  },
   { path: '**', redirectTo: '' },
 ];

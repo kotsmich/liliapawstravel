@@ -41,9 +41,12 @@ export class RequestDetailDialogComponent extends DetailDialogBase {
   readonly previewHeader = signal('');
   readonly previewVisible = signal(false);
 
-  readonly isDocPreview = computed(() =>
-    (this.previewUrl() ?? '').toLowerCase().includes('.pdf'),
-  );
+  readonly isDocPreview = computed(() => {
+    const url = (this.previewUrl() ?? '').toLowerCase();
+    if (!url) return false;
+    const path = url.split('#')[0].split('?')[0];
+    return !/\.(jpg|jpeg|png|webp|gif)$/.test(path);
+  });
 
   private readonly transloco = inject(TranslocoService);
   private readonly localDate = inject(LocalDatePipe);

@@ -6,9 +6,19 @@
       [style.height]="frameHeight()"
       title="Document">
     </iframe>
-  } @else {
+  } @else if (isImage()) {
     <div class="media-frame-image">
       <img [src]="url()" [style.maxHeight]="imgMaxHeight()" alt="Media" />
+    </div>
+  } @else {
+    <div class="media-download">
+      <i class="pi pi-file media-download__icon"></i>
+      <span class="media-download__name">{{ fileName() }}</span>
+      <small class="media-download__hint">{{ 'common.previewUnavailable' | transloco }}</small>
+      <a class="media-download__btn" [href]="url()" [download]="fileName()" target="_blank" rel="noopener">
+        <i class="pi pi-download"></i>
+        <span>{{ 'common.download' | transloco }}</span>
+      </a>
     </div>
   }
 } @else {

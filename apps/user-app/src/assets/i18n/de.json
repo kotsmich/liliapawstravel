@@ -3,6 +3,7 @@
     "home": "Startseite",
     "about": "Über uns",
     "requestTransport": "Transport anfragen",
+    "transportDocuments": "Dokumente",
     "contact": "Kontakt"
   },
   "aria": {
@@ -170,6 +171,15 @@
       "euCompliant": "EU-konform",
       "dogs": "1.200+ Hunde",
       "countries": "18 Länder"
+    },
+    "exportDialog": {
+      "title": "Dokument exportieren",
+      "selectLanguage": "Sprache",
+      "formatLabel": "Format",
+      "formatPdf": "PDF",
+      "formatWord": "Word",
+      "export": "Exportieren",
+      "cancel": "Abbrechen"
     }
   },
   "toasts": {
@@ -251,10 +261,49 @@
     "documentLabel": "Dokument",
     "documentOptional": "(optional — TRACES oder Genehmigung)",
     "documentClickHint": "Klicken oder Dokument hierher ziehen",
-    "documentFormats": "PDF, JPG, PNG — max 10MB",
+    "documentFormats": "PDF, DOC, DOCX, ODT, RTF, TXT, JPG, PNG — max. 50MB",
     "removePhoto": "Foto entfernen",
     "removeDocument": "Dokument entfernen",
+    "exportDocument": "Dokument exportieren",
     "receiver": "Empfänger (optional)"
+  },
+  "transportDocuments": {
+    "eyebrow": "Reisedokumente",
+    "title": "Transportgenehmigungsdokumente",
+    "subtitle": "Laden Sie die Einwilligungs- und Genehmigungsformulare herunter, die für den Transport Ihres Hundes erforderlich sind. Verfügbar in Englisch, Griechisch und Deutsch, als PDF oder bearbeitbare Word-Datei.",
+    "download": "Dokument herunterladen",
+    "downloadNote": "Wählen Sie Sprache und Format im Dialogfenster aus.",
+    "howWeWork": {
+      "title": "So arbeiten wir mit Ihnen zusammen",
+      "p1": "Wir koordinieren jeden Transport persönlich mit der adoptierenden Person — sobald Sie eine Transportanfrage einreichen, melden wir uns per E-Mail und WhatsApp und begleiten Sie vor der Abholung Schritt für Schritt.",
+      "p2": "Diese Genehmigungsdokumente formalisieren die Übergabe und begleiten Ihren Hund auf der gesamten Reise. Sie werden in der Regel einige Tage vor der Abreise unterschrieben, aber Sie können sie gerne früher prüfen, damit Sie genau wissen, was Sie erwartet.",
+      "p3": "Falls etwas im Formular unklar ist, schreiben Sie uns einfach. Wir beantworten lieber zehn Fragen, als am Reisetag etwas Unklares zu haben."
+    },
+    "faq": {
+      "title": "Häufig gestellte Fragen",
+      "items": {
+        "0": {
+          "question": "Muss ich das Dokument vor der Reise ausdrucken und unterschreiben?",
+          "answer": "Ja — bitte drucken Sie das Dokument aus, unterschreiben Sie es und bringen Sie es am Transporttag mit, oder senden Sie vorab eine eingescannte Kopie. Wir erinnern Sie einige Tage vor der Abholung daran."
+        },
+        "1": {
+          "question": "PDF oder Word — welches sollte ich herunterladen?",
+          "answer": "Verwenden Sie Word, wenn Sie Ihre Daten vor dem Druck eintippen möchten. Verwenden Sie PDF, wenn Sie lieber drucken und handschriftlich ausfüllen."
+        },
+        "2": {
+          "question": "Was, wenn ich die Sprache des Ziellandes nicht spreche?",
+          "answer": "Wählen Sie die Sprache, in der Sie sich beim Unterschreiben am wohlsten fühlen. Übersetzungen übernehmen wir, und der Empfangspartner hat Kopien in der jeweiligen Landessprache."
+        },
+        "3": {
+          "question": "Kann ich diese Seite mit jemand anderem teilen (z. B. dem Empfänger)?",
+          "answer": "Auf jeden Fall — genau dafür gibt es diese Seite. Leiten Sie den Link weiter, und die Person kann dieselben Dokumente direkt herunterladen."
+        },
+        "4": {
+          "question": "An wen wende ich mich, wenn etwas fehlt oder nicht stimmt?",
+          "answer": "Nutzen Sie die Kontaktseite oder antworten Sie auf eine Nachricht, die wir Ihnen geschickt haben. Wir korrigieren oder klären innerhalb eines Werktages."
+        }
+      }
+    }
   },
   "seo": {
     "home": {

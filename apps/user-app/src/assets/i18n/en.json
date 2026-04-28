@@ -3,6 +3,7 @@
     "home": "Home",
     "about": "About",
     "requestTransport": "Request Transport",
+    "transportDocuments": "Documents",
     "contact": "Contact"
   },
   "aria": {
@@ -170,6 +171,15 @@
       "euCompliant": "EU compliant",
       "dogs": "1,200+ dogs",
       "countries": "18 countries"
+    },
+    "exportDialog": {
+      "title": "Export Document",
+      "selectLanguage": "Language",
+      "formatLabel": "Format",
+      "formatPdf": "PDF",
+      "formatWord": "Word",
+      "export": "Export",
+      "cancel": "Cancel"
     }
   },
   "toasts": {
@@ -251,10 +261,49 @@
     "documentLabel": "Document",
     "documentOptional": "(optional — TRACES or authorization)",
     "documentClickHint": "Click or drag document",
-    "documentFormats": "PDF, JPG, PNG — max 10MB",
+    "documentFormats": "PDF, DOC, DOCX, ODT, RTF, TXT, JPG, PNG — max 50MB",
     "removePhoto": "Remove photo",
     "removeDocument": "Remove document",
+    "exportDocument": "Export document",
     "receiver": "Receiver (optional)"
+  },
+  "transportDocuments": {
+    "eyebrow": "Travel docs",
+    "title": "Transport authorization documents",
+    "subtitle": "Download the consent and authorization forms required for your dog's transport. Available in English, Greek and German, as PDF or editable Word.",
+    "download": "Download document",
+    "downloadNote": "Pick your language and format inside the dialog.",
+    "howWeWork": {
+      "title": "How we work with you",
+      "p1": "We coordinate every transport personally with the adopter — we'll be in touch by email and WhatsApp once you submit a transport request, and we walk you through every step before pickup.",
+      "p2": "These authorization documents formalize the handover and accompany your dog through the trip. They are usually signed a few days before departure, but feel free to review them earlier so you know exactly what to expect.",
+      "p3": "If anything in the form is unclear, just send us a message. We'd rather answer ten questions than have anything ambiguous on travel day."
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": {
+        "0": {
+          "question": "Do I need to print and sign the document before the trip?",
+          "answer": "Yes — please print, sign, and bring the document on transport day, or send a scanned copy ahead of time. We'll remind you a few days before pickup."
+        },
+        "1": {
+          "question": "PDF or Word — which one should I download?",
+          "answer": "Use Word if you'd like to type your details before printing. Use PDF if you prefer to print and fill in by hand."
+        },
+        "2": {
+          "question": "What if I don't speak the language of the destination country?",
+          "answer": "Pick the language you're most comfortable signing in. We handle translations on our side and the receiving partner has copies in the local language."
+        },
+        "3": {
+          "question": "Can I share this page with someone else (e.g. the receiver)?",
+          "answer": "Absolutely — that's why this page exists. Forward the link and they can download the same documents directly."
+        },
+        "4": {
+          "question": "Who do I contact if something is missing or wrong?",
+          "answer": "Use the Contact page or reply to any message we've sent you. We'll fix or clarify within one business day."
+        }
+      }
+    }
   },
   "seo": {
     "home": {

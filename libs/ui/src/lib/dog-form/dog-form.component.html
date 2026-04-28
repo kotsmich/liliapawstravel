@@ -228,7 +228,7 @@
 
       @if (documentName) {
         <div class="document-preview flex align-items-center gap-2">
-          <i class="pi pi-file-pdf document-preview__icon"></i>
+          <i class="pi pi-file document-preview__icon"></i>
           <span class="flex-1 text-sm document-preview__name">{{ documentName }}</span>
           <p-button icon="pi pi-times" [text]="true" severity="danger"
             [rounded]="true" size="small" [pTooltip]="'dogs.removeDocument' | transloco"
@@ -237,8 +237,16 @@
         </div>
       }
 
+      <button
+        type="button"
+        class="dog-form__export-btn"
+        (click)="documentExportRequested.emit()">
+        <i class="pi pi-download dog-form__export-btn-icon"></i>
+        <span>{{ 'dogs.exportDocument' | transloco }}</span>
+      </button>
+
       <input #documentInput type="file"
-             accept=".pdf,image/jpg,image/jpeg,image/png"
+             accept=".pdf,.doc,.docx,.odt,.rtf,.txt,image/jpg,image/jpeg,image/png"
              style="display:none"
              (change)="onDocumentSelected($event)" />
     </div>
