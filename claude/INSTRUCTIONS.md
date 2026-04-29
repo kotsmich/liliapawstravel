@@ -106,7 +106,7 @@ Rules for **how to work in this codebase**. Companion to [FRONTEND.md](FRONTEND.
 - **How to apply:** don't move user-app i18n to async-only sources. Don't use `window`-dependent locale detection.
 
 ### Don't remove the `INJECT_VERSION` placeholder in user-app `environment.ts`
-- **Why:** [Dockerfile.user](../Dockerfile.user) replaces this string at build time for i18n cache-busting. Removing it breaks production deploys silently.
+- **Why:** [Dockerfile.user](../Dockerfile.user) replaces this string at build time and it's exposed as `environment.assetVersion` for cache-busting static-asset URLs (e.g. export documents in [document-download.util.ts](../apps/user-app/src/app/shared/utils/document-download.util.ts)). Removing it breaks production cache invalidation silently.
 - **How to apply:** the placeholder stays. If you need a new build-time variable, add a sibling placeholder and a corresponding `sed` line in the Dockerfile.
 
 ---

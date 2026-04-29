@@ -30,7 +30,7 @@ Only fall through to grep/glob when these files don't cover the detail you need.
 - **User app is SSR** — guard browser globals (`window`, `document`, `localStorage`) with `isPlatformBrowser`. Admin app is fine.
 - **Admin app translation is being deprecated** — don't extract helpers around the langChange pattern in admin-app.
 - **Toasts flow through NgRx actions** in both apps via `core/toast/` effects. Don't also call `MessageService.add()` for the same flow or you'll double-toast (admin's 403 interceptor toast is the deliberate exception).
-- **`INJECT_VERSION` placeholder** in user-app `environment.ts` is replaced at Docker build time — don't remove it.
+- **`INJECT_VERSION` placeholder** in user-app `environment.ts` is replaced at Docker build time and exposed as `environment.assetVersion` (used to cache-bust static-asset URLs) — don't remove it.
 
 ## Commands
 

@@ -486,7 +486,7 @@ BUILD_VERSION=$(date +%Y%m%d%H%M%S) && \
 sed -i "s/INJECT_VERSION/${BUILD_VERSION}/" apps/user-app/src/environments/environment.ts
 ```
 
-The `INJECT_VERSION` placeholder in [environment.ts](apps/user-app/src/environments/environment.ts) cache-busts i18n JSON. **Don't remove the placeholder.**
+The `INJECT_VERSION` placeholder in [environment.ts](apps/user-app/src/environments/environment.ts) is exposed as `environment.assetVersion` and used to cache-bust static assets the app references by URL (e.g. the export documents in [document-download.util.ts](apps/user-app/src/app/shared/utils/document-download.util.ts)). **Don't remove the placeholder.**
 
 ### 12. Admin trips uses `@ngrx/entity`, user trips uses a flat array
 
