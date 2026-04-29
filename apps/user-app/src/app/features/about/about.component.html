@@ -102,6 +102,14 @@
 
 
   <!-- ══════════════════════════════════════════════════════
+       FAQ
+       ══════════════════════════════════════════════════════ -->
+  <section class="faq" aria-label="Frequently asked questions">
+    <app-faq-accordion [items]="faqItems" titleKey="faq.title" />
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════
        CTA
        ══════════════════════════════════════════════════════ -->
   <app-cta-section (requestClicked)="goToRequest()" (contactClicked)="goToContact()" />

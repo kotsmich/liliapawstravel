@@ -25,5 +25,9 @@ export const APP_ROUTES: Routes = [
         (m) => m.TRANSPORT_DOCUMENTS_ROUTES,
       ),
   },
+  {
+    path: 'faq',
+    loadChildren: () => import('./features/faq/faq.routes').then((m) => m.FAQ_ROUTES),
+  },
   { path: '**', redirectTo: '' },
 ];

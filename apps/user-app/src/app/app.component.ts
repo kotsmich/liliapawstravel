@@ -22,6 +22,7 @@ const ROUTE_TO_SEO_KEY: Record<string, string> = {
   '/': 'home',
   '/contact': 'contact',
   '/request': 'request',
+  '/faq': 'faq',
 };
 
 @Component({

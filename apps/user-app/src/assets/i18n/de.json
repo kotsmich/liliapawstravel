@@ -4,6 +4,7 @@
     "about": "Über uns",
     "requestTransport": "Transport anfragen",
     "transportDocuments": "Dokumente",
+    "faq": "Q & A",
     "contact": "Kontakt"
   },
   "aria": {
@@ -226,6 +227,28 @@
       "reach":   { "title": "Gesamteuropäische Reichweite","desc": "Von Griechenland nach Italien, Deutschland, Frankreich und in die Niederlande — wir verbinden Tierheime mit Familien in ganz Europa." }
     }
   },
+  "faq": {
+    "title": "Häufig gestellte Fragen",
+    "items": {
+      "0":  { "question": "Wie oft finden die Fahrten statt?",                                            "answer": "Wir organisieren alle 10–15 Tage eine Fahrt, damit wir die Tiere bündeln und die optimale Route planen können." },
+      "1":  { "question": "Wie werden Abhol- und Lieferort festgelegt?",                                  "answer": "Wir haben feste Abhol- und Lieferstopps. Für jedes Tier wählen wir den Stopp, der der Adresse des Absenders oder Empfängers am nächsten liegt." },
+      "2":  { "question": "Kann ich eine Abholung oder Lieferung außerhalb der festen Stopps anfordern?", "answer": "In manchen Fällen ja, sofern der Ort auf unserer Route liegt und keinen Umweg verursacht. Immer nach vorheriger Absprache." },
+      "3":  { "question": "Welche Dokumente werden für die Reise meines Hundes oder meiner Katze benötigt?", "answer": "Erforderlich sind ein Heimtierausweis, ein Mikrochip, der mit den Daten des Ausweises übereinstimmt, und eine Vollmacht des Besitzers. Für adoptierte Tiere wird zusätzlich das TRACES vom Verein benötigt." },
+      "4":  { "question": "Was passiert, wenn ein Dokument fehlt?",                                       "answer": "Leider können Tiere ohne vollständige Dokumente die Reise nicht antreten. Wir führen vor der Abfahrt strenge Kontrollen zur Sicherheit aller durch." },
+      "5":  { "question": "Überprüfen Sie den Mikrochip des Tieres?",                                     "answer": "Ja, wir scannen den Mikrochip und stellen vor der Abholung sicher, dass er mit den Angaben im Ausweis übereinstimmt." },
+      "6":  { "question": "Wie werden die Tiere während der Fahrt betreut?",                              "answer": "Der Transportbereich steht in direktem Kontakt mit dem Fahrerbereich, sodass wir die Tiere kontinuierlich beaufsichtigen und sofort auf jeden Bedarf reagieren können." },
+      "7":  { "question": "Wie wird die Temperatur im Fahrzeug gewährleistet?",                           "answer": "Unser Fahrzeug verfügt über ein Heiz- und Kühlsystem, das den Tieren während der gesamten Fahrt ein stabiles und angenehmes Klima bietet." },
+      "8":  { "question": "Wie lange dauert das Zusammenstellen der Tiere vor der Reise?",                "answer": "Je nach Anzahl der Buchungen kann das Sammeln bis zu 10–15 Tage dauern, bis die Route vollständig ist." },
+      "9":  { "question": "Wann erfahre ich den genauen Tag und die Uhrzeit der Lieferung?",              "answer": "Der Plan wird einige Tage vor der Abfahrt finalisiert, sobald alle Stopps bestätigt sind, und wir informieren jeden Empfänger rechtzeitig." },
+      "10": { "question": "Welche Tierarten transportieren Sie?",                                         "answer": "Wir sind auf den internationalen Transport von Heimtieren spezialisiert, hauptsächlich Hunde und Katzen." },
+      "11": { "question": "Wie kann ich eine Buchung vornehmen?",                                         "answer": "Kontaktieren Sie uns mit den Angaben Ihres Tieres und der Adresse des Empfängers. Wir informieren Sie über die nächste verfügbare Fahrt und den nächstgelegenen Stopp." }
+    }
+  },
+  "faqPage": {
+    "eyebrow": "FAQ",
+    "title": "Antworten auf Ihre Fragen",
+    "subtitle": "Alles, was Sie über den Transport Ihres Tieres mit uns wissen müssen — von Haltestellen und Dokumenten bis hin zu Reisebedingungen."
+  },
   "dogs": {
     "dogName": "Name",
     "size": "Größe",
@@ -317,6 +340,10 @@
     "request": {
       "title": "Hundetransport anfragen — Lilia Paws Travel",
       "description": "Stellen Sie einen Transportantrag für Ihren Rettungshund. Lilia Paws Travel verbindet Adoptiveltern mit sicherem und zuverlässigem Hundetransport durch ganz Europa."
+    },
+    "faq": {
+      "title": "FAQ — Lilia Paws Travel",
+      "description": "Häufig gestellte Fragen zum Transport von Hunden und Katzen in Europa — Routen, Haltestellen, Dokumente und Buchungsprozess."
     }
   }
 }

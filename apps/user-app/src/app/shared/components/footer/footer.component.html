@@ -63,6 +63,12 @@
             </button>
           </li>
           <li>
+            <button type="button" class="footer__link" (click)="navigateTo('/faq')">
+              <i class="pi pi-question-circle" aria-hidden="true"></i>
+              {{ 'nav.faq' | transloco }}
+            </button>
+          </li>
+          <li>
             <button type="button" class="footer__link" (click)="navigateTo('/contact')">
               <i class="pi pi-envelope" aria-hidden="true"></i>
               {{ 'nav.contact' | transloco }}

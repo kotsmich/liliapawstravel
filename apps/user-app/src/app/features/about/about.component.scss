@@ -335,3 +335,14 @@
   font-size: .88rem; color: #7a6a5a; line-height: 1.7;
 }
 
+
+/* ══════════════════════════════════════════
+   FAQ section wrapper (accordion itself lives in <app-faq-accordion>)
+   ══════════════════════════════════════════ */
+.faq {
+  background: #fff8f2;
+  padding: 5rem 1.5rem;
+
+  @media (max-width: 600px) { padding: 3.5rem 1.25rem; }
+}
+

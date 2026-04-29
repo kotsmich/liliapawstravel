@@ -4,6 +4,7 @@
     "about": "About",
     "requestTransport": "Request Transport",
     "transportDocuments": "Documents",
+    "faq": "Q & A",
     "contact": "Contact"
   },
   "aria": {
@@ -226,6 +227,28 @@
       "reach":   { "title": "Pan-European Reach",       "desc": "From Greece to Italy, Germany, France, and the Netherlands — we connect shelters with families across Europe." }
     }
   },
+  "faq": {
+    "title": "Frequently asked questions",
+    "items": {
+      "0":  { "question": "How often do trips take place?",                                                "answer": "We organise a trip every 10–15 days, so we can group animals together and plan the optimal route." },
+      "1":  { "question": "How are the pickup and drop-off points decided?",                              "answer": "We have fixed pickup and drop-off stops. For each animal we choose the closest stop to the sender's or recipient's address." },
+      "2":  { "question": "Can I request pickup or delivery outside the fixed stops?",                    "answer": "In some cases yes, provided the location is on our route and does not cause a detour. Always arranged in advance." },
+      "3":  { "question": "What documents are needed for my dog or cat to travel?",                       "answer": "A pet passport, a microchip matching the passport details, and an authorisation document from the owner are required. For adopted animals, a TRACES from the association is also needed." },
+      "4":  { "question": "What happens if a document is missing?",                                       "answer": "Unfortunately, animals without complete paperwork cannot start the trip. We perform strict checks before departure for everyone's safety." },
+      "5":  { "question": "Do you check the animal's microchip?",                                         "answer": "Yes, we scan the microchip and verify that it matches the passport details before pickup." },
+      "6":  { "question": "How are the animals cared for during the trip?",                               "answer": "The transport cabin is in direct contact with the drivers' area, so we can supervise continuously and respond immediately to any need." },
+      "7":  { "question": "How is the temperature in the vehicle controlled?",                            "answer": "Our vehicle has heating and cooling, ensuring a stable and comfortable climate for the animals throughout the journey." },
+      "8":  { "question": "How long does collecting the animals before the trip take?",                   "answer": "Depending on the number of bookings, the collection period can last up to 10–15 days, until the route is full." },
+      "9":  { "question": "When will I know the exact day and time of delivery?",                         "answer": "The schedule is finalised a few days before departure, once all stops are confirmed, and we notify each recipient in good time." },
+      "10": { "question": "What kinds of animals do you transport?",                                      "answer": "We specialise in international transport of companion animals, mainly dogs and cats." },
+      "11": { "question": "How do I make a booking?",                                                     "answer": "Get in touch with us with your animal's details and the recipient's address. We will let you know about the next available trip and the closest stop." }
+    }
+  },
+  "faqPage": {
+    "eyebrow": "FAQ",
+    "title": "Answers to your questions",
+    "subtitle": "Everything you need to know about transporting your animal with us — from stops and documents to travel conditions."
+  },
   "dogs": {
     "dogName": "Name",
     "size": "Size",
@@ -317,6 +340,10 @@
     "request": {
       "title": "Request Dog Transport — Lilia Paws Travel",
       "description": "Submit a transport request for your rescue dog. Lilia Paws Travel connects adoptive families with safe, reliable cross-Europe dog transport."
+    },
+    "faq": {
+      "title": "FAQ — Lilia Paws Travel",
+      "description": "Frequently asked questions about transporting dogs and cats across Europe — routes, stops, documents, and booking process."
     }
   }
 }

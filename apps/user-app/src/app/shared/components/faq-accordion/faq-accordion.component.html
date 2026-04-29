@@ -1,0 +1,18 @@
+@if (titleKey(); as key) {
+  <div class="faq-accordion__header">
+    <h2>{{ key | transloco }}</h2>
+  </div>
+}
+
+<p-accordion [value]="defaultOpen()" class="faq-accordion__panel">
+  @for (item of items(); track item.value) {
+    <p-accordion-panel [value]="item.value">
+      <p-accordion-header>
+        <span class="faq-accordion__question">{{ item.questionKey | transloco }}</span>
+      </p-accordion-header>
+      <p-accordion-content>
+        <p class="faq-accordion__answer">{{ item.answerKey | transloco }}</p>
+      </p-accordion-content>
+    </p-accordion-panel>
+  }
+</p-accordion>

@@ -1,0 +1,28 @@
+<div class="page faq-page">
+
+  <!-- ══════════════════════════════════════════════════════
+       PAGE HERO
+       ══════════════════════════════════════════════════════ -->
+  <header class="page-intro" aria-label="Frequently asked questions">
+    <div class="page-intro__bg-overlay"></div>
+    <div class="page-intro__inner">
+      <span class="page-eyebrow">{{ 'faqPage.eyebrow' | transloco }}</span>
+      <h1>{{ 'faqPage.title' | transloco }}</h1>
+      <p>{{ 'faqPage.subtitle' | transloco }}</p>
+    </div>
+    <div class="page-intro__rule" aria-hidden="true"></div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════
+       FAQ
+       ══════════════════════════════════════════════════════ -->
+  <section class="faq" aria-label="Questions and answers">
+    <app-faq-accordion [items]="faqItems" />
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       CTA
+       ══════════════════════════════════════════════════════ -->
+  <app-cta-section (requestClicked)="goToRequest()" (contactClicked)="goToContact()" />
+
+</div>

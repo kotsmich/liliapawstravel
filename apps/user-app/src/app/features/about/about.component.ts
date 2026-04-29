@@ -3,13 +3,14 @@ import { NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
 import { CtaSectionComponent } from '@user/features/home/components/cta-section/cta-section.component';
+import { FaqAccordionComponent, FaqItem } from '@user/shared/components/faq-accordion/faq-accordion.component';
 import { autoRotate } from '@user/shared/auto-rotate';
 
 @Component({
   selector: 'app-about',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslocoModule, CtaSectionComponent, NgOptimizedImage],
+  imports: [TranslocoModule, CtaSectionComponent, NgOptimizedImage, FaqAccordionComponent],
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
 })
@@ -39,6 +40,12 @@ export class AboutComponent {
     { icon: '🚐', titleKey: 'aboutPage.values.vehicle.title', descKey: 'aboutPage.values.vehicle.desc' },
     { icon: '🌍', titleKey: 'aboutPage.values.reach.title',  descKey: 'aboutPage.values.reach.desc'  },
   ];
+
+  readonly faqItems: FaqItem[] = Array.from({ length: 12 }, (_, i) => ({
+    questionKey: `faq.items.${i}.question`,
+    answerKey: `faq.items.${i}.answer`,
+    value: i.toString(),
+  }));
 
   readonly currentSlide = autoRotate(() => this.heroSlides.length, 3500).index;
 
