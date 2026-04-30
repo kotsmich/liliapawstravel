@@ -22,7 +22,7 @@ export class NavbarComponent {
 
   @HostListener('window:scroll')
   onScroll(): void {
-    if (isPlatformBrowser(this.platformId)) this.scrolled.set(window.scrollY > 20);
+    if (isPlatformBrowser(this.platformId)) this.scrolled.set(window.scrollY > 250);
   }
 
   toggleMenu(): void { this.menuOpen.update(v => !v); }

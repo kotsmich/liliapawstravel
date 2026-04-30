@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy, PLATFORM_ID, ViewChild, inject } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { Router } from '@angular/router';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { TranslocoService } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { PopoverModule } from 'primeng/popover';
@@ -93,7 +92,7 @@ export class LanguageSwitcherComponent {
   @ViewChild('popover') popover!: Popover;
 
   private readonly transloco = inject(TranslocoService);
-  private readonly router = inject(Router);
+  private readonly location = inject(Location);
   private readonly platformId = inject(PLATFORM_ID);
 
   readonly langs: LangOption[] = [
@@ -114,7 +113,7 @@ export class LanguageSwitcherComponent {
   changeLang(lang: SupportedLang): void {
     if (lang === this.activeLang) return;
 
-    const currentUrl = this.router.url;
+    const currentUrl = this.location.path(true);
     const segments = currentUrl.split('?')[0].split('#')[0].split('/').filter(Boolean);
     if (segments.length && (SUPPORTED_LANGS as readonly string[]).includes(segments[0])) {
       segments[0] = lang;
@@ -123,16 +122,15 @@ export class LanguageSwitcherComponent {
     }
     const queryIdx = currentUrl.indexOf('?');
     const fragmentIdx = currentUrl.indexOf('#');
-    const queryParams = queryIdx >= 0
-      ? Object.fromEntries(new URLSearchParams(currentUrl.slice(queryIdx + 1, fragmentIdx >= 0 ? fragmentIdx : undefined)))
-      : undefined;
-    const fragment = fragmentIdx >= 0 ? currentUrl.slice(fragmentIdx + 1) : undefined;
+    const queryPart = queryIdx >= 0 ? currentUrl.slice(queryIdx, fragmentIdx >= 0 ? fragmentIdx : undefined) : '';
+    const fragmentPart = fragmentIdx >= 0 ? currentUrl.slice(fragmentIdx) : '';
+    const newUrl = '/' + segments.join('/') + queryPart + fragmentPart;
 
     if (isPlatformBrowser(this.platformId)) {
-      // Persist for one year, root path, SameSite=Lax for safe top-level navigation.
       document.cookie = `lang=${lang}; Max-Age=31536000; Path=/; SameSite=Lax`;
     }
 
-    this.router.navigate(['/', ...segments], { queryParams, fragment });
+    this.location.replaceState(newUrl);
+    this.transloco.setActiveLang(lang);
   }
 }

@@ -1,7 +1,9 @@
 <nav class="navbar" [class.scrolled]="scrolled()" [attr.aria-label]="'aria.mainNav' | transloco">
   <div class="navbar__container flex align-items-center justify-content-between">
     <a class="navbar__brand flex align-items-center" [routerLink]="linkService.commands('/')" (click)="closeMenu()">
-      <img class="navbar__logo" src="assets/images/paws-logo.webp" alt="" width="65" height="65" />
+      @if (scrolled()) {
+        <img class="navbar__logo" src="assets/images/paws-logo.webp" alt="" width="65" height="65" />
+      }
       <span class="navbar__name">Lilia Paws Travel</span>
     </a>
     <ul class="navbar__links flex align-items-center" [class.open]="menuOpen()" role="menubar">
