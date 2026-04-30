@@ -1,8 +1,9 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
 import { autoRotate } from '@user/shared/auto-rotate';
+import { LinkService } from '@user/services/link.service';
 
 @Component({
   selector: 'app-about-section',
@@ -15,6 +16,8 @@ import { autoRotate } from '@user/shared/auto-rotate';
 export class AboutSectionComponent {
   @Input() steps: Array<{ step: number; title: string; desc: string }> = [];
 
+  protected readonly linkService = inject(LinkService);
+
   readonly features = [
     { icon: '🛡️', titleKey: 'about.safetyFirst.title', descKey: 'about.safetyFirst.desc' },
     { icon: '🐾', titleKey: 'about.weCare.title',      descKey: 'about.weCare.desc'      },
@@ -23,10 +26,10 @@ export class AboutSectionComponent {
   ];
 
   readonly galleryImages = [
-    { src: 'assets/images/gallery-1.webp', alt: 'Rescued dog' },
-    { src: 'assets/images/gallery-2.webp', alt: 'Dog on transport' },
-    { src: 'assets/images/gallery-3.webp', alt: 'Happy dog' },
-    { src: 'assets/images/gallery-4.webp', alt: 'Dog portrait' },
+    { src: 'assets/images/gallery-1.webp', altKey: 'gallery.alt.rescuedDog' },
+    { src: 'assets/images/gallery-2.webp', altKey: 'gallery.alt.onTransport' },
+    { src: 'assets/images/gallery-3.webp', altKey: 'gallery.alt.happyDog' },
+    { src: 'assets/images/gallery-4.webp', altKey: 'gallery.alt.portrait' },
   ];
 
   readonly photos = [

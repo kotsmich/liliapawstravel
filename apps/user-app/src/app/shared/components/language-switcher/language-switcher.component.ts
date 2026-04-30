@@ -1,12 +1,15 @@
-import { Component, ChangeDetectionStrategy, inject, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, PLATFORM_ID, ViewChild, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 import { TranslocoService } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { PopoverModule } from 'primeng/popover';
 import { Popover } from 'primeng/popover';
+import { DEFAULT_LANG, SUPPORTED_LANGS, SupportedLang, isSupportedLang } from '@user/core/i18n/supported-langs';
 
 interface LangOption {
   code: string;
-  value: string;
+  value: SupportedLang;
   label: string;
 }
 
@@ -90,21 +93,46 @@ export class LanguageSwitcherComponent {
   @ViewChild('popover') popover!: Popover;
 
   private readonly transloco = inject(TranslocoService);
+  private readonly router = inject(Router);
+  private readonly platformId = inject(PLATFORM_ID);
 
-  langs: LangOption[] = [
+  readonly langs: LangOption[] = [
     { code: 'gb', value: 'en', label: 'English' },
     { code: 'gr', value: 'el', label: 'Ελληνικά' },
     { code: 'de', value: 'de', label: 'Deutsch' },
   ];
 
-  activeLang = this.transloco.getActiveLang() ?? 'en';
-
-  get activeCode(): string {
-    return this.langs.find(lang => lang.value === this.activeLang)?.code ?? 'gb';
+  get activeLang(): SupportedLang {
+    const v = this.transloco.getActiveLang();
+    return isSupportedLang(v) ? v : DEFAULT_LANG;
   }
 
-  changeLang(lang: string): void {
-    this.activeLang = lang;
-    this.transloco.setActiveLang(lang);
+  get activeCode(): string {
+    return this.langs.find((lang) => lang.value === this.activeLang)?.code ?? 'gr';
+  }
+
+  changeLang(lang: SupportedLang): void {
+    if (lang === this.activeLang) return;
+
+    const currentUrl = this.router.url;
+    const segments = currentUrl.split('?')[0].split('#')[0].split('/').filter(Boolean);
+    if (segments.length && (SUPPORTED_LANGS as readonly string[]).includes(segments[0])) {
+      segments[0] = lang;
+    } else {
+      segments.unshift(lang);
+    }
+    const queryIdx = currentUrl.indexOf('?');
+    const fragmentIdx = currentUrl.indexOf('#');
+    const queryParams = queryIdx >= 0
+      ? Object.fromEntries(new URLSearchParams(currentUrl.slice(queryIdx + 1, fragmentIdx >= 0 ? fragmentIdx : undefined)))
+      : undefined;
+    const fragment = fragmentIdx >= 0 ? currentUrl.slice(fragmentIdx + 1) : undefined;
+
+    if (isPlatformBrowser(this.platformId)) {
+      // Persist for one year, root path, SameSite=Lax for safe top-level navigation.
+      document.cookie = `lang=${lang}; Max-Age=31536000; Path=/; SameSite=Lax`;
+    }
+
+    this.router.navigate(['/', ...segments], { queryParams, fragment });
   }
 }

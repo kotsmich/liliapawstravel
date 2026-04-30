@@ -10,7 +10,8 @@
     "build:all": "nx run-many -t build -p user-app admin-app api",
     "watch:all": "concurrently \"ng build user-app --watch\" \"ng build admin-app --watch\" \"cd apps/api && npm run dev\"",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "generate:sitemap": "node apps/user-app/scripts/generate-sitemap.mjs"
   },
   "private": true,
   "engines": {

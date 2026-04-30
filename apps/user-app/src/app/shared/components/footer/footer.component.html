@@ -22,10 +22,10 @@
         </div>
         <p class="footer__tagline">{{ 'footer.tagline' | transloco }}</p>
         <div class="footer__social" aria-label="Social media">
-          <a href="#" class="footer__social-btn" aria-label="Facebook" rel="noopener noreferrer">
+          <a href="#" class="footer__social-btn" aria-label="Facebook" rel="nofollow noopener noreferrer">
             <i class="pi pi-facebook" aria-hidden="true"></i>
           </a>
-          <a href="#" class="footer__social-btn" aria-label="Instagram" rel="noopener noreferrer">
+          <a href="#" class="footer__social-btn" aria-label="Instagram" rel="nofollow noopener noreferrer">
             <i class="pi pi-instagram" aria-hidden="true"></i>
           </a>
           <a [href]="'mailto:' + contact.email" class="footer__social-btn" aria-label="Email">
@@ -39,40 +39,40 @@
         <h4 class="footer__col-title">{{ 'footer.navigation' | transloco }}</h4>
         <ul class="footer__links">
           <li>
-            <button type="button" class="footer__link" (click)="navigateTo('/')">
+            <a class="footer__link" [routerLink]="linkService.commands('/')">
               <i class="pi pi-home" aria-hidden="true"></i>
               {{ 'nav.home' | transloco }}
-            </button>
+            </a>
           </li>
           <li>
-            <button type="button" class="footer__link" (click)="navigateTo('/about')">
+            <a class="footer__link" [routerLink]="linkService.commands('/about')">
               <i class="pi pi-info-circle" aria-hidden="true"></i>
               {{ 'nav.about' | transloco }}
-            </button>
+            </a>
           </li>
           <li>
-            <button type="button" class="footer__link" (click)="navigateTo('/request')">
+            <a class="footer__link" [routerLink]="linkService.commands('/request')">
               <i class="pi pi-send" aria-hidden="true"></i>
               {{ 'nav.requestTransport' | transloco }}
-            </button>
+            </a>
           </li>
           <li>
-            <button type="button" class="footer__link" (click)="navigateTo('/transport-documents')">
+            <a class="footer__link" [routerLink]="linkService.commands('/transport-documents')">
               <i class="pi pi-file" aria-hidden="true"></i>
               {{ 'nav.transportDocuments' | transloco }}
-            </button>
+            </a>
           </li>
           <li>
-            <button type="button" class="footer__link" (click)="navigateTo('/faq')">
+            <a class="footer__link" [routerLink]="linkService.commands('/faq')">
               <i class="pi pi-question-circle" aria-hidden="true"></i>
               {{ 'nav.faq' | transloco }}
-            </button>
+            </a>
           </li>
           <li>
-            <button type="button" class="footer__link" (click)="navigateTo('/contact')">
+            <a class="footer__link" [routerLink]="linkService.commands('/contact')">
               <i class="pi pi-envelope" aria-hidden="true"></i>
               {{ 'nav.contact' | transloco }}
-            </button>
+            </a>
           </li>
         </ul>
       </div>

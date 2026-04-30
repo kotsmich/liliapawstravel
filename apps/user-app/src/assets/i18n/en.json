@@ -38,7 +38,13 @@
   },
   "gallery": {
     "passengersTag": "Our Passengers",
-    "title": "Furry travellers we've loved"
+    "title": "Furry travellers we've loved",
+    "alt": {
+      "rescuedDog": "Rescued dog",
+      "onTransport": "Dog on transport",
+      "happyDog": "Happy dog",
+      "portrait": "Dog portrait"
+    }
   },
   "about": {
     "whoWeAreTag": "Who We Are",
@@ -329,21 +335,52 @@
     }
   },
   "seo": {
+    "common": {
+      "homeBreadcrumb": "Home"
+    },
     "home": {
       "title": "Lilia Paws Travel — Safe Dog Transport Across Europe",
-      "description": "Lilia Paws Travel safely transports adopted dogs across Europe, connecting shelters with loving families. Request transport for your rescue dog today."
+      "description": "Lilia Paws Travel safely transports adopted dogs across Europe, connecting shelters with loving families. Request transport for your rescue dog today.",
+      "imageAlt": "Lilia Paws Travel — Safe Dog Transport Across Europe",
+      "breadcrumb": "Home"
     },
     "contact": {
       "title": "Contact Us — Lilia Paws Travel",
-      "description": "Get in touch with Lilia Paws Travel. We answer questions about dog transport across Europe and help you schedule your rescue dog's journey."
+      "description": "Get in touch with Lilia Paws Travel. We answer questions about dog transport across Europe and help you schedule your rescue dog's journey.",
+      "imageAlt": "Contact Us — Lilia Paws Travel",
+      "breadcrumb": "Contact"
     },
     "request": {
       "title": "Request Dog Transport — Lilia Paws Travel",
-      "description": "Submit a transport request for your rescue dog. Lilia Paws Travel connects adoptive families with safe, reliable cross-Europe dog transport."
+      "description": "Submit a transport request for your rescue dog. Lilia Paws Travel connects adoptive families with safe, reliable cross-Europe dog transport.",
+      "imageAlt": "Request Dog Transport — Lilia Paws Travel",
+      "breadcrumb": "Request Transport"
     },
     "faq": {
       "title": "FAQ — Lilia Paws Travel",
-      "description": "Frequently asked questions about transporting dogs and cats across Europe — routes, stops, documents, and booking process."
+      "description": "Frequently asked questions about transporting dogs and cats across Europe — routes, stops, documents, and booking process.",
+      "breadcrumb": "FAQ"
+    },
+    "about": {
+      "title": "About Lilia Paws Travel — Our Story, Mission & Values",
+      "description": "Lilia Paws Travel was founded by Lilia Pontika to provide safe, humane cross-Europe transport for adopted rescue dogs. Read our story, mission, and values.",
+      "imageAlt": "About Lilia Paws Travel — Our Story, Mission & Values",
+      "breadcrumb": "About"
+    },
+    "transportDocuments": {
+      "title": "Transport Authorization Documents — Lilia Paws Travel",
+      "description": "Download consent and authorization forms required for your dog's cross-Europe transport. Available in English, Greek, and German as PDF or editable Word.",
+      "imageAlt": "Transport Authorization Documents — Lilia Paws Travel",
+      "breadcrumb": "Transport Documents"
+    },
+    "notFound": {
+      "title": "Page Not Found — Lilia Paws Travel",
+      "description": "The page you're looking for could not be found. Return to the homepage to continue browsing Lilia Paws Travel."
     }
+  },
+  "notFound": {
+    "heading": "We couldn't find that page",
+    "body": "The link may be broken or the page may have moved. Let's get you back on track.",
+    "backHome": "Back to home"
   }
 }

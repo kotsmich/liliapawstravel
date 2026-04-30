@@ -54,7 +54,7 @@ This is the deep reference for the Angular Nx monorepo at `lilia-paws-front/`. [
 - **Languages**: `en`, `el` (Greek, default), `de`
 - **Loaders**:
   - Admin: HTTP loader [transloco-loader.ts](apps/admin-app/src/app/core/transloco-loader.ts) → fetches `/assets/i18n/{lang}.json`
-  - User: HTTP loader + SSR-aware [transloco-server.loader.ts](apps/user-app/src/app/core/transloco-server.loader.ts)
+  - User: single bundled-import loader [transloco-loader.ts](apps/user-app/src/app/core/transloco-loader.ts) used by both browser and SSR — JSON is `import`ed from `assets/i18n/*.json` so the same snapshot is baked into both bundles, keeping SSR HTML in lockstep with client hydration
 - **Files**: [admin-app i18n](apps/admin-app/src/assets/i18n/), [user-app i18n](apps/user-app/src/assets/i18n/)
 - **Status**: admin-app translation is planned for removal (per project memory) — do **not** extract helpers around the langChange pattern in admin-app. User app keeps Transloco.
 
@@ -225,8 +225,8 @@ features/
 
 - `provideClientHydration(withEventReplay())`
 - Router: `PreloadAllModules` + `withInMemoryScrolling({ scrollPositionRestoration: 'top' })`
-- HttpClient with `userApiInterceptor`
-- NgRx store with 3 reducers (contact, tripRequest, trips) + 4 effect classes (Contact, TripRequest, Trips, Notification)
+- HttpClient with `withFetch()` + `serverApiBaseInterceptor` (SSR base-URL prefix) + `userApiInterceptor`
+- NgRx store with 2 root reducers (contact, tripRequest) + 3 root effect classes (Contact, TripRequest, Notification). The `trips` slice + `TripsEffects` are **registered lazily** on the `/request` route's providers via `provideState(tripsFeature)` + `provideEffects(TripsEffects)` — see [trip-request.routes.ts](apps/user-app/src/app/features/trip-request/trip-request.routes.ts). This keeps SSR for `/`, `/about`, `/faq`, `/contact`, `/transport-documents` from making a wasted `/api/trips` call and from opening a server-side WebSocket on every render.
 - PrimeNG with **"Lilia" tan/brown palette** (different from admin)
 - Transloco with HTTP loader (server loader merged in [app.config.server.ts](apps/user-app/src/app/app.config.server.ts))
 
@@ -246,19 +246,23 @@ features/
 ### State Management
 
 - **No auth, no auth guard** — fully public site.
-- **Core**: [core/store/trips/](apps/user-app/src/app/core/store/trips/) — read-only trip list, with WS update support (`wsTripsReceived`).
+- **Trips** ([core/store/trips/](apps/user-app/src/app/core/store/trips/)) — read-only trip list with WS update support (`wsTripsReceived`). Folder lives under `core/` for legacy reasons but is **registered only on the `/request` route** (see App Config note above). `TripsEffects` implements `OnInitEffects` to dispatch `refreshTrips()` on registration (works for both root and lazy effect contexts), and `wsTrips$` is gated by `isPlatformBrowser` so the WebSocket never opens during SSR. Only [trip-request.component.ts](apps/user-app/src/app/features/trip-request/trip-request.component.ts) reads the selectors — if a future feature needs trip data, either move the slice to root or add `provideState(tripsFeature)` to that feature's route as well.
 - **Feature stores**:
   - [features/trip-request/store/](apps/user-app/src/app/features/trip-request/store/) — multi-step submission state.
   - [features/contact/store/](apps/user-app/src/app/features/contact/store/) — contact form submission state.
 
 ### HTTP Layer
 
-- Base URL: `/api` (dev proxy / prod absolute via env).
-- **Interceptor**: [user-api.interceptor.ts](apps/user-app/src/app/interceptors/user-api.interceptor.ts)
-  - Sets `Content-Type: application/json` (skips for `FormData`)
-  - On `status === 0` → dispatch `httpConnectionError()` (toast)
-  - On `status >= 500` → dispatch `httpServerError({ status })`
-  - No 401 handling (no auth).
+- Base URL: `/api` (browser: dev Express proxy or prod Nginx; SSR: prefixed at runtime by `serverApiBaseInterceptor`).
+- **Interceptors** (order matters — server-base runs first so `userApiInterceptor` sees the absolute URL):
+  - [server-api-base.interceptor.ts](apps/user-app/src/app/interceptors/server-api-base.interceptor.ts) — SSR-only (gated by `isPlatformServer`). Prefixes `/api` and `/ws` URLs with `process.env.API_TARGET` (default `http://api:3000`, mirroring [server.ts](apps/user-app/src/server.ts)). Required because Node's `fetch` rejects relative URLs during SSR. No-ops in the browser.
+  - [user-api.interceptor.ts](apps/user-app/src/app/interceptors/user-api.interceptor.ts)
+    - Sets `Content-Type: application/json` (skips for `FormData`)
+    - On `status === 0` → dispatch `httpConnectionError()` (toast) — **browser only**
+    - On `status >= 500` → dispatch `httpServerError({ status })` — **browser only**
+    - Toast dispatches are gated by `isPlatformServer` because they are user-facing UI; dispatching during SSR also triggers Transloco "Missing translation" warnings since the lang bundle isn't loaded into its runtime cache when the effect fires.
+    - No 401 handling (no auth).
+- **`provideHttpClient` is registered once in [app.config.ts](apps/user-app/src/app/app.config.ts)** with `withFetch()` (required for SSR, fine in browser). Don't re-call it in [app.config.server.ts](apps/user-app/src/app/app.config.server.ts) — `mergeApplicationConfig` would create a second HttpClient and the interceptor chain is hard to reason about.
 
 ### Notable Services
 
@@ -465,7 +469,9 @@ Both apps have a `core/toast/` area whose `NotificationEffects` translate NgRx a
 
 ### 9. Store is registered globally, but features only "wake up" lazily
 
-Reducers + effects are registered in the root `appConfig`, but feature effects only fire once their lazy route loads. If an effect isn't running, check that the route is actually being navigated to.
+Most reducers + effects are registered in the root `appConfig`, but feature effects only fire once their lazy route loads. If an effect isn't running, check that the route is actually being navigated to.
+
+**Exception (user-app):** the `trips` slice and `TripsEffects` are *not* registered at root — they're added via route providers on `/request` (see [trip-request.routes.ts](apps/user-app/src/app/features/trip-request/trip-request.routes.ts)). This is deliberate for SSR perf: `/`, `/about`, etc. shouldn't fetch trip data or open a WebSocket. Reading a trips selector outside the `/request` route subtree will return `undefined` state. Use `OnInitEffects.ngrxOnInitEffects()` (not `ROOT_EFFECTS_INIT`) to dispatch a one-shot init action from a lazy-registered effect class — `ROOT_EFFECTS_INIT` already fired before the lazy providers exist.
 
 ### 10. `toSignal()` initial values matter
 

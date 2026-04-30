@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd, NavigationStart, NavigationCancel, NavigationError } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { catchError, combineLatest, EMPTY, map, startWith, switchMap } from 'rxjs';
+import { combineLatest, map, startWith, switchMap } from 'rxjs';
 import { ToastModule } from 'primeng/toast';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TranslocoService } from '@jsverse/transloco';
@@ -11,19 +11,34 @@ import { Store } from '@ngrx/store';
 import { NavbarComponent } from '@user/shared/components/navbar/navbar.component';
 import { FooterComponent } from '@user/shared/components/footer/footer.component';
 import { AppWebSocketService } from '@ui/lib/websocket/app-websocket.service';
-import { SocketEvent } from '@models/lib/socket-events.model';
-import { TripRequest } from '@models/lib/trip-request.model';
-import { wsRequestApproved, wsRequestRejected } from '@user/core/toast/toast.actions';
 import { RouterUrlService } from '@user/services/router-url.service';
 import { SeoService } from '@user/services/seo.service';
 import { LoggerService } from '@user/services/logger.service';
+import { DEFAULT_LANG, SupportedLang, isSupportedLang, stripLangPrefix } from '@user/core/i18n/supported-langs';
+import imageDimensions from '../assets/images/dimensions.json';
 
 const ROUTE_TO_SEO_KEY: Record<string, string> = {
   '/': 'home',
   '/contact': 'contact',
   '/request': 'request',
   '/faq': 'faq',
+  '/about': 'about',
+  '/transport-documents': 'transportDocuments',
 };
+
+// Per-route share-card image (filename in /assets/images/). Routes without an
+// entry fall back to the global /assets/og-image.jpg in SeoService.
+const ROUTE_TO_OG_IMAGE: Record<string, string | undefined> = {
+  home: 'hero-2.webp',
+  about: 'founder.webp',
+  request: 'request-hero.webp',
+  contact: 'contact-hero.webp',
+  faq: undefined,
+  transportDocuments: 'cta-bg.webp',
+};
+
+type ImageDimensions = Record<string, { width: number; height: number }>;
+const DIMENSIONS = imageDimensions as ImageDimensions;
 
 @Component({
   selector: 'app-root',
@@ -89,11 +104,41 @@ export class AppComponent implements OnInit {
   }
 
   private updateMeta(url: string, lang: string): void {
-    const seoKey = ROUTE_TO_SEO_KEY[url] ?? 'home';
+    const path = stripLangPrefix(url.split('?')[0].split('#')[0]);
+    const seoLang: SupportedLang = isSupportedLang(lang) ? lang : DEFAULT_LANG;
+    const seoKey = ROUTE_TO_SEO_KEY[path];
+
+    // Unknown path = wildcard 404 route. Apply the noindex SEO so this NavigationEnd
+    // pass agrees with NotFoundComponent.ngOnInit and doesn't reset robots to index.
+    if (!seoKey) {
+      this.seo.apply({
+        title: this.translocoService.translate('seo.notFound.title', undefined, seoLang),
+        description: this.translocoService.translate('seo.notFound.description', undefined, seoLang),
+        path: '/404',
+        lang: seoLang,
+        robots: 'noindex, follow',
+      });
+      return;
+    }
+
+    const imageFile = ROUTE_TO_OG_IMAGE[seoKey];
+    const dims = imageFile ? DIMENSIONS[imageFile] : undefined;
+    const altKey = `seo.${seoKey}.imageAlt`;
+    const altTranslated = this.translocoService.translate(altKey, undefined, seoLang);
+    // Home gets no BreadcrumbList — single-item breadcrumbs offer no SERP value.
+    const breadcrumbName = seoKey === 'home'
+      ? undefined
+      : this.translocoService.translate(`seo.${seoKey}.breadcrumb`, undefined, seoLang);
     this.seo.apply({
-      title: this.translocoService.translate(`seo.${seoKey}.title`, undefined, lang),
-      description: this.translocoService.translate(`seo.${seoKey}.description`, undefined, lang),
-      url,
+      title: this.translocoService.translate(`seo.${seoKey}.title`, undefined, seoLang),
+      description: this.translocoService.translate(`seo.${seoKey}.description`, undefined, seoLang),
+      path,
+      lang: seoLang,
+      image: imageFile ? `/assets/images/${imageFile}` : undefined,
+      imageAlt: altTranslated && altTranslated !== altKey ? altTranslated : undefined,
+      imageWidth: dims?.width,
+      imageHeight: dims?.height,
+      breadcrumbName,
     });
   }
 }

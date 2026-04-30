@@ -102,8 +102,8 @@ Rules for **how to work in this codebase**. Companion to [FRONTEND.md](FRONTEND.
 - **How to apply:** in admin-app, leave existing translation code as-is unless directly fixing a bug. New admin-app strings should still be considered against this deprecation — ask before adding.
 
 ### User-app translation must remain SSR-safe
-- **Why:** user-app prerenders; the server-side loader [transloco-server.loader.ts](../apps/user-app/src/app/core/transloco-server.loader.ts) reads JSON synchronously at build/request time.
-- **How to apply:** don't move user-app i18n to async-only sources. Don't use `window`-dependent locale detection.
+- **Why:** user-app prerenders for SEO. The single loader [transloco-loader.ts](../apps/user-app/src/app/core/transloco-loader.ts) imports the JSON at build time so both the SSR bundle and the browser bundle resolve translations synchronously from the same snapshot — crawlers always see translated HTML, never raw keys, and there's no drift between SSR output and client hydration. A previous file-system server loader (resolving paths relative to `process.cwd()`) was removed because it could silently serve stale `dist/` JSON in dev and emit "Missing translation" warnings during pre-render.
+- **How to apply:** don't move user-app i18n to async-only or HTTP-fetched sources. Don't add a server-only loader that reads from disk. Don't use `window`-dependent locale detection. Keep the loader synchronous.
 
 ### Don't remove the `INJECT_VERSION` placeholder in user-app `environment.ts`
 - **Why:** [Dockerfile.user](../Dockerfile.user) replaces this string at build time and it's exposed as `environment.assetVersion` for cache-busting static-asset URLs (e.g. export documents in [document-download.util.ts](../apps/user-app/src/app/shared/utils/document-download.util.ts)). Removing it breaks production cache invalidation silently.

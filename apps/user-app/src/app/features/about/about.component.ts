@@ -5,6 +5,7 @@ import { TranslocoModule } from '@jsverse/transloco';
 import { CtaSectionComponent } from '@user/features/home/components/cta-section/cta-section.component';
 import { FaqAccordionComponent, FaqItem } from '@user/shared/components/faq-accordion/faq-accordion.component';
 import { autoRotate } from '@user/shared/auto-rotate';
+import { LinkService } from '@user/services/link.service';
 
 @Component({
   selector: 'app-about',
@@ -16,6 +17,7 @@ import { autoRotate } from '@user/shared/auto-rotate';
 })
 export class AboutComponent {
   private readonly router = inject(Router);
+  private readonly linkService = inject(LinkService);
 
   readonly heroSlides = [
     'assets/images/about-hero-1.webp',
@@ -49,6 +51,6 @@ export class AboutComponent {
 
   readonly currentSlide = autoRotate(() => this.heroSlides.length, 3500).index;
 
-  goToRequest(): void { this.router.navigate(['/request']); }
-  goToContact(): void { this.router.navigate(['/contact']); }
+  goToRequest(): void { this.router.navigate(this.linkService.commands('/request')); }
+  goToContact(): void { this.router.navigate(this.linkService.commands('/contact')); }
 }

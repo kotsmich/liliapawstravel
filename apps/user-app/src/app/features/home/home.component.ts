@@ -4,6 +4,7 @@ import { HeroComponent } from './components/hero/hero.component';
 import { AboutSectionComponent } from './components/about-section/about-section.component';
 import { CtaSectionComponent } from './components/cta-section/cta-section.component';
 import { PanoramaSectionComponent } from './components/panorama-section/panorama-section.component';
+import { LinkService } from '@user/services/link.service';
 
 @Component({
   selector: 'app-home',
@@ -15,6 +16,7 @@ import { PanoramaSectionComponent } from './components/panorama-section/panorama
 })
 export class HomeComponent {
   private readonly router = inject(Router);
+  private readonly linkService = inject(LinkService);
 
   steps = [
     { step: 1, title: 'about.step1.title', desc: 'about.step1.desc' },
@@ -23,6 +25,6 @@ export class HomeComponent {
     { step: 4, title: 'about.step4.title', desc: 'about.step4.desc' },
   ];
 
-  goToRequest(): void { this.router.navigate(['/request']); }
-  goToContact(): void { this.router.navigate(['/contact']); }
+  goToRequest(): void { this.router.navigate(this.linkService.commands('/request')); }
+  goToContact(): void { this.router.navigate(this.linkService.commands('/contact')); }
 }

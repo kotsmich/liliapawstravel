@@ -1,10 +1,11 @@
-import { ApplicationConfig, isDevMode } from '@angular/core';
-import { provideTransloco } from '@jsverse/transloco';
+import { ApplicationConfig, inject, isDevMode, provideAppInitializer } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { provideTransloco, TranslocoService } from '@jsverse/transloco';
 import { TranslocoHttpLoader } from '@user/core/transloco-loader';
 import { provideRouter, withPreloading, PreloadAllModules, withInMemoryScrolling } from '@angular/router';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideClientHydration, withEventReplay, withHttpTransferCacheOptions } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
@@ -12,13 +13,15 @@ import { providePrimeNG } from 'primeng/config';
 import { definePreset } from '@primeng/themes';
 import Aura from '@primeng/themes/aura';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { firstValueFrom } from 'rxjs';
 
 import { APP_ROUTES } from './app.routes';
 import { userApiInterceptor } from '@user/interceptors/user-api.interceptor';
-import { tripsReducer, TripsEffects } from '@user/core/store/trips';
+import { serverApiBaseInterceptor } from '@user/interceptors/server-api-base.interceptor';
 import { tripRequestReducer, TripRequestEffects } from '@user/features/trip-request/store';
 import { contactReducer, ContactEffects } from '@user/features/contact/store';
 import { NotificationEffects } from '@user/core/toast/notification.effects';
+import { langFromPath } from '@user/core/i18n/supported-langs';
 
 const LiliaPreset = definePreset(Aura, {
   semantic: {
@@ -40,20 +43,25 @@ const LiliaPreset = definePreset(Aura, {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideClientHydration(withEventReplay()),
+    provideClientHydration(
+      withEventReplay(),
+      withHttpTransferCacheOptions({
+        includePostRequests: false,
+        filter: (req) => req.method === 'GET' && req.url.startsWith('/api'),
+      }),
+    ),
     provideRouter(
       APP_ROUTES,
       withPreloading(PreloadAllModules),
       withInMemoryScrolling({ scrollPositionRestoration: 'top' })
     ),
     provideAnimationsAsync(),
-    provideHttpClient(withInterceptors([userApiInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([serverApiBaseInterceptor, userApiInterceptor])),
     provideStore({
       contact: contactReducer,
       tripRequest: tripRequestReducer,
-      trips: tripsReducer,
     }),
-    provideEffects([ContactEffects, TripRequestEffects, TripsEffects, NotificationEffects]),
+    provideEffects([ContactEffects, TripRequestEffects, NotificationEffects]),
     ...(isDevMode() ? [provideStoreDevtools({ maxAge: 25 })] : []),
     providePrimeNG({
       theme: {
@@ -74,6 +82,13 @@ export const appConfig: ApplicationConfig = {
         prodMode: !isDevMode(),
       },
       loader: TranslocoHttpLoader,
+    }),
+    provideAppInitializer(() => {
+      const transloco = inject(TranslocoService);
+      const doc = inject(DOCUMENT);
+      const lang = langFromPath(doc.location?.pathname);
+      transloco.setActiveLang(lang);
+      return firstValueFrom(transloco.load(lang));
     }),
   ],
 };

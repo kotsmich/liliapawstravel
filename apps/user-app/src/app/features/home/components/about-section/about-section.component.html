@@ -26,7 +26,7 @@
       <span class="eyebrow">{{ 'about.whoWeAreTag' | transloco }}</span>
       <h2>{{ 'about.title' | transloco }}</h2>
       <p>{{ 'about.p1' | transloco }}</p>
-      <a class="about__cta" routerLink="/about">{{ 'about.learnMore' | transloco }}</a>
+      <a class="about__cta" [routerLink]="linkService.commands('/about')">{{ 'about.learnMore' | transloco }}</a>
     </div>
 
     <!-- Photo slider column -->
@@ -174,7 +174,7 @@
     <div class="gallery__grid">
       @for (img of galleryImages; track img.src; let i = $index) {
         <div class="gallery__item" [attr.data-index]="i">
-          <img [ngSrc]="img.src" [alt]="img.alt" fill sizes="(max-width: 600px) 50vw, 25vw" />
+          <img [ngSrc]="img.src" [alt]="img.altKey | transloco" fill sizes="(max-width: 600px) 50vw, 25vw" />
           <div class="gallery__overlay" aria-hidden="true">
             <span class="gallery__overlay-icon">🐾</span>
           </div>
