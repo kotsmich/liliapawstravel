@@ -215,7 +215,7 @@ textarea.p-inputtextarea::placeholder {
 
 /* ── Page hero title logo ── */
 .page-intro__logo {
-  width: clamp(64px, 9vw, 96px);
+  width: 100px;
   height: auto;
   flex-shrink: 0;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, .4));
