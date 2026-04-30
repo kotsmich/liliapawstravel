@@ -1,0 +1,12 @@
+<p-dialog
+  [header]="header()"
+  [visible]="visible()"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: isDocPreview() ? 'min(50vw, 700px)' : 'min(60vw, 500px)' }">
+  <app-media-viewer
+    [url]="url()"
+    frameHeight="40vh"
+    imgMaxHeight="40vh" />
+</p-dialog>

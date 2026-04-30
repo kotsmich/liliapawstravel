@@ -82,7 +82,12 @@
 
 /* ── Global resets ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* Reserve scrollbar space permanently so PrimeNG's modal scroll-lock
+     (body.p-overflow-hidden) doesn't shift centered content sideways. */
+  scrollbar-gutter: stable;
+}
 body {
   font-family: var(--font-body);
   color: var(--color-text);
@@ -91,6 +96,9 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
+/* Pair with scrollbar-gutter: cancel PrimeNG's padding-right compensation
+   since the gutter is already reserved — otherwise content squeezes 15px. */
+body.p-overflow-hidden { padding-right: 0 !important; }
 a { color: inherit; text-decoration: none; }
 
 /* ── Accessibility ── */
@@ -203,6 +211,19 @@ textarea.p-inputtextarea::placeholder {
   padding: .3rem .9rem; border-radius: 20px; font-size: .78rem;
   font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
   margin-bottom: .75rem;
+}
+
+/* ── Page hero title logo ── */
+.page-intro__logo {
+  width: clamp(64px, 9vw, 96px);
+  height: auto;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, .4));
+}
+h1:has(> .page-intro__logo) {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
 }
 
 /* ── Section label (eyebrow) ── */

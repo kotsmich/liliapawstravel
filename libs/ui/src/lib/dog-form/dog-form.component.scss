@@ -285,8 +285,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  /* WCAG 2.5.8 Target Size — min-height 44px, padding lifted from 0.3/0.85rem */
-  min-height: 44px;
+  min-height: 35px;
   padding: 0.5rem 1rem;
   border-radius: 22px;
   border: 1.5px solid var(--color-border, #e2d5d0);

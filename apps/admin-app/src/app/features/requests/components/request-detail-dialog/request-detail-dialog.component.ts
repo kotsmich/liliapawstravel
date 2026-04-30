@@ -10,9 +10,9 @@ import { TableColumn, TableConfig } from '@models/lib/table-column.interface';
 import { requestStatusSeverity, requestStatusLabel, RequestStatus } from '@admin/shared/utils/status';
 import { DetailDialogBase } from '@admin/shared/components/detail-dialog-base';
 import { GenericTableComponent } from '@ui/lib/components/table/generic-table.component';
-import { MediaViewerComponent } from '../../../../shared/components/media-viewer/media-viewer.component';
 import { InternalNoteEditorComponent } from './internal-note-editor/internal-note-editor.component';
 import { RequestInfoGridComponent } from './request-info-grid/request-info-grid.component';
+import { RequestPreviewDialogComponent } from './request-preview-dialog/request-preview-dialog.component';
 
 type RequestDog = NonNullable<TripRequest['dogs']>[number];
 
@@ -20,7 +20,7 @@ type RequestDog = NonNullable<TripRequest['dogs']>[number];
   selector: 'app-request-detail-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DialogModule, ButtonModule, TagModule, GenericTableComponent, TranslocoModule, MediaViewerComponent, InternalNoteEditorComponent, RequestInfoGridComponent],
+  imports: [DialogModule, ButtonModule, TagModule, GenericTableComponent, TranslocoModule, InternalNoteEditorComponent, RequestInfoGridComponent, RequestPreviewDialogComponent],
   providers: [LocalDatePipe],
   templateUrl: './request-detail-dialog.component.html',
   styleUrl: './request-detail-dialog.component.scss',
@@ -40,13 +40,6 @@ export class RequestDetailDialogComponent extends DetailDialogBase {
   readonly previewUrl = signal<string | null>(null);
   readonly previewHeader = signal('');
   readonly previewVisible = signal(false);
-
-  readonly isDocPreview = computed(() => {
-    const url = (this.previewUrl() ?? '').toLowerCase();
-    if (!url) return false;
-    const path = url.split('#')[0].split('?')[0];
-    return !/\.(jpg|jpeg|png|webp|gif)$/.test(path);
-  });
 
   private readonly transloco = inject(TranslocoService);
   private readonly localDate = inject(LocalDatePipe);

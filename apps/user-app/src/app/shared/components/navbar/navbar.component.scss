@@ -51,8 +51,10 @@
   &__name {
     transition: color 0.4s ease;
     letter-spacing: -.01em;
+    white-space: nowrap;
 
-    @media (max-width: 960px) { display: none; }
+    @media (max-width: 480px) { font-size: .9rem; }
+    @media (max-width: 360px) { font-size: .8rem; }
   }
 
   &__burger {
@@ -88,7 +90,7 @@
 }
 
 /* ── Mobile ── */
-@media (max-width: 800px) {
+@media (max-width: 810px) {
   .navbar {
     &__burger {
       display: flex; align-items: center; justify-content: center;

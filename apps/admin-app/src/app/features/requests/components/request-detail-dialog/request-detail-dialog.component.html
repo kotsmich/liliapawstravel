@@ -41,28 +41,23 @@
     </div>
 
     <app-internal-note-editor
+      [entityId]="req.id"
       [note]="req.adminNote ?? ''"
       (noteSaved)="saveNote.emit($event)" />
   }
 
-  <p-dialog
-    [header]="previewHeader()"
-    [visible]="previewVisible()"
-    (visibleChange)="previewVisible.set($event)"
-    [modal]="true"
-    [draggable]="false"
-    [style]="{ width: isDocPreview() ? 'min(90vw, 700px)' : 'min(80vw, 360px)' }">
-    <app-media-viewer
-      [url]="previewUrl()"
-      frameHeight="70vh"
-      imgMaxHeight="50vh" />
-  </p-dialog>
-
+  
   <ng-template pTemplate="footer">
     <p-button
-      [label]="'requests.detail.cancel' | transloco"
-      severity="secondary"
-      [outlined]="true"
-      (onClick)="cancel.emit()" />
+    [label]="'requests.detail.cancel' | transloco"
+    severity="secondary"
+    [outlined]="true"
+    (onClick)="cancel.emit()" />
   </ng-template>
 </p-dialog>
+
+<app-request-preview-dialog
+  [header]="previewHeader()"
+  [url]="previewUrl()"
+  [visible]="previewVisible()"
+  (visibleChange)="previewVisible.set($event)" />

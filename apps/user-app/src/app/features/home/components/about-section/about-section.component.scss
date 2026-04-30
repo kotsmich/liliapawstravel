@@ -83,7 +83,7 @@
   position: relative;
   z-index: 1;
   /* Diagonal bottom edge — left side higher this time (alternates direction) */
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 2.5rem));
+  // clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 2.5rem));
   padding-bottom: calc(3.5rem + 2.5rem);
 
   @media (max-width: 480px) {
