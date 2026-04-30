@@ -163,6 +163,8 @@
   grid-template-columns: 1fr 1fr;
   gap: .5rem .85rem;
 
+  @media (max-width: 550px) { grid-template-columns: 1fr; }
+
   .field {
     margin-bottom: 0;
     min-width: 0;
@@ -178,7 +180,11 @@
     }
   }
 
-  .field:nth-child(3) { grid-column: 1 / -1; width: fit-content; }
+  .field:nth-child(3) {
+    grid-column: 1 / -1;
+    width: fit-content;
+    @media (max-width: 550px) { width: auto; }
+  }
 }
 
 /* ══════════════════════════════════════════

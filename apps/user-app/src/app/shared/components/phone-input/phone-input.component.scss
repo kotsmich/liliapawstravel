@@ -1,21 +1,46 @@
 :host { display: block; }
 
+/* Wrapper carries the single visible border so the dial-code select and
+   national-number input read as one unified field. */
 .phone-input-row {
   display: flex;
   align-items: stretch;
+  border: 1px solid var(--p-form-field-border-color, #d4d4d8);
+  border-radius: var(--p-form-field-border-radius, 6px);
+  background: var(--p-form-field-background, #fff);
+  transition: border-color .2s ease, box-shadow .2s ease;
+  overflow: hidden; /* clip child rounded corners against our radius */
 
-  .phone-code-select ::ng-deep .p-select {
-    width: 90px;
-    border-right: none;
-    border-radius: var(--p-border-radius, 6px) 0 0 var(--p-border-radius, 6px);
-    height: 100%;
+  &:hover {
+    border-color: var(--p-form-field-hover-border-color, #a1a1aa);
   }
 
+  &:focus-within {
+    border-color: var(--p-primary-color, var(--color-primary, #eb691c));
+    box-shadow: 0 0 0 2px rgba(235, 105, 28, .22);
+  }
+
+  /* Strip the dial-code select's own border/background — rely on the wrapper. */
+  .phone-code-select ::ng-deep .p-select {
+    width: 90px;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0;
+  }
+
+  /* Single internal divider between dial-code and number. */
   p-ifta-label {
     flex: 1;
+    min-width: 0;
+    border-left: 1px solid var(--p-form-field-border-color, #d4d4d8);
 
     ::ng-deep input.p-inputtext {
-      border-radius: 0 var(--p-border-radius, 6px) var(--p-border-radius, 6px) 0;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      border-radius: 0;
+      width: 100%;
     }
   }
 }

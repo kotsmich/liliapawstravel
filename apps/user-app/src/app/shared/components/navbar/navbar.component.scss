@@ -40,9 +40,19 @@
     &:hover { opacity: .85; }
   }
 
+  &__logo {
+    width: 65px; height: 65px;
+    display: block;
+    object-fit: contain;
+    // background: #fff;
+    border-radius: 50%;
+  }
+
   &__name {
     transition: color 0.4s ease;
     letter-spacing: -.01em;
+
+    @media (max-width: 960px) { display: none; }
   }
 
   &__burger {
@@ -78,7 +88,7 @@
 }
 
 /* ── Mobile ── */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .navbar {
     &__burger {
       display: flex; align-items: center; justify-content: center;

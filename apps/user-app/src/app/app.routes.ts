@@ -41,5 +41,6 @@ export const APP_ROUTES: Routes = [
       },
     ],
   },
+  { path: '', pathMatch: 'full', redirectTo: `/${DEFAULT_LANG}` },
   { path: '**', redirectTo: `/${DEFAULT_LANG}/404` },
 ];
