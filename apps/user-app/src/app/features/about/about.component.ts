@@ -2,8 +2,8 @@ import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
+import { ButtonModule } from 'primeng/button';
 import { CtaSectionComponent } from '@user/features/home/components/cta-section/cta-section.component';
-import { FaqAccordionComponent, FaqItem } from '@user/shared/components/faq-accordion/faq-accordion.component';
 import { autoRotate } from '@user/shared/auto-rotate';
 import { LinkService } from '@user/services/link.service';
 
@@ -11,7 +11,7 @@ import { LinkService } from '@user/services/link.service';
   selector: 'app-about',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslocoModule, CtaSectionComponent, NgOptimizedImage, FaqAccordionComponent],
+  imports: [TranslocoModule, CtaSectionComponent, NgOptimizedImage, ButtonModule],
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
 })
@@ -43,14 +43,9 @@ export class AboutComponent {
     { icon: '🌍', titleKey: 'aboutPage.values.reach.title',  descKey: 'aboutPage.values.reach.desc'  },
   ];
 
-  readonly faqItems: FaqItem[] = Array.from({ length: 12 }, (_, i) => ({
-    questionKey: `faq.items.${i}.question`,
-    answerKey: `faq.items.${i}.answer`,
-    value: i.toString(),
-  }));
-
   readonly currentSlide = autoRotate(() => this.heroSlides.length, 3500).index;
 
   goToRequest(): void { this.router.navigate(this.linkService.commands('/request')); }
   goToContact(): void { this.router.navigate(this.linkService.commands('/contact')); }
+  goToFaq(): void { this.router.navigate(this.linkService.commands('/faq')); }
 }

@@ -105,10 +105,18 @@
 
 
   <!-- ══════════════════════════════════════════════════════
-       FAQ
+       FAQ CTA
        ══════════════════════════════════════════════════════ -->
-  <section class="faq" aria-label="Frequently asked questions">
-    <app-faq-accordion [items]="faqItems" titleKey="faq.title" />
+  <section class="faq-cta" aria-label="Frequently asked questions">
+    <div class="faq-cta__inner">
+      <h2>{{ 'faq.title' | transloco }}</h2>
+      <p>{{ 'aboutPage.faqCtaSubtitle' | transloco }}</p>
+      <p-button
+        [label]="'aboutPage.faqCtaButton' | transloco"
+        severity="secondary"
+        (onClick)="goToFaq()"
+      />
+    </div>
   </section>
 
 

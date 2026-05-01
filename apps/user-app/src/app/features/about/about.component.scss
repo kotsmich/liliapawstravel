@@ -337,12 +337,32 @@
 
 
 /* ══════════════════════════════════════════
-   FAQ section wrapper (accordion itself lives in <app-faq-accordion>)
+   FAQ CTA
    ══════════════════════════════════════════ */
-.faq {
+.faq-cta {
   background: #fff8f2;
   padding: 5rem 1.5rem;
+  text-align: center;
 
   @media (max-width: 600px) { padding: 3.5rem 1.25rem; }
+
+  &__inner {
+    max-width: 560px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    color: #2d1f10;
+  }
+
+  p {
+    color: #7a6a5a;
+    line-height: 1.7;
+  }
 }
 

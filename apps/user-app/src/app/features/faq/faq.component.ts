@@ -25,10 +25,16 @@ export class FaqComponent implements OnInit, OnDestroy {
   private readonly jsonLd = inject(JsonLdService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly faqItems: FaqItem[] = Array.from({ length: 12 }, (_, i) => ({
-    questionKey: `faq.items.${i}.question`,
-    answerKey: `faq.items.${i}.answer`,
-    value: i.toString(),
+  readonly group1Items: FaqItem[] = Array.from({ length: 12 }, (_, i) => ({
+    questionKey: `faq.group1.items.${i}.question`,
+    answerKey: `faq.group1.items.${i}.answer`,
+    value: `g1-${i}`,
+  }));
+
+  readonly group2Items: FaqItem[] = Array.from({ length: 8 }, (_, i) => ({
+    questionKey: `faq.group2.items.${i}.question`,
+    answerKey: `faq.group2.items.${i}.answer`,
+    value: `g2-${i}`,
   }));
 
   ngOnInit(): void {
@@ -49,7 +55,7 @@ export class FaqComponent implements OnInit, OnDestroy {
   goToContact(): void { this.router.navigate(this.linkService.commands('/contact')); }
 
   private publishFaqSchema(lang: string): void {
-    const mainEntity = this.faqItems.map((item) => ({
+    const mainEntity = [...this.group1Items, ...this.group2Items].map((item) => ({
       '@type': 'Question',
       name: this.transloco.translate(item.questionKey, undefined, lang),
       acceptedAnswer: {

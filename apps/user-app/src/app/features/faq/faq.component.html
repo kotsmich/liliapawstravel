@@ -20,7 +20,10 @@
        FAQ
        ══════════════════════════════════════════════════════ -->
   <section class="faq" aria-label="Questions and answers">
-    <app-faq-accordion [items]="faqItems" />
+    <div class="faq__grid">
+      <app-faq-accordion [items]="group1Items" titleKey="faq.group1.title" />
+      <app-faq-accordion [items]="group2Items" titleKey="faq.group2.title" />
+    </div>
   </section>
 
   <!-- ══════════════════════════════════════════════════════

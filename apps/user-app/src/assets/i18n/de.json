@@ -231,29 +231,47 @@
       "shelter": { "title": "Tierheim-Partnerschaften",    "desc": "Wir arbeiten ausschließlich mit zertifizierten, ethischen Tierheimen — jede Adoption ist verifiziert und verantwortungsvoll." },
       "vehicle": { "title": "Klimatisierte Vans & Direkter Kontakt", "desc": "Temperaturgeregelt, vor jeder Fahrt desinfiziert. Unsere Fahrer haben auf der gesamten Route direkten Zugang zu den Transportboxen. Komfortabel und sicher für Hunde aller Größen." },
       "reach":   { "title": "Gesamteuropäische Reichweite","desc": "Von Griechenland nach Italien, Deutschland, Frankreich und in die Niederlande — wir verbinden Tierheime mit Familien in ganz Europa." }
-    }
+    },
+    "faqCtaSubtitle": "Haben Sie Fragen zu unserem Service? Hier finden Sie Antworten auf die häufigsten Fragen.",
+    "faqCtaButton": "Alle Fragen & Antworten ansehen"
   },
   "faq": {
     "title": "Häufig gestellte Fragen",
-    "items": {
-      "0":  { "question": "Wie oft finden die Fahrten statt?",                                            "answer": "Wir organisieren alle 10–15 Tage eine Fahrt, damit wir die Tiere bündeln und die optimale Route planen können." },
-      "1":  { "question": "Wie werden Abhol- und Lieferort festgelegt?",                                  "answer": "Wir haben feste Abhol- und Lieferstopps. Für jedes Tier wählen wir den Stopp, der der Adresse des Absenders oder Empfängers am nächsten liegt." },
-      "2":  { "question": "Kann ich eine Abholung oder Lieferung außerhalb der festen Stopps anfordern?", "answer": "In manchen Fällen ja, sofern der Ort auf unserer Route liegt und keinen Umweg verursacht. Immer nach vorheriger Absprache." },
-      "3":  { "question": "Welche Dokumente werden für die Reise meines Hundes oder meiner Katze benötigt?", "answer": "Erforderlich sind ein Heimtierausweis, ein Mikrochip, der mit den Daten des Ausweises übereinstimmt, und eine Vollmacht des Besitzers. Für adoptierte Tiere wird zusätzlich das TRACES vom Verein benötigt." },
-      "4":  { "question": "Was passiert, wenn ein Dokument fehlt?",                                       "answer": "Leider können Tiere ohne vollständige Dokumente die Reise nicht antreten. Wir führen vor der Abfahrt strenge Kontrollen zur Sicherheit aller durch." },
-      "5":  { "question": "Überprüfen Sie den Mikrochip des Tieres?",                                     "answer": "Ja, wir scannen den Mikrochip und stellen vor der Abholung sicher, dass er mit den Angaben im Ausweis übereinstimmt." },
-      "6":  { "question": "Wie werden die Tiere während der Fahrt betreut?",                              "answer": "Der Transportbereich steht in direktem Kontakt mit dem Fahrerbereich, sodass wir die Tiere kontinuierlich beaufsichtigen und sofort auf jeden Bedarf reagieren können." },
-      "7":  { "question": "Wie wird die Temperatur im Fahrzeug gewährleistet?",                           "answer": "Unser Fahrzeug verfügt über ein Heiz- und Kühlsystem, das den Tieren während der gesamten Fahrt ein stabiles und angenehmes Klima bietet." },
-      "8":  { "question": "Wie lange dauert das Zusammenstellen der Tiere vor der Reise?",                "answer": "Je nach Anzahl der Buchungen kann das Sammeln bis zu 10–15 Tage dauern, bis die Route vollständig ist." },
-      "9":  { "question": "Wann erfahre ich den genauen Tag und die Uhrzeit der Lieferung?",              "answer": "Der Plan wird einige Tage vor der Abfahrt finalisiert, sobald alle Stopps bestätigt sind, und wir informieren jeden Empfänger rechtzeitig." },
-      "10": { "question": "Welche Tierarten transportieren Sie?",                                         "answer": "Wir sind auf den internationalen Transport von Heimtieren spezialisiert, hauptsächlich Hunde und Katzen." },
-      "11": { "question": "Wie kann ich eine Buchung vornehmen?",                                         "answer": "Kontaktieren Sie uns mit den Angaben Ihres Tieres und der Adresse des Empfängers. Wir informieren Sie über die nächste verfügbare Fahrt und den nächstgelegenen Stopp." }
+    "group1": {
+      "title": "Routen & Buchungen",
+      "items": {
+        "0":  { "question": "Wie oft finden die Fahrten statt?",                                        "answer": "Wir organisieren alle 10–15 Tage eine Fahrt, damit wir die Tiere bündeln und die optimale Route planen können." },
+        "1":  { "question": "Wo findet die Abholung statt?",                                            "answer": "Wir haben feste Abholpunkte entlang unserer Routen. Falls es besondere Umstände gibt, können wir das besprechen und eine Lösung finden." },
+        "2":  { "question": "In welchen Städten halten Sie?",                                           "answer": "Wir halten in der Regel in Larissa, Litochoro, Katerini, Thessaloniki, Kozani, Veria, Ioannina und Igoumenitsa." },
+        "3":  { "question": "Was, wenn ich in keiner dieser Städte bin?",                               "answer": "Kein Problem. Kontaktieren Sie uns und wir schauen, wie wir Ihnen helfen können. Wir arbeiten mit zuverlässigen Haustier-Taxis in vielen Regionen zusammen." },
+        "4":  { "question": "Wie werden Abhol- und Lieferort festgelegt?",                              "answer": "Wir haben feste Abhol- und Lieferstopps. Für jedes Tier wählen wir den Stopp, der der Adresse des Absenders oder Empfängers am nächsten liegt." },
+        "5":  { "question": "Kann ich eine Abholung oder Lieferung außerhalb der festen Stopps anfordern?", "answer": "In manchen Fällen ja, sofern der Ort auf unserer Route liegt und keinen Umweg verursacht. Immer nach vorheriger Absprache." },
+        "6":  { "question": "Wie läuft die Lieferung ab?",                                              "answer": "Die Lieferung erfolgt an bestimmten Punkten, genauso wie die Abholung. Falls es eine Anfrage gibt, die die Route nicht beeinflusst, prüfen wir sie gerne." },
+        "7":  { "question": "Wie lange dauert das Zusammenstellen der Tiere vor der Reise?",            "answer": "Je nach Anzahl der Buchungen kann das Sammeln bis zu 10–15 Tage dauern, bis die Route vollständig ist." },
+        "8":  { "question": "Wann erfahre ich den genauen Tag und die Uhrzeit der Lieferung?",          "answer": "Der Plan wird einige Tage vor der Abfahrt finalisiert, sobald alle Stopps bestätigt sind, und wir informieren jeden Empfänger rechtzeitig." },
+        "9":  { "question": "Können Sie ein Haustier aus dem Ausland bringen?",                         "answer": "Ja, natürlich. Wir übernehmen auch Transporte aus dem Ausland nach Griechenland und koordinieren den gesamten Ablauf." },
+        "10": { "question": "Was ist mit den Transportboxen?",                                          "answer": "Wir haben Boxen in allen Größen verfügbar, auch für sehr große Rassen, bis zu 120 × 120 × 100 cm." },
+        "11": { "question": "Wie kann ich eine Buchung vornehmen?",                                     "answer": "Kontaktieren Sie uns mit den Angaben Ihres Tieres und der Adresse des Empfängers. Wir informieren Sie über die nächste verfügbare Fahrt und den nächstgelegenen Stopp." }
+      }
+    },
+    "group2": {
+      "title": "Betreuung & Dokumente",
+      "items": {
+        "0":  { "question": "Welche Dokumente werden für die Reise meines Hundes oder meiner Katze benötigt?", "answer": "Erforderlich sind ein Heimtierausweis, ein Mikrochip, der mit den Daten des Ausweises übereinstimmt, und eine Vollmacht des Besitzers. Für adoptierte Tiere wird zusätzlich das TRACES vom Verein benötigt." },
+        "1":  { "question": "Wann werden die Dokumente benötigt?",                                      "answer": "Idealerweise sollten wir alle erforderlichen Dokumente und Informationen mindestens eine Woche vor der Reise haben." },
+        "2":  { "question": "Was passiert, wenn ein Dokument fehlt?",                                   "answer": "Leider können Tiere ohne vollständige Dokumente die Reise nicht antreten. Wir führen vor der Abfahrt strenge Kontrollen zur Sicherheit aller durch." },
+        "3":  { "question": "Überprüfen Sie den Mikrochip des Tieres?",                                 "answer": "Ja, wir scannen den Mikrochip und stellen vor der Abholung sicher, dass er mit den Angaben im Ausweis übereinstimmt." },
+        "4":  { "question": "Welche Tierarten transportieren Sie?",                                     "answer": "Wir sind auf den internationalen Transport von Heimtieren spezialisiert, hauptsächlich Hunde und Katzen." },
+        "5":  { "question": "Wie werden die Tiere während der Fahrt betreut?",                          "answer": "Während der gesamten Reise ist immer eine Begleitperson dabei, die die Tiere beaufsichtigt. Der Transportbereich steht in direktem Kontakt mit dem Fahrerbereich, sodass wir kontinuierlich auf jeden Bedarf reagieren können. Die Begleitperson sorgt dafür, dass alle Tiere sauber, komfortabel und gut versorgt sind." },
+        "6":  { "question": "Wie wird die Temperatur im Fahrzeug gewährleistet?",                       "answer": "Unser Fahrzeug verfügt über ein Heiz- und Kühlsystem, das den Tieren während der gesamten Fahrt ein stabiles und angenehmes Klima bietet." },
+        "7":  { "question": "Werde ich während der Reise auf dem Laufenden gehalten?",                  "answer": "Selbstverständlich. Wir halten Sie mit Fotos, Standortupdates und Neuigkeiten über Ihr Haustier auf dem Laufenden, damit Sie während der gesamten Fahrt entspannt sein können." }
+      }
     }
   },
   "faqPage": {
     "eyebrow": "FAQ",
     "title": "Antworten auf Ihre Fragen",
-    "subtitle": "Alles, was Sie über den Transport Ihres Tieres mit uns wissen müssen — von Haltestellen und Dokumenten bis hin zu Reisebedingungen."
+    "subtitle": "Alles, was Sie über den Transport Ihres vierbeinigen Freundes mit uns wissen müssen — von Haltestellen und Dokumenten bis hin zu Reisebedingungen."
   },
   "dogs": {
     "dogName": "Name",
