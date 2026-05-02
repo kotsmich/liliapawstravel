@@ -20,9 +20,9 @@
   },
   "hero": {
     "badge": "Europe's trusted dog transport",
-    "title": "We don't just transport pets.",
-    "titleAccent": "We reunite families.",
-    "subtitle": "Because we know how much they mean to you.",
+    "title": "Every dog deserves",
+    "titleAccent": "a journey of love",
+    "subtitle": "We don't just transport pets. We reunite families.",
     "requestTransport": "Request Transport",
     "getInTouch": "Get in Touch",
     "slides": {
@@ -48,16 +48,16 @@
   },
   "about": {
     "whoWeAreTag": "Who We Are",
-    "title": "Born from a love for rescue dogs",
+    "title": "Driven by love and respect for animals",
     "p1": "Lilia Paws Travel was founded by Lilia Pontika, a passionate animal welfare advocate. Through years of experience, she witnessed hundreds of dogs adopted across borders with no safe, humane transport solution.",
     "p2": "From a one-van operation to a network spanning 18 countries and 200+ shelters, we've safely transported over 1,200 dogs and counting.",
     "safetyFirst": { "title": "Safety First", "desc": "Vet-approved health certificates and constant monitoring." },
-    "weCare": { "title": "We Care Deeply", "desc": "Dogs are not cargo. Comfort stops and cuddles on every trip." },
-    "fullyLegal": { "title": "Fully Legal", "desc": "EU pet travel compliance — microchips, passports, documents handled." },
+    "weCare": { "title": "Care", "desc": "Your beloved companion is in good hands, fed, hydrated, clean, and never left alone throughout the journey." },
+    "fullyLegal": { "title": "Fully Legal", "desc": "EU pet travel compliance, microchips, passports, documents handled." },
     "shelterPartners": { "title": "Shelter Partners", "desc": "We work with 200+ certified shelters and verified adopters." },
     "processTag": "The Process",
     "processTitle": "How adoption transport works",
-    "processSubtitle": "Simple, transparent, stress-free — for you and your dog.",
+    "processSubtitle": "Simple, transparent, stress-free, for you and your dog.",
     "step1": { "title": "Adopter Approved", "desc": "Shelter confirms the adoption." },
     "step2": { "title": "Book a Trip", "desc": "Submit the transport request." },
     "step3": { "title": "We Prepare", "desc": "Route planned, documents checked." },
@@ -67,7 +67,7 @@
   "fleet": {
     "tag": "Our Fleet",
     "title": "Built for safe, comfortable journeys",
-    "p1": "Our climate-controlled van is specially outfitted for animal transport — spacious crates, ventilation, and hygiene protocols on every trip.",
+    "p1": "Our climate-controlled van is specially outfitted for animal transport. Spacious crates, ventilation, and hygiene protocols on every trip.",
     "p2": "Each vehicle is inspected and sanitised before departure, ensuring your dog travels in the safest and most comfortable conditions possible.",
     "cta": "View Our Fleet"
   },
@@ -157,7 +157,7 @@
     "submit": "Submit Request",
     "submitting": "Submitting...",
     "submitNoticeTitle": "Important",
-    "submitNoticeBody": "The admin will review your request and get in touch with you. If documents, microchip info, or any other information is needed, we'll reach out a few days before the trip — no need to have everything ready right now. Submit your request to secure your spots and we'll sort out the details together.",
+    "submitNoticeBody": "The admin will review your request and get in touch with you. If documents, microchip info, or any other information is needed, we'll reach out a few days before the trip, no need to have everything ready right now. Submit your request to secure your spots and we'll sort out the details together.",
     "noTripHint": "Select a highlighted date on the calendar above to start your booking.",
     "from": "From",
     "to": "To",
@@ -213,24 +213,24 @@
   },
   "aboutPage": {
     "heroTag": "Our Story",
-    "heroTitle": "Born from a love for rescue dogs",
-    "heroSubtitle": "Many years on the road, thousands of dogs home — one loving journey at a time.",
+    "heroTitle": "Driven by love and respect for animals",
+    "heroSubtitle": "Many years on the road, thousands of dogs home. One loving journey at a time.",
     "founder": "Founder & Driver",
     "storyTag": "Who We Are",
     "storyTitle": "A mission that started with one van and a promise",
     "storyP1": "Lilia Paws Travel was founded by Lilia Pontika, a passionate animal welfare advocate. Through years of experience, she witnessed hundreds of dogs adopted across borders with no safe, humane transport solution.",
-    "storyP2": "What began as voluntary dog transport quickly grew into a deep responsibility — to create a humane, safe, and reliable way of transporting animals that respects every life.",
-    "storyP3": "Our responsibility is not simply transporting an animal to a new owner — it is carrying a soul to a new family. Transparency, safety, and humane treatment are our primary concern on every journey.",
+    "storyP2": "What began as voluntary dog transport quickly grew into a deep responsibility. To create a humane, safe, and reliable way of transporting animals that respects every life.",
+    "storyP3": "Our responsibility is not simply transporting an animal to a new owner. It is carrying a soul to a new family. Transparency, safety, and humane treatment are our primary concern on every journey.",
     "valuesTag": "Our Values",
     "valuesTitle": "What we believe in",
-    "valuesSubtitle": "Every decision we make — from route planning to rest stops — is guided by these principles.",
+    "valuesSubtitle": "Every decision we make, from route planning to rest stops, is guided by these principles.",
     "values": {
       "safety":  { "title": "Safety Above All",        "desc": "Vet-approved health certificates, microchip verification, and continuous monitoring on every trip." },
-      "care":    { "title": "Genuine Care",             "desc": "Comfort stops, food, water, and hygiene on every route. Dogs are never left unattended." },
-      "legal":   { "title": "Fully EU Compliant",       "desc": "We handle all paperwork — pet passports, health certificates, microchips, and TRACES certificates." },
-      "shelter": { "title": "Shelter Partnerships",     "desc": "We work exclusively with certified, ethical shelters, ensuring every adoption is verified and responsible." },
+      "care":    { "title": "Care",                    "desc": "Your beloved companion is in good hands, fed, hydrated, clean, and never left alone throughout the journey." },
+      "legal":   { "title": "Fully EU Compliant",       "desc": "We handle all paperwork, pet passports, health certificates, microchips, and TRACES certificates." },
+      "shelter": { "title": "Shelter Partnerships",     "desc": "We are selective about our partners. We only work with shelters that share our values. Every adoption goes through a strict vetting process, carried out with care." },
       "vehicle": { "title": "Climate-Controlled Vans & Direct Contact", "desc": "Temperature-regulated, sanitised before every trip. Our drivers maintain direct access to the crates throughout the journey. Comfortable and safe for dogs of all sizes." },
-      "reach":   { "title": "Pan-European Reach",       "desc": "From Greece to Italy, Germany, France, and the Netherlands — we connect shelters with families across Europe." }
+      "reach":   { "title": "Pan-European Reach",       "desc": "From Greece to Italy, Germany, France, and the Netherlands, we connect shelters with families across Europe." }
     },
     "faqCtaSubtitle": "Have questions about our service? Find answers to the most common ones.",
     "faqCtaButton": "View all Q&A"
@@ -271,7 +271,7 @@
   "faqPage": {
     "eyebrow": "FAQ",
     "title": "Answers to your questions",
-    "subtitle": "Everything you need to know about transporting your four-legged friend with us — from stops and documents to travel conditions."
+    "subtitle": "Everything you need to know about transporting your four-legged friend with us, from stops and documents to travel conditions."
   },
   "dogs": {
     "dogName": "Name",
@@ -306,7 +306,7 @@
     "photoClickHint": "Click or drag photo",
     "photoFormats": "JPG, PNG, WEBP — max 5MB",
     "documentLabel": "Document",
-    "documentOptional": "(optional — TRACES or authorization)",
+    "documentOptional": "(optional, TRACES or authorization)",
     "documentClickHint": "Click or drag document",
     "documentFormats": "PDF, DOC, DOCX, ODT, RTF, TXT, JPG, PNG — max 50MB",
     "removePhoto": "Remove photo",

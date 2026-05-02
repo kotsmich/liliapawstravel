@@ -20,9 +20,9 @@
   },
   "hero": {
     "badge": "Europas vertrauenswürdiger Hundetransport",
-    "title": "Wir transportieren nicht nur Haustiere.",
-    "titleAccent": "Wir vereinen Familien.",
-    "subtitle": "Weil wir wissen, wie wichtig sie für Sie sind.",
+    "title": "Jeder Hund verdient",
+    "titleAccent": "eine Reise voller Liebe",
+    "subtitle": "Wir transportieren nicht nur Haustiere. Wir vereinen Familien.",
     "requestTransport": "Transport anfragen",
     "getInTouch": "Kontakt aufnehmen",
     "slides": {
@@ -48,16 +48,16 @@
   },
   "about": {
     "whoWeAreTag": "Wer Wir Sind",
-    "title": "Entstanden aus Liebe zu Rettungshunden",
-    "p1": "Lilia Paws Travel wurde von Lilia Pontika gegründet, einer leidenschaftlichen Tierschutzaktivistin. Durch jahrelange Erfahrung erlebte sie, wie Hunderte von Hunden grenzüberschreitend adoptiert wurden — ohne sichere, humane Transportlösung.",
+    "title": "Getragen von Liebe und Respekt für Tiere",
+    "p1": "Lilia Paws Travel wurde von Lilia Pontika gegründet, einer leidenschaftlichen Tierschutzaktivistin. Durch jahrelange Erfahrung erlebte sie, wie Hunderte von Hunden grenzüberschreitend adoptiert wurden, ohne sichere, humane Transportlösung.",
     "p2": "Von einem Ein-Van-Betrieb zu einem Netzwerk in 18 Ländern und 200+ Tierheimen haben wir bereits über 1.200 Hunde sicher transportiert.",
     "safetyFirst": { "title": "Sicherheit Zuerst", "desc": "Tierärztlich genehmigte Gesundheitszertifikate und ständige Überwachung." },
-    "weCare": { "title": "Wir Kümmern Uns", "desc": "Hunde sind kein Fracht. Komfortstopps und Streicheleinheiten auf jeder Reise." },
-    "fullyLegal": { "title": "Vollständig Legal", "desc": "EU-Haustierreise-Konformität — Mikrochips, Pässe, Dokumente erledigt." },
+    "weCare": { "title": "Fürsorge", "desc": "Ihr geliebtes Tier ist in guten Händen, mit Futter, Wasser, Hygiene und ständiger Begleitung auf der gesamten Strecke." },
+    "fullyLegal": { "title": "Vollständig Legal", "desc": "EU-Haustierreise-Konformität, Mikrochips, Pässe, Dokumente erledigt." },
     "shelterPartners": { "title": "Tierheim-Partner", "desc": "Wir arbeiten mit 200+ zertifizierten Tierheimen und verifizierten Adoptern." },
     "processTag": "Der Ablauf",
     "processTitle": "Wie Adoptionsstransport funktioniert",
-    "processSubtitle": "Einfach, transparent, stressfrei — für Sie und Ihren Hund.",
+    "processSubtitle": "Einfach, transparent, stressfrei, für Sie und Ihren Hund.",
     "step1": { "title": "Adopter Genehmigt", "desc": "Tierheim bestätigt die Adoption." },
     "step2": { "title": "Reise Buchen", "desc": "Transportanfrage einreichen." },
     "step3": { "title": "Wir Bereiten Vor", "desc": "Route geplant, Dokumente geprüft." },
@@ -67,7 +67,7 @@
   "fleet": {
     "tag": "Unsere Flotte",
     "title": "Gebaut für sichere, komfortable Reisen",
-    "p1": "Unser klimatisierter Transporter ist speziell für den Tiertransport ausgestattet — geräumige Transportboxen, Belüftung und Hygieneprotokolle auf jeder Fahrt.",
+    "p1": "Unser klimatisierter Transporter ist speziell für den Tiertransport ausgestattet. Geräumige Transportboxen, Belüftung und Hygieneprotokolle auf jeder Fahrt.",
     "p2": "Jedes Fahrzeug wird vor der Abfahrt geprüft und desinfiziert, um Ihrem Hund die sichersten und komfortabelsten Reisebedingungen zu bieten.",
     "cta": "Unsere Flotte ansehen"
   },
@@ -157,7 +157,7 @@
     "submit": "Anfrage einreichen",
     "submitting": "Wird eingereicht...",
     "submitNoticeTitle": "Wichtig",
-    "submitNoticeBody": "Der Administrator wird Ihre Anfrage prüfen und sich bei Ihnen melden. Falls Dokumente, Microchip-Angaben oder sonstige Informationen benötigt werden, melden wir uns einige Tage vor der Reise — Sie müssen jetzt noch nicht alles parat haben. Reichen Sie Ihre Anfrage ein, um Ihre Plätze zu sichern, und wir klären die Details gemeinsam.",
+    "submitNoticeBody": "Der Administrator wird Ihre Anfrage prüfen und sich bei Ihnen melden. Falls Dokumente, Microchip-Angaben oder sonstige Informationen benötigt werden, melden wir uns einige Tage vor der Reise, Sie müssen jetzt noch nicht alles parat haben. Reichen Sie Ihre Anfrage ein, um Ihre Plätze zu sichern, und wir klären die Details gemeinsam.",
     "noTripHint": "Wählen Sie ein hervorgehobenes Datum im Kalender oben, um Ihre Buchung zu starten.",
     "from": "Von",
     "to": "Nach",
@@ -213,24 +213,24 @@
   },
   "aboutPage": {
     "heroTag": "Unsere Geschichte",
-    "heroTitle": "Entstanden aus Liebe zu Rettungshunden",
-    "heroSubtitle": "Viele Jahre unterwegs, Tausende Hunde zu Hause — eine liebevolle Reise nach der anderen.",
+    "heroTitle": "Getragen von Liebe und Respekt für Tiere",
+    "heroSubtitle": "Viele Jahre unterwegs, Tausende Hunde zu Hause. Eine liebevolle Reise nach der anderen.",
     "founder": "Gründerin & Fahrerin",
     "storyTag": "Wer Wir Sind",
     "storyTitle": "Eine Mission, die mit einem Van und einem Versprechen begann",
-    "storyP1": "Lilia Paws Travel wurde von Lilia Pontika gegründet, einer leidenschaftlichen Tierschutzaktivistin. Durch jahrelange Erfahrung erlebte sie, wie Hunderte von Hunden grenzüberschreitend adoptiert wurden — ohne sichere, humane Transportlösung.",
-    "storyP2": "Was als freiwilliger Hundetransport begann, wurde schnell zu einer tiefen Verantwortung — einen humanen, sicheren und zuverlässigen Transportweg zu schaffen, der jedes Leben respektiert.",
-    "storyP3": "Unsere Verantwortung besteht nicht nur darin, ein Tier zu einem neuen Besitzer zu transportieren — es ist die Beförderung einer Seele in eine neue Familie. Transparenz, Sicherheit und humane Behandlung sind unser vorrangiges Anliegen auf jeder Reise.",
+    "storyP1": "Lilia Paws Travel wurde von Lilia Pontika gegründet, einer leidenschaftlichen Tierschutzaktivistin. Durch jahrelange Erfahrung erlebte sie, wie Hunderte von Hunden grenzüberschreitend adoptiert wurden, ohne sichere, humane Transportlösung.",
+    "storyP2": "Was als freiwilliger Hundetransport begann, wurde schnell zu einer tiefen Verantwortung. Einen humanen, sicheren und zuverlässigen Transportweg zu schaffen, der jedes Leben respektiert.",
+    "storyP3": "Unsere Verantwortung besteht nicht nur darin, ein Tier zu einem neuen Besitzer zu transportieren. Es ist die Beförderung einer Seele in eine neue Familie. Transparenz, Sicherheit und humane Behandlung sind unser vorrangiges Anliegen auf jeder Reise.",
     "valuesTag": "Unsere Werte",
     "valuesTitle": "Woran wir glauben",
-    "valuesSubtitle": "Jede Entscheidung — von der Routenplanung bis zu den Pausen — wird von diesen Grundsätzen geleitet.",
+    "valuesSubtitle": "Jede Entscheidung, von der Routenplanung bis zu den Pausen, wird von diesen Grundsätzen geleitet.",
     "values": {
       "safety":  { "title": "Sicherheit über alles",      "desc": "Tierärztlich genehmigte Gesundheitszertifikate, Mikrochip-Verifizierung und kontinuierliche Überwachung auf jeder Fahrt." },
-      "care":    { "title": "Echte Fürsorge",              "desc": "Komfortpausen, Futter, Wasser und Hygiene auf jeder Route. Hunde werden nie allein gelassen." },
-      "legal":   { "title": "Vollständig EU-konform",      "desc": "Wir übernehmen alle Dokumente — Heimtierausweise, Gesundheitszertifikate, Mikrochips und TRACES-Zertifikate." },
-      "shelter": { "title": "Tierheim-Partnerschaften",    "desc": "Wir arbeiten ausschließlich mit zertifizierten, ethischen Tierheimen — jede Adoption ist verifiziert und verantwortungsvoll." },
+      "care":    { "title": "Fürsorge",                    "desc": "Ihr geliebtes Tier ist in guten Händen, mit Futter, Wasser, Hygiene und ständiger Begleitung auf der gesamten Strecke." },
+      "legal":   { "title": "Vollständig EU-konform",      "desc": "Wir übernehmen alle Dokumente, Heimtierausweise, Gesundheitszertifikate, Mikrochips und TRACES-Zertifikate." },
+      "shelter": { "title": "Tierheim-Partnerschaften",    "desc": "Wir wählen unsere Partner sorgfältig aus. Wir arbeiten nur mit Tierheimen, die unsere Werte teilen. Jede Adoption wird streng geprüft, mit Sorgfalt und Herz." },
       "vehicle": { "title": "Klimatisierte Vans & Direkter Kontakt", "desc": "Temperaturgeregelt, vor jeder Fahrt desinfiziert. Unsere Fahrer haben auf der gesamten Route direkten Zugang zu den Transportboxen. Komfortabel und sicher für Hunde aller Größen." },
-      "reach":   { "title": "Gesamteuropäische Reichweite","desc": "Von Griechenland nach Italien, Deutschland, Frankreich und in die Niederlande — wir verbinden Tierheime mit Familien in ganz Europa." }
+      "reach":   { "title": "Gesamteuropäische Reichweite","desc": "Von Griechenland nach Italien, Deutschland, Frankreich und in die Niederlande, wir verbinden Tierheime mit Familien in ganz Europa." }
     },
     "faqCtaSubtitle": "Haben Sie Fragen zu unserem Service? Hier finden Sie Antworten auf die häufigsten Fragen.",
     "faqCtaButton": "Alle Fragen & Antworten ansehen"
@@ -271,7 +271,7 @@
   "faqPage": {
     "eyebrow": "FAQ",
     "title": "Antworten auf Ihre Fragen",
-    "subtitle": "Alles, was Sie über den Transport Ihres vierbeinigen Freundes mit uns wissen müssen — von Haltestellen und Dokumenten bis hin zu Reisebedingungen."
+    "subtitle": "Alles, was Sie über den Transport Ihres vierbeinigen Freundes mit uns wissen müssen, von Haltestellen und Dokumenten bis hin zu Reisebedingungen."
   },
   "dogs": {
     "dogName": "Name",
@@ -306,7 +306,7 @@
     "photoClickHint": "Klicken oder Foto hierher ziehen",
     "photoFormats": "JPG, PNG, WEBP — max 5MB",
     "documentLabel": "Dokument",
-    "documentOptional": "(optional — TRACES oder Genehmigung)",
+    "documentOptional": "(optional, TRACES oder Genehmigung)",
     "documentClickHint": "Klicken oder Dokument hierher ziehen",
     "documentFormats": "PDF, DOC, DOCX, ODT, RTF, TXT, JPG, PNG — max. 50MB",
     "removePhoto": "Foto entfernen",
