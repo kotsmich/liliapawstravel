@@ -247,11 +247,12 @@
         "4":  { "question": "How are the pickup and drop-off points decided?",                          "answer": "We have fixed pickup and drop-off stops. For each animal we choose the closest stop to the sender's or recipient's address." },
         "5":  { "question": "Can I request pickup or delivery outside the fixed stops?",                "answer": "In some cases yes, provided the location is on our route and does not cause a detour. Always arranged in advance." },
         "6":  { "question": "How does delivery work?",                                                  "answer": "Delivery takes place at designated points, just like pickup. If there is a request that does not affect the route, we are happy to consider it." },
-        "7":  { "question": "How long does collecting the animals before the trip take?",               "answer": "Depending on the number of bookings, the collection period can last up to 10–15 days, until the route is full." },
-        "8":  { "question": "When will I know the exact day and time of delivery?",                     "answer": "The schedule is finalised a few days before departure, once all stops are confirmed, and we notify each recipient in good time." },
-        "9":  { "question": "Can you bring a pet from abroad?",                                         "answer": "Yes, of course. We also handle transports from abroad to Greece, coordinating the entire process." },
-        "10": { "question": "What about crates?",                                                       "answer": "We have crates available in all sizes, including for very large breeds, up to 120 × 120 × 100 cm." },
-        "11": { "question": "How do I make a booking?",                                                 "answer": "Get in touch with us with your animal's details and the recipient's address. We will let you know about the next available trip and the closest stop." }
+        "7":  { "question": "What countries do you support for Transportation?",                        "answer": "We go to the following countries: Italy, Austria, Germany, Netherlands, France." },
+        "8":  { "question": "How long does collecting the animals before the trip take?",               "answer": "Depending on the number of bookings, the collection period can last up to 10–15 days, until the route is full." },
+        "9":  { "question": "When will I know the exact day and time of delivery?",                     "answer": "The schedule is finalised a few days before departure, once all stops are confirmed, and we notify each recipient in good time." },
+        "10": { "question": "Can you bring a pet from abroad?",                                         "answer": "Yes, of course. We also handle transports from abroad to Greece, coordinating the entire process." },
+        "11": { "question": "What about crates?",                                                       "answer": "We have crates available in all sizes, including for very large breeds, up to 120 × 120 × 100 cm." },
+        "12": { "question": "How do I make a booking?",                                                 "answer": "Head to the request page and fill in the trip request form — it only takes a few minutes. Or, if you prefer, just get in touch with us directly and we will help you book your reservation." }
       }
     },
     "group2": {

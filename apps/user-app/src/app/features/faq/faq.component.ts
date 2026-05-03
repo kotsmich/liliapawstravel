@@ -25,7 +25,7 @@ export class FaqComponent implements OnInit, OnDestroy {
   private readonly jsonLd = inject(JsonLdService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly group1Items: FaqItem[] = Array.from({ length: 12 }, (_, i) => ({
+  readonly group1Items: FaqItem[] = Array.from({ length: 13 }, (_, i) => ({
     questionKey: `faq.group1.items.${i}.question`,
     answerKey: `faq.group1.items.${i}.answer`,
     value: `g1-${i}`,

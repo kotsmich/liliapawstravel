@@ -247,11 +247,12 @@
         "4":  { "question": "Wie werden Abhol- und Lieferort festgelegt?",                              "answer": "Wir haben feste Abhol- und Lieferstopps. Für jedes Tier wählen wir den Stopp, der der Adresse des Absenders oder Empfängers am nächsten liegt." },
         "5":  { "question": "Kann ich eine Abholung oder Lieferung außerhalb der festen Stopps anfordern?", "answer": "In manchen Fällen ja, sofern der Ort auf unserer Route liegt und keinen Umweg verursacht. Immer nach vorheriger Absprache." },
         "6":  { "question": "Wie läuft die Lieferung ab?",                                              "answer": "Die Lieferung erfolgt an bestimmten Punkten, genauso wie die Abholung. Falls es eine Anfrage gibt, die die Route nicht beeinflusst, prüfen wir sie gerne." },
-        "7":  { "question": "Wie lange dauert das Zusammenstellen der Tiere vor der Reise?",            "answer": "Je nach Anzahl der Buchungen kann das Sammeln bis zu 10–15 Tage dauern, bis die Route vollständig ist." },
-        "8":  { "question": "Wann erfahre ich den genauen Tag und die Uhrzeit der Lieferung?",          "answer": "Der Plan wird einige Tage vor der Abfahrt finalisiert, sobald alle Stopps bestätigt sind, und wir informieren jeden Empfänger rechtzeitig." },
-        "9":  { "question": "Können Sie ein Haustier aus dem Ausland bringen?",                         "answer": "Ja, natürlich. Wir übernehmen auch Transporte aus dem Ausland nach Griechenland und koordinieren den gesamten Ablauf." },
-        "10": { "question": "Was ist mit den Transportboxen?",                                          "answer": "Wir haben Boxen in allen Größen verfügbar, auch für sehr große Rassen, bis zu 120 × 120 × 100 cm." },
-        "11": { "question": "Wie kann ich eine Buchung vornehmen?",                                     "answer": "Kontaktieren Sie uns mit den Angaben Ihres Tieres und der Adresse des Empfängers. Wir informieren Sie über die nächste verfügbare Fahrt und den nächstgelegenen Stopp." }
+        "7":  { "question": "In welche Länder fahren Sie für den Transport?",                           "answer": "Wir fahren in folgende Länder: Italien, Österreich, Deutschland, Niederlande, Frankreich." },
+        "8":  { "question": "Wie lange dauert das Zusammenstellen der Tiere vor der Reise?",            "answer": "Je nach Anzahl der Buchungen kann das Sammeln bis zu 10–15 Tage dauern, bis die Route vollständig ist." },
+        "9":  { "question": "Wann erfahre ich den genauen Tag und die Uhrzeit der Lieferung?",          "answer": "Der Plan wird einige Tage vor der Abfahrt finalisiert, sobald alle Stopps bestätigt sind, und wir informieren jeden Empfänger rechtzeitig." },
+        "10": { "question": "Können Sie ein Haustier aus dem Ausland bringen?",                         "answer": "Ja, natürlich. Wir übernehmen auch Transporte aus dem Ausland nach Griechenland und koordinieren den gesamten Ablauf." },
+        "11": { "question": "Was ist mit den Transportboxen?",                                          "answer": "Wir haben Boxen in allen Größen verfügbar, auch für sehr große Rassen, bis zu 120 × 120 × 100 cm." },
+        "12": { "question": "Wie kann ich eine Buchung vornehmen?",                                     "answer": "Besuchen Sie die Anfrageseite und füllen Sie das Transportantragsformular aus — das dauert nur wenige Minuten. Alternativ können Sie uns auch direkt kontaktieren und wir helfen Ihnen bei der Buchung." }
       }
     },
     "group2": {
