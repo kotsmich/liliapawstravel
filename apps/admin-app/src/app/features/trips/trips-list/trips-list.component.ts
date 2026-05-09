@@ -63,7 +63,8 @@ export class TripsListComponent implements OnInit {
   readonly detailHeader = computed(() => {
     const trip = this.detailTrip();
     if (!trip) return '';
-    return `${trip.departureCity} → ${trip.arrivalCity}  ·  ${this.localDate.transform(trip.date)}`;
+    const dogsBooked = trip.totalCapacity - trip.spotsAvailable;
+    return `${trip.departureCity} → ${trip.arrivalCity}  | ${this.localDate.transform(trip.date)}  | Συνολο:  ${dogsBooked} / ${trip.totalCapacity}`;
   });
 
   readonly detailRequests = toSignal(toObservable(this.detailTripId).pipe(
