@@ -9,13 +9,17 @@
   styleClass="trip-detail-dialog dialog-tall"
   (onHide)="onHide()">
 
-  @if (trip()) {
+  @if (loading()) {
+    <div class="dialog-spinner-center">
+      <ui-loading-spinner />
+    </div>
+  } @else if (trip()) {
     <app-trip-dogs-tabs
       [tripId]="trip()?.id ?? null"
       [showAddButton]="true"
       [requests]="requests()"
       (rowClicked)="openDogDetail($event)" />
-    }
+  }
 </p-dialog>
 
 <app-dog-detail-dialog

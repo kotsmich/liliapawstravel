@@ -15,7 +15,7 @@
         <app-dog-requestor-selector [requestors]="requestors()" idx="batch" />
       </div>
     }
-    <p-accordion [multiple]="true" [(value)]="activeAccordionPanels">
+    <p-accordion [multiple]="false" [(value)]="activeAccordionPanels">
       @for (panel of panelForms(); track $index) {
         <p-accordion-panel [value]="$index.toString()">
           <p-accordion-header>

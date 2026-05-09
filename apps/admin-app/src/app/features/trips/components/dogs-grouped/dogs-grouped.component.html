@@ -5,7 +5,7 @@
     <div class="no-groups">{{ emptyMessage() }}</div>
   }
 } @else {
-  <p-accordion [multiple]="true" [value]="expandedKeys()" (valueChange)="onAccordionValueChange($event)">
+  <p-accordion [multiple]="false" [value]="openPanel()" (valueChange)="onAccordionValueChange($event)">
     @for (group of groups(); track group.key) {
       <p-accordion-panel [value]="group.key">
         <p-accordion-header>
@@ -24,7 +24,7 @@
           </div>
         </p-accordion-header>
         <p-accordion-content>
-          @if (expandedKeys().includes(group.key)) {
+          @if (openPanel() === group.key) {
             @if (group.dogs.length === 0 && emptyGroupMessage()) {
               <span class="text-color-secondary text-sm">{{ emptyGroupMessage() }}</span>
             } @else {

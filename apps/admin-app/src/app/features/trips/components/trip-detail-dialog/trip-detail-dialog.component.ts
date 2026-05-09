@@ -11,6 +11,7 @@ import { DogActionsService } from '../../trip-form/dog-actions.service';
 import { DogGroupingService } from '../../trip-form/dog-grouping.service';
 import { DogSelectionStore } from '../../trip-form/dog-selection.store';
 import { TripDogsTabsComponent } from '../trip-dogs-tabs/trip-dogs-tabs.component';
+import { LoadingSpinnerComponent } from '@ui/lib/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-trip-detail-dialog',
@@ -21,6 +22,7 @@ import { TripDogsTabsComponent } from '../trip-dogs-tabs/trip-dogs-tabs.componen
     DialogModule,
     DogDetailDialogComponent,
     TripDogsTabsComponent,
+    LoadingSpinnerComponent,
   ],
   templateUrl: './trip-detail-dialog.component.html',
   styleUrls: ['./trip-detail-dialog.component.scss'],
@@ -29,6 +31,7 @@ export class TripDetailDialogComponent extends DetailDialogBase {
   readonly dogManager = inject(DogManagerService);
 
   readonly header = input('');
+  readonly loading = input(false);
   readonly trip = signal<Trip | null>(null);
 
   @Input('trip') set tripInput(value: Trip | null) {

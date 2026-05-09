@@ -32,9 +32,9 @@ export class DogsByGroupComponent {
   readonly selectionChange = output<{ dogs: (Dog & { _idx: number })[]; groupKey: string }>();
   readonly rowClicked = output<Dog>();
 
-  readonly expandedKeys = signal<string[]>([]);
+  readonly openPanel = signal<string | null>(null);
 
   onAccordionValueChange(value: unknown): void {
-    this.expandedKeys.set(Array.isArray(value) ? value.map(String) : []);
+    this.openPanel.set(value != null ? String(value) : null);
   }
 }

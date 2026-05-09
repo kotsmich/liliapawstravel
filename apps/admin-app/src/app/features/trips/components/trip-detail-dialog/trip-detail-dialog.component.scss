@@ -1,3 +1,18 @@
+.dialog-spinner-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 300px;
+}
+
+.dialog-spinner-center {
+  --p-progressspinner-color-1: var(--p-primary-color);
+  --p-progressspinner-color-2: var(--p-primary-color);
+  --p-progressspinner-color-3: var(--p-primary-color);
+  --p-progressspinner-color-4: var(--p-primary-color);
+}
+
 :host ::ng-deep .trip-detail-dialog {
   > .p-dialog-header {
     padding: 0.25rem 0.75rem;
