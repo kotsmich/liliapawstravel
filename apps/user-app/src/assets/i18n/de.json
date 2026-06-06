@@ -40,10 +40,7 @@
     "passengersTag": "Unsere Passagiere",
     "title": "Pelzige Reisende, die wir liebten",
     "alt": {
-      "rescuedDog": "Geretteter Hund",
-      "onTransport": "Hund auf Transport",
-      "happyDog": "Glücklicher Hund",
-      "portrait": "Hundeporträt"
+      "passenger": "Unser pelziger Passagier"
     }
   },
   "about": {
@@ -401,5 +398,17 @@
     "heading": "Diese Seite konnten wir nicht finden",
     "body": "Der Link ist möglicherweise defekt oder die Seite wurde verschoben. Wir bringen Sie zurück auf den richtigen Weg.",
     "backHome": "Zurück zur Startseite"
+  },
+  "vanTracking": {
+    "pageTitle": "Van verfolgen",
+    "codeLabel": "Tracking-Code",
+    "codePlaceholder": "Geben Sie Ihren 6-stelligen Code ein",
+    "submit": "Verfolgen",
+    "invalidCode": "Code nicht gefunden oder die Reise ist derzeit nicht aktiv.",
+    "networkError": "Verbindung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "waitingForLocation": "Warte auf erste Standortaktualisierung…",
+    "lastUpdated": "Zuletzt aktualisiert",
+    "connectionLost": "Live-Verbindung unterbrochen — Wiederverbindung…",
+    "tryAgain": "Anderen Code versuchen"
   }
 }

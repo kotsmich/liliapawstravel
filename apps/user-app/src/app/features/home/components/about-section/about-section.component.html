@@ -29,40 +29,33 @@
       <a class="about__cta" [routerLink]="linkService.commands('/about')">{{ 'about.learnMore' | transloco }}</a>
     </div>
 
-    <!-- Photo slider column -->
-    <div class="slider" aria-label="Photo slideshow">
-      <div class="slider__viewport">
-        @for (photo of photos; track $index; let i = $index) {
-          <img
-            class="slider__img"
-            [class.active]="i === currentIndex()"
-            [ngSrc]="photo"
-            [alt]="'Photo ' + (i + 1)"
-            fill
-            sizes="(max-width: 900px) 100vw, 50vw"
-          />
-        }
-        <div class="slider__counter" aria-live="polite" aria-atomic="true">
-          {{ currentIndex() + 1 }} / {{ photos.length }}
-        </div>
-      </div>
-
-      <div class="slider__nav">
-        <button class="slider__btn" type="button" (click)="prev()" aria-label="Previous photo">&#8249;</button>
-        <div class="slider__dots" role="tablist" aria-label="Slide navigation">
+    <!-- Photo album column -->
+    <div class="album" aria-label="Photo slideshow">
+      <span class="album__counter" aria-live="polite" aria-atomic="true">
+        {{ pad(currentIndex() + 1) }} / {{ pad(photos.length) }}
+      </span>
+      <div class="album__frame">
+        <div class="album__card">
           @for (photo of photos; track $index; let i = $index) {
-            <button
-              class="slider__dot"
-              type="button"
-              role="tab"
+            <img
+              class="album__img"
               [class.active]="i === currentIndex()"
-              (click)="goTo(i)"
-              [attr.aria-label]="'Go to slide ' + (i + 1)"
-              [attr.aria-selected]="i === currentIndex()"
-            ></button>
+              [ngSrc]="photo"
+              [alt]="'Photo ' + (i + 1)"
+              fill
+              sizes="(max-width: 900px) 100vw, 50vw"
+            />
           }
         </div>
-        <button class="slider__btn" type="button" (click)="next()" aria-label="Next photo">&#8250;</button>
+      </div>
+      <div class="album__controls">
+        <div class="album__progress" aria-hidden="true">
+          <span class="album__progress-fill" [style.width.%]="(currentIndex() + 1) / photos.length * 100"></span>
+        </div>
+        <div class="album__nav">
+          <button class="album__btn" type="button" (click)="prev()" aria-label="Previous photo">&#8249;</button>
+          <button class="album__btn album__btn--primary" type="button" (click)="next()" aria-label="Next photo">&#8250;</button>
+        </div>
       </div>
     </div>
 
@@ -75,39 +68,33 @@
 <section class="about about--fleet" aria-label="Our fleet">
   <div class="about__container about__container--reversed">
 
-    <!-- Photo slider column (left) -->
-    <div class="slider" aria-label="Fleet slideshow">
-      <div class="slider__viewport">
-        @for (photo of fleetPhotos; track $index; let i = $index) {
-          <img
-            class="slider__img"
-            [class.active]="i === fleetIndex()"
-            [ngSrc]="photo"
-            [alt]="'Fleet photo ' + (i + 1)"
-            fill
-            sizes="(max-width: 900px) 100vw, 50vw"
-          />
-        }
-        <div class="slider__counter" aria-live="polite" aria-atomic="true">
-          {{ fleetIndex() + 1 }} / {{ fleetPhotos.length }}
-        </div>
-      </div>
-      <div class="slider__nav">
-        <button class="slider__btn" type="button" (click)="fleetPrev()" aria-label="Previous photo">&#8249;</button>
-        <div class="slider__dots" role="tablist" aria-label="Slide navigation">
+    <!-- Photo album column (left) -->
+    <div class="album" aria-label="Fleet slideshow">
+      <span class="album__counter" aria-live="polite" aria-atomic="true">
+        {{ pad(fleetIndex() + 1) }} / {{ pad(fleetPhotos.length) }}
+      </span>
+      <div class="album__frame">
+        <div class="album__card">
           @for (photo of fleetPhotos; track $index; let i = $index) {
-            <button
-              class="slider__dot"
-              type="button"
-              role="tab"
+            <img
+              class="album__img"
               [class.active]="i === fleetIndex()"
-              (click)="fleetGoTo(i)"
-              [attr.aria-label]="'Go to slide ' + (i + 1)"
-              [attr.aria-selected]="i === fleetIndex()"
-            ></button>
+              [ngSrc]="photo"
+              [alt]="'Fleet photo ' + (i + 1)"
+              fill
+              sizes="(max-width: 900px) 100vw, 50vw"
+            />
           }
         </div>
-        <button class="slider__btn" type="button" (click)="fleetNext()" aria-label="Next photo">&#8250;</button>
+      </div>
+      <div class="album__controls">
+        <div class="album__progress" aria-hidden="true">
+          <span class="album__progress-fill" [style.width.%]="(fleetIndex() + 1) / fleetPhotos.length * 100"></span>
+        </div>
+        <div class="album__nav">
+          <button class="album__btn" type="button" (click)="fleetPrev()" aria-label="Previous photo">&#8249;</button>
+          <button class="album__btn album__btn--primary" type="button" (click)="fleetNext()" aria-label="Next photo">&#8250;</button>
+        </div>
       </div>
     </div>
 
@@ -170,12 +157,34 @@
       <span class="eyebrow">{{ 'gallery.passengersTag' | transloco }}</span>
       <h2>{{ 'gallery.title' | transloco }}</h2>
     </div>
-    <div class="gallery__grid">
-      @for (img of galleryImages; track img.src; let i = $index) {
-        <div class="gallery__item" [attr.data-index]="i">
-          <img [ngSrc]="img.src" [alt]="img.altKey | transloco" fill sizes="(max-width: 600px) 50vw, 25vw" />
-          <div class="gallery__overlay" aria-hidden="true">
-            <span class="gallery__overlay-icon">🐾</span>
+    <div class="gallery__slider" aria-label="Gallery slideshow">
+      <!-- Only the active group's grid is rendered, so extra groups cost nothing -->
+      <div class="gallery__stage">
+        @for (slide of gallerySlides; track $index; let s = $index) {
+          @if (s === galleryIndex()) {
+            <div
+              class="gallery__grid"
+              role="group"
+              [attr.aria-label]="'Group ' + (s + 1) + ' of ' + gallerySlides.length"
+            >
+              @for (src of slide; track src) {
+                <div class="gallery__item">
+                  <img [ngSrc]="src" [alt]="'gallery.alt.passenger' | transloco" fill sizes="(max-width: 600px) 50vw, 25vw" />
+                </div>
+              }
+            </div>
+          }
+        }
+      </div>
+
+      @if (gallerySlides.length > 1) {
+        <div class="album__controls gallery__controls">
+          <div class="album__progress" aria-hidden="true">
+            <span class="album__progress-fill" [style.width.%]="(galleryIndex() + 1) / gallerySlides.length * 100"></span>
+          </div>
+          <div class="album__nav">
+            <button class="album__btn" type="button" (click)="galleryPrev()" aria-label="Previous group">&#8249;</button>
+            <button class="album__btn album__btn--primary" type="button" (click)="galleryNext()" aria-label="Next group">&#8250;</button>
           </div>
         </div>
       }

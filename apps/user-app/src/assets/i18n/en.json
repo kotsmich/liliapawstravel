@@ -40,10 +40,7 @@
     "passengersTag": "Our Passengers",
     "title": "Furry travellers we've loved",
     "alt": {
-      "rescuedDog": "Rescued dog",
-      "onTransport": "Dog on transport",
-      "happyDog": "Happy dog",
-      "portrait": "Dog portrait"
+      "passenger": "Our furry passenger"
     }
   },
   "about": {
@@ -401,5 +398,17 @@
     "heading": "We couldn't find that page",
     "body": "The link may be broken or the page may have moved. Let's get you back on track.",
     "backHome": "Back to home"
+  },
+  "vanTracking": {
+    "pageTitle": "Track your van",
+    "codeLabel": "Tracking code",
+    "codePlaceholder": "Enter your 6-character code",
+    "submit": "Track",
+    "invalidCode": "Code not found or trip is not currently active.",
+    "networkError": "Could not connect. Please try again.",
+    "waitingForLocation": "Waiting for the first location update…",
+    "lastUpdated": "Last updated",
+    "connectionLost": "Live connection lost — retrying…",
+    "tryAgain": "Try a different code"
   }
 }

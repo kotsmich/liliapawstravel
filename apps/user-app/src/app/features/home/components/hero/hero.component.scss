@@ -46,14 +46,17 @@
   transform-origin: center center;
 }
 
-/* Gradient overlays */
+/* Gradient overlays (decorative — must not swallow pointer events) */
+.hero__gradient-bottom,
+.hero__gradient-left { pointer-events: none; }
+
 .hero__gradient-bottom {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  height: 65%;
+  height: 60%;
   background: linear-gradient(to top,
-    rgba(15, 10, 5, 0.88) 0%,
-    rgba(15, 10, 5, 0.55) 50%,
+    rgba(15, 10, 5, 0.6) 0%,
+    rgba(15, 10, 5, 0.25) 55%,
     transparent 100%
   );
   z-index: 1;
@@ -63,9 +66,9 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(105deg,
-    rgba(15, 10, 5, 0.6) 0%,
-    rgba(15, 10, 5, 0.25) 55%,
-    transparent 100%
+    rgba(15, 10, 5, 0.55) 0%,
+    rgba(15, 10, 5, 0.15) 45%,
+    transparent 70%
   );
   z-index: 1;
 }

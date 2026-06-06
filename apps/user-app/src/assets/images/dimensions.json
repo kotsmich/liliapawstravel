@@ -1,122 +1,30 @@
 {
-  "about-hero-1.webp": {
-    "width": 1830,
-    "height": 2728
-  },
-  "about-hero-2.webp": {
-    "width": 1546,
-    "height": 2032
-  },
-  "about-hero-3.webp": {
-    "width": 1920,
-    "height": 1288
-  },
-  "about-hero-4.webp": {
-    "width": 1830,
-    "height": 2728
-  },
-  "contact-hero.webp": {
+  "who-1.webp": {
     "width": 1536,
     "height": 2048
   },
-  "cta-bg.webp": {
-    "width": 1600,
-    "height": 1073
-  },
-  "fleet-van.webp": {
-    "width": 1024,
-    "height": 1536
-  },
-  "founder.webp": {
-    "width": 828,
-    "height": 1792
-  },
-  "gallery-1.webp": {
-    "width": 1508,
-    "height": 2084
-  },
-  "gallery-2.webp": {
-    "width": 1572,
-    "height": 2000
-  },
-  "gallery-3.webp": {
-    "width": 1438,
-    "height": 2184
-  },
-  "gallery-4.webp": {
+  "who-2.webp": {
     "width": 1536,
     "height": 2048
   },
-  "hero-2.webp": {
-    "width": 1920,
-    "height": 1288
-  },
-  "hero-3.webp": {
+  "who-3.webp": {
     "width": 1536,
     "height": 2048
   },
-  "hero-4.webp": {
-    "width": 1920,
-    "height": 1440
-  },
-  "how-bg.webp": {
-    "width": 1200,
-    "height": 1600
-  },
-  "pano-1.webp": {
-    "width": 2400,
-    "height": 1200
-  },
-  "pano-2.webp": {
-    "width": 2400,
-    "height": 1200
-  },
-  "photo-1.webp": {
+  "who-4.webp": {
     "width": 1600,
     "height": 2844
   },
-  "photo-2.webp": {
+  "who-5.webp": {
     "width": 1600,
     "height": 2844
   },
-  "photo-3.webp": {
+  "who-6.webp": {
     "width": 1600,
-    "height": 2844
+    "height": 2400
   },
-  "photo-4.webp": {
-    "width": 827,
-    "height": 1789
-  },
-  "request-hero.webp": {
+  "who-7.webp": {
     "width": 1600,
-    "height": 1073
-  },
-  "story-1.webp": {
-    "width": 688,
-    "height": 1178
-  },
-  "story-2.webp": {
-    "width": 1536,
-    "height": 2048
-  },
-  "story-3.webp": {
-    "width": 1200,
-    "height": 1600
-  },
-  "story-4.webp": {
-    "width": 1536,
-    "height": 2048
-  },
-  "story-5.webp": {
-    "width": 1600,
-    "height": 1073
-  },
-  "van-daylight.webp": {
-    "width": 1024,
-    "height": 1536
-  },
-  "van.webp": {
-    "width": 1024,
-    "height": 1536
+    "height": 2400
   }
 }

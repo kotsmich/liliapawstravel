@@ -1,29 +1,8 @@
 <section class="hero" aria-label="Hero banner">
 
-  <!-- ── Background Slider ── -->
+  <!-- ── Animated physics backdrop ── -->
   <div class="hero__slides" aria-hidden="true">
-    @for (slide of slides; track $index; let i = $index) {
-      <div class="hero__slide" [class.active]="i === currentSlide()">
-        @if (i === 0) {
-          <img
-            class="hero__bg"
-            [ngSrc]="slide.image"
-            [alt]="slide.captionKey | transloco"
-            fill
-            priority
-            sizes="100vw"
-          />
-        } @else {
-          <img
-            class="hero__bg"
-            [ngSrc]="slide.image"
-            [alt]="slide.captionKey | transloco"
-            fill
-            sizes="100vw"
-          />
-        }
-      </div>
-    }
+    <app-physics-tiles [images]="tileImages" />
     <!-- Gradient overlays -->
     <div class="hero__gradient-bottom"></div>
     <div class="hero__gradient-left"></div>
@@ -49,20 +28,6 @@
         <button class="btn-outline-light" type="button" (click)="contactClicked.emit()">
           {{ 'hero.getInTouch' | transloco }}
         </button>
-      </div>
-
-      <div class="hero__dots" role="tablist" aria-label="Slide navigation">
-        @for (slide of slides; track $index; let i = $index) {
-          <button
-            class="hero__dot"
-            type="button"
-            role="tab"
-            [class.active]="i === currentSlide()"
-            (click)="goTo(i)"
-            [attr.aria-label]="'Slide ' + (i + 1)"
-            [attr.aria-selected]="i === currentSlide()"
-          ></button>
-        }
       </div>
     </div>
   </div>
