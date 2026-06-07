@@ -47,8 +47,24 @@
 }
 
 /* Gradient overlays (decorative — must not swallow pointer events) */
+.hero__gradient-top,
 .hero__gradient-bottom,
 .hero__gradient-left { pointer-events: none; }
+
+/* Top scrim — darkens behind the transparent navbar so its white text stays
+   legible over the bright tile collage. Fixed height (not %) keeps it tight to
+   the 72px bar regardless of hero height. */
+.hero__gradient-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 200px;
+  background: linear-gradient(to bottom,
+    rgba(15, 10, 5, 0.6) 0%,
+    rgba(15, 10, 5, 0.28) 55%,
+    transparent 100%
+  );
+  z-index: 1;
+}
 
 .hero__gradient-bottom {
   position: absolute;
