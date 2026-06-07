@@ -34,4 +34,7 @@ export const TILE_IMAGES: string[] = [
   'assets/images/tiles/tile-31.webp',
   'assets/images/tiles/tile-32.webp',
   'assets/images/tiles/tile-33.webp',
+  'assets/images/tiles/tile-34.webp',
+  'assets/images/tiles/tile-35.webp',
+  'assets/images/tiles/tile-36.webp',
 ];

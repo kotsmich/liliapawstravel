@@ -17,13 +17,34 @@ const TILE_WIDTH_RATIO = 1 / 4.2;
 const TILE_MIN = 200;
 const TILE_MAX = 380;
 
-/** Depth planes: 0 = farthest (small/slow/dim), 1 = nearest (large/fast/bright). */
+/** Depth planes: 0 = farthest (small/slow), 1 = nearest (large/fast). */
 const SIZE_FAR = 0.58;
 const SIZE_NEAR = 1.16;
 const SPEED_FAR = 0.5;
 const SPEED_NEAR = 1.3;
-const ALPHA_FAR = 0.5;
-const ALPHA_NEAR = 1.0;
+
+/**
+ * Resting opacity — the dimmed state a tile sits at between focus pulls. Every
+ * tile still swells to a full 100% on its own pulse (see CLARITY_* below); this
+ * is only how clear it is the rest of the time.
+ */
+const REST_FAR = 0.42;
+const REST_NEAR = 0.58;
+
+/**
+ * Focus pull: a slow travelling spotlight of clarity. Each tile ramps from its
+ * resting opacity up to a crisp 100%, *holds* there for a beat, then eases back
+ * down and sits dark for the rest of the cycle. FREQ sets how often (smaller =
+ * slower, ~12.5s here). HOLD is the fraction of the cycle spent at full clarity
+ * and RAMP the fraction easing in/out each side — keep HOLD small so only a tile
+ * or two is ever at full at once. Phases are golden-ratio spread across tiles,
+ * so the clear moments never bunch up — every photo gets its turn, in turn.
+ */
+const CLARITY_FREQ = 0.01;
+const CLARITY_HOLD = 0.14;
+const CLARITY_RAMP = 0.12;
+
+const TWO_PI = Math.PI * 2;
 
 /** Warm peach accent (matches the hero title <em>) used to tint the drop shadow. */
 const SHADOW_TINT = 'rgba(60, 35, 20, 0.42)';
@@ -34,6 +55,20 @@ const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
 const smoothstep = (edge0: number, edge1: number, x: number): number => {
   const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0)));
   return t * t * (3 - 2 * t);
+};
+
+/**
+ * Trapezoidal focus pulse over a cycle position `p` in [0,1): ease up over RAMP,
+ * hold at full for HOLD, ease down over RAMP, then sit dark for the remainder.
+ * The flat top is what lets a clear tile linger instead of just flashing past.
+ */
+const focusPulse = (p: number): number => {
+  const holdEnd = CLARITY_RAMP + CLARITY_HOLD;
+  const downEnd = holdEnd + CLARITY_RAMP;
+  if (p < CLARITY_RAMP) return smoothstep(0, CLARITY_RAMP, p);
+  if (p < holdEnd) return 1;
+  if (p < downEnd) return 1 - smoothstep(holdEnd, downEnd, p);
+  return 0;
 };
 
 interface Tile {
@@ -47,12 +82,14 @@ interface Tile {
   w: number;
   h: number;
   r: number;
-  /** Depth plane in [0,1]; drives size, parallax speed and brightness. */
+  /** Depth plane in [0,1]; drives size and parallax speed. */
   depth: number;
   /** Parallax multiplier applied to the shared travel clock. */
   speedMul: number;
-  /** Resting opacity for this depth (before edge fade). */
-  baseAlpha: number;
+  /** Dimmed opacity between focus pulls (before edge fade). */
+  restAlpha: number;
+  /** Phase of this tile's focus pull, spread so peaks never bunch up. */
+  clarityPhase: number;
   /** Soft drop-shadow blur / vertical offset, scaled by depth. */
   shadowBlur: number;
   shadowOffset: number;
@@ -186,7 +223,7 @@ export class HeroTilesComponent {
 
       const colEdge = this.longEdge * lerp(SIZE_FAR, SIZE_NEAR, depth);
       const speedMul = lerp(SPEED_FAR, SPEED_NEAR, depth);
-      const baseAlpha = lerp(ALPHA_FAR, ALPHA_NEAR, depth);
+      const restAlpha = lerp(REST_FAR, REST_NEAR, depth);
       const shadowBlur = lerp(10, 30, depth);
       const shadowOffset = lerp(4, 14, depth);
       const swayAmp = lerp(6, 20, depth);
@@ -208,8 +245,9 @@ export class HeroTilesComponent {
         const scale = colEdge / Math.max(img.naturalWidth || 1, img.naturalHeight || 1);
         const w = Math.round((img.naturalWidth || 1) * scale);
         const h = Math.round((img.naturalHeight || 1) * scale);
-        // Spread the per-tile motion phases with another golden-ratio walk so no
-        // two tiles sway, wobble or breathe in lockstep.
+        // Spread the per-tile phases with a golden-ratio walk so no two tiles
+        // pulse, sway, wobble or breathe in lockstep. The base walk (`g % 1`)
+        // drives the focus pull, so its peaks land evenly across the whole field.
         const g = tileIdx * 0.6180339887;
         tiles.push({
           img,
@@ -221,14 +259,15 @@ export class HeroTilesComponent {
           r: Math.min(w, h) * 0.14,
           depth,
           speedMul,
-          baseAlpha,
+          restAlpha,
+          clarityPhase: (g % 1) * Math.PI * 2,
           shadowBlur,
           shadowOffset,
           swayAmp,
-          swayPhase: (g % 1) * Math.PI * 2,
+          swayPhase: ((g * 1.7) % 1) * Math.PI * 2,
           wobbleAmp,
-          wobblePhase: ((g * 1.7) % 1) * Math.PI * 2,
-          breathePhase: ((g * 2.3) % 1) * Math.PI * 2,
+          wobblePhase: ((g * 2.3) % 1) * Math.PI * 2,
+          breathePhase: ((g * 3.1) % 1) * Math.PI * 2,
         });
         tileIdx++;
       }
@@ -270,13 +309,20 @@ export class HeroTilesComponent {
         (1 - smoothstep(height - band * 0.6, height + band * 0.35, y));
       if (fade <= 0.001) continue;
 
+      // Focus pull: ramp up, hold at a full 100%, ramp down, then rest dark.
+      // The hold lets each clear tile linger; spread phases keep peaks separated.
+      const p = (((clock * CLARITY_FREQ + t.clarityPhase) / TWO_PI) % 1 + 1) % 1;
+      const clarity = focusPulse(p);
+      const alpha = lerp(t.restAlpha, 1, clarity) * fade;
+
       // Floating life: gentle horizontal sway, tiny rotation wobble, slow breath.
+      // The focused tile also lifts a touch (scale) so it reads as pulled into focus.
       const sway = Math.sin(clock * 0.018 + t.swayPhase) * t.swayAmp;
       const wobble = Math.sin(clock * 0.02 + t.wobblePhase) * t.wobbleAmp;
-      const breathe = 1 + Math.sin(clock * 0.015 + t.breathePhase) * 0.02;
+      const breathe = 1 + Math.sin(clock * 0.015 + t.breathePhase) * 0.02 + clarity * 0.06;
 
       ctx.save();
-      ctx.globalAlpha = t.baseAlpha * fade;
+      ctx.globalAlpha = alpha;
       ctx.translate(t.x + sway, y);
       ctx.rotate(wobble);
       ctx.scale(breathe, breathe);
@@ -284,11 +330,11 @@ export class HeroTilesComponent {
       const hw = t.w / 2;
       const hh = t.h / 2;
 
-      // White backing card + soft, warm-tinted drop shadow.
+      // White backing card + soft, warm-tinted drop shadow (deepened in focus).
       this.roundedPath(ctx, -hw, -hh, t.w, t.h, t.r);
       ctx.shadowColor = SHADOW_TINT;
-      ctx.shadowBlur = t.shadowBlur;
-      ctx.shadowOffsetY = t.shadowOffset;
+      ctx.shadowBlur = t.shadowBlur * (1 + clarity * 0.6);
+      ctx.shadowOffsetY = t.shadowOffset * (1 + clarity * 0.4);
       ctx.fillStyle = '#ffffff';
       ctx.fill();
       ctx.shadowColor = 'transparent';
@@ -299,9 +345,12 @@ export class HeroTilesComponent {
       ctx.clip();
       ctx.drawImage(t.img, -hw, -hh, t.w, t.h);
 
+      // The glossy veil thins out as a tile pulls into focus, so at the peak the
+      // photo itself is clean and unobstructed — properly 100% clear.
+      const veil = 1 - clarity * 0.85;
       const sheen = ctx.createLinearGradient(-hw, -hh, hw, hh);
-      sheen.addColorStop(0, 'rgba(255, 255, 255, 0.22)');
-      sheen.addColorStop(0.4, 'rgba(255, 255, 255, 0.04)');
+      sheen.addColorStop(0, `rgba(255, 255, 255, ${0.22 * veil})`);
+      sheen.addColorStop(0.4, `rgba(255, 255, 255, ${0.04 * veil})`);
       sheen.addColorStop(1, 'rgba(255, 255, 255, 0)');
       ctx.fillStyle = sheen;
       ctx.fillRect(-hw, -hh, t.w, t.h);
