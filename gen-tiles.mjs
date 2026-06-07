@@ -1,4 +1,4 @@
-// Generate hero physics-tile thumbnails + a manifest from collage-src.
+// Generate hero tile thumbnails + a manifest from collage-src.
 //
 // Drop any number of photos into ./collage-src, then run:
 //   node gen-tiles.mjs
@@ -17,7 +17,7 @@ const SRC = join(__dirname, 'collage-src');
 const TILES_DIR = join(__dirname, 'apps/user-app/src/assets/images/tiles');
 const MANIFEST = join(
   __dirname,
-  'apps/user-app/src/app/features/home/components/hero/physics-tiles/tiles.manifest.ts',
+  'apps/user-app/src/app/features/home/components/hero/hero-tiles/tiles.manifest.ts',
 );
 const LONG_EDGE = 300; // px — thumbnails stay small for fast texture loading
 const IMG_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp', '.avif', '.tif', '.tiff']);
