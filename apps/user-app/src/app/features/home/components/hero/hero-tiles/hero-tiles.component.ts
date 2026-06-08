@@ -32,17 +32,18 @@ const REST_FAR = 0.42;
 const REST_NEAR = 0.58;
 
 /**
- * Focus pull: a slow travelling spotlight of clarity. Each tile ramps from its
- * resting opacity up to a crisp 100%, *holds* there for a beat, then eases back
- * down and sits dark for the rest of the cycle. FREQ sets how often (smaller =
- * slower, ~12.5s here). HOLD is the fraction of the cycle spent at full clarity
- * and RAMP the fraction easing in/out each side — keep HOLD small so only a tile
- * or two is ever at full at once. Phases are golden-ratio spread across tiles,
- * so the clear moments never bunch up — every photo gets its turn, in turn.
+ * Clarity rhythm: each tile sits fully clear (100%) for most of its cycle, then
+ * briefly dips to its dim resting opacity for a few seconds before swelling back
+ * — so clarity dominates and persists, and the dim state is the rare, passing
+ * event. FREQ sets the cycle length (smaller = slower, ~12.5s here). DIM_HOLD is
+ * the fraction of the cycle held dim and RAMP the fraction easing in/out each
+ * side — keep DIM_HOLD small so only a tile or two is ever dimming at once.
+ * Phases are golden-ratio spread across tiles, so the dim dips ripple through
+ * the field one or two at a time rather than all fading together.
  */
 const CLARITY_FREQ = 0.01;
-const CLARITY_HOLD = 0.14;
-const CLARITY_RAMP = 0.12;
+const CLARITY_DIM_HOLD = 0.14;
+const CLARITY_RAMP = 0.09;
 
 const TWO_PI = Math.PI * 2;
 
@@ -58,17 +59,18 @@ const smoothstep = (edge0: number, edge1: number, x: number): number => {
 };
 
 /**
- * Trapezoidal focus pulse over a cycle position `p` in [0,1): ease up over RAMP,
- * hold at full for HOLD, ease down over RAMP, then sit dark for the remainder.
- * The flat top is what lets a clear tile linger instead of just flashing past.
+ * Clarity over a cycle position `p` in [0,1): full clarity (1) dominates, broken
+ * by one brief dim dip — ease down over RAMP, hold dim for DIM_HOLD, ease back
+ * up over RAMP, then stay clear for the rest. The long flat 1 is what makes
+ * clarity persist; the trough is the short, passing low-opacity moment.
  */
 const focusPulse = (p: number): number => {
-  const holdEnd = CLARITY_RAMP + CLARITY_HOLD;
-  const downEnd = holdEnd + CLARITY_RAMP;
-  if (p < CLARITY_RAMP) return smoothstep(0, CLARITY_RAMP, p);
-  if (p < holdEnd) return 1;
-  if (p < downEnd) return 1 - smoothstep(holdEnd, downEnd, p);
-  return 0;
+  const dimEnd = CLARITY_RAMP + CLARITY_DIM_HOLD;
+  const upEnd = dimEnd + CLARITY_RAMP;
+  if (p < CLARITY_RAMP) return 1 - smoothstep(0, CLARITY_RAMP, p);
+  if (p < dimEnd) return 0;
+  if (p < upEnd) return smoothstep(dimEnd, upEnd, p);
+  return 1;
 };
 
 interface Tile {
