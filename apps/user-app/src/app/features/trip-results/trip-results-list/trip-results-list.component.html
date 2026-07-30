@@ -94,7 +94,7 @@
             </div>
 
             <div class="result-card__body">
-              <span class="result-card__date">{{ card.date | date:'MMMM y' }}</span>
+              <span class="result-card__date">{{ card.date | date:'d MMMM y' }}</span>
               <a class="result-card__link" [routerLink]="linkService.commands('/results/' + card.id)">
                 <span class="result-card__route">{{ card.route }}</span>
               </a>
