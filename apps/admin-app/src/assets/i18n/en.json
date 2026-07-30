@@ -2,6 +2,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "trips": "Trips",
+    "tripResults": "Trip Results",
     "requests": "Requests",
     "messages": "Messages"
   },
@@ -22,6 +23,36 @@
     "signingIn": "Signing in...",
     "emailRequired": "Valid email required.",
     "passwordMinLength": "Min 6 characters."
+  },
+  "tripResults": {
+    "title": "Trip Results",
+    "subtitle": "Completed trips published as photo galleries on the public site.",
+    "addResult": "Add Trip Result",
+    "editResult": "Edit Trip Result",
+    "loading": "Loading trip results...",
+    "empty": "No trip results published yet.",
+    "date": "Trip Date",
+    "departureCity": "Departure City",
+    "arrivalCity": "Arrival City",
+    "required": "This field is required.",
+    "photos": "Photos",
+    "photosPicked": "{{ count }} photo(s) selected",
+    "managePhotos": "Photos",
+    "uploadPhotos": "Upload Photos",
+    "uploading": "Uploading photos...",
+    "noPhotos": "No photos",
+    "noPhotosYet": "No photos in this gallery yet. Upload a few to publish it.",
+    "photoAlt": "Trip photo",
+    "confirm": {
+      "delete": {
+        "header": "Delete Trip Result",
+        "message": "Delete the result for {{ route }} on {{ date }}? All its photos will be removed."
+      },
+      "deletePhoto": {
+        "header": "Delete Photo",
+        "message": "Remove this photo from the gallery? This cannot be undone."
+      }
+    }
   },
   "common": {
     "save": "Save",
@@ -90,6 +121,7 @@
     },
     "noTrips": "No trips found.",
     "noTripScheduled": "No trip scheduled for {{ date }}.",
+    "noUpcomingTrips": "No available trips yet — upcoming trips are still to be scheduled.",
     "selectDateHint": "Select a date on the calendar to see trip details.",
     "loadingTrips": "Loading trips...",
     "tripName": "Trip Name",

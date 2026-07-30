@@ -101,6 +101,9 @@ export class TripRequestComponent {
 
   readonly nextAvailableTrip = toSignal(this.store.select(selectNextAvailableTrip), { initialValue: null });
 
+  /** Nothing bookable from today onwards — schedule not published yet. */
+  readonly noAvailableTrips = computed(() => !this.loading() && !this.nextAvailableTrip());
+
   private readonly dogsStatus = toSignal(this.dogs.statusChanges, { initialValue: this.dogs.status });
   private readonly contactValid = toSignal(
     this.form.statusChanges.pipe(

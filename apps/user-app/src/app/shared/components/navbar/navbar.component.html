@@ -8,6 +8,7 @@
       <li role="none"><a role="menuitem" [routerLink]="linkService.commands('/')" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">{{ 'nav.home' | transloco }}</a></li>
       <li role="none"><a role="menuitem" [routerLink]="linkService.commands('/about')" routerLinkActive="active" (click)="closeMenu()">{{ 'nav.about' | transloco }}</a></li>
       <li role="none"><a role="menuitem" [routerLink]="linkService.commands('/request')" routerLinkActive="active" (click)="closeMenu()">{{ 'nav.requestTransport' | transloco }}</a></li>
+      <li role="none"><a role="menuitem" [routerLink]="linkService.commands('/results')" routerLinkActive="active" (click)="closeMenu()">{{ 'nav.tripResults' | transloco }}</a></li>
       <li role="none"><a role="menuitem" [routerLink]="linkService.commands('/transport-documents')" routerLinkActive="active" (click)="closeMenu()">{{ 'nav.transportDocuments' | transloco }}</a></li>
       <li role="none"><a role="menuitem" [routerLink]="linkService.commands('/faq')" routerLinkActive="active" (click)="closeMenu()">{{ 'nav.faq' | transloco }}</a></li>
       <li role="none"><a role="menuitem" [routerLink]="linkService.commands('/contact')" routerLinkActive="active" (click)="closeMenu()">{{ 'nav.contact' | transloco }}</a></li>

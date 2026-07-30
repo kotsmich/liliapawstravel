@@ -48,6 +48,7 @@ export class ShellComponent implements OnInit {
   navItems = [
     { icon: 'pi pi-th-large', labelKey: 'nav.dashboard', link: '/admin/dashboard' },
     { icon: 'pi pi-car', labelKey: 'nav.trips', link: '/admin/trips' },
+    { icon: 'pi pi-images', labelKey: 'nav.tripResults', link: '/admin/trip-results' },
     { icon: 'pi pi-inbox', labelKey: 'nav.requests', link: '/admin/requests' },
     { icon: 'pi pi-envelope', labelKey: 'nav.messages', link: '/admin/messages' },
   ];

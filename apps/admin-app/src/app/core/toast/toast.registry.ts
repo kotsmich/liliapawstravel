@@ -14,6 +14,13 @@ import {
   updateRequestNoteSuccess, updateRequestNoteFailure,
   addRequestFromSocket,
 } from '@admin/features/requests/store';
+import {
+  addTripResultSuccess, addTripResultFailure,
+  updateTripResultSuccess, updateTripResultFailure,
+  deleteTripResultSuccess, deleteTripResultFailure,
+  uploadTripResultPhotosSuccess, uploadTripResultPhotosFailure,
+  deleteTripResultPhotoSuccess, deleteTripResultPhotoFailure,
+} from '@admin/features/trip-results/store';
 import { deleteMessageSuccess, addMessageFromSocket } from '@admin/features/messages/store';
 import {
   changeEmailSuccess, changeEmailFailure,
@@ -50,6 +57,28 @@ export const TOAST_REGISTRY: Record<string, (action: any) => ToastPayload> = {
   ...register(updateTripFailure,
     ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
   ...register(deleteTripFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
+
+  // Trip results
+  ...register(addTripResultSuccess,
+    () => ({ severity: 'success', summary: 'Saved', detail: 'Trip result published.' })),
+  ...register(updateTripResultSuccess,
+    () => ({ severity: 'success', summary: 'Saved', detail: 'Trip result updated.' })),
+  ...register(deleteTripResultSuccess,
+    () => ({ severity: 'success', summary: 'Deleted', detail: 'Trip result deleted.' })),
+  ...register(uploadTripResultPhotosSuccess,
+    () => ({ severity: 'success', summary: 'Uploaded', detail: 'Photos added to the gallery.' })),
+  ...register(deleteTripResultPhotoSuccess,
+    () => ({ severity: 'info', summary: 'Deleted', detail: 'Photo removed.' })),
+  ...register(addTripResultFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
+  ...register(updateTripResultFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
+  ...register(deleteTripResultFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
+  ...register(uploadTripResultPhotosFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
+  ...register(deleteTripResultPhotoFailure,
     ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
 
   // Dogs

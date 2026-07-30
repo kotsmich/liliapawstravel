@@ -3,9 +3,29 @@
     "home": "Startseite",
     "about": "Über uns",
     "requestTransport": "Transport anfragen",
+    "tripResults": "Reisegalerie",
     "transportDocuments": "Dokumente",
     "faq": "Q & A",
     "contact": "Kontakt"
+  },
+  "tripResults": {
+    "eyebrow": "Abgeschlossene Reisen",
+    "title": "Reisegalerie",
+    "subtitle": "Jede Reise, die wir bisher gemacht haben — in Bildern erzählt. Wählen Sie eine Reise, um die Galerie zu öffnen.",
+    "loading": "Reisen werden geladen...",
+    "emptyTitle": "Noch keine Reisen veröffentlicht",
+    "emptyHint": "Unsere abgeschlossenen Reisen erscheinen hier in Kürze.",
+    "photoCount": "{{ count }} Foto(s)",
+    "viewGallery": "Galerie ansehen",
+    "backToResults": "Alle Reisen",
+    "noPhotosYet": "Die Fotos dieser Reise folgen in Kürze.",
+    "notFound": "Diese Reise wurde nicht gefunden.",
+    "openPhoto": "Foto {{ num }} öffnen",
+    "showPhoto": "Foto {{ num }} anzeigen",
+    "photoViewer": "Fotoansicht",
+    "closeViewer": "Fotoansicht schließen",
+    "previousPhoto": "Vorheriges Foto",
+    "nextPhoto": "Nächstes Foto"
   },
   "aria": {
     "mainNav": "Hauptnavigation",
@@ -116,6 +136,8 @@
     "clickHint": "Klicken Sie auf ein hervorgehobenes Datum, um eine Reise auszuwählen.",
     "nextTripLabel": "Nächste verfügbare Reise",
     "nextTripSpotsLeft": "· {{ count }} Platz/Plätze übrig",
+    "noTripsYetLabel": "Noch keine verfügbaren Reisen",
+    "noTripsYetHint": "Die nächsten Reisetermine werden noch festgelegt. Schauen Sie bald wieder vorbei.",
     "selectedTrip": "Ausgewählte Reise",
     "booked": "{{ percent }}% gebucht",
     "lessThan10": "Weniger als 10 Plätze übrig",
@@ -388,6 +410,11 @@
       "description": "Laden Sie die Einwilligungs- und Genehmigungsformulare für den Hundetransport herunter. Verfügbar in Englisch, Griechisch und Deutsch als PDF oder Word.",
       "imageAlt": "Transportgenehmigungsdokumente — Lilia Paws Travel",
       "breadcrumb": "Transportdokumente"
+    },
+    "results": {
+      "title": "Reisegalerie — Lilia Paws Travel",
+      "description": "Fotos von den Reisen, die Lilia Paws Travel bereits durchgeführt hat. Sehen Sie sich die Galerie jeder Fahrt und die vermittelten Hunde an.",
+      "breadcrumb": "Reisegalerie"
     },
     "notFound": {
       "title": "Seite nicht gefunden — Lilia Paws Travel",

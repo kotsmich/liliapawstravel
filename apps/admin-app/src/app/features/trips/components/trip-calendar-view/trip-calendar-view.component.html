@@ -13,6 +13,13 @@
 
   <!-- Right column: trips for selected date -->
   <div class="trips-list flex flex-column gap-3">
+    @if (noUpcomingTrips()) {
+      <div class="no-upcoming flex align-items-start gap-2">
+        <i class="pi pi-exclamation-triangle"></i>
+        <span>{{ 'trips.noUpcomingTrips' | transloco }}</span>
+      </div>
+    }
+
     @if (selectedDate() && tripsForDate().length > 0) {
       @for (trip of tripsForDate(); track trackByTripId($index, trip)) {
         <app-trip-calendar-card

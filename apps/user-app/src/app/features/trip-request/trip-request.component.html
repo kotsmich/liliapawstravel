@@ -42,6 +42,16 @@
               <i class="pi pi-arrow-right"></i>
             </span>
           </button>
+        } @else if (noAvailableTrips()) {
+          <div class="no-trips-banner">
+            <span class="no-trips-banner__icon">
+              <i class="pi pi-calendar-clock"></i>
+            </span>
+            <span class="no-trips-banner__body">
+              <span class="no-trips-banner__label">{{ 'tripRequest.noTripsYetLabel' | transloco }}</span>
+              <span class="no-trips-banner__info">{{ 'tripRequest.noTripsYetHint' | transloco }}</span>
+            </span>
+          </div>
         }
 
         <ui-trip-calendar

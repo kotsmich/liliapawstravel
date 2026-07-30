@@ -1,0 +1,113 @@
+<div class="page trip-results-page">
+
+  <!-- ══════════════════════════════════════════════════════
+       PAGE HERO
+       ══════════════════════════════════════════════════════ -->
+  <header class="page-intro" [attr.aria-label]="'tripResults.title' | transloco">
+    <div class="page-intro__bg-overlay"></div>
+    <div class="page-intro__inner">
+      <span class="page-eyebrow">{{ 'tripResults.eyebrow' | transloco }}</span>
+      <h1>
+        <img class="page-intro__logo" src="assets/images/paws-logo.webp" alt="" width="56" height="56" />
+        {{ 'tripResults.title' | transloco }}
+      </h1>
+      <p>{{ 'tripResults.subtitle' | transloco }}</p>
+    </div>
+    <div class="page-intro__rule" aria-hidden="true"></div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════
+       RESULTS GRID
+       ══════════════════════════════════════════════════════ -->
+  <section class="results" [attr.aria-label]="'tripResults.title' | transloco">
+    <div class="results__inner">
+
+      @if (showLoader()) {
+        <ui-loading-spinner class="results__status"
+                            [diameter]="48"
+                            [message]="'tripResults.loading' | transloco" />
+      }
+
+      @if (showEmpty()) {
+        <div class="results__empty">
+          <span class="results__empty-icon" aria-hidden="true">📷</span>
+          <h2>{{ 'tripResults.emptyTitle' | transloco }}</h2>
+          <p>{{ 'tripResults.emptyHint' | transloco }}</p>
+        </div>
+      }
+
+      <div class="results__grid">
+        @for (card of cards(); track card.id) {
+          <article class="result-card">
+
+            <!-- Preview carousel: flick through the first few photos without leaving the grid.
+                 Controls sit above the stretched card link, so they must stay outside the <a>. -->
+            <div class="result-card__media">
+              @if (card.previews.length) {
+                @for (photo of card.previews; track photo.id; let i = $index) {
+                  @if (isNearActive(card, i)) {
+                    <img class="result-card__photo"
+                         [class.is-active]="i === activeIndex(card.id)"
+                         [src]="photo.url" [alt]="card.route"
+                         [attr.aria-hidden]="i === activeIndex(card.id) ? null : 'true'"
+                         loading="lazy" decoding="async" />
+                  }
+                }
+              } @else {
+                <span class="result-card__media-empty" aria-hidden="true">🐾</span>
+              }
+
+              <span class="result-card__count">
+                <i class="pi pi-images" aria-hidden="true"></i>
+                {{ 'tripResults.photoCount' | transloco: { count: card.photoCount } }}
+              </span>
+
+              @if (card.previews.length > 1) {
+                <button type="button" class="result-card__nav result-card__nav--prev"
+                        (click)="step(card, -1)"
+                        [attr.aria-label]="'tripResults.previousPhoto' | transloco">
+                  <i class="pi pi-chevron-left" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="result-card__nav result-card__nav--next"
+                        (click)="step(card, 1)"
+                        [attr.aria-label]="'tripResults.nextPhoto' | transloco">
+                  <i class="pi pi-chevron-right" aria-hidden="true"></i>
+                </button>
+
+                <!-- One dot per photo only while they still fit the card; long galleries get a counter. -->
+                @if (card.showDots) {
+                  <span class="result-card__dots">
+                    @for (photo of card.previews; track photo.id; let i = $index) {
+                      <button type="button" class="result-card__dot"
+                              [class.is-active]="i === activeIndex(card.id)"
+                              [attr.aria-current]="i === activeIndex(card.id) ? 'true' : null"
+                              [attr.aria-label]="'tripResults.showPhoto' | transloco: { num: i + 1 }"
+                              (click)="show(card.id, i)"></button>
+                    }
+                  </span>
+                } @else {
+                  <span class="result-card__position" aria-live="polite">
+                    {{ activeIndex(card.id) + 1 }} / {{ card.previews.length }}
+                  </span>
+                }
+              }
+            </div>
+
+            <div class="result-card__body">
+              <span class="result-card__date">{{ card.date | date:'MMMM y' }}</span>
+              <a class="result-card__link" [routerLink]="linkService.commands('/results/' + card.id)">
+                <span class="result-card__route">{{ card.route }}</span>
+              </a>
+              <span class="result-card__cta">
+                {{ 'tripResults.viewGallery' | transloco }}
+                <i class="pi pi-arrow-right" aria-hidden="true"></i>
+              </span>
+            </div>
+          </article>
+        }
+      </div>
+
+    </div>
+  </section>
+
+</div>

@@ -25,6 +25,11 @@ export const APP_ROUTES: Routes = [
           import('./features/trip-request/trip-request.routes').then((m) => m.TRIP_REQUEST_ROUTES),
       },
       {
+        path: 'results',
+        loadChildren: () =>
+          import('./features/trip-results/trip-results.routes').then((m) => m.TRIP_RESULTS_ROUTES),
+      },
+      {
         path: 'transport-documents',
         loadChildren: () =>
           import('./features/transport-documents/transport-documents.routes').then(

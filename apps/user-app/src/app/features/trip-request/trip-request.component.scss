@@ -145,6 +145,56 @@
   }
 }
 
+.no-trips-banner {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  width: 100%;
+  padding: .7rem 1rem;
+  margin-bottom: 1rem;
+  background: #fdf6ef;
+  border: 1.5px dashed #e8cdb4;
+  border-radius: 12px;
+  text-align: left;
+
+  &__icon {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: #f6e5d5;
+    display: flex; align-items: center; justify-content: center;
+    color: #a9673a;
+    font-size: .85rem;
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+  }
+
+  &__label {
+    font-size: .68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: #a9673a;
+  }
+
+  &__info {
+    font-size: .84rem;
+    font-weight: 500;
+    color: #2d2016;
+  }
+
+  @media (max-width: 480px) {
+    padding: .6rem .85rem;
+    &__info { font-size: .8rem; }
+  }
+}
+
 /* ══════════════════════════════════════════
    FORM CARD
    ══════════════════════════════════════════ */

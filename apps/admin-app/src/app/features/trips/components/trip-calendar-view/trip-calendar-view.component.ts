@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, input, output } from '@angular/core';
 import { TranslocoModule } from '@jsverse/transloco';
 import { CardModule } from 'primeng/card';
 import { LocalDatePipe } from '@ui/lib/pipes/local-date.pipe';
@@ -26,6 +26,14 @@ export class TripCalendarViewComponent {
   readonly editTrip = output<Trip>();
   readonly deleteTrip = output<Trip>();
   readonly viewDetails = output<Trip>();
+
+  /** Past trips exist, but nothing is scheduled from today onwards. */
+  readonly noUpcomingTrips = computed(() => {
+    const trips = this.trips();
+    if (trips.length === 0) return false;
+    const todayIso = new Date().toISOString().slice(0, 10);
+    return !trips.some((trip) => trip.date >= todayIso);
+  });
 
   trackByTripId(_: number, trip: Trip): string { return trip.id; }
 

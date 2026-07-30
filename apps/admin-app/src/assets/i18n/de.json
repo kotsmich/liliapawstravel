@@ -2,6 +2,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "trips": "Reisen",
+    "tripResults": "Reise-Ergebnisse",
     "requests": "Anfragen",
     "messages": "Nachrichten"
   },
@@ -22,6 +23,36 @@
     "signingIn": "Anmeldung...",
     "emailRequired": "Gültige E-Mail erforderlich.",
     "passwordMinLength": "Mindestens 6 Zeichen."
+  },
+  "tripResults": {
+    "title": "Reise-Ergebnisse",
+    "subtitle": "Abgeschlossene Reisen, die als Fotogalerien auf der öffentlichen Website erscheinen.",
+    "addResult": "Reise-Ergebnis hinzufügen",
+    "editResult": "Reise-Ergebnis bearbeiten",
+    "loading": "Reise-Ergebnisse werden geladen...",
+    "empty": "Noch keine Reise-Ergebnisse veröffentlicht.",
+    "date": "Reisedatum",
+    "departureCity": "Abfahrtsstadt",
+    "arrivalCity": "Ankunftsstadt",
+    "required": "Dieses Feld ist erforderlich.",
+    "photos": "Fotos",
+    "photosPicked": "{{ count }} Foto(s) ausgewählt",
+    "managePhotos": "Fotos",
+    "uploadPhotos": "Fotos hochladen",
+    "uploading": "Fotos werden hochgeladen...",
+    "noPhotos": "Keine Fotos",
+    "noPhotosYet": "Noch keine Fotos in dieser Galerie. Laden Sie einige hoch, um sie zu veröffentlichen.",
+    "photoAlt": "Reisefoto",
+    "confirm": {
+      "delete": {
+        "header": "Reise-Ergebnis löschen",
+        "message": "Ergebnis für {{ route }} am {{ date }} löschen? Alle zugehörigen Fotos werden entfernt."
+      },
+      "deletePhoto": {
+        "header": "Foto löschen",
+        "message": "Dieses Foto aus der Galerie entfernen? Dies kann nicht rückgängig gemacht werden."
+      }
+    }
   },
   "common": {
     "save": "Speichern",
@@ -90,6 +121,7 @@
     },
     "noTrips": "Keine Reisen gefunden.",
     "noTripScheduled": "Keine Reise für {{ date }} geplant.",
+    "noUpcomingTrips": "Noch keine verfügbaren Reisen — kommende Reisen sind noch festzulegen.",
     "selectDateHint": "Datum im Kalender wählen, um Details anzuzeigen.",
     "loadingTrips": "Reisen laden...",
     "tripName": "Reisename",

@@ -25,7 +25,7 @@ type SupportedLang = (typeof SUPPORTED_LANGS)[number];
 // and must return HTTP 404 — search engines need the status, not just <meta robots>.
 // Keep in sync if a new top-level feature route is added.
 const KNOWN_LANG_CHILDREN: ReadonlySet<string> = new Set([
-  'about', 'contact', 'request', 'transport-documents', 'faq',
+  'about', 'contact', 'request', 'transport-documents', 'faq', 'results',
 ]);
 
 function isSupportedLang(value: string): value is SupportedLang {

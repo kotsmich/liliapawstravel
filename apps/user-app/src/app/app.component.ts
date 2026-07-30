@@ -23,8 +23,13 @@ const ROUTE_TO_SEO_KEY: Record<string, string> = {
   '/request': 'request',
   '/faq': 'faq',
   '/about': 'about',
+  '/results': 'results',
   '/transport-documents': 'transportDocuments',
 };
+
+// Routes whose children are dynamic (e.g. /results/:id) and share the parent's SEO
+// entry — without this they fall through to the wildcard branch and get the 404 title.
+const DYNAMIC_CHILD_PREFIXES = ['/results'];
 
 // Per-route share-card image (filename in /assets/images/). Routes without an
 // entry fall back to the global /assets/og-image.jpg in SeoService.
@@ -106,7 +111,8 @@ export class AppComponent implements OnInit {
   private updateMeta(url: string, lang: string): void {
     const path = stripLangPrefix(url.split('?')[0].split('#')[0]);
     const seoLang: SupportedLang = isSupportedLang(lang) ? lang : DEFAULT_LANG;
-    const seoKey = ROUTE_TO_SEO_KEY[path];
+    const dynamicParent = DYNAMIC_CHILD_PREFIXES.find((prefix) => path.startsWith(`${prefix}/`));
+    const seoKey = ROUTE_TO_SEO_KEY[path] ?? (dynamicParent ? ROUTE_TO_SEO_KEY[dynamicParent] : undefined);
 
     // Unknown path = wildcard 404 route. Apply the noindex SEO so this NavigationEnd
     // pass agrees with NotFoundComponent.ngOnInit and doesn't reset robots to index.

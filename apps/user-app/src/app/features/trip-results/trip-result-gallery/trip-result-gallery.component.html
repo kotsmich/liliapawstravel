@@ -1,0 +1,87 @@
+<div class="page gallery-page">
+
+  <header class="page-intro">
+    <div class="page-intro__bg-overlay"></div>
+    <div class="page-intro__inner">
+      <a class="back-link" [routerLink]="linkService.commands('/results')">
+        <i class="pi pi-arrow-left" aria-hidden="true"></i>
+        {{ 'tripResults.backToResults' | transloco }}
+      </a>
+      @if (result(); as trip) {
+        <span class="page-eyebrow">{{ trip.date | date:'d MMMM y' }}</span>
+        <h1>{{ trip.departureCity }} → {{ trip.arrivalCity }}</h1>
+        <p>{{ 'tripResults.photoCount' | transloco: { count: trip.photoCount } }}</p>
+      } @else {
+        <h1>{{ 'tripResults.title' | transloco }}</h1>
+      }
+    </div>
+    <div class="page-intro__rule" aria-hidden="true"></div>
+  </header>
+
+  <section class="gallery">
+    <div class="gallery__inner">
+
+      @if (showLoader()) {
+        <ui-loading-spinner class="gallery__status"
+                            [diameter]="48"
+                            [message]="'tripResults.loading' | transloco" />
+      }
+
+      @if (showError()) {
+        <div class="gallery__empty">
+          <span aria-hidden="true">🚫</span>
+          <p>{{ 'tripResults.notFound' | transloco }}</p>
+        </div>
+      }
+
+      @if (result(); as trip) {
+        @if (trip.photos.length === 0) {
+          <div class="gallery__empty">
+            <span aria-hidden="true">📷</span>
+            <p>{{ 'tripResults.noPhotosYet' | transloco }}</p>
+          </div>
+        }
+
+        <div class="gallery__grid">
+          @for (photo of trip.photos; track trackById($index, photo); let i = $index) {
+            <button type="button" class="photo-tile"
+                    [attr.aria-label]="'tripResults.openPhoto' | transloco: { num: i + 1 }"
+                    (click)="openLightbox(i)">
+              <img [src]="photo.url"
+                   [alt]="trip.departureCity + ' → ' + trip.arrivalCity"
+                   loading="lazy" decoding="async" />
+            </button>
+          }
+        </div>
+      }
+
+    </div>
+  </section>
+</div>
+
+<!-- Lightbox -->
+@if (lightboxPhoto(); as photo) {
+  <div class="lightbox" role="dialog" aria-modal="true"
+       [attr.aria-label]="'tripResults.photoViewer' | transloco"
+       (click)="closeLightbox()">
+    <button type="button" class="lightbox__close"
+            [attr.aria-label]="'tripResults.closeViewer' | transloco"
+            (click)="closeLightbox()">
+      <i class="pi pi-times" aria-hidden="true"></i>
+    </button>
+
+    <button type="button" class="lightbox__nav lightbox__nav--prev"
+            [attr.aria-label]="'tripResults.previousPhoto' | transloco"
+            (click)="step(-1); $event.stopPropagation()">
+      <i class="pi pi-chevron-left" aria-hidden="true"></i>
+    </button>
+
+    <img class="lightbox__img" [src]="photo.url" alt="" (click)="$event.stopPropagation()" />
+
+    <button type="button" class="lightbox__nav lightbox__nav--next"
+            [attr.aria-label]="'tripResults.nextPhoto' | transloco"
+            (click)="step(1); $event.stopPropagation()">
+      <i class="pi pi-chevron-right" aria-hidden="true"></i>
+    </button>
+  </div>
+}

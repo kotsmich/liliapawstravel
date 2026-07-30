@@ -30,6 +30,10 @@ export const APP_ROUTES: Routes = [
         loadComponent: () => import('./features/trips/trip-form/trip-form.component').then((m) => m.TripFormComponent),
       },
       {
+        path: 'trip-results',
+        loadComponent: () => import('./features/trip-results/trip-results.component').then((m) => m.TripResultsComponent),
+      },
+      {
         path: 'requests',
         loadComponent: () => import('./features/requests/requests-list.component').then((m) => m.RequestsListComponent),
       },

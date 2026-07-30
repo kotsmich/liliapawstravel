@@ -1,0 +1,162 @@
+<div class="results-page flex flex-column gap-4">
+  <p-confirmdialog />
+
+  <div class="page-head flex align-items-center justify-content-between gap-3">
+    <div class="flex flex-column">
+      <h2>{{ 'tripResults.title' | transloco }}</h2>
+      <span class="page-head__sub">{{ 'tripResults.subtitle' | transloco }}</span>
+    </div>
+    <p-button
+      [label]="'tripResults.addResult' | transloco"
+      icon="pi pi-plus"
+      (onClick)="openCreate()" />
+  </div>
+
+  <!-- Only the first load blocks with a spinner; refocus refetches update the grid silently. -->
+  @if (loading() && results().length === 0) {
+    <ui-loading-spinner [message]="'tripResults.loading' | transloco" />
+  }
+
+  @if (!loading() && results().length === 0) {
+    <div class="empty">
+      <i class="pi pi-images"></i>
+      <p>{{ 'tripResults.empty' | transloco }}</p>
+      <p-button [label]="'tripResults.addResult' | transloco" icon="pi pi-plus"
+        size="small" [outlined]="true" (onClick)="openCreate()" />
+    </div>
+  }
+
+  <div class="results-grid">
+    @for (result of results(); track trackById($index, result)) {
+      <div class="result-card flex flex-column">
+        <div class="result-card__cover">
+          @if (result.coverPhotoUrl) {
+            <img [src]="result.coverPhotoUrl" [alt]="result.departureCity + ' → ' + result.arrivalCity" />
+          } @else {
+            <div class="result-card__cover-empty flex flex-column align-items-center justify-content-center">
+              <i class="pi pi-image"></i>
+              <span>{{ 'tripResults.noPhotos' | transloco }}</span>
+            </div>
+          }
+          <span class="result-card__count">
+            <i class="pi pi-images"></i> {{ result.photoCount }}
+          </span>
+        </div>
+
+        <div class="result-card__body flex flex-column gap-1">
+          <strong class="result-card__route">{{ result.departureCity }} → {{ result.arrivalCity }}</strong>
+          <span class="result-card__date">{{ result.date | localDate }}</span>
+        </div>
+
+        <div class="result-card__actions flex gap-1">
+          <p-button [label]="'tripResults.managePhotos' | transloco" icon="pi pi-images"
+            size="small" [text]="true" (onClick)="openPhotos(result)" />
+          <p-button icon="pi pi-pencil" size="small" [text]="true" severity="secondary"
+            [ariaLabel]="'common.edit' | transloco" (onClick)="openEdit(result)" />
+          <p-button icon="pi pi-trash" size="small" [text]="true" severity="danger"
+            [ariaLabel]="'common.delete' | transloco" (onClick)="remove(result)" />
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Create / edit metadata -->
+<p-dialog
+  [visible]="formVisible()"
+  (visibleChange)="$event || closeForm()"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '32rem', maxWidth: '92vw' }"
+  [header]="(editId() ? 'tripResults.editResult' : 'tripResults.addResult') | transloco">
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate class="flex flex-column gap-3">
+    <div class="field">
+      <p-ifta-label>
+        <p-datepicker inputId="resultDate" formControlName="date" dateFormat="dd/mm/yy"
+          [showIcon]="true" styleClass="w-full" appendTo="body" />
+        <label for="resultDate">{{ 'tripResults.date' | transloco }}</label>
+      </p-ifta-label>
+      <small class="p-error" *appValidationError="form.get('date')">{{ 'tripResults.required' | transloco }}</small>
+    </div>
+
+    <div class="field">
+      <p-ifta-label>
+        <input pInputText id="departureCity" formControlName="departureCity" class="w-full" />
+        <label for="departureCity">{{ 'tripResults.departureCity' | transloco }}</label>
+      </p-ifta-label>
+      <small class="p-error" *appValidationError="form.get('departureCity')">{{ 'tripResults.required' | transloco }}</small>
+    </div>
+
+    <div class="field">
+      <p-ifta-label>
+        <input pInputText id="arrivalCity" formControlName="arrivalCity" class="w-full" />
+        <label for="arrivalCity">{{ 'tripResults.arrivalCity' | transloco }}</label>
+      </p-ifta-label>
+      <small class="p-error" *appValidationError="form.get('arrivalCity')">{{ 'tripResults.required' | transloco }}</small>
+    </div>
+
+    @if (!editId()) {
+      <div class="field">
+        <label class="file-label" for="newResultPhotos">{{ 'tripResults.photos' | transloco }}</label>
+        <input #pendingPhotosInput id="newResultPhotos" type="file"
+          accept="image/jpeg,image/png,image/webp" multiple
+          (change)="onPendingPhotosSelected($event)" />
+        <small class="hint">
+          {{ 'tripResults.photosPicked' | transloco: { count: pendingPhotos().length } }}
+        </small>
+      </div>
+    }
+
+    <div class="dialog-actions flex justify-content-end gap-2">
+      <p-button type="button" [label]="'common.cancel' | transloco" [text]="true"
+        severity="secondary" (onClick)="closeForm()" />
+      <p-button type="submit" [label]="'common.save' | transloco" icon="pi pi-check"
+        [loading]="mutating()" />
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Photo gallery management -->
+<p-dialog
+  [visible]="!!photosDialogResult()"
+  (visibleChange)="$event || closePhotos()"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '54rem', maxWidth: '94vw' }"
+  [header]="'tripResults.managePhotos' | transloco">
+  @if (photosDialogResult(); as result) {
+    <div class="flex flex-column gap-3">
+      <div class="photos-head flex align-items-center justify-content-between gap-2">
+        <span class="photos-head__route">
+          {{ result.departureCity }} → {{ result.arrivalCity }} · {{ result.date | localDate }}
+        </span>
+        <label class="upload-btn" for="resultPhotoUpload">
+          <i class="pi pi-upload"></i> {{ 'tripResults.uploadPhotos' | transloco }}
+        </label>
+        <input id="resultPhotoUpload" class="sr-only" type="file"
+          accept="image/jpeg,image/png,image/webp" multiple (change)="onPhotosSelected($event)" />
+      </div>
+
+      @if (mutating()) {
+        <ui-loading-spinner [message]="'tripResults.uploading' | transloco" />
+      }
+
+      @if (result.photos.length === 0) {
+        <p class="photos-empty">{{ 'tripResults.noPhotosYet' | transloco }}</p>
+      }
+
+      <div class="photos-grid">
+        @for (photo of result.photos; track trackById($index, photo)) {
+          <div class="photo-tile">
+            <img [src]="photo.url" [alt]="'tripResults.photoAlt' | transloco" />
+            <button type="button" class="photo-tile__remove"
+              [attr.aria-label]="'common.delete' | transloco"
+              (click)="removePhoto(photo)">
+              <i class="pi pi-times"></i>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</p-dialog>

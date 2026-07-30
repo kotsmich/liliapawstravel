@@ -3,9 +3,29 @@
     "home": "Home",
     "about": "About",
     "requestTransport": "Request Transport",
+    "tripResults": "Trips Gallery",
     "transportDocuments": "Documents",
     "faq": "Q & A",
     "contact": "Contact"
+  },
+  "tripResults": {
+    "eyebrow": "Journeys completed",
+    "title": "Trips Gallery",
+    "subtitle": "Every trip we have made so far, told in photos. Pick a journey to open its gallery.",
+    "loading": "Loading trips...",
+    "emptyTitle": "No trips published yet",
+    "emptyHint": "Our completed journeys will appear here soon.",
+    "photoCount": "{{ count }} photo(s)",
+    "viewGallery": "View gallery",
+    "backToResults": "All trip results",
+    "noPhotosYet": "Photos for this trip are on the way.",
+    "notFound": "We could not find this trip.",
+    "openPhoto": "Open photo {{ num }}",
+    "showPhoto": "Show photo {{ num }}",
+    "photoViewer": "Photo viewer",
+    "closeViewer": "Close photo viewer",
+    "previousPhoto": "Previous photo",
+    "nextPhoto": "Next photo"
   },
   "aria": {
     "mainNav": "Main navigation",
@@ -116,6 +136,8 @@
     "clickHint": "Click a highlighted date to select a trip.",
     "nextTripLabel": "Next available trip",
     "nextTripSpotsLeft": "· {{ count }} spot(s) left",
+    "noTripsYetLabel": "No available trips yet",
+    "noTripsYetHint": "Upcoming travel dates are still being scheduled. Please check back soon.",
     "selectedTrip": "Selected Trip",
     "booked": "{{ percent }}% booked",
     "lessThan10": "Less than 10 spots left",
@@ -388,6 +410,11 @@
       "description": "Download consent and authorization forms required for your dog's cross-Europe transport. Available in English, Greek, and German as PDF or editable Word.",
       "imageAlt": "Transport Authorization Documents — Lilia Paws Travel",
       "breadcrumb": "Transport Documents"
+    },
+    "results": {
+      "title": "Trips Gallery — Lilia Paws Travel",
+      "description": "Photos from the journeys Lilia Paws Travel has completed. Browse each trip's gallery and see the rescue dogs we brought home.",
+      "breadcrumb": "Trips Gallery"
     },
     "notFound": {
       "title": "Page Not Found — Lilia Paws Travel",
