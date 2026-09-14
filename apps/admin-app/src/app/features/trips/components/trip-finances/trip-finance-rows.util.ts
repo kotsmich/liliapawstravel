@@ -1,4 +1,9 @@
-import { TripFinanceEntry, TripFinanceRow } from '@models/lib/trip-finance.model';
+import {
+  TripFinanceEntry,
+  TripFinancePreset,
+  TripFinanceRow,
+  TripFinanceStandardOps,
+} from '@models/lib/trip-finance.model';
 import { TripRequester } from '@models/lib/trip.model';
 
 /** Prefix for the synthetic key of a requestor who has no saved income yet. */
@@ -18,7 +23,11 @@ const normalizeName = (name: string): string => name.trim().toLocaleLowerCase();
 const byCreatedAt = (a: TripFinanceEntry, b: TripFinanceEntry): number =>
   a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id);
 
-const savedRow = (entry: TripFinanceEntry, orphaned = false): TripFinanceRow => ({
+const savedRow = (
+  entry: TripFinanceEntry,
+  orphaned = false,
+  suggestedAmount: number | null = null
+): TripFinanceRow => ({
   key: entry.id,
   entry,
   requesterId: entry.requesterId,
@@ -26,6 +35,7 @@ const savedRow = (entry: TripFinanceEntry, orphaned = false): TripFinanceRow => 
   // rewrite what was true when the money was recorded.
   displayName: entry.name,
   amount: entry.amount,
+  suggestedAmount,
   note: entry.note,
   orphaned,
 });
@@ -50,7 +60,7 @@ export function buildFlatRows(entries: TripFinanceEntry[]): TripFinanceRow[] {
  */
 export function buildExpenseRows(
   entries: TripFinanceEntry[],
-  presets: readonly string[]
+  presets: readonly TripFinancePreset[]
 ): TripFinanceRow[] {
   const byName = new Map<string, TripFinanceEntry>();
   for (const entry of entries) {
@@ -61,18 +71,24 @@ export function buildExpenseRows(
 
   const claimed = new Set<string>();
   const presetRows = presets.map((preset, index): TripFinanceRow => {
-    const entry = byName.get(normalizeName(preset));
+    const entry = byName.get(normalizeName(preset.name));
     if (entry && !claimed.has(entry.id)) {
       claimed.add(entry.id);
-      return savedRow(entry);
+      // A saved line sitting at 0 has nothing recorded against it yet — most
+      // often because the tab was just reset — so it keeps its suggestion and
+      // stays fillable. A real amount drops the suggestion.
+      return savedRow(entry, false, entry.amount === 0 ? preset.amount : null);
     }
     return {
       key: presetRowKey(index),
       entry: null,
       requesterId: null,
-      displayName: preset,
+      displayName: preset.name,
       // 0, not null: an unfilled standard line genuinely cost nothing so far.
+      // The standard price rides along in suggestedAmount and stays out of the
+      // displayed figure until it has been saved.
       amount: 0,
+      suggestedAmount: preset.amount,
       note: null,
       orphaned: false,
     };
@@ -85,6 +101,33 @@ export function buildExpenseRows(
 
   return [...presetRows, ...customRows];
 }
+
+/**
+ * What "fill standard lines" would do: apply the standard price to every
+ * standard line that has one and nothing recorded against it.
+ *
+ * A missing line is created; a line sitting at 0 — which is what a reset leaves
+ * behind — is updated in place rather than duplicated. Lines with a real amount
+ * are left alone, which is what makes the action safe to run twice: adding a
+ * preset mid-season tops up the gap on a trip already under way without
+ * overwriting anything the admin typed.
+ */
+export function standardLineOps(rows: TripFinanceRow[]): TripFinanceStandardOps {
+  const ops: TripFinanceStandardOps = { creates: [], updates: [] };
+  for (const row of rows) {
+    if (row.suggestedAmount === null) continue;
+    if (row.entry) {
+      ops.updates.push({ entryId: row.entry.id, amount: row.suggestedAmount });
+    } else {
+      ops.creates.push({ type: 'expense', name: row.displayName, amount: row.suggestedAmount });
+    }
+  }
+  return ops;
+}
+
+/** True when the fill action would change something. */
+export const hasStandardLineOps = (ops: TripFinanceStandardOps): boolean =>
+  ops.creates.length > 0 || ops.updates.length > 0;
 
 /**
  * Merges saved income entries with the trip's requestors, in three blocks:
@@ -115,6 +158,8 @@ export function buildIncomeRows(
       displayName: requester.name,
       // null renders a blank input; 0 would read as a real "paid nothing".
       amount: null,
+      // Incomes have no standard price — what a payer owes is per trip.
+      suggestedAmount: null,
       note: null,
       orphaned: false,
     };

@@ -9,6 +9,21 @@
   }
 }
 
+// Replaces PrimeNG's plain title span, so it has to carry the title styling itself.
+.finances-dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.finances-dialog-header__title {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .dialog-spinner-center {
   display: flex;
   align-items: center;

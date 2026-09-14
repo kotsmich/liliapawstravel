@@ -78,6 +78,7 @@
     "actions": "Aktionen",
     "noRecordsFound": "Keine Einträge gefunden",
     "download": "Herunterladen",
+    "refresh": "Neu laden",
     "previewUnavailable": "Vorschau für diesen Dateityp nicht verfügbar"
   },
   "dashboard": {
@@ -160,6 +161,14 @@
       "noExpenses": "Noch keine Ausgaben erfasst.",
       "noIncomes": "Noch keine Zahler auf dieser Reise.",
       "addExpensePlaceholder": "Ausgabe hinzufügen…",
+      "fillStandardLines": "Standardposten ausfüllen",
+      "resetExpenses": "Auf 0 zurücksetzen",
+      "confirm": {
+        "reset": {
+          "header": "Ausgaben auf 0 zurücksetzen",
+          "message": "Alle erfassten Ausgabenbeträge auf 0 setzen? {{ count }} Posten werden genullt. Namen und Notizen bleiben erhalten."
+        }
+      },
       "addPayerPlaceholder": "Zahler außerhalb der Reise hinzufügen…",
       "orphanDivider": "Nicht mehr auf dieser Reise",
       "orphanTooltip": "Dieser Zahler hat keine Hunde mehr auf dieser Reise. Die Zahlung bleibt erfasst."

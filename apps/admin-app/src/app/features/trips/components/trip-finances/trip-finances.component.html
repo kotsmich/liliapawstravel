@@ -5,11 +5,11 @@
 
 <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event?.toString())" styleClass="finance-tabs">
   <p-tablist>
-    <p-tab value="expenses">
-      {{ 'trips.finances.expensesTab' | transloco: { count: expenseRows().length } }}
-    </p-tab>
     <p-tab value="incomes">
       {{ 'trips.finances.incomesTab' | transloco: { count: incomeRows().length } }}
+    </p-tab>
+    <p-tab value="expenses">
+      {{ 'trips.finances.expensesTab' | transloco: { count: expenseRows().length } }}
     </p-tab>
     <p-tab value="payments">
       {{ 'trips.finances.paymentsTab' | transloco: { count: paymentRows().length } }}
@@ -30,6 +30,25 @@
     (create)="onCreate($event)"
     (remove)="onRemove($event)" />
 
+  @if (activeTab() === 'expenses' && (canFillStandardLines() || canResetExpenses())) {
+    <div class="finance-fill-standard">
+      <!-- Each button hides once it would be a no-op: nothing left to fill, or
+           every amount already zero. -->
+      @if (canResetExpenses()) {
+        <p-button icon="pi pi-replay" size="small" severity="danger" [text]="true"
+          [label]="'trips.finances.resetExpenses' | transloco"
+          [loading]="resetExpensesPending()"
+          (onClick)="onResetExpenses()" />
+      }
+      @if (canFillStandardLines()) {
+        <p-button icon="pi pi-bolt" size="small" severity="secondary" [outlined]="true"
+          [label]="'trips.finances.fillStandardLines' | transloco"
+          [loading]="fillStandardPending()"
+          (onClick)="onFillStandardLines()" />
+      }
+    </div>
+  }
+
   @if (activeTab() === 'payments') {
     <!-- Kept out of the tiles above: payments are a log, not part of profit. -->
     <p class="finance-payments-note">
@@ -37,11 +56,18 @@
       {{ 'trips.finances.paymentsTotal' | transloco: { total: paymentsTotal() | currency: 'EUR' } }}
     </p>
   }
+}
 
-  <!-- Always the last flex item, so it sits at the bottom of the dialog
-       regardless of how few rows the table holds. -->
+<!-- Always the last flex item, so it sits at the bottom of the dialog
+     regardless of how few rows the table holds.
+
+     One bar per tab, kept alive and merely hidden: a half-typed line has to
+     still be there when the admin comes back to the tab. Rendered outside the
+     loading branch for the same reason — a refresh must not wipe a draft. -->
+@for (mode of addModes; track mode) {
   <app-trip-finances-add-row
-    [mode]="tableMode()"
-    [pending]="quickAddPending()"
+    [class.is-inactive]="mode !== tableMode()"
+    [mode]="mode"
+    [pending]="quickAddPending() && mode === tableMode()"
     (add)="onQuickAdd($event)" />
 }

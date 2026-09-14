@@ -68,10 +68,12 @@ export class TripFinancesTableComponent {
     () => this.rows().find((row) => row.orphaned)?.key ?? null
   );
 
+  // Only the name is mandatory here too; clearing the amount means 0, not a
+  // blocked save. See the add-row component for the same rule.
   private buildForm() {
     return this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(120)]],
-      amount: [null as number | null, [Validators.required, Validators.min(0)]],
+      amount: [null as number | null, [Validators.min(0)]],
       note: ['', [Validators.maxLength(500)]],
     });
   }
@@ -85,7 +87,10 @@ export class TripFinancesTableComponent {
     if (this.editingKey() === row.key) return;
     this.editForm.reset({
       name: row.displayName,
-      amount: row.amount,
+      // A standard line with nothing recorded — unsaved, or left at 0 by a
+      // reset — opens at its usual price, so accepting it is one keystroke.
+      // Anything with a real amount opens at what was actually recorded.
+      amount: row.suggestedAmount ?? row.amount,
       note: row.note ?? '',
     });
     if (this.isNameLocked(row)) {
@@ -112,7 +117,7 @@ export class TripFinancesTableComponent {
       this.update.emit({
         entryId: row.entry.id,
         rowKey: row.key,
-        changes: { name: name!, amount: amount!, note: note?.trim() ?? '' },
+        changes: { name: name!, amount: amount ?? 0, note: note?.trim() ?? '' },
       });
     } else {
       // An unsaved requestor suggestion becoming a real income row.
@@ -121,7 +126,7 @@ export class TripFinancesTableComponent {
         payload: {
           type: this.mode(),
           name: name!,
-          amount: amount!,
+          amount: amount ?? 0,
           ...(note?.trim() ? { note: note.trim() } : {}),
           ...(row.requesterId ? { requesterId: row.requesterId } : {}),
         },

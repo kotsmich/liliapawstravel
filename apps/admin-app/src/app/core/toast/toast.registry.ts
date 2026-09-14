@@ -19,6 +19,8 @@ import {
   createTripFinanceEntryFailure,
   updateTripFinanceEntryFailure,
   deleteTripFinanceEntryFailure,
+  fillStandardExpensesFailure,
+  resetExpenseAmountsFailure,
 } from '@admin/features/trips/store/trip-finances';
 import {
   addTripResultSuccess, addTripResultFailure,
@@ -75,6 +77,12 @@ export const TOAST_REGISTRY: Record<string, (action: any) => ToastPayload> = {
   ...register(updateTripFinanceEntryFailure,
     ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
   ...register(deleteTripFinanceEntryFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
+  // The batch actions are all-or-nothing, so a failure leaves nothing on screen
+  // to signal it — these two toasts are the only feedback the admin gets.
+  ...register(fillStandardExpensesFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
+  ...register(resetExpenseAmountsFailure,
     ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
 
   // Trip results

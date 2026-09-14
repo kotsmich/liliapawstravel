@@ -1,6 +1,12 @@
 import { TripFinanceEntry } from '@models/lib/trip-finance.model';
 import { TripRequester } from '@models/lib/trip.model';
-import { buildExpenseRows, buildFlatRows, buildIncomeRows } from './trip-finance-rows.util';
+import {
+  buildExpenseRows,
+  buildFlatRows,
+  buildIncomeRows,
+  hasStandardLineOps,
+  standardLineOps,
+} from './trip-finance-rows.util';
 
 const entry = (over: Partial<TripFinanceEntry>): TripFinanceEntry => ({
   id: 'e1',
@@ -36,15 +42,37 @@ describe('buildFlatRows', () => {
 });
 
 describe('buildExpenseRows', () => {
-  const presets = ['Φαγητα', 'Διοδια', 'Diesel Larisa'];
+  const presets = [
+    { name: 'Φαγητα', amount: null },
+    { name: 'Διοδια', amount: 40 },
+    { name: 'Diesel Larisa', amount: null },
+  ];
 
   it('lists every preset at 0, in route order, when nothing is saved', () => {
     const rows = buildExpenseRows([], presets);
 
-    expect(rows.map((r) => r.displayName)).toEqual(presets);
+    expect(rows.map((r) => r.displayName)).toEqual(presets.map((p) => p.name));
     // 0, not null — an unfilled standard line genuinely cost nothing so far.
     expect(rows.map((r) => r.amount)).toEqual([0, 0, 0]);
     expect(rows.map((r) => r.key)).toEqual(['preset:0', 'preset:1', 'preset:2']);
+  });
+
+  it('carries the standard price as a suggestion, never as the amount', () => {
+    const rows = buildExpenseRows([], presets);
+
+    // The tiles sum saved entries only, so a standard price must not reach
+    // `amount` before it is recorded or the table would outrun the totals.
+    expect(rows[1].amount).toBe(0);
+    expect(rows[1].suggestedAmount).toBe(40);
+    expect(rows[0].suggestedAmount).toBeNull();
+  });
+
+  it('drops the suggestion once the line has been recorded', () => {
+    const saved = entry({ id: 'e-tolls', type: 'expense', name: 'Διοδια', amount: 35 });
+    const rows = buildExpenseRows([saved], presets);
+
+    expect(rows[1].amount).toBe(35);
+    expect(rows[1].suggestedAmount).toBeNull();
   });
 
   it('resolves a saved expense into its preset slot, keeping route order', () => {
@@ -76,6 +104,72 @@ describe('buildExpenseRows', () => {
     const rows = buildExpenseRows([first, second], presets);
 
     expect(rows.map((r) => r.key)).toEqual(['preset:0', 'a', 'preset:2', 'b']);
+  });
+});
+
+describe('standardLineOps', () => {
+  const presets = [
+    { name: 'Φαγητα', amount: null },
+    { name: 'Διοδια', amount: 40 },
+    { name: 'Viniet 1 Italy', amount: 80 },
+  ];
+
+  it('creates only the standard lines that have a price', () => {
+    const ops = standardLineOps(buildExpenseRows([], presets));
+
+    // Φαγητα varies per trip and has no default — it must not be invented.
+    expect(ops.creates).toEqual([
+      { type: 'expense', name: 'Διοδια', amount: 40 },
+      { type: 'expense', name: 'Viniet 1 Italy', amount: 80 },
+    ]);
+    expect(ops.updates).toEqual([]);
+  });
+
+  it('skips lines with a real amount, so a second run tops up rather than overwrites', () => {
+    const saved = entry({ id: 'e-tolls', type: 'expense', name: 'Διοδια', amount: 35 });
+    const ops = standardLineOps(buildExpenseRows([saved], presets));
+
+    expect(ops.creates).toEqual([{ type: 'expense', name: 'Viniet 1 Italy', amount: 80 }]);
+    expect(ops.updates).toEqual([]);
+  });
+
+  it('updates a zeroed line instead of duplicating it, so a reset can be undone', () => {
+    const zeroed = entry({ id: 'e-tolls', type: 'expense', name: 'Διοδια', amount: 0 });
+    const ops = standardLineOps(buildExpenseRows([zeroed], presets));
+
+    expect(ops.updates).toEqual([{ entryId: 'e-tolls', amount: 40 }]);
+    // Crucially not a create — that would leave two Διοδια rows.
+    expect(ops.creates).toEqual([{ type: 'expense', name: 'Viniet 1 Italy', amount: 80 }]);
+  });
+
+  it('is empty once every priced line has a real amount, which hides the button', () => {
+    const rows = buildExpenseRows(
+      [
+        entry({ id: 'a', type: 'expense', name: 'Διοδια', amount: 35 }),
+        entry({ id: 'b', type: 'expense', name: 'Viniet 1 Italy', amount: 80 }),
+      ],
+      presets
+    );
+
+    expect(hasStandardLineOps(standardLineOps(rows))).toBe(false);
+  });
+
+  it('is fillable again after every line has been reset to 0', () => {
+    const rows = buildExpenseRows(
+      [
+        entry({ id: 'a', type: 'expense', name: 'Διοδια', amount: 0 }),
+        entry({ id: 'b', type: 'expense', name: 'Viniet 1 Italy', amount: 0 }),
+      ],
+      presets
+    );
+    const ops = standardLineOps(rows);
+
+    expect(hasStandardLineOps(ops)).toBe(true);
+    expect(ops.updates).toEqual([
+      { entryId: 'a', amount: 40 },
+      { entryId: 'b', amount: 80 },
+    ]);
+    expect(ops.creates).toEqual([]);
   });
 });
 

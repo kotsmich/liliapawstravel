@@ -30,9 +30,11 @@ export class TripFinancesAddRowComponent {
 
   readonly add = output<TripFinanceEntryPayload>();
 
+  // Name is the only thing we insist on — the amount and the note are routinely
+  // filled in later, so a blank amount is saved as 0 rather than blocking.
   readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(120)]],
-    amount: [null as number | null, [Validators.required, Validators.min(0)]],
+    amount: [null as number | null, [Validators.min(0)]],
     note: ['', [Validators.maxLength(500)]],
   });
 
@@ -53,7 +55,7 @@ export class TripFinancesAddRowComponent {
     this.add.emit({
       type: this.mode(),
       name: name!.trim(),
-      amount: amount!,
+      amount: amount ?? 0,
       ...(note?.trim() ? { note: note.trim() } : {}),
     });
     this.form.reset({ name: '', amount: null, note: '' });

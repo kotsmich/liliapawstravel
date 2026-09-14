@@ -1,9 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal, viewChild,
+} from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { switchMap } from 'rxjs';
 import { CurrencyPipe } from '@angular/common';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
 import { LoadingSpinnerComponent } from '@ui/lib/loading-spinner/loading-spinner.component';
 import {
@@ -15,10 +18,15 @@ import {
   TripFinanceSummary,
 } from '@models/lib/trip-finance.model';
 import { TripRequester } from '@models/lib/trip.model';
+import { ConfirmActionService } from '@admin/shared/services/confirm-action.service';
 import {
+  FILL_STANDARD_ROW_KEY,
+  RESET_EXPENSES_ROW_KEY,
   createTripFinanceEntry,
   deleteTripFinanceEntry,
+  fillStandardExpenses,
   loadTripFinances,
+  resetExpenseAmounts,
   selectTripFinancesLoading,
   selectTripFinancesMutatingKey,
   tripFinancesSelectors,
@@ -27,9 +35,19 @@ import {
 import { TripFinancesSummaryComponent } from './trip-finances-summary/trip-finances-summary.component';
 import { TripFinancesTableComponent } from './trip-finances-table/trip-finances-table.component';
 import { TripFinancesAddRowComponent } from './trip-finances-add-row/trip-finances-add-row.component';
-import { buildExpenseRows, buildFlatRows, buildIncomeRows } from './trip-finance-rows.util';
+import {
+  buildExpenseRows,
+  buildFlatRows,
+  buildIncomeRows,
+  hasStandardLineOps,
+  standardLineOps,
+} from './trip-finance-rows.util';
 import { EXPENSE_PRESETS } from './trip-finance-presets.constants';
-import { TRIP_FINANCES_DEFAULT_TAB, TripFinancesTab } from './trip-finances.constants';
+import {
+  TRIP_FINANCES_ADD_MODES,
+  TRIP_FINANCES_DEFAULT_TAB,
+  TripFinancesTab,
+} from './trip-finances.constants';
 
 const EMPTY_SUMMARY: TripFinanceSummary = { incomeTotal: 0, expenseTotal: 0, profit: 0 };
 
@@ -49,7 +67,7 @@ const QUICK_ADD_KEY = 'quick-add';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CurrencyPipe, TranslocoModule, TabsModule, LoadingSpinnerComponent,
+    CurrencyPipe, TranslocoModule, ButtonModule, TabsModule, LoadingSpinnerComponent,
     TripFinancesSummaryComponent, TripFinancesTableComponent, TripFinancesAddRowComponent,
   ],
   templateUrl: './trip-finances.component.html',
@@ -57,11 +75,16 @@ const QUICK_ADD_KEY = 'quick-add';
 })
 export class TripFinancesComponent implements OnInit {
   private readonly store = inject(Store);
+  private readonly confirm = inject(ConfirmActionService);
+  private readonly transloco = inject(TranslocoService);
 
   readonly tripId = input.required<string>();
   readonly requesters = input<TripRequester[]>([]);
 
   readonly activeTab = signal<TripFinancesTab>(TRIP_FINANCES_DEFAULT_TAB);
+
+  /** All three add bars render at once; only the active one is visible. */
+  readonly addModes = TRIP_FINANCES_ADD_MODES;
 
   readonly loading = toSignal(this.store.select(selectTripFinancesLoading), { initialValue: false });
   readonly mutatingKey = toSignal(this.store.select(selectTripFinancesMutatingKey), { initialValue: null });
@@ -102,6 +125,22 @@ export class TripFinancesComponent implements OnInit {
 
   readonly quickAddPending = computed(() => this.mutatingKey() === QUICK_ADD_KEY);
 
+  /** The standard lines with nothing recorded yet — missing, or zeroed by a reset. */
+  private readonly pendingStandardLines = computed(() =>
+    standardLineOps(this.expenseRows())
+  );
+  readonly canFillStandardLines = computed(() => hasStandardLineOps(this.pendingStandardLines()));
+  readonly fillStandardPending = computed(() => this.mutatingKey() === FILL_STANDARD_ROW_KEY);
+
+  /** Saved expenses carrying a non-zero amount — the only ones a reset would change. */
+  private readonly resettableExpenseIds = computed(() =>
+    this.expenses().filter((entry) => entry.amount !== 0).map((entry) => entry.id)
+  );
+  readonly canResetExpenses = computed(() => this.resettableExpenseIds().length > 0);
+  readonly resetExpensesPending = computed(() => this.mutatingKey() === RESET_EXPENSES_ROW_KEY);
+
+  private readonly table = viewChild(TripFinancesTableComponent);
+
   /** One table and one add-row serve all three tabs; only the data differs. */
   readonly tableMode = computed((): TripFinanceEntryType => {
     switch (this.activeTab()) {
@@ -120,11 +159,45 @@ export class TripFinancesComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.refresh();
+  }
+
+  /** Refetches every entry for the trip. Called on init and from the host's refresh button. */
+  refresh(): void {
     this.store.dispatch(loadTripFinances({ tripId: this.tripId() }));
   }
 
   onTabChange(tab: string | undefined): void {
+    // The table is shared across tabs, so an open inline edit would survive the
+    // switch and keep pointing at a row the new tab doesn't render.
+    this.table()?.cancelEdit();
     this.activeTab.set((tab as TripFinancesTab) ?? TRIP_FINANCES_DEFAULT_TAB);
+  }
+
+  /** Applies the standard price to every line that has one and nothing recorded. */
+  onFillStandardLines(): void {
+    const ops = this.pendingStandardLines();
+    if (!hasStandardLineOps(ops)) return;
+    this.store.dispatch(fillStandardExpenses({ tripId: this.tripId(), ops }));
+  }
+
+  /**
+   * Zeroes every saved expense amount, keeping names, notes and custom lines.
+   * Confirmed first: it rewrites the whole tab and the tiles with one click.
+   */
+  onResetExpenses(): void {
+    const entryIds = this.resettableExpenseIds();
+    if (!entryIds.length) return;
+    this.confirm.confirm({
+      header: this.transloco.translate('trips.finances.confirm.reset.header'),
+      message: this.transloco.translate('trips.finances.confirm.reset.message', {
+        count: entryIds.length,
+      }),
+      acceptLabel: this.transloco.translate('trips.finances.resetExpenses'),
+      severity: 'danger',
+      accept: () =>
+        this.store.dispatch(resetExpenseAmounts({ tripId: this.tripId(), entryIds })),
+    });
   }
 
   /** Adding a brand-new line from the bar; the table's own rows have real keys. */

@@ -12,8 +12,16 @@
 
 app-trip-finances-summary,
 .finance-spinner,
+.finance-fill-standard,
 .finance-payments-note {
   flex: 0 0 auto;
+}
+
+.finance-fill-standard {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 :host ::ng-deep .finance-tabs {
@@ -22,6 +30,12 @@ app-trip-finances-summary,
 }
 
 // app-trip-finances-table sets its own `flex: 1 1 auto; min-height: 0` on :host.
+
+// The three add bars all stay in the DOM to keep their drafts; `display: none`
+// (not `visibility`) so the hidden ones drop out of the tab order too.
+app-trip-finances-add-row.is-inactive {
+  display: none;
+}
 
 .finance-spinner {
   display: flex;

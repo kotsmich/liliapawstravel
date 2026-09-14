@@ -78,6 +78,7 @@
     "actions": "Actions",
     "noRecordsFound": "No records found",
     "download": "Download",
+    "refresh": "Refresh",
     "previewUnavailable": "Preview not available for this file type"
   },
   "dashboard": {
@@ -160,6 +161,14 @@
       "noExpenses": "No expenses recorded yet.",
       "noIncomes": "No payers on this trip yet.",
       "addExpensePlaceholder": "Add an expense…",
+      "fillStandardLines": "Fill standard lines",
+      "resetExpenses": "Reset to 0",
+      "confirm": {
+        "reset": {
+          "header": "Reset expenses to 0",
+          "message": "Set every recorded expense amount back to 0? {{ count }} line(s) will be zeroed. Names and notes are kept."
+        }
+      },
       "addPayerPlaceholder": "Add a payer not on the trip…",
       "orphanDivider": "No longer on this trip",
       "orphanTooltip": "This payer no longer has dogs on this trip. The payment is kept on record."

@@ -4,6 +4,10 @@ import { TripFinanceEntry } from '@models/lib/trip-finance.model';
 import {
   loadTripFinances, loadTripFinancesSuccess, loadTripFinancesFailure,
   createTripFinanceEntry, createTripFinanceEntrySuccess, createTripFinanceEntryFailure,
+  FILL_STANDARD_ROW_KEY,
+  fillStandardExpenses, fillStandardExpensesSuccess, fillStandardExpensesFailure,
+  resetExpenseAmounts, resetExpenseAmountsSuccess, resetExpenseAmountsFailure,
+  RESET_EXPENSES_ROW_KEY,
   updateTripFinanceEntry, updateTripFinanceEntrySuccess, updateTripFinanceEntryFailure,
   deleteTripFinanceEntry, deleteTripFinanceEntrySuccess, deleteTripFinanceEntryFailure,
 } from './trip-finances.actions';
@@ -50,6 +54,28 @@ export const tripFinancesFeature = createFeature({
       adapter.upsertOne(entry, { ...state, mutatingKey: null })
     ),
     on(createTripFinanceEntryFailure, (state, { error }) => ({ ...state, mutatingKey: null, error })),
+
+    on(fillStandardExpenses, (state) => ({
+      ...state,
+      mutatingKey: FILL_STANDARD_ROW_KEY,
+      error: null,
+    })),
+    // upsertMany, not setAll: the batch only ever contains the lines that were
+    // missing, and everything already on the trip has to survive it.
+    on(fillStandardExpensesSuccess, (state, { entries }) =>
+      adapter.upsertMany(entries, { ...state, mutatingKey: null })
+    ),
+    on(fillStandardExpensesFailure, (state, { error }) => ({ ...state, mutatingKey: null, error })),
+
+    on(resetExpenseAmounts, (state) => ({
+      ...state,
+      mutatingKey: RESET_EXPENSES_ROW_KEY,
+      error: null,
+    })),
+    on(resetExpenseAmountsSuccess, (state, { entries }) =>
+      adapter.upsertMany(entries, { ...state, mutatingKey: null })
+    ),
+    on(resetExpenseAmountsFailure, (state, { error }) => ({ ...state, mutatingKey: null, error })),
 
     on(updateTripFinanceEntry, (state, { rowKey }) => ({ ...state, mutatingKey: rowKey, error: null })),
     on(updateTripFinanceEntrySuccess, (state, { entry }) =>
