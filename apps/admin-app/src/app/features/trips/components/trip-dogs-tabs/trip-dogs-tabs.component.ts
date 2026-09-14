@@ -6,10 +6,10 @@ import { TranslocoModule } from '@jsverse/transloco';
 import { Dog } from '@models/lib/dog.model';
 import { TripRequest } from '@models/lib/trip-request.model';
 import { TableConfig } from '@models/lib/table-column.interface';
-import { DogsTableComponent } from '@admin/features/trips/components/dogs-table.component';
 import { DogsByGroupComponent } from '@admin/features/trips/components/dogs-grouped/dogs-grouped.component';
 import { DogFormDialogWrapperComponent } from '@admin/features/trips/components/dog-form-dialog-wrapper/dog-form-dialog-wrapper.component';
 import { DogManagerService } from '@admin/features/trips/trip-form/dog-manager.service';
+import { TripFinancesComponent } from '@admin/features/trips/components/trip-finances/trip-finances.component';
 import { TripDogsExportPdfComponent } from './trip-dogs-export-pdf/trip-dogs-export-pdf.component';
 import { TRIP_DOGS_DEFAULT_TAB, TripDogsTab } from './trip-dogs-tabs.constants';
 
@@ -19,8 +19,9 @@ import { TRIP_DOGS_DEFAULT_TAB, TripDogsTab } from './trip-dogs-tabs.constants';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ButtonModule, TabsModule, TagModule, TranslocoModule,
-    DogsTableComponent, DogsByGroupComponent,
+    DogsByGroupComponent,
     DogFormDialogWrapperComponent, TripDogsExportPdfComponent,
+    TripFinancesComponent,
   ],
   templateUrl: './trip-dogs-tabs.component.html',
   styleUrl: './trip-dogs-tabs.component.scss',
@@ -31,6 +32,8 @@ export class TripDogsTabsComponent {
   readonly tripId = input<string | null>(null);
   readonly activeTab = model(TRIP_DOGS_DEFAULT_TAB);
   readonly showAddButton = input(false);
+  /** Opt-in: the trip form reuses this component for trips that may not exist yet. */
+  readonly showFinances = input(false);
   readonly showExportPdf = input(false);
   readonly tableSelectable = input(false);
   readonly requests = input<TripRequest[]>([]);

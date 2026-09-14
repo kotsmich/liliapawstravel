@@ -1,6 +1,7 @@
 <p-datepicker
   [inline]="true"
-  [minDate]="minDate"
+  [minDate]="minDate()"
+  [disabledDates]="disabledDates()"
   [(ngModel)]="selectedDateObj"
   (onSelect)="onSelect($event)"
   styleClass="trip-cal"
@@ -12,6 +13,7 @@
     <span
       class="date-cell flex flex-column align-items-center justify-content-center"
       [class.has-event]="eventMap().has(dateKey(date))"
+      [class.is-past-event]="isPastEvent(date)"
       [pTooltip]="tooltipMap().get(dateKey(date)) ?? ''"
       tooltipPosition="top"
       (dblclick)="eventMap().has(dateKey(date)) && onDblClick(date)"

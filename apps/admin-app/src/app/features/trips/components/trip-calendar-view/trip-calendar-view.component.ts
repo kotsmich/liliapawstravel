@@ -26,6 +26,7 @@ export class TripCalendarViewComponent {
   readonly editTrip = output<Trip>();
   readonly deleteTrip = output<Trip>();
   readonly viewDetails = output<Trip>();
+  readonly financesClicked = output<Trip>();
 
   /** Past trips exist, but nothing is scheduled from today onwards. */
   readonly noUpcomingTrips = computed(() => {

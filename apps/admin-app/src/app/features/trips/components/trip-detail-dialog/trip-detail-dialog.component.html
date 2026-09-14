@@ -3,8 +3,8 @@
   [visible]="visible()"
   (visibleChange)="visibleChange.emit($event)"
   [modal]="true"
-  [style]="{ width: '98vw', height: '98vh' }"
-  [contentStyle]="{ overflowX: 'auto', overflowY: 'auto', height: '100%' }"
+  [style]="{ width: '98vw', height: '90vh' }"
+  [contentStyle]="{ flex: '1 1 auto', minHeight: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }"
   [draggable]="false"
   styleClass="trip-detail-dialog dialog-tall"
   (onHide)="onHide()">
@@ -17,6 +17,7 @@
     <app-trip-dogs-tabs
       [tripId]="trip()?.id ?? null"
       [showAddButton]="true"
+      [showFinances]="true"
       [requests]="requests()"
       (rowClicked)="openDogDetail($event)" />
   }

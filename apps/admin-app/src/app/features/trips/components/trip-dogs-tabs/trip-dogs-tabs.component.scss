@@ -1,0 +1,29 @@
+/**
+ * Column layout so the active panel can claim the leftover height.
+ *
+ * `height: 100%` resolves to auto when an ancestor is unbounded — which is the
+ * case on the trip form page — and the whole thing degrades to normal document
+ * flow. Inside the detail dialog the chain is bounded, so the panel gets a real
+ * height and scrolls instead of pushing the toolbar and tab strip off-screen.
+ */
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Fixed chrome: never shrink to make room for the panel. */
+.tabs-toolbar,
+p-tabs {
+  flex: 0 0 auto;
+}
+
+.tab-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.tab-panel--scroll {
+  overflow: auto;
+}

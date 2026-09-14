@@ -2,6 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
+    // Specs import `@models/*` from libs/, outside this app folder. Without an
+    // explicit rootDir, TS infers it from the included spec files alone and
+    // then rejects those imports with TS6059.
+    "rootDir": "../../",
     "types": [
       "jasmine"
     ],

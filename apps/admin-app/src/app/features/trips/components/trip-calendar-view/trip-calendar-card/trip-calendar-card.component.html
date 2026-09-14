@@ -30,6 +30,8 @@
       <div class="trip-actions__main">
         <p-button [label]="'trips.dogsList' | transloco" icon="pi pi-eye" [text]="true" size="large"
           (onClick)="viewDetails.emit(trip())" />
+        <p-button [label]="'trips.finances.title' | transloco" icon="pi pi-wallet" [text]="true" size="large"
+          (onClick)="finances.emit(trip())" />
         <p-button [label]="'common.edit' | transloco" icon="pi pi-pencil" [outlined]="true" size="large"
           (onClick)="edit.emit(trip())" />
       </div>

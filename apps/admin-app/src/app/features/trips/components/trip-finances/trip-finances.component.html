@@ -1,0 +1,47 @@
+<app-trip-finances-summary
+  [incomeTotal]="summary().incomeTotal"
+  [expenseTotal]="summary().expenseTotal"
+  [profit]="summary().profit" />
+
+<p-tabs [value]="activeTab()" (valueChange)="onTabChange($event?.toString())" styleClass="finance-tabs">
+  <p-tablist>
+    <p-tab value="expenses">
+      {{ 'trips.finances.expensesTab' | transloco: { count: expenseRows().length } }}
+    </p-tab>
+    <p-tab value="incomes">
+      {{ 'trips.finances.incomesTab' | transloco: { count: incomeRows().length } }}
+    </p-tab>
+    <p-tab value="payments">
+      {{ 'trips.finances.paymentsTab' | transloco: { count: paymentRows().length } }}
+    </p-tab>
+  </p-tablist>
+</p-tabs>
+
+@if (loading()) {
+  <div class="finance-spinner">
+    <ui-loading-spinner />
+  </div>
+} @else {
+  <app-trip-finances-table
+    [mode]="tableMode()"
+    [rows]="activeRows()"
+    [mutatingKey]="mutatingKey()"
+    (update)="onUpdate($event)"
+    (create)="onCreate($event)"
+    (remove)="onRemove($event)" />
+
+  @if (activeTab() === 'payments') {
+    <!-- Kept out of the tiles above: payments are a log, not part of profit. -->
+    <p class="finance-payments-note">
+      <i class="pi pi-info-circle"></i>
+      {{ 'trips.finances.paymentsTotal' | transloco: { total: paymentsTotal() | currency: 'EUR' } }}
+    </p>
+  }
+
+  <!-- Always the last flex item, so it sits at the bottom of the dialog
+       regardless of how few rows the table holds. -->
+  <app-trip-finances-add-row
+    [mode]="tableMode()"
+    [pending]="quickAddPending()"
+    (add)="onQuickAdd($event)" />
+}

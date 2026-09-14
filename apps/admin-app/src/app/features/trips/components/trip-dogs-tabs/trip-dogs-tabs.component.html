@@ -1,5 +1,7 @@
-@if (showAddButton()) {
-  <div class="flex gap-2 align-items-center justify-content-end mb-2">
+<!-- Hidden on the finances tab: "Add Dog" is meaningless there, and the PDF
+     export falls through to the full manifest for any unknown tab value. -->
+@if (showAddButton() && activeTab() !== 'finances') {
+  <div class="tabs-toolbar flex gap-2 align-items-center justify-content-end mb-2">
     @if (dogManager.selectedDogs().length) {
       <p-button
         type="button"
@@ -26,6 +28,9 @@
     <p-tab value="byPickup">{{ 'trips.byPickupTab' | transloco: { count: dogManager.tripPickupLocations().length } }}</p-tab>
     <p-tab value="byDestination">{{ 'trips.byDestinationTab' | transloco: { count: dogManager.tripDestinations().length } }}</p-tab>
     <!-- <p-tab value="all">{{ 'trips.allDogsTab' | transloco: { count: dogManager.dogsData().length } }}</p-tab> -->
+    @if (showFinances()) {
+      <p-tab value="finances">{{ 'trips.finances.tab' | transloco }}</p-tab>
+    }
   </p-tablist>
 </p-tabs>
 <!-- 
@@ -42,39 +47,52 @@
     (rowClicked)="rowClicked.emit($event)" />
 } -->
 
-@if (activeTab() === 'byRequestor') {
-  <app-dogs-grouped
-    [groups]="dogManager.requestorGroups()"
-    [dogColumns]="dogManager.dogColumns()"
-    [dogActions]="dogManager.dogActions()"
-    [tableConfig]="tableConfig()"
-    [emptyMessage]="'trips.noRequestorsLinked' | transloco"
-    (selectionChange)="dogManager.onSelectionChange($event.dogs, $event.groupKey)"
-    (rowClicked)="rowClicked.emit($event)" />
+<!-- The dog panels scroll as a block; the finances panel scrolls internally
+     (fixed tiles and quick-add row), so it is deliberately outside this wrapper. -->
+@if (activeTab() !== 'finances') {
+  <div class="tab-panel tab-panel--scroll">
+    @if (activeTab() === 'byRequestor') {
+      <app-dogs-grouped
+        [groups]="dogManager.requestorGroups()"
+        [dogColumns]="dogManager.dogColumns()"
+        [dogActions]="dogManager.dogActions()"
+        [tableConfig]="tableConfig()"
+        [emptyMessage]="'trips.noRequestorsLinked' | transloco"
+        (selectionChange)="dogManager.onSelectionChange($event.dogs, $event.groupKey)"
+        (rowClicked)="rowClicked.emit($event)" />
+    }
+
+    @if (activeTab() === 'byDestination') {
+      <app-dogs-grouped
+        [groups]="dogManager.destinationGroups()"
+        [dogColumns]="dogManager.dogColumns()"
+        [dogActions]="dogManager.dogActions()"
+        [tableConfig]="tableConfig()"
+        emptyStateIcon="pi pi-map-marker"
+        [emptyMessage]="'trips.detail.noDestinations' | transloco"
+        [emptyGroupMessage]="'trips.detail.noDogsForDestination' | transloco"
+        (rowClicked)="rowClicked.emit($event)" />
+    }
+
+    @if (activeTab() === 'byPickup') {
+      <app-dogs-grouped
+        [groups]="dogManager.pickupGroups()"
+        [dogColumns]="dogManager.dogColumns()"
+        [dogActions]="dogManager.dogActions()"
+        [tableConfig]="tableConfig()"
+        emptyStateIcon="pi pi-map-marker"
+        [emptyMessage]="'trips.detail.noDestinations' | transloco"
+        [emptyGroupMessage]="'trips.detail.noDogsForPickup' | transloco"
+        (rowClicked)="rowClicked.emit($event)" />
+    }
+  </div>
 }
 
-@if (activeTab() === 'byDestination') {
-  <app-dogs-grouped
-    [groups]="dogManager.destinationGroups()"
-    [dogColumns]="dogManager.dogColumns()"
-    [dogActions]="dogManager.dogActions()"
-    [tableConfig]="tableConfig()"
-    emptyStateIcon="pi pi-map-marker"
-    [emptyMessage]="'trips.detail.noDestinations' | transloco"
-    [emptyGroupMessage]="'trips.detail.noDogsForDestination' | transloco"
-    (rowClicked)="rowClicked.emit($event)" />
-}
-
-@if (activeTab() === 'byPickup') {
-  <app-dogs-grouped
-    [groups]="dogManager.pickupGroups()"
-    [dogColumns]="dogManager.dogColumns()"
-    [dogActions]="dogManager.dogActions()"
-    [tableConfig]="tableConfig()"
-    emptyStateIcon="pi pi-map-marker"
-    [emptyMessage]="'trips.detail.noDestinations' | transloco"
-    [emptyGroupMessage]="'trips.detail.noDogsForPickup' | transloco"
-    (rowClicked)="rowClicked.emit($event)" />
+@if (activeTab() === 'finances' && tripId()) {
+  <app-trip-finances
+    class="tab-panel"
+    [tripId]="tripId()!"
+    [requesters]="dogManager.currentTrip()?.requesters ?? []" />
 }
 
 <app-dog-form-dialog-wrapper [tripId]="tripId()" [tripDestinations]="dogManager.tripDestinations()" [tripPickupLocations]="dogManager.tripPickupLocations()" />

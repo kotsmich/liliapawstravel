@@ -1,0 +1,93 @@
+<!-- Scrollable mode is what pins thead/tfoot: only the rows move, so the column
+     titles and the quick-add row stay reachable however long the list gets. -->
+<p-table
+  [value]="rows()"
+  [dataKey]="'key'"
+  [scrollable]="true"
+  scrollHeight="flex"
+  styleClass="finance-table p-datatable-sm"
+  [tableStyle]="{ 'min-width': '32rem' }">
+  <ng-template pTemplate="header">
+    <tr>
+      <th class="finance-table__name">{{ nameHeaderKey() | transloco }}</th>
+      <th class="finance-table__note">{{ 'trips.finances.note' | transloco }}</th>
+      <th class="finance-table__amount">{{ 'trips.finances.amount' | transloco }}</th>
+      <th class="finance-table__actions"></th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-row>
+    @if (row.key === firstOrphanKey()) {
+      <tr class="finance-table__divider">
+        <td colspan="4">
+          <i class="pi pi-exclamation-triangle"></i>
+          {{ 'trips.finances.orphanDivider' | transloco }}
+        </td>
+      </tr>
+    }
+
+    @if (editingKey() === row.key) {
+      <tr class="finance-table__row is-editing" [formGroup]="editForm">
+        <td>
+          <input pInputText type="text" formControlName="name" class="w-full"
+            [attr.aria-label]="'trips.finances.name' | transloco"
+            (keyup.enter)="commitEdit(row)" (keyup.escape)="cancelEdit()" />
+        </td>
+        <td>
+          <input pInputText type="text" formControlName="note" class="w-full"
+            [attr.aria-label]="'trips.finances.note' | transloco"
+            (keyup.enter)="commitEdit(row)" (keyup.escape)="cancelEdit()" />
+        </td>
+        <td>
+          <p-inputNumber formControlName="amount" mode="currency" currency="EUR" locale="el-GR"
+            [min]="0" [maxFractionDigits]="2" styleClass="w-full"
+            [ariaLabel]="'trips.finances.amount' | transloco"
+            (keyup.enter)="commitEdit(row)" (keyup.escape)="cancelEdit()" />
+        </td>
+        <td class="finance-table__actions">
+          <p-button icon="pi pi-check" severity="success" [text]="true" [rounded]="true" size="small"
+            [disabled]="editForm.invalid" [loading]="mutatingKey() === row.key"
+            [ariaLabel]="'common.save' | transloco" (onClick)="commitEdit(row)" />
+          <p-button icon="pi pi-times" severity="secondary" [text]="true" [rounded]="true" size="small"
+            [ariaLabel]="'common.cancel' | transloco" (onClick)="cancelEdit()" />
+        </td>
+      </tr>
+    } @else {
+      <tr class="finance-table__row" [class.is-unsaved]="!row.entry" [class.is-orphaned]="row.orphaned"
+        (click)="startEdit(row)">
+        <td>
+          @if (row.orphaned) {
+            <i class="pi pi-exclamation-triangle finance-table__warn"
+              [pTooltip]="'trips.finances.orphanTooltip' | transloco"></i>
+          }
+          {{ row.displayName }}
+        </td>
+        <td class="finance-table__note">{{ row.note }}</td>
+        <td class="finance-table__amount">
+          @if (row.amount === null) {
+            <span class="finance-table__placeholder">{{ 'trips.finances.notRecorded' | transloco }}</span>
+          } @else {
+            {{ row.amount | currency: 'EUR' }}
+          }
+        </td>
+        <td class="finance-table__actions">
+          @if (row.entry) {
+            <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" size="small"
+              [loading]="mutatingKey() === row.key"
+              [ariaLabel]="'common.delete' | transloco"
+              (onClick)="$event.stopPropagation(); onDelete(row)" />
+          }
+        </td>
+      </tr>
+    }
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="4" class="finance-table__empty">
+        {{ emptyMessageKey() | transloco }}
+      </td>
+    </tr>
+  </ng-template>
+  <!-- Adding a line lives in app-trip-finances-add-row, pinned below this table. -->
+</p-table>

@@ -20,6 +20,7 @@ import { ConfirmActionService } from '@admin/shared/services/confirm-action.serv
 import { TripCalendarViewComponent } from '../components/trip-calendar-view/trip-calendar-view.component';
 import { AllTripsTabComponent } from '../components/all-trips-tab/all-trips-tab.component';
 import { TripDetailDialogComponent } from '../components/trip-detail-dialog/trip-detail-dialog.component';
+import { TripFinancesDialogComponent } from '../components/trip-finances-dialog/trip-finances-dialog.component';
 
 @Component({
   selector: 'app-trip-list-page',
@@ -31,6 +32,7 @@ import { TripDetailDialogComponent } from '../components/trip-detail-dialog/trip
     TripCalendarViewComponent,
     AllTripsTabComponent,
     TripDetailDialogComponent,
+    TripFinancesDialogComponent,
     TranslocoModule,
   ],
   providers: [LocalDatePipe],
@@ -71,6 +73,13 @@ export class TripsListComponent implements OnInit {
     switchMap((id) => id ? this.store.select(selectRequestsByTripId(id)) : of([]))
   ), { initialValue: [] as TripRequest[] });
 
+  readonly financesDialogVisible = signal(false);
+  readonly financesTripId = signal<string | null>(null);
+
+  readonly financesTrip = toSignal(toObservable(this.financesTripId).pipe(
+    switchMap((id) => id ? this.store.select(selectTripById(id)) : of(null))
+  ), { initialValue: null as Trip | null });
+
   ngOnInit(): void {
     this.store.dispatch(loadTrips());
   }
@@ -109,6 +118,17 @@ export class TripsListComponent implements OnInit {
 
   closeDetail(): void {
     this.detailTripId.set(null);
+  }
+
+  /** The detail fetch is what populates `trip.requesters`, which the incomes tab needs. */
+  openFinances(trip: Trip): void {
+    this.financesTripId.set(trip.id);
+    this.store.dispatch(loadTripById({ id: trip.id }));
+    this.financesDialogVisible.set(true);
+  }
+
+  closeFinances(): void {
+    this.financesTripId.set(null);
   }
 
   approveRequestInDetail(req: TripRequest): void {

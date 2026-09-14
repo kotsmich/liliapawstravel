@@ -36,26 +36,29 @@ export const selectTripById = (id: string): MemoizedSelector<object, Trip | null
 
 export const clearSelectTripByIdCache = (): void => _tripByIdCache.clear();
 
+// Completed trips are included so past dates that actually held a trip stay
+// markable — and therefore clickable — in the admin calendar.
 export const selectTripsAsCalendarEvents = createSelector(selectAllTrips, (trips): CalendarEvent[] =>
-  trips
-    .filter((trip) => trip.status !== 'completed')
-    .map((trip) => ({
-      id: `evt-${trip.id}`,
-      tripId: trip.id,
-      title: `${trip.departureCity} → ${trip.arrivalCity}`,
-      date: trip.date,
-      color:
-        trip.isFull || trip.spotsAvailable <= 0 || !trip.acceptingRequests
+  trips.map((trip) => ({
+    id: `evt-${trip.id}`,
+    tripId: trip.id,
+    title: `${trip.departureCity} → ${trip.arrivalCity}`,
+    date: trip.date,
+    status: trip.status,
+    color:
+      trip.status === 'completed'
+        ? '#9ca3af'
+        : trip.isFull || trip.spotsAvailable <= 0 || !trip.acceptingRequests
           ? '#94a3b8'
           : trip.status === 'in-progress'
             ? '#e07b54'
             : trip.spotsAvailable <= 2
               ? '#f59e0b'
               : '#4caf50',
-      dogsCount: trip.totalCapacity - trip.spotsAvailable,
-      totalCapacity: trip.totalCapacity,
-      spotsAvailable: trip.spotsAvailable,
-      isFull: trip.isFull,
-      acceptingRequests: trip.acceptingRequests,
-    }))
+    dogsCount: trip.totalCapacity - trip.spotsAvailable,
+    totalCapacity: trip.totalCapacity,
+    spotsAvailable: trip.spotsAvailable,
+    isFull: trip.isFull,
+    acceptingRequests: trip.acceptingRequests,
+  }))
 );

@@ -1,0 +1,39 @@
+// Fixed summary + tabs at the top, fixed add bar at the bottom, and only the
+// table's rows scrolling between them.
+//
+// A flex item in both hosts — the finances dialog body and the details tab
+// strip — so it claims the leftover height rather than declaring one.
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+app-trip-finances-summary,
+.finance-spinner,
+.finance-payments-note {
+  flex: 0 0 auto;
+}
+
+:host ::ng-deep .finance-tabs {
+  flex: 0 0 auto;
+  margin-bottom: 0.5rem;
+}
+
+// app-trip-finances-table sets its own `flex: 1 1 auto; min-height: 0` on :host.
+
+.finance-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.finance-payments-note {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}

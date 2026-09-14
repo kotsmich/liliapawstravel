@@ -1,0 +1,14 @@
+<form class="finance-add" [formGroup]="form" (ngSubmit)="submit()">
+  <input pInputText type="text" formControlName="name" class="finance-add__name"
+    [placeholder]="placeholderKey() | transloco" />
+
+  <input pInputText type="text" formControlName="note" class="finance-add__note"
+    [placeholder]="'trips.finances.note' | transloco" />
+
+  <p-inputNumber formControlName="amount" mode="currency" currency="EUR" locale="el-GR"
+    [min]="0" [maxFractionDigits]="2" styleClass="finance-add__amount"
+    [ariaLabel]="'trips.finances.amount' | transloco" />
+
+  <p-button type="submit" icon="pi pi-plus" [label]="'common.add' | transloco" size="small"
+    [disabled]="form.invalid" [loading]="pending()" />
+</form>

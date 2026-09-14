@@ -16,6 +16,13 @@ import { CalendarEvent } from '@models/lib/calendar-event.model';
 export class TripCalendarComponent implements AfterViewInit {
   readonly events = input<CalendarEvent[]>([]);
 
+  /**
+   * Keeps past dates that hold a trip selectable (past dates without one stay
+   * disabled). Admin needs it to open a finished trip; the public request
+   * calendar must never offer a past date, so it defaults to off.
+   */
+  readonly allowPastEvents = input(false);
+
   @ViewChild(DatePicker) private dp?: DatePicker;
   private _pendingNavigate: string | null = null;
 
@@ -53,7 +60,7 @@ export class TripCalendarComponent implements AfterViewInit {
   private _confirmedDate: Date | null = null;
   selectedDateObj: Date | null = null;
 
-  readonly minDate = new Date();
+  private readonly todayStr = this.toDateStr(new Date());
 
   readonly eventMap = computed(() =>
     new Map(this.events().map(e => [e.date, e.color]))
@@ -62,6 +69,37 @@ export class TripCalendarComponent implements AfterViewInit {
   readonly tooltipMap = computed(() =>
     new Map(this.events().map(e => [e.date, this.buildTooltip(e)]))
   );
+
+  /** Reaches back to the earliest trip when past events are allowed, else today. */
+  readonly minDate = computed(() => {
+    const today = this.startOfToday();
+    if (!this.allowPastEvents()) return today;
+    const earliest = this.events().reduce<string | null>(
+      (min, e) => (min === null || e.date < min ? e.date : min), null
+    );
+    if (!earliest || earliest >= this.todayStr) return today;
+    return new Date(earliest + 'T00:00:00');
+  });
+
+  /**
+   * With past events allowed, minDate no longer blocks the past, so every past
+   * day *without* a trip is disabled individually. Bounded by the earliest trip.
+   */
+  readonly disabledDates = computed(() => {
+    if (!this.allowPastEvents()) return [];
+    const events = this.eventMap();
+    const today = this.startOfToday();
+    const disabled: Date[] = [];
+    for (const cursor = new Date(this.minDate().getTime()); cursor < today; cursor.setDate(cursor.getDate() + 1)) {
+      if (!events.has(this.toDateStr(cursor))) disabled.push(new Date(cursor.getTime()));
+    }
+    return disabled;
+  });
+
+  isPastEvent(d: { year: number; month: number; day: number }): boolean {
+    const key = this.dateKey(d);
+    return key < this.todayStr && this.eventMap().has(key);
+  }
 
   dateKey(d: { year: number; month: number; day: number }): string {
     return `${d.year}-${String(d.month + 1).padStart(2, '0')}-${String(d.day).padStart(2, '0')}`;
@@ -88,7 +126,9 @@ export class TripCalendarComponent implements AfterViewInit {
 
   private buildTooltip(event: CalendarEvent): string {
     const lines: string[] = [event.title, event.date];
-    if (event.isFull) {
+    if (event.status === 'completed') {
+      lines.push('Status: Completed');
+    } else if (event.isFull) {
       lines.push('Status: Full');
     } else if (event.acceptingRequests === false) {
       lines.push('Requests: Closed');
@@ -110,6 +150,11 @@ export class TripCalendarComponent implements AfterViewInit {
     if (spots >= 5) return 'Less than 10 spots left';
     if (spots > 3) return 'Less than 5 spots left';
     return `${spots} spot${spots === 1 ? '' : 's'} left`;
+  }
+
+  private startOfToday(): Date {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
   }
 
   private toDateStr(date: Date): string {

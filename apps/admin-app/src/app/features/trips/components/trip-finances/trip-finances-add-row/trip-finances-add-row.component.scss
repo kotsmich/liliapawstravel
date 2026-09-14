@@ -1,0 +1,34 @@
+:host {
+  display: block;
+  flex: 0 0 auto;
+}
+
+// Column widths mirror the table above so the bar reads as its last row.
+.finance-add {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 10rem auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-surface);
+  border-top: 2px solid var(--color-border-light);
+}
+
+.finance-add__name,
+.finance-add__note {
+  width: 100%;
+}
+
+:host ::ng-deep .finance-add__amount {
+  width: 100%;
+
+  .p-inputnumber-input {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .finance-add {
+    grid-template-columns: 1fr 1fr;
+  }
+}

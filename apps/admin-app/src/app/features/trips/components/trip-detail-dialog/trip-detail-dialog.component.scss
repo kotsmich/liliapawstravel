@@ -14,7 +14,13 @@
 }
 
 :host ::ng-deep .trip-detail-dialog {
+  // Explicit rather than assumed: the header is fixed and the content takes the
+  // rest, which is what lets the active tab panel scroll on its own.
+  display: flex;
+  flex-direction: column;
+
   > .p-dialog-header {
+    flex: 0 0 auto;
     padding: 0.25rem 0.75rem;
     min-height: 0;
 
@@ -27,6 +33,13 @@
   > .p-dialog-content {
     padding: 0.25rem 1rem 1rem;
   }
+}
+
+// The dialog body no longer scrolls as a whole — each tab panel owns its own
+// scrolling, so the tab strip (and the finances tiles) stay put.
+app-trip-dogs-tabs {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .tab-content {

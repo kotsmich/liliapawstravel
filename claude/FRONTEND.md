@@ -144,6 +144,7 @@ Use these — avoid relative imports, especially across apps.
 - `/admin/**` (guarded by `authGuard`) → [ShellComponent](apps/admin-app/src/app/shared/components/shell/shell.component.ts) wraps:
   - `/dashboard` → [DashboardComponent](apps/admin-app/src/app/features/dashboard/dashboard.component.ts)
   - `/trips`, `/trips/new`, `/trips/:id/edit` → [TripsListComponent](apps/admin-app/src/app/features/trips/trips-list/trips-list.component.ts), [TripFormComponent](apps/admin-app/src/app/features/trips/trip-form/trip-form.component.ts)
+  - `/trip-results` → [TripResultsComponent](apps/admin-app/src/app/features/trip-results/trip-results.component.ts)
   - `/requests` → [RequestsListComponent](apps/admin-app/src/app/features/requests/requests-list.component.ts)
   - `/messages` → [MessagesPageComponent](apps/admin-app/src/app/features/messages/messages-page.component.ts)
   - `/settings` → [SettingsComponent](apps/admin-app/src/app/features/settings/settings.component.ts) with `/profile`, `/invitation`, `/users`
@@ -170,6 +171,7 @@ Use these — avoid relative imports, especially across apps.
 ### Feature Stores (lazy-bound by route)
 
 - **Trips** ([features/trips/store/](apps/admin-app/src/app/features/trips/store/)): `@ngrx/entity` adapter. State has `trips`, `selectedTripId`, `loading`, `mutating`, `error`. Effects call [trips.service.ts](apps/admin-app/src/app/services/trips.service.ts).
+- **Trip Results** ([features/trip-results/store/](apps/admin-app/src/app/features/trip-results/store/)): `@ngrx/entity` adapter sorted newest-date-first. Published photo galleries for completed trips — a **separate entity from `Trip`**, not a view over it. Effects call [trip-results.service.ts](apps/admin-app/src/app/services/trip-results.service.ts); `addTripResult$` chains create → photo upload because photos need the new id. Registered **globally** in [app.config.ts](apps/admin-app/src/app/app.config.ts), not on the route. There is **no WS event** for trip results (the gateway only broadcasts requests/messages), so the page would go stale against the public site whenever a result is created in another tab or session — [trip-results.component.ts](apps/admin-app/src/app/features/trip-results/trip-results.component.ts) compensates by re-dispatching `loadTripResults()` on `visibilitychange`/`focus`, and the spinner is gated on an empty grid so those refetches stay silent.
 - **Requests** ([features/requests/store/](apps/admin-app/src/app/features/requests/store/)): trip requests with approval flow handled by [requests-approval.service.ts](apps/admin-app/src/app/features/requests/requests-approval.service.ts).
 - **Messages** ([features/messages/store/](apps/admin-app/src/app/features/messages/store/)): inbox/sent.
 - **Users (admin mgmt)** ([features/settings/users/store/](apps/admin-app/src/app/features/settings/users/store/)): admin-user CRUD.
@@ -192,6 +194,7 @@ features/
 │   ├── trips-list/     filterable table
 │   ├── shared/         feature-local shared
 │   └── store/          NgRx (entity adapter)
+├── trip-results/       published photo galleries for completed trips
 ├── requests/           trip request approval/review
 ├── messages/           admin inbox
 └── settings/           profile, users, invitations
@@ -240,6 +243,7 @@ features/
 - `/about` → [AboutComponent](apps/user-app/src/app/features/about/about.component.ts)
 - `/contact` → [ContactComponent](apps/user-app/src/app/features/contact/contact.component.ts)
 - `/request` → [TripRequestComponent](apps/user-app/src/app/features/trip-request/trip-request.component.ts)
+- `/results`, `/results/:id` → [TripResultsListComponent](apps/user-app/src/app/features/trip-results/trip-results-list/trip-results-list.component.ts), [TripResultGalleryComponent](apps/user-app/src/app/features/trip-results/trip-result-gallery/trip-result-gallery.component.ts)
 - Wildcard → `/`
 - Each feature exports its own `*.routes.ts` with lazy-loaded children.
 
@@ -247,6 +251,7 @@ features/
 
 - **No auth, no auth guard** — fully public site.
 - **Trips** ([core/store/trips/](apps/user-app/src/app/core/store/trips/)) — read-only trip list with WS update support (`wsTripsReceived`). Folder lives under `core/` for legacy reasons but is **registered only on the `/request` route** (see App Config note above). `TripsEffects` implements `OnInitEffects` to dispatch `refreshTrips()` on registration (works for both root and lazy effect contexts), and `wsTrips$` is gated by `isPlatformBrowser` so the WebSocket never opens during SSR. Only [trip-request.component.ts](apps/user-app/src/app/features/trip-request/trip-request.component.ts) reads the selectors — if a future feature needs trip data, either move the slice to root or add `provideState(tripsFeature)` to that feature's route as well.
+- **Trip Results** ([core/store/trip-results/](apps/user-app/src/app/core/store/trip-results/)) — read-only. Registered via `provideState` on the `/results` route only. Flat state (`results`, `selected`, `loading`, `error`); `selected` exists because a deep link to `/results/:id` lands before the list has ever been fetched. The public `GET /api/trip-results` list already returns each result's **full `photos[]`** (the backend relation is `eager: true`), so card-level features like the preview carousel in [trip-results-list.component.ts](apps/user-app/src/app/features/trip-results/trip-results-list/trip-results-list.component.ts) need no extra request. That carousel cycles a card's **whole** gallery, but only mounts the active photo plus its two neighbours: a stacked `<img>` at `opacity: 0` is still in the viewport, so `loading="lazy"` won't stop the browser downloading it, and rendering every photo of every card would pull hundreds of images on first paint. Above `DOTS_LIMIT` photos the dot strip is replaced by an "n / total" counter.
 - **Feature stores**:
   - [features/trip-request/store/](apps/user-app/src/app/features/trip-request/store/) — multi-step submission state.
   - [features/contact/store/](apps/user-app/src/app/features/contact/store/) — contact form submission state.
@@ -255,7 +260,7 @@ features/
 
 - Base URL: `/api` (browser: dev Express proxy or prod Nginx; SSR: prefixed at runtime by `serverApiBaseInterceptor`).
 - **Interceptors** (order matters — server-base runs first so `userApiInterceptor` sees the absolute URL):
-  - [server-api-base.interceptor.ts](apps/user-app/src/app/interceptors/server-api-base.interceptor.ts) — SSR-only (gated by `isPlatformServer`). Prefixes `/api` and `/ws` URLs with `process.env.API_TARGET` (default `http://api:3000`, mirroring [server.ts](apps/user-app/src/server.ts)). Required because Node's `fetch` rejects relative URLs during SSR. No-ops in the browser.
+  - [server-api-base.interceptor.ts](apps/user-app/src/app/interceptors/server-api-base.interceptor.ts) — SSR-only (gated by `isPlatformServer`). Prefixes `/api` and `/ws` URLs with `process.env.API_TARGET`. Required because Node's `fetch` rejects relative URLs during SSR. No-ops in the browser. Default when `API_TARGET` is unset: `http://api:3000` in prod (the Docker Compose service name, mirroring [server.ts](apps/user-app/src/server.ts)), `http://localhost:3000` under `isDevMode()` — `nx serve` runs SSR outside the Compose network, where `api` doesn't resolve, so without the dev fallback **every** SSR fetch fails and each page's HTML is served with its empty/error state.
   - [user-api.interceptor.ts](apps/user-app/src/app/interceptors/user-api.interceptor.ts)
     - Sets `Content-Type: application/json` (skips for `FormData`)
     - On `status === 0` → dispatch `httpConnectionError()` (toast) — **browser only**
@@ -280,7 +285,8 @@ features/
 ├── home/         landing — hero, CTA, stats, panorama
 ├── about/        static-ish about page
 ├── contact/      contact form + map, NgRx store
-└── trip-request/ MOST COMPLEX: multi-step wizard, dog selection, file uploads, real-time availability
+├── trip-request/ MOST COMPLEX: multi-step wizard, dog selection, file uploads, real-time availability
+└── trip-results/ "Our Trip Results" — gallery index + per-trip lightbox gallery
 ```
 
 ### Styling
@@ -301,6 +307,7 @@ Pure TypeScript types/interfaces; no component code.
 export * from './lib/utils';
 export * from './lib/dog.model';
 export * from './lib/trip.model';
+export * from './lib/trip-result.model';
 export * from './lib/calendar-event.model';
 export * from './lib/contact-form.model';
 export * from './lib/trip-request.model';
@@ -314,6 +321,7 @@ export * from './lib/dialog-config.interface';
 
 - [dog.model.ts](libs/models/src/lib/dog.model.ts) — `Dog` (name, size, behaviors, gender, age, chip ID, photos, documents). Enums: `DogHeight` (`under10` | `10to25` | `over30`), `DogBehavior` (friendly/aggressive/fearful/anxious/calm). Includes `requesterId`, `destinationId`, `pickupLocationId`, `receiver`, `receiverPhone`, transient `newRequesterName` for inline requester creation.
 - [trip.model.ts](libs/models/src/lib/trip.model.ts) — `Trip` plus `TripStatus` (`upcoming` | `in-progress` | `completed`), `TripDestination`, `TripRequester`.
+- [trip-result.model.ts](libs/models/src/lib/trip-result.model.ts) — `TripResult` (published gallery: date, cities, `photos`, `photoCount`, `coverPhotoUrl`), `TripResultPhoto`, `TripResultPayload`. **Unrelated to `Trip`** — a trip result is its own admin-created entity, so past journeys that predate the app can still be published.
 - [trip-request.model.ts](libs/models/src/lib/trip-request.model.ts), [admin-user.model.ts](libs/models/src/lib/admin-user.model.ts), [calendar-event.model.ts](libs/models/src/lib/calendar-event.model.ts), [contact-form.model.ts](libs/models/src/lib/contact-form.model.ts), [socket-events.model.ts](libs/models/src/lib/socket-events.model.ts).
 - [table-column.interface.ts](libs/models/src/lib/table-column.interface.ts) — config for `GenericTableComponent`.
 - [utils.ts](libs/models/src/lib/utils.ts) — shared helpers.

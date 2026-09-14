@@ -133,6 +133,14 @@ Rules for **how to work in this codebase**. Companion to [FRONTEND.md](FRONTEND.
 - **Why:** `Date.now()`, `Math.random()`, `crypto.randomUUID()` produce different values on server vs client, causing hydration mismatches.
 - **How to apply:** initialize such values inside `ngAfterViewInit` (browser-only) or pass them in from a service that's deterministic per-request.
 
+### Never render a terminal "empty" or "not found" state during SSR
+- **Why:** a data fetch that fails server-side gets baked into the served HTML, and the user stares at "we could not find this" for the whole hydration window even though the browser re-dispatches and succeeds. `!loading() && !data()` is *not* a failure on the server — it's an unresolved one.
+- **How to apply:** gate the failure/empty branch on `isPlatformBrowser` and let everything else fall through to the loader (`ui-loading-spinner` from `@ui`). See the `showError`/`showLoader` computeds in [trip-result-gallery.component.ts](apps/user-app/src/app/features/trip-results/trip-result-gallery/trip-result-gallery.component.ts).
+
+### Register every new top-level route in the two SSR route tables
+- **Why:** they're hand-maintained mirrors of [app.routes.ts](apps/user-app/src/app/app.routes.ts) and fail silently. Missing from `KNOWN_LANG_CHILDREN` in [server.ts](apps/user-app/src/server.ts) → the page is served with HTTP 404. Missing from `ROUTE_TO_SEO_KEY` in [app.component.ts](apps/user-app/src/app/app.component.ts) → it gets the "Page Not Found" `<title>` and `noindex`.
+- **How to apply:** add the path to both, add a `seo.<key>` block (title/description/breadcrumb) to all three of `en/de/el.json`, and for routes with dynamic children (`/results/:id`) add the parent to `DYNAMIC_CHILD_PREFIXES` so children inherit the parent's SEO entry.
+
 ---
 
 ## 9. Workflow Rules (for Claude)
@@ -149,9 +157,9 @@ Rules for **how to work in this codebase**. Companion to [FRONTEND.md](FRONTEND.
 - **Why:** the stack is intentional (PrimeNG, NgRx, Transloco, jspdf). New deps need a real justification and may conflict with existing patterns.
 - **How to apply:** before `npm install <thing>`, propose it and wait for the user to agree.
 
-### For UI changes, verify in the browser before reporting complete
-- **Why:** type-check + tests pass != feature works. Visual regressions, broken bindings, and CSS issues only show in a real browser.
-- **How to apply:** run `npm run start:admin-portal` or `npm run start:user-portal`, exercise the changed flow + nearby flows, then report. If you can't run the dev server, say so explicitly instead of claiming success.
+### Don't build, compile, or run the app to verify — the user does that
+- **Why:** the user checks the result themselves after the changes land. Builds (`nx build`, `tsc`, dev servers) are slow, and reporting pre-existing warnings from them is noise, not signal. Time is better spent reading the surrounding code carefully enough that the change is right by construction.
+- **How to apply:** make the change, explain what changed and what to look at, and stop. Don't run `nx build` / `npm run start:*` / `tsc --noEmit` "just to check", and don't report build warnings you didn't introduce. Run a build or test only if the user explicitly asks, or if a genuine question can't be answered any other way — and say why.
 
 ### Expect complexity in the trip-form / trip-request areas
 - **Why:** dog selection, multi-requester grouping, file uploads, and validation are spread across multiple services. See [FRONTEND.md § Gotchas](FRONTEND.md#3-trip-form-is-the-heaviest-feature-in-the-codebase).

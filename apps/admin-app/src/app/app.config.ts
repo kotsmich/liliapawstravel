@@ -18,6 +18,7 @@ import { APP_ROUTES } from './app.routes';
 import { adminApiInterceptor } from '@admin/interceptors/admin-api.interceptor';
 import { authReducer, AuthEffects, restoreSession } from '@admin/core/store/auth';
 import { tripsReducer, TripsEffects } from '@admin/features/trips/store';
+import { tripFinancesReducer, TripFinancesEffects } from '@admin/features/trips/store/trip-finances';
 import { tripResultsReducer, TripResultsEffects } from '@admin/features/trip-results/store';
 import { calendarReducer } from '@admin/core/store/calendar';
 import { requestsReducer, RequestsEffects } from '@admin/features/requests/store';
@@ -68,6 +69,7 @@ export const appConfig: ApplicationConfig = {
     provideStore({
       auth: authReducer,
       trips: tripsReducer,
+      tripFinances: tripFinancesReducer,
       tripResults: tripResultsReducer,
       calendar: calendarReducer,
       requests: requestsReducer,
@@ -75,7 +77,7 @@ export const appConfig: ApplicationConfig = {
       notifications: notificationsReducer,
       users: usersReducer,
     }),
-    provideEffects([AuthEffects, TripsEffects, TripResultsEffects, RequestsEffects, MessagesEffects, NotificationEffects, SocketEffects, UsersEffects]),
+    provideEffects([AuthEffects, TripsEffects, TripFinancesEffects, TripResultsEffects, RequestsEffects, MessagesEffects, NotificationEffects, SocketEffects, UsersEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     providePrimeNG({
       theme: {

@@ -1,0 +1,17 @@
+// Explicit rather than assumed: the header is fixed and the content takes the
+// rest, which is what lets the finances panel size itself with `flex`.
+:host ::ng-deep .trip-finances-dialog {
+  display: flex;
+  flex-direction: column;
+
+  > .p-dialog-header {
+    flex: 0 0 auto;
+  }
+}
+
+.dialog-spinner-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+}

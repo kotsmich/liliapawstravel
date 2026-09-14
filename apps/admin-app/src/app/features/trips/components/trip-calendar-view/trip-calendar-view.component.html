@@ -5,6 +5,7 @@
     <ng-template pTemplate="title">{{ 'trips.schedule' | transloco }}</ng-template>
     <ui-trip-calendar
       [events]="calendarEvents()"
+      [allowPastEvents]="true"
       [selectedDate]="selectedDate()"
       (dateSelected)="dateSelected.emit($event)"
       (dateDblClicked)="onDateDblClicked($event)">
@@ -25,6 +26,7 @@
         <app-trip-calendar-card
           [trip]="trip"
           (viewDetails)="viewDetails.emit($event)"
+          (finances)="financesClicked.emit($event)"
           (edit)="editTrip.emit($event)"
           (delete)="deleteTrip.emit($event)"
         />

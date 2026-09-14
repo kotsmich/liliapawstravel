@@ -15,6 +15,12 @@ import {
   addRequestFromSocket,
 } from '@admin/features/requests/store';
 import {
+  loadTripFinancesFailure,
+  createTripFinanceEntryFailure,
+  updateTripFinanceEntryFailure,
+  deleteTripFinanceEntryFailure,
+} from '@admin/features/trips/store/trip-finances';
+import {
   addTripResultSuccess, addTripResultFailure,
   updateTripResultSuccess, updateTripResultFailure,
   deleteTripResultSuccess, deleteTripResultFailure,
@@ -57,6 +63,18 @@ export const TOAST_REGISTRY: Record<string, (action: any) => ToastPayload> = {
   ...register(updateTripFailure,
     ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
   ...register(deleteTripFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
+
+  // Trip finances — failures only. Inline editing fires one save per typed
+  // amount, so success toasts would spam; the row leaving edit mode and the
+  // summary tile moving are already the confirmation.
+  ...register(loadTripFinancesFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
+  ...register(createTripFinanceEntryFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
+  ...register(updateTripFinanceEntryFailure,
+    ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
+  ...register(deleteTripFinanceEntryFailure,
     ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
 
   // Trip results

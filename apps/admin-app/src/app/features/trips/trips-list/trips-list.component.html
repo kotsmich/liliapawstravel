@@ -26,6 +26,7 @@
       (editTrip)="onEditTrip($event)"
       (deleteTrip)="deleteTrip($event)"
       (viewDetails)="openDetail($event)"
+      (financesClicked)="openFinances($event)"
       />
   }
   <!-- All Trips Tab -->
@@ -51,4 +52,13 @@
   (rejectRequest)="rejectRequestInDetail($event)"
   (deleteRequest)="deleteRequestInDetail($event)"
   (closed)="closeDetail()"
+  />
+
+<!-- Trip Finances Dialog -->
+<app-trip-finances-dialog
+  [visible]="financesDialogVisible()"
+  [trip]="financesTrip()"
+  [loading]="loading()"
+  (visibleChange)="financesDialogVisible.set($event)"
+  (closed)="closeFinances()"
   />

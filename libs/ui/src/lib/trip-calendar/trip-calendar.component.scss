@@ -21,6 +21,15 @@
       font-weight: 700;
     }
   }
+
+  // Still selectable, but muted so a finished trip never reads as upcoming.
+  &.has-event.is-past-event {
+    background: #e5e7eb;
+
+    .day-number {
+      color: #6b7280;
+    }
+  }
 }
 
 

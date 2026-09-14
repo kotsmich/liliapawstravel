@@ -20,8 +20,19 @@ export function findNearestTrip(
   return [...filtered].sort((a, b) => a.date.localeCompare(b.date))[0] ?? null;
 }
 
-// Falls back to today (never a past trip) so the calendar stays on the
-// current day and the view can warn that nothing is scheduled ahead.
+export function findLatestPastTrip(trips: readonly Trip[]): Trip | null {
+  const todayIso = today();
+  return [...trips]
+    .filter((trip) => trip.date < todayIso)
+    .sort((a, b) => b.date.localeCompare(a.date))[0] ?? null;
+}
+
+// Prefers the next trip from today onwards. With nothing scheduled ahead it
+// falls back to the most recent past trip so its details are one click away
+// (the view still warns that nothing is upcoming), and to today when there
+// are no trips at all.
 export function pickAutoSelectDate(trips: readonly Trip[]): string {
-  return findNearestTrip(trips, { futureOnly: true })?.date ?? today();
+  return findNearestTrip(trips, { futureOnly: true })?.date
+    ?? findLatestPastTrip(trips)?.date
+    ?? today();
 }
