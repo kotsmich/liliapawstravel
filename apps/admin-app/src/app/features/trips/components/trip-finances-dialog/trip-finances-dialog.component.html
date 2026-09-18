@@ -27,6 +27,6 @@
       <ui-loading-spinner />
     </div>
   } @else if (visible() && trip(); as loadedTrip) {
-    <app-trip-finances [tripId]="loadedTrip.id" [requesters]="loadedTrip.requesters ?? []" />
+    <app-trip-finances [tripId]="loadedTrip.id" [trip]="loadedTrip" [requesters]="loadedTrip.requesters ?? []" />
   }
 </p-dialog>

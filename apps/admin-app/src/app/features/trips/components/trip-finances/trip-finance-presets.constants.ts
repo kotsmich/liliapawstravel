@@ -17,12 +17,27 @@ import { TripFinancePreset } from '@models/lib/trip-finance.model';
  * distrust the ones that are right.
  *
  * TODO: the list is a frontend constant for now; when it moves behind
- * `GET /trip-finance-presets`, only the source changes — `buildExpenseRows`
+ * `GET /trip-finance-presets`, only the source changes — `buildPresetRows`
  * already takes it as a parameter.
  */
+/**
+ * The people and cuts paid out on every trip. Same rules as the expense list:
+ * a line only reaches the database once it has an amount, and `amount: null`
+ * means the figure varies per trip, so the row waits at 0 for a real number.
+ */
+export const PAYMENT_PRESETS: readonly TripFinancePreset[] = [
+  { name: 'Stelios', amount: null },
+  { name: 'Anthi', amount: null },
+  { name: 'Logistria 50%', amount: 62 },
+  { name: 'Service 25%', amount: 100 },
+  { name: 'Δανειο 50%', amount: 210 },
+  { name: 'Ασφαλεια βαν 60ευρο', amount: 60 },
+];
+
 export const EXPENSE_PRESETS: readonly TripFinancePreset[] = [
   { name: 'Πανες - Καθαριστικα', amount: 25 },
-  { name: 'Φαγητα Δρομολογιο', amount: 30 },
+  { name: 'Φαγητα Δρομολογιο', amount: 40 },
+  { name: 'On the road εξτρα', amount: 30},
   { name: 'Διοδια μαζι', amount: 50 },
   { name: 'Diesel Larisa', amount: 120 },
   { name: 'Add blue', amount: 15 },
@@ -41,7 +56,6 @@ export const EXPENSE_PRESETS: readonly TripFinancePreset[] = [
   { name: 'Hotel (Return)', amount: 60 },
   { name: 'Viniet 2 Italy', amount: 80 },
   { name: 'Πλοιο Italy - Igoumenitsa', amount: 300 },
-  { name: 'On the road εξτρα', amount: 30},
   { name: 'Dinners', amount: 150},
 
 ];

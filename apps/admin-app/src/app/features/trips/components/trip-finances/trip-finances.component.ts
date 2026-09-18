@@ -11,14 +11,14 @@ import { TabsModule } from 'primeng/tabs';
 import { LoadingSpinnerComponent } from '@ui/lib/loading-spinner/loading-spinner.component';
 import {
   TripFinanceEntry,
-  TripFinanceEntryChanges,
   TripFinanceEntryPayload,
   TripFinanceEntryType,
   TripFinanceRow,
   TripFinanceSummary,
 } from '@models/lib/trip-finance.model';
-import { TripRequester } from '@models/lib/trip.model';
+import { Trip, TripRequester } from '@models/lib/trip.model';
 import { ConfirmActionService } from '@admin/shared/services/confirm-action.service';
+import { TripFinancesExportService } from '@admin/services/trip-finances-export.service';
 import {
   FILL_STANDARD_ROW_KEY,
   RESET_EXPENSES_ROW_KEY,
@@ -30,19 +30,21 @@ import {
   selectTripFinancesLoading,
   selectTripFinancesMutatingKey,
   tripFinancesSelectors,
-  updateTripFinanceEntry,
+  saveTripFinanceRow,
 } from '@admin/features/trips/store/trip-finances';
 import { TripFinancesSummaryComponent } from './trip-finances-summary/trip-finances-summary.component';
-import { TripFinancesTableComponent } from './trip-finances-table/trip-finances-table.component';
+import {
+  TripFinanceAutosave,
+  TripFinancesTableComponent,
+} from './trip-finances-table/trip-finances-table.component';
 import { TripFinancesAddRowComponent } from './trip-finances-add-row/trip-finances-add-row.component';
 import {
-  buildExpenseRows,
-  buildFlatRows,
   buildIncomeRows,
+  buildPresetRows,
   hasStandardLineOps,
   standardLineOps,
 } from './trip-finance-rows.util';
-import { EXPENSE_PRESETS } from './trip-finance-presets.constants';
+import { EXPENSE_PRESETS, PAYMENT_PRESETS } from './trip-finance-presets.constants';
 import {
   TRIP_FINANCES_ADD_MODES,
   TRIP_FINANCES_DEFAULT_TAB,
@@ -77,9 +79,15 @@ export class TripFinancesComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly confirm = inject(ConfirmActionService);
   private readonly transloco = inject(TranslocoService);
+  private readonly exportService = inject(TripFinancesExportService);
 
   readonly tripId = input.required<string>();
+  /** Route and date for the PDF header; the rows themselves come from the store. */
+  readonly trip = input<Trip | null>(null);
   readonly requesters = input<TripRequester[]>([]);
+
+  /** True while the two PDFs are being built — spins the export button. */
+  readonly exporting = signal(false);
 
   readonly activeTab = signal<TripFinancesTab>(TRIP_FINANCES_DEFAULT_TAB);
 
@@ -115,10 +123,21 @@ export class TripFinancesComponent implements OnInit {
     { initialValue: 0 }
   );
 
+  /**
+   * Final budget — income − expenses − payments. Rounded through cents, the same
+   * way the PDF's ΥΠΟΛΟΙΠΟ box is, so the tile and the printed sheet always agree.
+   */
+  readonly remaining = computed(() => {
+    const { incomeTotal, expenseTotal } = this.summary();
+    return Math.round((incomeTotal - expenseTotal - this.paymentsTotal()) * 100) / 100;
+  });
+
   readonly expenseRows = computed((): TripFinanceRow[] =>
-    buildExpenseRows(this.expenses(), EXPENSE_PRESETS)
+    buildPresetRows(this.expenses(), EXPENSE_PRESETS, 'expense')
   );
-  readonly paymentRows = computed((): TripFinanceRow[] => buildFlatRows(this.payments()));
+  readonly paymentRows = computed((): TripFinanceRow[] =>
+    buildPresetRows(this.payments(), PAYMENT_PRESETS, 'payment')
+  );
   readonly incomeRows = computed((): TripFinanceRow[] =>
     buildIncomeRows(this.incomes(), this.requesters())
   );
@@ -169,8 +188,9 @@ export class TripFinancesComponent implements OnInit {
 
   onTabChange(tab: string | undefined): void {
     // The table is shared across tabs, so an open inline edit would survive the
-    // switch and keep pointing at a row the new tab doesn't render.
-    this.table()?.cancelEdit();
+    // switch and keep pointing at a row the new tab doesn't render. Closing
+    // flushes it first, so nothing typed just before the switch is lost.
+    this.table()?.closeEdit();
     this.activeTab.set((tab as TripFinancesTab) ?? TRIP_FINANCES_DEFAULT_TAB);
   }
 
@@ -200,6 +220,34 @@ export class TripFinancesComponent implements OnInit {
     });
   }
 
+  /**
+   * Prints all three lists — expenses as one PDF, incomes + payments as the
+   * other — from exactly the rows and totals on screen, whichever tab is open.
+   */
+  async onExportPdf(): Promise<void> {
+    const trip = this.trip();
+    if (!trip || this.exporting()) return;
+
+    this.exporting.set(true);
+    try {
+      await this.exportService.exportFinancePdfs({
+        trip,
+        expenseRows: this.expenseRows(),
+        incomeRows: this.incomeRows(),
+        paymentRows: this.paymentRows(),
+        requesters: this.requesters(),
+        summary: this.summary(),
+        paymentsTotal: this.paymentsTotal(),
+      });
+    } catch (err) {
+      // Same handling as the dogs manifest export: generation is client-side,
+      // with no NgRx action to hang a toast on.
+      console.error('[FinancesPdf] Failed to generate PDFs:', err);
+    } finally {
+      this.exporting.set(false);
+    }
+  }
+
   /** Adding a brand-new line from the bar; the table's own rows have real keys. */
   onQuickAdd(payload: TripFinanceEntryPayload): void {
     this.onCreate({ rowKey: QUICK_ADD_KEY, payload });
@@ -211,13 +259,14 @@ export class TripFinancesComponent implements OnInit {
     );
   }
 
-  onUpdate(event: { entryId: string; rowKey: string; changes: TripFinanceEntryChanges }): void {
+  /** Inline autosave from the table; the store decides create-once vs update. */
+  onAutosave(event: TripFinanceAutosave): void {
     this.store.dispatch(
-      updateTripFinanceEntry({
+      saveTripFinanceRow({
         tripId: this.tripId(),
-        entryId: event.entryId,
         rowKey: event.rowKey,
-        changes: event.changes,
+        entryId: event.entryId,
+        payload: event.payload,
       })
     );
   }

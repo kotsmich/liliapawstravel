@@ -1,8 +1,12 @@
 <!-- Scrollable mode is what pins thead/tfoot: only the rows move, so the column
-     titles and the quick-add row stay reachable however long the list gets. -->
+     titles stay reachable however long the list gets.
+
+     rowTrackBy by the stable slot key: rows are rebuilt after every autosave, and
+     tracking by identity would redraw the open row and throw the cursor out. -->
 <p-table
   [value]="rows()"
   [dataKey]="'key'"
+  [rowTrackBy]="trackByKey"
   [scrollable]="true"
   scrollHeight="flex"
   styleClass="finance-table p-datatable-sm"
@@ -27,29 +31,40 @@
     }
 
     @if (editingKey() === row.key) {
+      <!-- Autosaves after a pause, on blur and on Enter; Escape closes (what was
+           typed is already saved, so there is nothing to discard). -->
       <tr class="finance-table__row is-editing" [formGroup]="editForm">
         <td>
           <input pInputText type="text" formControlName="name" class="w-full"
             [attr.aria-label]="'trips.finances.name' | transloco"
-            (keyup.enter)="commitEdit(row)" (keyup.escape)="cancelEdit()" />
+            (blur)="flushAutosave()"
+            (keyup.enter)="commitEdit()" (keyup.escape)="closeEdit()" />
         </td>
         <td>
           <input pInputText type="text" formControlName="note" class="w-full"
             [attr.aria-label]="'trips.finances.note' | transloco"
-            (keyup.enter)="commitEdit(row)" (keyup.escape)="cancelEdit()" />
+            (blur)="flushAutosave()"
+            (keyup.enter)="commitEdit()" (keyup.escape)="closeEdit()" />
         </td>
         <td>
           <p-inputNumber formControlName="amount" mode="currency" currency="EUR" locale="el-GR"
             [min]="0" [maxFractionDigits]="2" styleClass="w-full"
             [ariaLabel]="'trips.finances.amount' | transloco"
-            (keyup.enter)="commitEdit(row)" (keyup.escape)="cancelEdit()" />
+            (onBlur)="flushAutosave()"
+            (keyup.enter)="commitEdit()" (keyup.escape)="closeEdit()" />
         </td>
         <td class="finance-table__actions">
-          <p-button icon="pi pi-check" severity="success" [text]="true" [rounded]="true" size="small"
-            [disabled]="editForm.invalid" [loading]="mutatingKey() === row.key"
-            [ariaLabel]="'common.save' | transloco" (onClick)="commitEdit(row)" />
+          <!-- Status replaces the old confirm button: a spinner while this row is
+               saving, a warning when it can't be saved (the name was cleared). -->
+          @if (mutatingKey() === row.key) {
+            <i class="pi pi-spin pi-spinner finance-table__status"
+              [attr.aria-label]="'common.saving' | transloco"></i>
+          } @else if (editForm.invalid) {
+            <i class="pi pi-exclamation-circle finance-table__status is-invalid"
+              [pTooltip]="'common.required' | transloco"></i>
+          }
           <p-button icon="pi pi-times" severity="secondary" [text]="true" [rounded]="true" size="small"
-            [ariaLabel]="'common.cancel' | transloco" (onClick)="cancelEdit()" />
+            [ariaLabel]="'common.close' | transloco" (onClick)="closeEdit()" />
         </td>
       </tr>
     } @else {
@@ -66,6 +81,14 @@
         <td class="finance-table__amount">
           @if (row.amount === null) {
             <span class="finance-table__placeholder">{{ 'trips.finances.notRecorded' | transloco }}</span>
+          } @else if (row.suggestedAmount !== null) {
+            <!-- What this standard line normally costs. Shown instead of a bare
+                 0,00, which read as "this line was free". Styled apart because it
+                 is not saved yet and so is not in the totals above. -->
+            <span class="finance-table__suggested"
+              [pTooltip]="'trips.finances.suggestedTooltip' | transloco">
+              {{ row.suggestedAmount | currency: 'EUR' }}
+            </span>
           } @else {
             {{ row.amount | currency: 'EUR' }}
           }

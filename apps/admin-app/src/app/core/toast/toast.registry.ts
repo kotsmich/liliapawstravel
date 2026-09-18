@@ -17,7 +17,7 @@ import {
 import {
   loadTripFinancesFailure,
   createTripFinanceEntryFailure,
-  updateTripFinanceEntryFailure,
+  saveTripFinanceRowFailure,
   deleteTripFinanceEntryFailure,
   fillStandardExpensesFailure,
   resetExpenseAmountsFailure,
@@ -74,7 +74,7 @@ export const TOAST_REGISTRY: Record<string, (action: any) => ToastPayload> = {
     ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
   ...register(createTripFinanceEntryFailure,
     ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
-  ...register(updateTripFinanceEntryFailure,
+  ...register(saveTripFinanceRowFailure,
     ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),
   ...register(deleteTripFinanceEntryFailure,
     ({ error }) => ({ severity: 'error', summary: 'Error', detail: error })),

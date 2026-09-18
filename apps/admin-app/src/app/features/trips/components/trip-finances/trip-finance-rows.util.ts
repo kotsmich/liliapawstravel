@@ -1,5 +1,6 @@
 import {
   TripFinanceEntry,
+  TripFinanceEntryType,
   TripFinancePreset,
   TripFinanceRow,
   TripFinanceStandardOps,
@@ -12,23 +13,35 @@ export const SUGGESTED_ROW_PREFIX = 'req:';
 export const suggestedRowKey = (requesterId: string): string =>
   `${SUGGESTED_ROW_PREFIX}${requesterId}`;
 
-/** Prefix for a standard expense line that has not been saved yet. */
+/** Prefix for a standard line — expense or payment — that has not been saved yet. */
 export const PRESET_ROW_PREFIX = 'preset:';
 
-/** Keyed by index, not name, so a duplicated preset can never collide. */
-export const presetRowKey = (index: number): string => `${PRESET_ROW_PREFIX}${index}`;
+/**
+ * Keyed by index rather than name, so a duplicated preset can never collide,
+ * and namespaced by type: expenses and payments keep separate lists, and a
+ * shared `preset:0` would let the store's create-once cache mix the two up.
+ */
+export const presetRowKey = (type: TripFinanceEntryType, index: number): string =>
+  `${PRESET_ROW_PREFIX}${type}:${index}`;
 
 const normalizeName = (name: string): string => name.trim().toLocaleLowerCase();
 
 const byCreatedAt = (a: TripFinanceEntry, b: TripFinanceEntry): number =>
   a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id);
 
+/**
+ * `key` defaults to the entry id, but rows that occupy a fixed slot — a standard
+ * line or a trip requestor — pass the slot key instead, so the key is identical
+ * before and after the entry is first saved. That's what lets an open inline
+ * edit (and its autosave queue) survive its own first save.
+ */
 const savedRow = (
   entry: TripFinanceEntry,
   orphaned = false,
-  suggestedAmount: number | null = null
+  suggestedAmount: number | null = null,
+  key: string = entry.id
 ): TripFinanceRow => ({
-  key: entry.id,
+  key,
   entry,
   requesterId: entry.requesterId,
   // The snapshotted name, not the live requester name — a later rename must not
@@ -41,26 +54,20 @@ const savedRow = (
 });
 
 /**
- * Plain chronological rows, with no merging — used by the payments tab, whose
- * entries are free-form name/amount lines with no canonical list behind them.
- */
-export function buildFlatRows(entries: TripFinanceEntry[]): TripFinanceRow[] {
-  return [...entries].sort(byCreatedAt).map((entry) => savedRow(entry));
-}
-
-/**
- * Merges saved expenses with the standard expense list: every preset occupies
- * its slot in route order — showing 0 € until an amount is recorded — and any
- * expense whose name is not a preset follows in the order it was added.
+ * Merges saved entries with a standard list — the route's expense lines, or the
+ * usual payouts. Every preset occupies its slot in list order, showing 0 € until
+ * an amount is recorded, and anything whose name is not a preset follows in the
+ * order it was added.
  *
  * Matching is by normalized name, since presets have no id of their own. A
  * preset renamed after saving therefore drops into the custom block and its
  * original slot reappears at 0 €, which is the honest reading: that standard
  * line has nothing recorded against it.
  */
-export function buildExpenseRows(
+export function buildPresetRows(
   entries: TripFinanceEntry[],
-  presets: readonly TripFinancePreset[]
+  presets: readonly TripFinancePreset[],
+  type: TripFinanceEntryType
 ): TripFinanceRow[] {
   const byName = new Map<string, TripFinanceEntry>();
   for (const entry of entries) {
@@ -77,10 +84,15 @@ export function buildExpenseRows(
       // A saved line sitting at 0 has nothing recorded against it yet — most
       // often because the tab was just reset — so it keeps its suggestion and
       // stays fillable. A real amount drops the suggestion.
-      return savedRow(entry, false, entry.amount === 0 ? preset.amount : null);
+      return savedRow(
+        entry,
+        false,
+        entry.amount === 0 ? preset.amount : null,
+        presetRowKey(type, index)
+      );
     }
     return {
-      key: presetRowKey(index),
+      key: presetRowKey(type, index),
       entry: null,
       requesterId: null,
       displayName: preset.name,
@@ -112,14 +124,17 @@ export function buildExpenseRows(
  * preset mid-season tops up the gap on a trip already under way without
  * overwriting anything the admin typed.
  */
-export function standardLineOps(rows: TripFinanceRow[]): TripFinanceStandardOps {
+export function standardLineOps(
+  rows: TripFinanceRow[],
+  type: TripFinanceEntryType = 'expense'
+): TripFinanceStandardOps {
   const ops: TripFinanceStandardOps = { creates: [], updates: [] };
   for (const row of rows) {
     if (row.suggestedAmount === null) continue;
     if (row.entry) {
       ops.updates.push({ entryId: row.entry.id, amount: row.suggestedAmount });
     } else {
-      ops.creates.push({ type: 'expense', name: row.displayName, amount: row.suggestedAmount });
+      ops.creates.push({ type, name: row.displayName, amount: row.suggestedAmount });
     }
   }
   return ops;
@@ -128,6 +143,35 @@ export function standardLineOps(rows: TripFinanceRow[]): TripFinanceStandardOps 
 /** True when the fill action would change something. */
 export const hasStandardLineOps = (ops: TripFinanceStandardOps): boolean =>
   ops.creates.length > 0 || ops.updates.length > 0;
+
+/**
+ * The priced standard lines a trip is missing altogether, across both lists —
+ * what gets recorded automatically when a trip's finances are opened, so the
+ * usual expenses and payouts count without anyone typing them.
+ *
+ * Creates only, deliberately: a line already saved at 0 was zeroed on purpose,
+ * by "reset to 0" or by hand, and topping it back up on every reload would undo
+ * that. Re-applying those prices stays a manual choice — the fill button.
+ */
+export function missingStandardLines(
+  entries: TripFinanceEntry[],
+  expensePresets: readonly TripFinancePreset[],
+  paymentPresets: readonly TripFinancePreset[]
+): TripFinanceStandardOps {
+  const createsFor = (
+    type: TripFinanceEntryType,
+    presets: readonly TripFinancePreset[]
+  ) =>
+    standardLineOps(
+      buildPresetRows(entries.filter((entry) => entry.type === type), presets, type),
+      type
+    ).creates;
+
+  return {
+    creates: [...createsFor('expense', expensePresets), ...createsFor('payment', paymentPresets)],
+    updates: [],
+  };
+}
 
 /**
  * Merges saved income entries with the trip's requestors, in three blocks:
@@ -150,7 +194,7 @@ export function buildIncomeRows(
 
   const requestorRows = requesters.map((requester): TripFinanceRow => {
     const entry = byRequesterId.get(requester.requesterId);
-    if (entry) return savedRow(entry);
+    if (entry) return savedRow(entry, false, null, suggestedRowKey(requester.requesterId));
     return {
       key: suggestedRowKey(requester.requesterId),
       entry: null,

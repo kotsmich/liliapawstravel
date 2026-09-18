@@ -24,9 +24,18 @@ app-trip-finances-summary,
   margin-top: 0.5rem;
 }
 
-:host ::ng-deep .finance-tabs {
+// Tabs take the row; the export button sits at its end on the same line.
+.finance-tabs-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   flex: 0 0 auto;
   margin-bottom: 0.5rem;
+}
+
+:host ::ng-deep .finance-tabs {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 // app-trip-finances-table sets its own `flex: 1 1 auto; min-height: 0` on :host.

@@ -61,9 +61,29 @@
     font-style: italic;
   }
 
+  // A standard price that hasn't been recorded: visible, but clearly not a
+  // saved figure — dashed underline sets it apart from the real amounts.
+  .finance-table__suggested {
+    color: var(--color-text-muted);
+    font-style: italic;
+    border-bottom: 1px dashed var(--color-border-alt);
+    cursor: help;
+  }
+
   .finance-table__warn {
     margin-right: 0.375rem;
     color: var(--color-warning);
+  }
+
+  // Autosave status beside the close button in the open row.
+  .finance-table__status {
+    margin-right: 0.25rem;
+    vertical-align: middle;
+    color: var(--color-text-muted);
+
+    &.is-invalid {
+      color: var(--color-error-alt);
+    }
   }
 
   .finance-table__divider > td {

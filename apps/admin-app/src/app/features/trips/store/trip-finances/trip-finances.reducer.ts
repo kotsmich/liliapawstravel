@@ -8,7 +8,7 @@ import {
   fillStandardExpenses, fillStandardExpensesSuccess, fillStandardExpensesFailure,
   resetExpenseAmounts, resetExpenseAmountsSuccess, resetExpenseAmountsFailure,
   RESET_EXPENSES_ROW_KEY,
-  updateTripFinanceEntry, updateTripFinanceEntrySuccess, updateTripFinanceEntryFailure,
+  saveTripFinanceRow, saveTripFinanceRowSuccess, saveTripFinanceRowFailure,
   deleteTripFinanceEntry, deleteTripFinanceEntrySuccess, deleteTripFinanceEntryFailure,
 } from './trip-finances.actions';
 
@@ -77,11 +77,13 @@ export const tripFinancesFeature = createFeature({
     ),
     on(resetExpenseAmountsFailure, (state, { error }) => ({ ...state, mutatingKey: null, error })),
 
-    on(updateTripFinanceEntry, (state, { rowKey }) => ({ ...state, mutatingKey: rowKey, error: null })),
-    on(updateTripFinanceEntrySuccess, (state, { entry }) =>
+    // Autosave: the spinner follows the row being saved. upsertOne covers both
+    // outcomes — a slot's first save creates the entry, later ones update it.
+    on(saveTripFinanceRow, (state, { rowKey }) => ({ ...state, mutatingKey: rowKey, error: null })),
+    on(saveTripFinanceRowSuccess, (state, { entry }) =>
       adapter.upsertOne(entry, { ...state, mutatingKey: null })
     ),
-    on(updateTripFinanceEntryFailure, (state, { error }) => ({ ...state, mutatingKey: null, error })),
+    on(saveTripFinanceRowFailure, (state, { error }) => ({ ...state, mutatingKey: null, error })),
 
     on(deleteTripFinanceEntry, (state, { rowKey }) => ({ ...state, mutatingKey: rowKey, error: null })),
     on(deleteTripFinanceEntrySuccess, (state, { id }) =>

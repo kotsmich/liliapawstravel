@@ -14,4 +14,6 @@ export class TripFinancesSummaryComponent {
   readonly incomeTotal = input.required<number>();
   readonly expenseTotal = input.required<number>();
   readonly profit = input.required<number>();
+  /** Income − expenses − payments: what's actually left once everything is paid out. */
+  readonly remaining = input.required<number>();
 }

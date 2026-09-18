@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CurrencyPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { debounceTime } from 'rxjs';
 import { TranslocoModule } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -8,11 +10,20 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import {
-  TripFinanceEntryChanges,
   TripFinanceEntryPayload,
   TripFinanceEntryType,
   TripFinanceRow,
 } from '@models/lib/trip-finance.model';
+
+/** How long typing has to pause before the open row is saved. */
+const AUTOSAVE_DEBOUNCE_MS = 500;
+
+export interface TripFinanceAutosave {
+  rowKey: string;
+  /** null for a slot with nothing saved yet — the store creates it once, then updates. */
+  entryId: string | null;
+  payload: TripFinanceEntryPayload;
+}
 
 /**
  * Inline-editable money table, shared by all three finance tabs.
@@ -20,6 +31,9 @@ import {
  * Built on a raw `p-table` rather than `GenericTableComponent`, which has no
  * cell editing and a row-level click handler that would fire every time the
  * admin clicks into an input. Adding new lines is a sibling component.
+ *
+ * Edits autosave: after a pause in typing, on leaving a field, on Enter, and
+ * when the row is closed or another row opened. There is no confirm button.
  */
 @Component({
   selector: 'app-trip-finances-table',
@@ -39,8 +53,7 @@ export class TripFinancesTableComponent {
   readonly rows = input<TripFinanceRow[]>([]);
   readonly mutatingKey = input<string | null>(null);
 
-  readonly create = output<{ rowKey: string; payload: TripFinanceEntryPayload }>();
-  readonly update = output<{ entryId: string; rowKey: string; changes: TripFinanceEntryChanges }>();
+  readonly autosave = output<TripFinanceAutosave>();
   readonly remove = output<TripFinanceRow>();
 
   readonly editingKey = signal<string | null>(null);
@@ -63,10 +76,26 @@ export class TripFinancesTableComponent {
 
   readonly editForm = this.buildForm();
 
+  /** The open row's last sent (or loaded) values, so identical values are never re-sent. */
+  private lastSentSnapshot: string | null = null;
+
+  /**
+   * Rows are rebuilt from the store after every save. Tracking by the stable
+   * slot key keeps the open row's DOM — and the cursor inside it — alive across
+   * that; PrimeNG's default tracks by object identity and would redraw it.
+   */
+  readonly trackByKey = (_index: number, row: TripFinanceRow): string => row.key;
+
   /** The orphan block gets its own divider row; everything above it is normal. */
   readonly firstOrphanKey = computed(
     () => this.rows().find((row) => row.orphaned)?.key ?? null
   );
+
+  constructor() {
+    this.editForm.valueChanges
+      .pipe(debounceTime(AUTOSAVE_DEBOUNCE_MS), takeUntilDestroyed())
+      .subscribe(() => this.flushAutosave());
+  }
 
   // Only the name is mandatory here too; clearing the amount means 0, not a
   // blocked save. See the add-row component for the same rule.
@@ -85,59 +114,102 @@ export class TripFinancesTableComponent {
 
   startEdit(row: TripFinanceRow): void {
     if (this.editingKey() === row.key) return;
-    this.editForm.reset({
-      name: row.displayName,
-      // A standard line with nothing recorded — unsaved, or left at 0 by a
-      // reset — opens at its usual price, so accepting it is one keystroke.
-      // Anything with a real amount opens at what was actually recorded.
-      amount: row.suggestedAmount ?? row.amount,
-      note: row.note ?? '',
-    });
+    // Leaving another row mid-type must not drop its last keystrokes.
+    this.flushAutosave();
+
+    // emitEvent: false — loading a row into the form is not an edit, and must
+    // neither trigger the debounce nor count as a change.
+    this.editForm.reset(
+      {
+        name: row.displayName,
+        // A standard line with nothing recorded — unsaved, or left at 0 by a
+        // reset — opens at its usual price, so accepting it is one keystroke.
+        // Anything with a real amount opens at what was actually recorded.
+        amount: row.suggestedAmount ?? row.amount,
+        note: row.note ?? '',
+      },
+      { emitEvent: false }
+    );
+    const name = this.editForm.controls.name;
     if (this.isNameLocked(row)) {
-      this.editForm.controls.name.disable();
+      name.disable({ emitEvent: false });
     } else {
-      this.editForm.controls.name.enable();
+      name.enable({ emitEvent: false });
     }
+
+    // A saved row starts from what is persisted — not from the suggestion shown
+    // in the form. An unsaved slot has nothing persisted at all.
+    this.lastSentSnapshot = row.entry
+      ? this.snapshot(row.displayName, row.amount ?? 0, row.note ?? '')
+      : null;
     this.editingKey.set(row.key);
   }
 
-  cancelEdit(): void {
-    this.editingKey.set(null);
-  }
-
-  commitEdit(row: TripFinanceRow): void {
+  /**
+   * Saves whatever is in the open row, if it needs saving.
+   *
+   * An untouched row never saves: merely opening an unsaved standard line must
+   * not create money nobody entered. `force` is for Enter, which is an explicit
+   * "accept" — it saves a pre-filled suggestion even though nothing was typed.
+   */
+  flushAutosave(force = false): void {
+    const key = this.editingKey();
+    if (!key) return;
+    if (!force && !this.editForm.dirty) return;
     if (this.editForm.invalid) {
       this.editForm.markAllAsTouched();
       return;
     }
-    // getRawValue, not value — a locked payer name is disabled and would be dropped.
-    const { name, amount, note } = this.editForm.getRawValue();
 
-    if (row.entry) {
-      this.update.emit({
-        entryId: row.entry.id,
-        rowKey: row.key,
-        changes: { name: name!, amount: amount ?? 0, note: note?.trim() ?? '' },
-      });
-    } else {
-      // An unsaved requestor suggestion becoming a real income row.
-      this.create.emit({
-        rowKey: row.key,
-        payload: {
-          type: this.mode(),
-          name: name!,
-          amount: amount ?? 0,
-          ...(note?.trim() ? { note: note.trim() } : {}),
-          ...(row.requesterId ? { requesterId: row.requesterId } : {}),
-        },
-      });
-    }
+    const row = this.rows().find((candidate) => candidate.key === key);
+    if (!row) return;
+
+    // getRawValue, not value — a locked payer name is disabled and would be dropped.
+    const raw = this.editForm.getRawValue();
+    const name = (raw.name ?? '').trim();
+    const amount = raw.amount ?? 0;
+    const note = (raw.note ?? '').trim();
+
+    const snapshot = this.snapshot(name, amount, note);
+    if (snapshot === this.lastSentSnapshot) return;
+    this.lastSentSnapshot = snapshot;
+
+    this.autosave.emit({
+      rowKey: row.key,
+      entryId: row.entry?.id ?? null,
+      payload: {
+        type: this.mode(),
+        name,
+        amount,
+        ...(note ? { note } : {}),
+        ...(row.requesterId ? { requesterId: row.requesterId } : {}),
+      },
+    });
+  }
+
+  /** Enter: save now (accepting any suggestion shown) and close the row. */
+  commitEdit(): void {
+    this.flushAutosave(true);
+    if (this.editForm.valid) this.editingKey.set(null);
+  }
+
+  /**
+   * Close the row, saving anything typed. There is no discard — by the time the
+   * admin reaches for close, their typing has already been saved.
+   */
+  closeEdit(): void {
+    this.flushAutosave();
     this.editingKey.set(null);
   }
 
   onDelete(row: TripFinanceRow): void {
     if (!row.entry) return;
+    // No flush: the row is going away, so saving it first would be wasted work.
     if (this.editingKey() === row.key) this.editingKey.set(null);
     this.remove.emit(row);
+  }
+
+  private snapshot(name: string, amount: number, note: string): string {
+    return JSON.stringify([name, amount, note]);
   }
 }

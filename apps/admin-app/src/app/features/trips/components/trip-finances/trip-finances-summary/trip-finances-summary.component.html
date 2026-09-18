@@ -13,4 +13,10 @@
     <span class="finance-summary__label">{{ 'trips.finances.profit' | transloco }}</span>
     <span class="finance-summary__value">{{ profit() | currency: 'EUR' }}</span>
   </div>
+
+  <!-- The bottom line: profit also takes payments out. Tinted so it reads as the result. -->
+  <div class="finance-summary__tile finance-summary__tile--remaining" [class.is-negative]="remaining() < 0">
+    <span class="finance-summary__label">{{ 'trips.finances.remaining' | transloco }}</span>
+    <span class="finance-summary__value">{{ remaining() | currency: 'EUR' }}</span>
+  </div>
 </div>

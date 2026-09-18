@@ -1,7 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import {
   TripFinanceEntry,
-  TripFinanceEntryChanges,
   TripFinanceEntryPayload,
   TripFinanceStandardOps,
 } from '@models/lib/trip-finance.model';
@@ -73,16 +72,20 @@ export const resetExpenseAmountsFailure = createAction(
   props<{ error: string }>()
 );
 
-export const updateTripFinanceEntry = createAction(
-  '[Trip Finances] Update Entry',
-  props<{ tripId: string; entryId: string; rowKey: string; changes: TripFinanceEntryChanges }>()
+// Inline autosave. `entryId` is null for a slot with nothing saved yet — a
+// standard line or a requestor row. The effect creates that entry once and
+// routes every later save for the same row to an update, so a burst of
+// keystrokes can never produce duplicate lines.
+export const saveTripFinanceRow = createAction(
+  '[Trip Finances] Save Row',
+  props<{ tripId: string; rowKey: string; entryId: string | null; payload: TripFinanceEntryPayload }>()
 );
-export const updateTripFinanceEntrySuccess = createAction(
-  '[Trip Finances] Update Entry Success',
+export const saveTripFinanceRowSuccess = createAction(
+  '[Trip Finances] Save Row Success',
   props<{ entry: TripFinanceEntry }>()
 );
-export const updateTripFinanceEntryFailure = createAction(
-  '[Trip Finances] Update Entry Failure',
+export const saveTripFinanceRowFailure = createAction(
+  '[Trip Finances] Save Row Failure',
   props<{ error: string }>()
 );
 

@@ -70,7 +70,12 @@ export interface TripFinanceSummary {
  * a trip requestor who has no entry yet and is shown as a blank suggestion.
  */
 export interface TripFinanceRow {
-  /** Entry id when saved, `req:${requesterId}` for an unsaved suggestion. Used for `track`. */
+  /**
+   * Stable identity for `track`. Slot rows keep one key whether saved or not —
+   * `preset:<index>` for a standard expense line, `req:<requesterId>` for a trip
+   * requestor — so an open edit survives the row's first autosave. Every other
+   * row is keyed by its entry id.
+   */
   key: string;
   entry: TripFinanceEntry | null;
   requesterId: string | null;
