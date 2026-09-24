@@ -30,7 +30,7 @@
       </td>
       <td>
         <p-inputNumber formControlName="amount" mode="currency" currency="EUR" locale="el-GR"
-          [min]="0" [maxFractionDigits]="2" styleClass="income-table__input"
+          [min]="0" [maxFractionDigits]="2" styleClass="income-table__input" placeholder="—"
           [ariaLabel]="'trips.finances.total' | transloco"
           (onBlur)="flush(row.key)" />
       </td>
@@ -40,28 +40,28 @@
       <td>
         <p-inputNumber formControlName="paidCash" mode="currency" currency="EUR" locale="el-GR"
           [min]="0" [max]="maxFor(groupFor(row), 'paidCash')"
-          [maxFractionDigits]="2" styleClass="income-table__input"
+          [maxFractionDigits]="2" styleClass="income-table__input" placeholder="—"
           [ariaLabel]="'trips.finances.cash' | transloco"
           (onBlur)="flush(row.key)" />
       </td>
       <td>
         <p-inputNumber formControlName="paidPaypal" mode="currency" currency="EUR" locale="el-GR"
           [min]="0" [max]="maxFor(groupFor(row), 'paidPaypal')"
-          [maxFractionDigits]="2" styleClass="income-table__input"
+          [maxFractionDigits]="2" styleClass="income-table__input" placeholder="—"
           [ariaLabel]="'trips.finances.paypal' | transloco"
           (onBlur)="flush(row.key)" />
       </td>
       <td>
         <p-inputNumber formControlName="paidRevolut" mode="currency" currency="EUR" locale="el-GR"
           [min]="0" [max]="maxFor(groupFor(row), 'paidRevolut')"
-          [maxFractionDigits]="2" styleClass="income-table__input"
+          [maxFractionDigits]="2" styleClass="income-table__input" placeholder="—"
           [ariaLabel]="'trips.finances.revolut' | transloco"
           (onBlur)="flush(row.key)" />
       </td>
       <td>
         <p-inputNumber formControlName="paidCredia" mode="currency" currency="EUR" locale="el-GR"
           [min]="0" [max]="maxFor(groupFor(row), 'paidCredia')"
-          [maxFractionDigits]="2" styleClass="income-table__input"
+          [maxFractionDigits]="2" styleClass="income-table__input" placeholder="—"
           [ariaLabel]="'trips.finances.credia' | transloco"
           (onBlur)="flush(row.key)" />
       </td>
@@ -69,7 +69,9 @@
       <!-- Read-only: it is the sum, not something to type into. Red only when the
            total has been dropped below what was already collected. -->
       <td class="income-table__num">
-        @if (isOverpaid(groupFor(row))) {
+        @if (isUnset(groupFor(row))) {
+          <span class="income-table__remaining is-unset">&mdash;</span>
+        } @else if (isOverpaid(groupFor(row))) {
           <span class="income-table__remaining is-invalid"
             [pTooltip]="'trips.finances.overpaid' | transloco">
             {{ remainingOf(groupFor(row)) | currency: 'EUR' }}

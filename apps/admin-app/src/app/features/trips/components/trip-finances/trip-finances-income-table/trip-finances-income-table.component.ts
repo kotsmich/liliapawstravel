@@ -28,6 +28,15 @@ export interface TripFinanceIncomeSave {
 const cents = (value: unknown): number => Math.round((Number(value) || 0) * 100);
 
 /**
+ * Zero means "nothing recorded here", so the control is left empty and the
+ * input falls back to its placeholder. With five money columns on every row a
+ * literal 0,00 € in each one is what the eye has to wade through to find the
+ * figures that matter — and it reads as a deliberate "they paid nothing by
+ * Revolut" rather than as an untouched field. `flush` sends it back as 0.
+ */
+const blank = (value: number | null): number | null => (value ? value : null);
+
+/**
  * The incomes tab: one row per payer, with what they owe and how much of it
  * arrived by each method.
  *
@@ -80,11 +89,11 @@ export class TripFinancesIncomeTableComponent {
     // `maxFor`), so lowering or clearing the total never blocks the save.
     const group = this.fb.group({
       name: [row.name, [Validators.required, Validators.maxLength(120)]],
-      amount: [row.total as number | null, [Validators.min(0)]],
-      paidCash: [row.entry.paidCash as number | null, [Validators.min(0)]],
-      paidPaypal: [row.entry.paidPaypal as number | null, [Validators.min(0)]],
-      paidRevolut: [row.entry.paidRevolut as number | null, [Validators.min(0)]],
-      paidCredia: [row.entry.paidCredia as number | null, [Validators.min(0)]],
+      amount: [blank(row.total), [Validators.min(0)]],
+      paidCash: [blank(row.entry.paidCash), [Validators.min(0)]],
+      paidPaypal: [blank(row.entry.paidPaypal), [Validators.min(0)]],
+      paidRevolut: [blank(row.entry.paidRevolut), [Validators.min(0)]],
+      paidCredia: [blank(row.entry.paidCredia), [Validators.min(0)]],
     });
 
     group.valueChanges
@@ -158,6 +167,15 @@ export class TripFinancesIncomeTableComponent {
     return this.remainingOf(group) < 0;
   }
 
+  /**
+   * Nothing owed and nothing collected. Remaining has no meaning on such a row,
+   * so it shows a dash — a settled 0,00 € would claim this payer is paid up.
+   */
+  isUnset(group: FormGroup): boolean {
+    const value = group.value as Record<string, unknown>;
+    return cents(value['amount']) === 0 && this.paidCents(value) === 0;
+  }
+
   onDelete(row: TripFinanceIncomeRow): void {
     this.groups.delete(row.key);
     this.lastSent.delete(row.key);
@@ -169,13 +187,15 @@ export class TripFinancesIncomeTableComponent {
   }
 
   private applyServerValues(group: FormGroup, row: TripFinanceIncomeRow): void {
+    // Blanked the same way the group was built, or the comparison below would
+    // read the server's 0 as a change from the control's null on every pass.
     const next = {
       name: row.name,
-      amount: row.total,
-      paidCash: row.entry.paidCash,
-      paidPaypal: row.entry.paidPaypal,
-      paidRevolut: row.entry.paidRevolut,
-      paidCredia: row.entry.paidCredia,
+      amount: blank(row.total),
+      paidCash: blank(row.entry.paidCash),
+      paidPaypal: blank(row.entry.paidPaypal),
+      paidRevolut: blank(row.entry.paidRevolut),
+      paidCredia: blank(row.entry.paidCredia),
     };
     // Only when something actually differs: patching unconditionally during
     // render would churn the inputs on every change detection pass.

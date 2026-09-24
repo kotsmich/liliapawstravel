@@ -3,7 +3,9 @@ import jsPDF from 'jspdf';
 import autoTable, { RowInput } from 'jspdf-autotable';
 import { Trip } from '@models/lib/trip.model';
 import {
+  TRIP_FINANCE_METHODS,
   TripFinanceIncomeRow,
+  TripFinanceMethod,
   TripFinanceRow,
   TripFinanceSummary,
 } from '@models/lib/trip-finance.model';
@@ -95,7 +97,7 @@ const L = {
   payer: 'Πληρωτής',
   paidTo: 'Προς',
   owed: 'Σύνολο',
-  received: 'Εισπράχθηκε',
+  method: 'Τρόπος πληρωμής',
   remainingCol: 'Υπόλοιπο',
   note: 'Σημείωση',
   amount: 'Ποσό',
@@ -113,6 +115,33 @@ const L = {
 
 const euro = new Intl.NumberFormat('el-GR', { style: 'currency', currency: 'EUR' });
 const money = (value: number): string => euro.format(value);
+
+/**
+ * How each method prints in the breakdown column — the same words the incomes
+ * tab uses on screen, so the sheet and the panel read alike.
+ */
+const METHOD_LABELS: Record<TripFinanceMethod, string> = {
+  paidCash: 'Μετρητά',
+  paidPaypal: 'PayPal',
+  paidRevolut: 'Revolut',
+  paidCredia: 'Credia',
+};
+
+const wholeAmount = new Intl.NumberFormat('el-GR', { maximumFractionDigits: 0 });
+const centsAmount = new Intl.NumberFormat('el-GR', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+/**
+ * No € sign, and no ",00" on a round figure: several of these share one cell,
+ * and the Σύνολο column next to it has already established the currency.
+ */
+const compactAmount = (value: number): string =>
+  Number.isInteger(value) ? wholeAmount.format(value) : centsAmount.format(value);
+
+/** En dash, not an em dash: NotoSans carries it, and the header already uses it. */
+const NO_VALUE = '–';
 
 /** `YYYY-MM-DD` → `DD/MM/YYYY` by splitting, so a timezone can never shift the day. */
 const displayDate = (iso: string): string => {
@@ -303,6 +332,18 @@ export class TripFinancesExportService {
     const receivedTotal =
       data.incomeRows.reduce((sum, row) => sum + Math.round(row.paid * 100), 0) / 100;
     const outstanding = Math.round((data.summary.incomeTotal - receivedTotal) * 100) / 100;
+
+    // Per method across every payer, so the foot answers the question the column
+    // raises: of everything collected, how much is cash in hand and how much
+    // landed in an account.
+    const methodTotals = TRIP_FINANCE_METHODS.reduce(
+      (totals, method) => {
+        totals[method] =
+          data.incomeRows.reduce((sum, row) => sum + Math.round(row.entry[method] * 100), 0) / 100;
+        return totals;
+      },
+      {} as Record<TripFinanceMethod, number>,
+    );
     const settledCount = data.incomeRows.filter((row) => row.remaining <= 0).length;
 
     const incomeBody: RowInput[] = data.incomeRows.length
@@ -313,23 +354,26 @@ export class TripFinancesExportService {
       startY: CONTENT_TOP + 5,
       head: [[
         L.payer,
+        L.method,
         { content: L.owed, styles: { halign: 'right' } },
-        { content: L.received, styles: { halign: 'right' } },
         { content: L.remainingCol, styles: { halign: 'right' } },
       ]],
       body: incomeBody,
       foot: [[
         { content: L.total },
+        { content: this.methodBreakdown(methodTotals) || NO_VALUE },
         { content: money(data.summary.incomeTotal), styles: { halign: 'right' } },
-        { content: money(receivedTotal), styles: { halign: 'right' } },
         { content: money(outstanding), styles: { halign: 'right' } },
       ]],
       showFoot: 'lastPage',
       ...this.tableTheme(font, BRAND_COLOR, density),
+      // The two money columns sit together on the right so owed and outstanding
+      // can be read against each other. Only the breakdown is left unsized, so
+      // the space the names don't need goes to the prose that can use it.
       columnStyles: {
-        1: { cellWidth: 30 },
-        2: { cellWidth: 30 },
-        3: { cellWidth: 30 },
+        0: { cellWidth: 46 },
+        2: { cellWidth: 26 },
+        3: { cellWidth: 26 },
       },
       margin: tableMargin,
     });
@@ -517,14 +561,17 @@ export class TripFinancesExportService {
 
   private incomeRow(row: TripFinanceIncomeRow): RowInput {
     const settled = row.remaining <= 0;
+    const breakdown = this.methodBreakdown(row.entry);
 
     return [
       row.name,
-      { content: money(row.total), styles: { halign: 'right' } },
       {
-        content: money(row.paid),
-        styles: { halign: 'right', textColor: row.paid > 0 ? GREEN : MUTED },
+        // Where the money actually came in, rather than a bare total — the sheet
+        // is what gets checked against the cash tin and the accounts.
+        content: breakdown || NO_VALUE,
+        styles: { textColor: breakdown ? GREEN : MUTED },
       },
+      { content: money(row.total), styles: { halign: 'right' } },
       {
         // The column the admin chases: amber and bold while anything is owed,
         // quiet once the payer has settled up.
@@ -536,6 +583,16 @@ export class TripFinancesExportService {
         },
       },
     ];
+  }
+
+  /**
+   * `Μετρητά: 700 - Revolut: 200`, in the column order of the incomes tab and
+   * leaving out the methods that brought nothing. Empty when none did.
+   */
+  private methodBreakdown(amounts: Record<TripFinanceMethod, number>): string {
+    return TRIP_FINANCE_METHODS.filter((method) => amounts[method] > 0)
+      .map((method) => `${METHOD_LABELS[method]}: ${compactAmount(amounts[method])}`)
+      .join(' - ');
   }
 
   // ── Shared drawing ─────────────────────────────────────────────────────────

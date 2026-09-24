@@ -117,6 +117,12 @@
     font-weight: 600;
   }
 
+  // Nothing owed yet — as quiet as the empty inputs on the same row.
+  .income-table__remaining.is-unset {
+    color: var(--color-text-muted);
+    font-weight: 400;
+  }
+
   // Settled: quiet, because a paid-up row needs no attention.
   .income-table__remaining.is-settled {
     color: var(--color-text-muted);
