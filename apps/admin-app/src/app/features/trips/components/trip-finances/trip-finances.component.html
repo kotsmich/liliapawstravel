@@ -33,6 +33,21 @@
   <div class="finance-spinner">
     <ui-loading-spinner />
   </div>
+} @else if (activeTab() === 'incomes') {
+  <!-- Incomes have their own ledger: every cell is an input at once, and
+       Remaining is the sum of the others rather than something to type into. -->
+  <app-trip-finances-income-table
+    [rows]="incomeRows()"
+    [mutatingKey]="mutatingKey()"
+    (save)="onIncomeSave($event)"
+    (remove)="onIncomeRemove($event)" />
+
+  @if (incomeOutstanding() > 0) {
+    <p class="finance-payments-note">
+      <i class="pi pi-info-circle"></i>
+      {{ 'trips.finances.outstandingNote' | transloco: { total: incomeOutstanding() | currency: 'EUR' } }}
+    </p>
+  }
 } @else {
   <app-trip-finances-table
     [mode]="tableMode()"

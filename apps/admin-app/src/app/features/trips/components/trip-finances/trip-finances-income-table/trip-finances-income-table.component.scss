@@ -1,0 +1,152 @@
+// min-height:0 is load-bearing: without it a flex child refuses to shrink
+// below its content, and the table would push the dialog instead of scrolling.
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+:host ::ng-deep .income-table {
+  // Only in flex mode: PrimeNG sets an explicit container height otherwise,
+  // and turning it into a shrinkable flex item would undo that.
+  &.p-datatable-flex-scrollable {
+    flex: 1 1 auto;
+    min-height: 0;
+
+    > .p-datatable-table-container {
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+  }
+
+  // Fixed layout, so the columns are decided once by the header and never
+  // re-measured from the cells. With auto layout every keystroke changes the
+  // width of the Remaining text and the whole grid twitches sideways.
+  .p-datatable-table {
+    table-layout: fixed;
+  }
+
+  // The widths add up to the 64rem min-width set on the table, so nothing is
+  // squeezed when the dialog is narrower than the grid and it scrolls instead.
+  .income-table__name {
+    width: 15rem;
+  }
+
+  .income-table__num {
+    width: 7.5rem;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .income-table__actions {
+    width: 4rem;
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  // The four method inputs and the total share one width, so the columns line
+  // up as a grid the eye can scan down.
+  .income-table__input {
+    width: 100%;
+
+    .p-inputnumber-input {
+      width: 100%;
+      text-align: right;
+    }
+  }
+
+  // ── Banded rows ──────────────────────────────────────────────────────────
+  // With the field borders gone (below) the rows would run together, so the
+  // banding is what keeps the eye on one payer while scanning across seven
+  // columns. The tint is the theme's own cream, not a neutral grey.
+  .p-datatable-tbody > tr {
+    background: var(--color-white);
+    transition: background-color 0.15s ease;
+  }
+
+  .p-datatable-tbody > tr:nth-child(even) {
+    background: var(--color-surface-alt);
+  }
+
+  // The cells must let the row's band through — PrimeNG paints them otherwise.
+  .p-datatable-tbody > tr > td {
+    background: transparent;
+  }
+
+  // ── Fields at rest ───────────────────────────────────────────────────────
+  // Every cell here is an input, so drawing all seven borders turns the table
+  // into a wall of boxes. At rest the values read as plain text; the row being
+  // worked on gets its fields back.
+  .income-table__row {
+    .p-inputtext {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    // Pointing at a row is the hint that it can be typed into.
+    &:hover .p-inputtext {
+      border-color: var(--color-border);
+    }
+
+    // Clicking into it commits: solid fields across the whole row, so the admin
+    // sees every cell they can move through with Tab.
+    &:focus-within .p-inputtext {
+      background: var(--color-white);
+      border-color: var(--color-border-alt);
+    }
+
+    // After the two rules above, so the field actually being typed in keeps the
+    // app-wide orange focus ring rather than the row's plain border.
+    .p-inputtext:focus {
+      background: var(--color-white);
+      border-color: var(--field-focus-border);
+      box-shadow: var(--field-focus-ring);
+    }
+
+    // Transparent borders would otherwise swallow the global invalid styling,
+    // and a cleared payer name has to stay visible.
+    .p-inputtext.ng-invalid.ng-touched:not(:focus) {
+      border-color: var(--color-error);
+    }
+  }
+
+  .income-table__remaining {
+    font-weight: 600;
+  }
+
+  // Settled: quiet, because a paid-up row needs no attention.
+  .income-table__remaining.is-settled {
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  // Still owed — the number the admin is chasing.
+  .income-table__remaining.is-owing {
+    color: var(--color-warning);
+  }
+
+  // Methods add up to more than the total; this row is not being saved.
+  .income-table__remaining.is-invalid {
+    color: var(--color-error-alt);
+    cursor: help;
+  }
+
+  // Width is reserved permanently — see the comment on the slot in the template.
+  .income-table__status {
+    display: inline-block;
+    width: 1rem;
+    margin-right: 0.25rem;
+    vertical-align: middle;
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+
+  .income-table__empty {
+    padding: 1.25rem;
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+}

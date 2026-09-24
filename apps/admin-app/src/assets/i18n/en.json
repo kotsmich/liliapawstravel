@@ -156,6 +156,14 @@
       "remaining": "Final budget",
       "name": "Name",
       "payer": "Payer",
+      "total": "Total",
+      "cash": "Cash",
+      "paypal": "PayPal",
+      "revolut": "Revolut",
+      "credia": "Credia",
+      "remainingToPay": "Remaining",
+      "overpaid": "More has been collected than the total. Raise the total or lower a method.",
+      "outstandingNote": "Still to collect: {{ total }} of the agreed totals.",
       "note": "Note",
       "amount": "Amount",
       "notRecorded": "Not recorded",
@@ -170,6 +178,10 @@
         "reset": {
           "header": "Reset expenses to 0",
           "message": "Set every recorded expense amount back to 0? {{ count }} line(s) will be zeroed. Names and notes are kept."
+        },
+        "removePayer": {
+          "header": "Remove payer",
+          "message": "Remove {{ name }} from this trip's incomes, along with everything recorded against them? Their dogs are not affected."
         }
       },
       "addPayerPlaceholder": "Add a payer not on the trip…",

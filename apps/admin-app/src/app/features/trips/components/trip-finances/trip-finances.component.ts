@@ -13,10 +13,11 @@ import {
   TripFinanceEntry,
   TripFinanceEntryPayload,
   TripFinanceEntryType,
+  TripFinanceIncomeRow,
   TripFinanceRow,
   TripFinanceSummary,
 } from '@models/lib/trip-finance.model';
-import { Trip, TripRequester } from '@models/lib/trip.model';
+import { Trip } from '@models/lib/trip.model';
 import { ConfirmActionService } from '@admin/shared/services/confirm-action.service';
 import { TripFinancesExportService } from '@admin/services/trip-finances-export.service';
 import {
@@ -37,6 +38,10 @@ import {
   TripFinanceAutosave,
   TripFinancesTableComponent,
 } from './trip-finances-table/trip-finances-table.component';
+import {
+  TripFinanceIncomeSave,
+  TripFinancesIncomeTableComponent,
+} from './trip-finances-income-table/trip-finances-income-table.component';
 import { TripFinancesAddRowComponent } from './trip-finances-add-row/trip-finances-add-row.component';
 import {
   buildIncomeRows,
@@ -57,8 +62,8 @@ const EMPTY_SUMMARY: TripFinanceSummary = { incomeTotal: 0, expenseTotal: 0, pro
 const QUICK_ADD_KEY = 'quick-add';
 
 /**
- * Expenses + incomes for one trip. Rendered both inside the trip details tabs
- * and inside the standalone finances dialog opened from the calendar card.
+ * Expenses, incomes and payments for one trip. Rendered both inside the trip
+ * details tabs and inside the standalone finances dialog opened from the card.
  *
  * Both hosts must keep it behind an `@if` that is false when the surface is
  * closed — the load is dispatched from `ngOnInit`, so a component kept alive
@@ -70,7 +75,8 @@ const QUICK_ADD_KEY = 'quick-add';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CurrencyPipe, TranslocoModule, ButtonModule, TabsModule, LoadingSpinnerComponent,
-    TripFinancesSummaryComponent, TripFinancesTableComponent, TripFinancesAddRowComponent,
+    TripFinancesSummaryComponent, TripFinancesTableComponent,
+    TripFinancesIncomeTableComponent, TripFinancesAddRowComponent,
   ],
   templateUrl: './trip-finances.component.html',
   styleUrl: './trip-finances.component.scss',
@@ -84,7 +90,6 @@ export class TripFinancesComponent implements OnInit {
   readonly tripId = input.required<string>();
   /** Route and date for the PDF header; the rows themselves come from the store. */
   readonly trip = input<Trip | null>(null);
-  readonly requesters = input<TripRequester[]>([]);
 
   /** True while the two PDFs are being built — spins the export button. */
   readonly exporting = signal(false);
@@ -122,6 +127,11 @@ export class TripFinancesComponent implements OnInit {
     this.tripId$.pipe(switchMap((id) => this.store.select(tripFinancesSelectors(id).paymentsTotal))),
     { initialValue: 0 }
   );
+  /** What the adopters still owe — shown under the incomes table. */
+  readonly incomeOutstanding = toSignal(
+    this.tripId$.pipe(switchMap((id) => this.store.select(tripFinancesSelectors(id).incomeOutstanding))),
+    { initialValue: 0 }
+  );
 
   /**
    * Final budget — income − expenses − payments. Rounded through cents, the same
@@ -138,9 +148,8 @@ export class TripFinancesComponent implements OnInit {
   readonly paymentRows = computed((): TripFinanceRow[] =>
     buildPresetRows(this.payments(), PAYMENT_PRESETS, 'payment')
   );
-  readonly incomeRows = computed((): TripFinanceRow[] =>
-    buildIncomeRows(this.incomes(), this.requesters())
-  );
+  /** Its own list — seeded per adopter by the server, then owned by the admin. */
+  readonly incomeRows = computed((): TripFinanceIncomeRow[] => buildIncomeRows(this.incomes()));
 
   readonly quickAddPending = computed(() => this.mutatingKey() === QUICK_ADD_KEY);
 
@@ -160,7 +169,7 @@ export class TripFinancesComponent implements OnInit {
 
   private readonly table = viewChild(TripFinancesTableComponent);
 
-  /** One table and one add-row serve all three tabs; only the data differs. */
+  /** Drives the add bar; the shared table serves expenses and payments only. */
   readonly tableMode = computed((): TripFinanceEntryType => {
     switch (this.activeTab()) {
       case 'incomes': return 'income';
@@ -169,13 +178,10 @@ export class TripFinancesComponent implements OnInit {
     }
   });
 
-  readonly activeRows = computed((): TripFinanceRow[] => {
-    switch (this.activeTab()) {
-      case 'incomes': return this.incomeRows();
-      case 'payments': return this.paymentRows();
-      default: return this.expenseRows();
-    }
-  });
+  /** Incomes have their own table, so this feeds the expenses/payments one. */
+  readonly activeRows = computed((): TripFinanceRow[] =>
+    this.activeTab() === 'payments' ? this.paymentRows() : this.expenseRows()
+  );
 
   ngOnInit(): void {
     this.refresh();
@@ -235,7 +241,6 @@ export class TripFinancesComponent implements OnInit {
         expenseRows: this.expenseRows(),
         incomeRows: this.incomeRows(),
         paymentRows: this.paymentRows(),
-        requesters: this.requesters(),
         summary: this.summary(),
         paymentsTotal: this.paymentsTotal(),
       });
@@ -259,7 +264,7 @@ export class TripFinancesComponent implements OnInit {
     );
   }
 
-  /** Inline autosave from the table; the store decides create-once vs update. */
+  /** Inline autosave from the expenses/payments table. */
   onAutosave(event: TripFinanceAutosave): void {
     this.store.dispatch(
       saveTripFinanceRow({
@@ -269,6 +274,51 @@ export class TripFinancesComponent implements OnInit {
         payload: event.payload,
       })
     );
+  }
+
+  /** Autosave from the incomes ledger: the name, the total and the four methods. */
+  onIncomeSave(event: TripFinanceIncomeSave): void {
+    const { name, amount, note, paidCash, paidPaypal, paidRevolut, paidCredia } = event.changes;
+    this.store.dispatch(
+      saveTripFinanceRow({
+        tripId: this.tripId(),
+        rowKey: event.rowKey,
+        entryId: event.entryId,
+        payload: {
+          type: 'income',
+          name: name ?? '',
+          amount: amount ?? 0,
+          note,
+          paidCash,
+          paidPaypal,
+          paidRevolut,
+          paidCredia,
+        },
+      })
+    );
+  }
+
+  /**
+   * Confirmed, because it takes the payer off this trip's list along with
+   * whatever was recorded against them. Their dogs are not touched.
+   */
+  onIncomeRemove(row: TripFinanceIncomeRow): void {
+    this.confirm.confirm({
+      header: this.transloco.translate('trips.finances.confirm.removePayer.header'),
+      message: this.transloco.translate('trips.finances.confirm.removePayer.message', {
+        name: row.name,
+      }),
+      acceptLabel: this.transloco.translate('common.delete'),
+      severity: 'danger',
+      accept: () =>
+        this.store.dispatch(
+          deleteTripFinanceEntry({
+            tripId: this.tripId(),
+            entryId: row.entry.id,
+            rowKey: row.key,
+          })
+        ),
+    });
   }
 
   onRemove(row: TripFinanceRow): void {

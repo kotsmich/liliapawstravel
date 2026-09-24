@@ -1,18 +1,21 @@
 import { Injectable } from '@angular/core';
 import jsPDF from 'jspdf';
-import autoTable, { CellInput, RowInput } from 'jspdf-autotable';
-import { Trip, TripRequester } from '@models/lib/trip.model';
-import { TripFinanceRow, TripFinanceSummary } from '@models/lib/trip-finance.model';
+import autoTable, { RowInput } from 'jspdf-autotable';
+import { Trip } from '@models/lib/trip.model';
+import {
+  TripFinanceIncomeRow,
+  TripFinanceRow,
+  TripFinanceSummary,
+} from '@models/lib/trip-finance.model';
 import { BRAND_COLOR, PAGE_MARGIN, drawBrandedHeader, loadUnicodeFontIntoDoc } from './pdf-export.utils';
 
 /** Everything the two finance PDFs print — the same rows and totals the panel shows. */
 export interface TripFinancesExportData {
   trip: Trip;
   expenseRows: TripFinanceRow[];
-  incomeRows: TripFinanceRow[];
+  /** Each payer with what they owe and how much of it has arrived. */
+  incomeRows: TripFinanceIncomeRow[];
   paymentRows: TripFinanceRow[];
-  /** Carries each requestor's dogs, for the dog count on the incomes sheet. */
-  requesters: TripRequester[];
   summary: TripFinanceSummary;
   paymentsTotal: number;
 }
@@ -91,13 +94,11 @@ const L = {
   expense: 'Έξοδο',
   payer: 'Πληρωτής',
   paidTo: 'Προς',
-  dogs: 'Σκύλοι',
-  status: 'Κατάσταση',
+  owed: 'Σύνολο',
+  received: 'Εισπράχθηκε',
+  remainingCol: 'Υπόλοιπο',
   note: 'Σημείωση',
   amount: 'Ποσό',
-  paid: 'Πληρώθηκε',
-  pending: 'Εκκρεμεί',
-  offTrip: '(εκτός ταξιδιού)',
   noExpenses: 'Δεν υπάρχουν έξοδα με ποσό.',
   noIncomes: 'Δεν υπάρχουν πληρωτές σε αυτό το ταξίδι.',
   noPayments: 'Δεν έχουν καταγραφεί πληρωμές.',
@@ -298,34 +299,37 @@ export class TripFinancesExportService {
     //    so the sheet answers "who still owes" at a glance.
     this.drawSectionTitle(doc, font, L.income, money(data.summary.incomeTotal), BRAND_COLOR, GREEN, CONTENT_TOP + 2);
 
-    const dogCounts = new Map(data.requesters.map((r) => [r.requesterId, r.dogs.length]));
-    const paidCount = data.incomeRows.filter((row) => (row.amount ?? 0) > 0).length;
+    // The tiles carry what is owed, so what actually arrived is summed here.
+    const receivedTotal =
+      data.incomeRows.reduce((sum, row) => sum + Math.round(row.paid * 100), 0) / 100;
+    const outstanding = Math.round((data.summary.incomeTotal - receivedTotal) * 100) / 100;
+    const settledCount = data.incomeRows.filter((row) => row.remaining <= 0).length;
 
     const incomeBody: RowInput[] = data.incomeRows.length
-      ? data.incomeRows.map((row) => this.incomeRow(row, dogCounts))
-      : [[{ content: L.noIncomes, colSpan: 5, styles: { halign: 'center', textColor: MUTED } }]];
+      ? data.incomeRows.map((row) => this.incomeRow(row))
+      : [[{ content: L.noIncomes, colSpan: 4, styles: { halign: 'center', textColor: MUTED } }]];
 
     autoTable(doc, {
       startY: CONTENT_TOP + 5,
       head: [[
         L.payer,
-        { content: L.dogs, styles: { halign: 'center' } },
-        L.status,
-        L.note,
-        { content: L.amount, styles: { halign: 'right' } },
+        { content: L.owed, styles: { halign: 'right' } },
+        { content: L.received, styles: { halign: 'right' } },
+        { content: L.remainingCol, styles: { halign: 'right' } },
       ]],
       body: incomeBody,
       foot: [[
-        { content: L.total, colSpan: 4 },
+        { content: L.total },
         { content: money(data.summary.incomeTotal), styles: { halign: 'right' } },
+        { content: money(receivedTotal), styles: { halign: 'right' } },
+        { content: money(outstanding), styles: { halign: 'right' } },
       ]],
       showFoot: 'lastPage',
       ...this.tableTheme(font, BRAND_COLOR, density),
       columnStyles: {
-        1: { cellWidth: 16 },
-        2: { cellWidth: 26 },
-        3: { cellWidth: 52 },
-        4: { cellWidth: 30 },
+        1: { cellWidth: 30 },
+        2: { cellWidth: 30 },
+        3: { cellWidth: 30 },
       },
       margin: tableMargin,
     });
@@ -335,7 +339,7 @@ export class TripFinancesExportService {
       doc.setFont(font, 'normal');
       doc.setFontSize(7.5);
       doc.setTextColor(...MUTED);
-      doc.text(L.payersSummary(paidCount, data.incomeRows.length), PAGE_MARGIN, y);
+      doc.text(L.payersSummary(settledCount, data.incomeRows.length), PAGE_MARGIN, y);
       y += 4;
     }
 
@@ -511,29 +515,25 @@ export class TripFinancesExportService {
     }
   }
 
-  private incomeRow(row: TripFinanceRow, dogCounts: Map<string, number>): RowInput {
-    const paid = (row.amount ?? 0) > 0;
-
-    // Dogs only mean something for a current requestor; custom payers and
-    // requestors who have left the trip get a dash.
-    const dogs = row.requesterId && !row.orphaned ? dogCounts.get(row.requesterId) : undefined;
-
-    const name: CellInput = row.orphaned
-      ? { content: `${row.displayName} ${L.offTrip}`, styles: { textColor: MUTED } }
-      : row.displayName;
+  private incomeRow(row: TripFinanceIncomeRow): RowInput {
+    const settled = row.remaining <= 0;
 
     return [
-      name,
-      { content: dogs === undefined ? '—' : String(dogs), styles: { halign: 'center' } },
+      row.name,
+      { content: money(row.total), styles: { halign: 'right' } },
       {
-        content: paid ? L.paid : L.pending,
-        styles: { textColor: paid ? GREEN : AMBER, fontStyle: 'bold' },
+        content: money(row.paid),
+        styles: { halign: 'right', textColor: row.paid > 0 ? GREEN : MUTED },
       },
-      row.note ?? '',
       {
-        // null means nothing recorded — a dash, not a 0,00 that reads like a real payment.
-        content: row.amount === null ? '—' : money(row.amount),
-        styles: { halign: 'right' },
+        // The column the admin chases: amber and bold while anything is owed,
+        // quiet once the payer has settled up.
+        content: money(row.remaining),
+        styles: {
+          halign: 'right',
+          textColor: settled ? MUTED : AMBER,
+          fontStyle: settled ? 'normal' : 'bold',
+        },
       },
     ];
   }

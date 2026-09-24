@@ -156,6 +156,14 @@
       "remaining": "Endbudget",
       "name": "Name",
       "payer": "Zahler",
+      "total": "Gesamt",
+      "cash": "Bar",
+      "paypal": "PayPal",
+      "revolut": "Revolut",
+      "credia": "Credia",
+      "remainingToPay": "Offen",
+      "overpaid": "Es wurde mehr eingenommen als der Gesamtbetrag. Gesamtbetrag erhöhen oder einen Betrag senken.",
+      "outstandingNote": "Noch einzuziehen: {{ total }} der vereinbarten Summen.",
       "note": "Notiz",
       "amount": "Betrag",
       "notRecorded": "Nicht erfasst",
@@ -170,6 +178,10 @@
         "reset": {
           "header": "Ausgaben auf 0 zurücksetzen",
           "message": "Alle erfassten Ausgabenbeträge auf 0 setzen? {{ count }} Posten werden genullt. Namen und Notizen bleiben erhalten."
+        },
+        "removePayer": {
+          "header": "Zahler entfernen",
+          "message": "{{ name }} aus den Einnahmen dieser Reise entfernen, samt allem Erfassten? Die Hunde bleiben unberührt."
         }
       },
       "addPayerPlaceholder": "Zahler außerhalb der Reise hinzufügen…",

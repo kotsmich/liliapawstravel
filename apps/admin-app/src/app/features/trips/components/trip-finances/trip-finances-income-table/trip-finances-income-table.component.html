@@ -1,0 +1,112 @@
+<!-- Scrollable mode pins the header; the row set is wider than the dialog, so
+     the container scrolls sideways rather than squeezing the inputs. -->
+<p-table
+  [value]="rows()"
+  [dataKey]="'key'"
+  [rowTrackBy]="trackByKey"
+  [scrollable]="true"
+  scrollHeight="flex"
+  styleClass="income-table p-datatable-sm"
+  [tableStyle]="{ 'min-width': '64rem' }">
+  <ng-template pTemplate="header">
+    <tr>
+      <th class="income-table__name">{{ 'trips.finances.payer' | transloco }}</th>
+      <th class="income-table__num">{{ 'trips.finances.total' | transloco }}</th>
+      <th class="income-table__num">{{ 'trips.finances.cash' | transloco }}</th>
+      <th class="income-table__num">{{ 'trips.finances.paypal' | transloco }}</th>
+      <th class="income-table__num">{{ 'trips.finances.revolut' | transloco }}</th>
+      <th class="income-table__num">{{ 'trips.finances.credia' | transloco }}</th>
+      <th class="income-table__num">{{ 'trips.finances.remainingToPay' | transloco }}</th>
+      <th class="income-table__actions"></th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-row>
+    <tr class="income-table__row" [formGroup]="groupFor(row)">
+      <td>
+        <input pInputText type="text" formControlName="name" class="w-full"
+          [attr.aria-label]="'trips.finances.payer' | transloco"
+          (blur)="flush(row.key)" />
+      </td>
+      <td>
+        <p-inputNumber formControlName="amount" mode="currency" currency="EUR" locale="el-GR"
+          [min]="0" [maxFractionDigits]="2" styleClass="income-table__input"
+          [ariaLabel]="'trips.finances.total' | transloco"
+          (onBlur)="flush(row.key)" />
+      </td>
+
+      <!-- Each method is capped at whatever the total still leaves, so more than
+           the total can never be entered — and no edit is ever blocked. -->
+      <td>
+        <p-inputNumber formControlName="paidCash" mode="currency" currency="EUR" locale="el-GR"
+          [min]="0" [max]="maxFor(groupFor(row), 'paidCash')"
+          [maxFractionDigits]="2" styleClass="income-table__input"
+          [ariaLabel]="'trips.finances.cash' | transloco"
+          (onBlur)="flush(row.key)" />
+      </td>
+      <td>
+        <p-inputNumber formControlName="paidPaypal" mode="currency" currency="EUR" locale="el-GR"
+          [min]="0" [max]="maxFor(groupFor(row), 'paidPaypal')"
+          [maxFractionDigits]="2" styleClass="income-table__input"
+          [ariaLabel]="'trips.finances.paypal' | transloco"
+          (onBlur)="flush(row.key)" />
+      </td>
+      <td>
+        <p-inputNumber formControlName="paidRevolut" mode="currency" currency="EUR" locale="el-GR"
+          [min]="0" [max]="maxFor(groupFor(row), 'paidRevolut')"
+          [maxFractionDigits]="2" styleClass="income-table__input"
+          [ariaLabel]="'trips.finances.revolut' | transloco"
+          (onBlur)="flush(row.key)" />
+      </td>
+      <td>
+        <p-inputNumber formControlName="paidCredia" mode="currency" currency="EUR" locale="el-GR"
+          [min]="0" [max]="maxFor(groupFor(row), 'paidCredia')"
+          [maxFractionDigits]="2" styleClass="income-table__input"
+          [ariaLabel]="'trips.finances.credia' | transloco"
+          (onBlur)="flush(row.key)" />
+      </td>
+
+      <!-- Read-only: it is the sum, not something to type into. Red only when the
+           total has been dropped below what was already collected. -->
+      <td class="income-table__num">
+        @if (isOverpaid(groupFor(row))) {
+          <span class="income-table__remaining is-invalid"
+            [pTooltip]="'trips.finances.overpaid' | transloco">
+            {{ remainingOf(groupFor(row)) | currency: 'EUR' }}
+          </span>
+        } @else if (remainingOf(groupFor(row)) === 0) {
+          <span class="income-table__remaining is-settled">
+            {{ 0 | currency: 'EUR' }}
+          </span>
+        } @else {
+          <span class="income-table__remaining is-owing">
+            {{ remainingOf(groupFor(row)) | currency: 'EUR' }}
+          </span>
+        }
+      </td>
+
+      <td class="income-table__actions">
+        <!-- The slot holds its width whether it is spinning or not: an icon
+             appearing mid-request would otherwise re-measure the column and
+             nudge every row for as long as the save takes. -->
+        <span class="income-table__status" aria-live="polite">
+          @if (mutatingKey() === row.key) {
+            <i class="pi pi-spin pi-spinner"
+              [attr.aria-label]="'common.saving' | transloco"></i>
+          }
+        </span>
+        <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" size="small"
+          [ariaLabel]="'common.delete' | transloco"
+          (onClick)="onDelete(row)" />
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="8" class="income-table__empty">
+        {{ 'trips.finances.noIncomes' | transloco }}
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

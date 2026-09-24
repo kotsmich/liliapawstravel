@@ -1,5 +1,4 @@
 import { TripFinanceEntry } from '@models/lib/trip-finance.model';
-import { TripRequester } from '@models/lib/trip.model';
 import {
   buildIncomeRows,
   buildPresetRows,
@@ -14,19 +13,14 @@ const entry = (over: Partial<TripFinanceEntry>): TripFinanceEntry => ({
   type: 'income',
   name: 'Entry',
   amount: 100,
+  paidCash: 0,
+  paidPaypal: 0,
+  paidRevolut: 0,
+  paidCredia: 0,
   note: null,
   requesterId: null,
   createdAt: '2026-01-01T00:00:00.000Z',
   ...over,
-});
-
-const requester = (id: string, name: string): TripRequester => ({
-  requesterId: id,
-  name,
-  email: null,
-  phone: null,
-  sourceRequestId: null,
-  dogs: [],
 });
 
 describe('buildPresetRows', () => {
@@ -240,58 +234,51 @@ describe('missingStandardLines', () => {
 });
 
 describe('buildIncomeRows', () => {
-  const requesters = [requester('r1', 'Maria'), requester('r2', 'John')];
+  const income = (over: Partial<TripFinanceEntry>): TripFinanceEntry =>
+    entry({ type: 'income', ...over });
 
-  it('lists every requestor, blank when there is no saved entry', () => {
-    const rows = buildIncomeRows([], requesters);
+  it('lists every income entry oldest first, keyed by entry id', () => {
+    const rows = buildIncomeRows([
+      income({ id: 'b', createdAt: '2026-01-02T00:00:00.000Z' }),
+      income({ id: 'a', createdAt: '2026-01-01T00:00:00.000Z' }),
+    ]);
 
-    expect(rows.map((r) => r.key)).toEqual(['req:r1', 'req:r2']);
-    expect(rows.map((r) => r.displayName)).toEqual(['Maria', 'John']);
-    // null, not 0 — the input must render empty rather than as a real zero.
-    expect(rows.map((r) => r.amount)).toEqual([null, null]);
-    expect(rows.every((r) => r.entry === null)).toBe(true);
+    // No suggestions to merge in: the server seeds the list, so every row is real.
+    expect(rows.map((r) => r.key)).toEqual(['a', 'b']);
+    expect(rows.every((r) => r.entry !== null)).toBe(true);
   });
 
-  it('resolves a saved entry into the requestor slot, keeping its position', () => {
-    const saved = entry({ id: 'e-maria', requesterId: 'r1', name: 'Maria', amount: 350 });
-    const rows = buildIncomeRows([saved], requesters);
+  it('adds the four methods into paid and leaves the rest owing', () => {
+    const rows = buildIncomeRows([
+      income({ id: 'a', amount: 500, paidCash: 300, paidCredia: 150 }),
+    ]);
 
-    // The requestor keeps its slot key once saved — an open edit survives the first autosave.
-    expect(rows.map((r) => r.key)).toEqual(['req:r1', 'req:r2']);
-    expect(rows[0].entry?.id).toBe('e-maria');
-    expect(rows[0].amount).toBe(350);
-    expect(rows[0].orphaned).toBe(false);
+    expect(rows[0].total).toBe(500);
+    expect(rows[0].paid).toBe(450);
+    expect(rows[0].remaining).toBe(50);
   });
 
-  it('uses the snapshotted entry name, not the live requester name', () => {
-    const saved = entry({ id: 'e1', requesterId: 'r1', name: 'Maria K.' });
-    const rows = buildIncomeRows([saved], [requester('r1', 'Maria Kowalski')]);
+  it('reports nothing remaining once the methods cover the total', () => {
+    const rows = buildIncomeRows([
+      income({ id: 'a', amount: 500, paidCash: 300, paidCredia: 200 }),
+    ]);
 
-    expect(rows[0].displayName).toBe('Maria K.');
+    expect(rows[0].remaining).toBe(0);
   });
 
-  it('puts custom payers after the requestor block', () => {
-    const custom = entry({ id: 'e-shop', requesterId: null, name: 'Pet shop' });
-    const rows = buildIncomeRows([custom], requesters);
+  it('sums through cents, so a split of small amounts does not drift', () => {
+    const rows = buildIncomeRows([
+      income({ id: 'a', amount: 0.3, paidCash: 0.1, paidPaypal: 0.2 }),
+    ]);
 
-    expect(rows.map((r) => r.key)).toEqual(['req:r1', 'req:r2', 'e-shop']);
-    expect(rows[2].requesterId).toBeNull();
+    expect(rows[0].paid).toBe(0.3);
+    expect(rows[0].remaining).toBe(0);
   });
 
-  it('flags a saved income whose requestor left the trip and keeps it last', () => {
-    const gone = entry({ id: 'e-anna', requesterId: 'r9', name: 'Anna', amount: 120 });
-    const rows = buildIncomeRows([gone], requesters);
+  it('shows the whole total as remaining when nothing has arrived', () => {
+    const rows = buildIncomeRows([income({ id: 'a', amount: 250 })]);
 
-    expect(rows.map((r) => r.key)).toEqual(['req:r1', 'req:r2', 'e-anna']);
-    expect(rows[2].orphaned).toBe(true);
-    expect(rows[2].amount).toBe(120);
-  });
-
-  it('treats an income whose requester FK was nulled as a plain custom payer', () => {
-    const nulled = entry({ id: 'e-anna', requesterId: null, name: 'Anna' });
-    const rows = buildIncomeRows([nulled], requesters);
-
-    expect(rows[2].orphaned).toBe(false);
-    expect(rows[2].displayName).toBe('Anna');
+    expect(rows[0].paid).toBe(0);
+    expect(rows[0].remaining).toBe(250);
   });
 });

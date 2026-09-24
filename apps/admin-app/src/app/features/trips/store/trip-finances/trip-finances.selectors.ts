@@ -27,12 +27,29 @@ const selectEntriesForTrip = (tripId: string) =>
 const sumAmounts = (entries: TripFinanceEntry[]): number =>
   entries.reduce((acc, entry) => acc + Math.round(entry.amount * 100), 0) / 100;
 
+/**
+ * Money actually received. An income's `amount` is what the payer owes, so
+ * summing that instead would count cash nobody has handed over yet.
+ */
+const sumReceived = (entries: TripFinanceEntry[]): number =>
+  entries.reduce(
+    (acc, entry) =>
+      acc +
+      Math.round(entry.paidCash * 100) +
+      Math.round(entry.paidPaypal * 100) +
+      Math.round(entry.paidRevolut * 100) +
+      Math.round(entry.paidCredia * 100),
+    0
+  ) / 100;
+
 interface TripFinancesSelectors {
   expenses: MemoizedSelector<object, TripFinanceEntry[]>;
   incomes: MemoizedSelector<object, TripFinanceEntry[]>;
   /** Outgoing log only — deliberately absent from `summary`. */
   payments: MemoizedSelector<object, TripFinanceEntry[]>;
   paymentsTotal: MemoizedSelector<object, number>;
+  /** What the adopters still owe, across every income row. */
+  incomeOutstanding: MemoizedSelector<object, number>;
   summary: MemoizedSelector<object, TripFinanceSummary>;
 }
 
@@ -51,6 +68,15 @@ export const tripFinancesSelectors = (tripId: string): TripFinancesSelectors => 
   const incomes = createSelector(entries, (all) => all.filter((e) => e.type === 'income'));
   const payments = createSelector(entries, (all) => all.filter((e) => e.type === 'payment'));
   const paymentsTotal = createSelector(payments, sumAmounts);
+  const incomeOutstanding = createSelector(
+    incomes,
+    (all) => Math.round((sumAmounts(all) - sumReceived(all)) * 100) / 100
+  );
+
+  // Income counts what the payers owe, not what has arrived: the trip is judged
+  // on the agreed fares, and collection is tracked separately by the method
+  // columns and `incomeOutstanding`.
+  //
   // Payments are intentionally not an input here — they are a log of what went
   // out, not part of the trip's profit.
   const summary = createSelector(expenses, incomes, (exp, inc): TripFinanceSummary => {
@@ -63,7 +89,14 @@ export const tripFinancesSelectors = (tripId: string): TripFinancesSelectors => 
     };
   });
 
-  const selectors: TripFinancesSelectors = { expenses, incomes, payments, paymentsTotal, summary };
+  const selectors: TripFinancesSelectors = {
+    expenses,
+    incomes,
+    payments,
+    paymentsTotal,
+    incomeOutstanding,
+    summary,
+  };
   _cache.set(tripId, selectors);
   return selectors;
 };

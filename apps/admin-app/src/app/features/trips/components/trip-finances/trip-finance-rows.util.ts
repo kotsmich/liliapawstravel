@@ -1,17 +1,11 @@
 import {
   TripFinanceEntry,
   TripFinanceEntryType,
+  TripFinanceIncomeRow,
   TripFinancePreset,
   TripFinanceRow,
   TripFinanceStandardOps,
 } from '@models/lib/trip-finance.model';
-import { TripRequester } from '@models/lib/trip.model';
-
-/** Prefix for the synthetic key of a requestor who has no saved income yet. */
-export const SUGGESTED_ROW_PREFIX = 'req:';
-
-export const suggestedRowKey = (requesterId: string): string =>
-  `${SUGGESTED_ROW_PREFIX}${requesterId}`;
 
 /** Prefix for a standard line — expense or payment — that has not been saved yet. */
 export const PRESET_ROW_PREFIX = 'preset:';
@@ -26,14 +20,16 @@ export const presetRowKey = (type: TripFinanceEntryType, index: number): string 
 
 const normalizeName = (name: string): string => name.trim().toLocaleLowerCase();
 
+const roundCents = (value: number): number => Math.round(value * 100) / 100;
+
 const byCreatedAt = (a: TripFinanceEntry, b: TripFinanceEntry): number =>
   a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id);
 
 /**
  * `key` defaults to the entry id, but rows that occupy a fixed slot — a standard
- * line or a trip requestor — pass the slot key instead, so the key is identical
- * before and after the entry is first saved. That's what lets an open inline
- * edit (and its autosave queue) survive its own first save.
+ * line — pass the slot key instead, so the key is identical before and after the
+ * entry is first saved. That's what lets an open inline edit (and its autosave
+ * queue) survive its own first save.
  */
 const savedRow = (
   entry: TripFinanceEntry,
@@ -44,7 +40,7 @@ const savedRow = (
   key,
   entry,
   requesterId: entry.requesterId,
-  // The snapshotted name, not the live requester name — a later rename must not
+  // The snapshotted name, not a live one — a later rename elsewhere must not
   // rewrite what was true when the money was recorded.
   displayName: entry.name,
   amount: entry.amount,
@@ -173,51 +169,30 @@ export function missingStandardLines(
   };
 }
 
-/**
- * Merges saved income entries with the trip's requestors, in three blocks:
- * requestors (saved or blank suggestion) → custom payers → orphans.
- *
- * A requestor drops out of `requesters` as soon as their last dog leaves the
- * trip (the server derives that list from dogs), so their saved income lands in
- * the orphan block rather than disappearing — deleting a money record because of
- * a manifest edit would be unrecoverable.
- */
-export function buildIncomeRows(
-  entries: TripFinanceEntry[],
-  requesters: TripRequester[]
-): TripFinanceRow[] {
-  const byRequesterId = new Map<string, TripFinanceEntry>();
-  for (const entry of entries) {
-    if (entry.requesterId) byRequesterId.set(entry.requesterId, entry);
-  }
-  const requesterIds = new Set(requesters.map((r) => r.requesterId));
+/** The four method columns added up, in cents so the sum is exact. */
+export const paidTotal = (entry: TripFinanceEntry): number =>
+  (Math.round(entry.paidCash * 100) +
+    Math.round(entry.paidPaypal * 100) +
+    Math.round(entry.paidRevolut * 100) +
+    Math.round(entry.paidCredia * 100)) /
+  100;
 
-  const requestorRows = requesters.map((requester): TripFinanceRow => {
-    const entry = byRequesterId.get(requester.requesterId);
-    if (entry) return savedRow(entry, false, null, suggestedRowKey(requester.requesterId));
+/**
+ * The incomes tab is its own list: the server seeds a row per adopter on the
+ * trip and from then on the admin owns it — rename, delete, add a payer who
+ * has no dogs at all. So every row here is a real saved entry; there are no
+ * suggestions to merge in and nothing to go orphaned.
+ */
+export function buildIncomeRows(entries: TripFinanceEntry[]): TripFinanceIncomeRow[] {
+  return [...entries].sort(byCreatedAt).map((entry) => {
+    const paid = paidTotal(entry);
     return {
-      key: suggestedRowKey(requester.requesterId),
-      entry: null,
-      requesterId: requester.requesterId,
-      displayName: requester.name,
-      // null renders a blank input; 0 would read as a real "paid nothing".
-      amount: null,
-      // Incomes have no standard price — what a payer owes is per trip.
-      suggestedAmount: null,
-      note: null,
-      orphaned: false,
+      key: entry.id,
+      entry,
+      name: entry.name,
+      total: entry.amount,
+      paid,
+      remaining: roundCents(entry.amount - paid),
     };
   });
-
-  const customRows = entries
-    .filter((entry) => entry.requesterId === null)
-    .sort(byCreatedAt)
-    .map((entry) => savedRow(entry));
-
-  const orphanRows = entries
-    .filter((entry) => entry.requesterId !== null && !requesterIds.has(entry.requesterId))
-    .sort(byCreatedAt)
-    .map((entry) => savedRow(entry, true));
-
-  return [...requestorRows, ...customRows, ...orphanRows];
 }

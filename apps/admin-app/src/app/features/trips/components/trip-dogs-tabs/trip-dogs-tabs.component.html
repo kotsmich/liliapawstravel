@@ -92,8 +92,7 @@
   <app-trip-finances
     class="tab-panel"
     [tripId]="tripId()!"
-    [trip]="dogManager.currentTrip()"
-    [requesters]="dogManager.currentTrip()?.requesters ?? []" />
+    [trip]="dogManager.currentTrip()" />
 }
 
 <app-dog-form-dialog-wrapper [tripId]="tripId()" [tripDestinations]="dogManager.tripDestinations()" [tripPickupLocations]="dogManager.tripPickupLocations()" />

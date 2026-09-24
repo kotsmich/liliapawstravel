@@ -142,7 +142,12 @@ export class TripFinancesEffects {
               ? this.service.updateEntry(tripId, knownId, {
                   name: payload.name,
                   amount: payload.amount,
-                  // '' rather than omitted, so clearing a note actually clears it.
+                  // Sent explicitly rather than omitted, so clearing a method
+                  // (or a note) actually clears it instead of being ignored.
+                  paidCash: payload.paidCash ?? 0,
+                  paidPaypal: payload.paidPaypal ?? 0,
+                  paidRevolut: payload.paidRevolut ?? 0,
+                  paidCredia: payload.paidCredia ?? 0,
                   note: payload.note ?? '',
                 })
               : this.service
